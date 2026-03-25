@@ -1,0 +1,110 @@
+/**
+ * Design System Effects
+ * Glassmorphism, Gradients, and Atmospheric Effects
+ */
+
+/* Glass & Gradient Rule - Premium Vercel-inspired finish */
+.glass-panel {
+  background: rgba(23, 31, 51, 0.7);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+}
+
+.glass-panel-strong {
+  background: rgba(23, 31, 51, 0.8);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+}
+
+/* Primary Gradient - Lithographic Quality */
+.primary-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
+}
+
+.primary-gradient-radial {
+  background: radial-gradient(circle at 50% 0%, rgba(192, 193, 255, 0.15) 0%, rgba(11, 19, 38, 0) 70%);
+}
+
+/* Hero Gradient - Atmospheric Background */
+.hero-gradient {
+  background: radial-gradient(circle at 50% 0%, rgba(128, 131, 255, 0.15) 0%, rgba(11, 19, 38, 0) 70%);
+}
+
+/* Grid Background - Technical Aesthetic */
+.grid-bg {
+  background-image: radial-gradient(var(--outline-variant) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+}
+
+/* Ghost Border - Subtle Boundaries */
+.ghost-border {
+  border: 1px solid rgba(70, 69, 84, 0.15);
+}
+
+.ghost-border-strong {
+  border: 1px solid rgba(70, 69, 84, 0.3);
+}
+
+/* Ambient Glow Effects */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(128, 131, 255, 0.4);
+}
+
+.glow-primary-subtle {
+  box-shadow: 0 0 12px rgba(128, 131, 255, 0.2);
+}
+
+.glow-error {
+  box-shadow: 0 0 16px rgba(255, 180, 171, 0.3);
+}
+
+/* Focus States */
+.focus-ring-primary {
+  outline: 2px solid rgba(192, 193, 255, 0.3);
+  outline-offset: 2px;
+}
+
+/* Hover State - Surface Bright */
+.hover-surface-bright {
+  transition: background-color 0.2s ease;
+}
+
+.hover-surface-bright:hover {
+  background-color: var(--surface-bright);
+}
+
+/* Tonal Layering - Depth Effects */
+.layer-lifted {
+  background: var(--surface-container-high);
+}
+
+.layer-inset {
+  background: var(--surface-container-lowest);
+}
+
+/* Backdrop Blur Utilities */
+.backdrop-blur-sm {
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(var(--blur-xl));
+  -webkit-backdrop-filter: blur(var(--blur-xl));
+}
