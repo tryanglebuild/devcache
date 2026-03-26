@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
 import { Folder, FileText, Star, MoreVertical, Edit, Trash2, Eye, Paperclip } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
@@ -14,6 +15,7 @@ import {
 import { EditItemSheet } from './EditItemSheet'
 import { ViewFileDialog } from './ViewFileDialog'
 import { createClient } from '@/lib/supabase/client'
+import { trackActivity } from '@/lib/activity/track'
 import toast from 'react-hot-toast'
 
 type ProjectItem = Tables<'project_items'>
@@ -26,6 +28,7 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
+  const router = useRouter()
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [attachmentCount, setAttachmentCount] = useState(0)
@@ -80,6 +83,23 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
     toast.success('Item deleted successfully')
   }
 
+  const handleItemClick = async () => {
+    // Track activity asynchronously without blocking navigation
+    trackActivity(item.id, 'view').catch(err => {
+      console.error('Failed to track activity:', err)
+    })
+    
+    if (isFolder) {
+      // Navigate to folder detail page
+      if (onOpen) {
+        onOpen()
+      }
+    } else {
+      // Navigate to file view page using Next.js router
+      router.push(`/dashboard/projects/file/${item.id}`)
+    }
+  }
+
   const isFolder = item.type === 'folder'
   const Icon = isFolder ? Folder : FileText
 
@@ -87,17 +107,7 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
     <>
       <div
         className="bg-white p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all cursor-pointer group relative"
-        onClick={() => {
-          if (isFolder) {
-            // Navigate to folder detail page
-            if (onOpen) {
-              onOpen()
-            }
-          } else {
-            // Navigate to file view page
-            window.location.href = `/dashboard/projects/file/${item.id}`
-          }
-        }}
+        onClick={handleItemClick}
       >
         {/* Favorite Star */}
         {item.is_favorite && (

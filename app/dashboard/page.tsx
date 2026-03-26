@@ -1,4 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
+import { RecentProjectsClient } from '@/components/dashboard/RecentProjectsClient'
+
+// Disable caching for this page to ensure fresh data on navigation
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -19,6 +24,31 @@ export default async function DashboardPage() {
   const totalFolders = projectItems?.filter(item => item.type === 'folder').length || 0
   const totalFiles = projectItems?.filter(item => item.type === 'file').length || 0
   const totalFavorites = projectItems?.filter(item => item.is_favorite).length || 0
+
+  // Fetch recent activity
+  let recentActivity = null
+  try {
+    const { data } = await supabase
+      .from('activity_log')
+      .select(`
+        id,
+        action_type,
+        created_at,
+        project_items (
+          id,
+          name,
+          type,
+          description
+        )
+      `)
+      .eq('user_id', user!.id)
+      .order('created_at', { ascending: false })
+      .limit(10)
+    
+    recentActivity = data
+  } catch (error) {
+    console.error('Failed to fetch activity:', error)
+  }
 
   const displayName = profile?.full_name || user!.email?.split('@')[0] || 'User'
 
@@ -84,30 +114,7 @@ export default async function DashboardPage() {
             </div>
             
             {projectItems && projectItems.length > 0 ? (
-              <div className="space-y-3">
-                {projectItems.slice(0, 5).map((item) => (
-                  <div key={item.id} className="bg-white p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      item.type === 'folder' ? 'bg-[#4648d4]/10 text-[#4648d4]' : 'bg-[#575992]/10 text-[#575992]'
-                    }`}>
-                      <span className="material-symbols-outlined text-xl">
-                        {item.type === 'folder' ? 'folder' : 'description'}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-[#191c1e] truncate">{item.name}</p>
-                      {item.description && (
-                        <p className="text-xs text-[#464554] truncate">{item.description}</p>
-                      )}
-                    </div>
-                    {item.is_favorite && (
-                      <span className="material-symbols-outlined text-[#904900] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        star
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <RecentProjectsClient items={projectItems} />
             ) : (
               <div className="text-center py-12 bg-white rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
@@ -148,12 +155,48 @@ export default async function DashboardPage() {
             </div>
             
             <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
-              <div className="text-center py-8">
-                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#464554]">history</span>
+              {recentActivity && recentActivity.length > 0 ? (
+                <div className="space-y-3">
+                  {recentActivity.map((activity: any) => {
+                    const item = activity.project_items
+                    if (!item) return null
+                    
+                    const timeAgo = new Date(activity.created_at).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                    
+                    return (
+                      <a
+                        key={activity.id}
+                        href={item.type === 'folder' ? `/dashboard/projects/${item.id}` : `/dashboard/projects/file/${item.id}`}
+                        className="flex items-start gap-3 p-3 hover:bg-[#f7f9fb] rounded-lg transition-colors"
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          item.type === 'folder' ? 'bg-[#4648d4]/10 text-[#4648d4]' : 'bg-[#575992]/10 text-[#575992]'
+                        }`}>
+                          <span className="material-symbols-outlined text-sm">
+                            {item.type === 'folder' ? 'folder' : 'description'}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-[#191c1e] truncate">{item.name}</p>
+                          <p className="text-xs text-[#464554]">{timeAgo}</p>
+                        </div>
+                      </a>
+                    )
+                  })}
                 </div>
-                <p className="text-sm text-[#464554]">No recent activity</p>
-              </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#f2f4f6] flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[#464554]">history</span>
+                  </div>
+                  <p className="text-sm text-[#464554]">No recent activity</p>
+                </div>
+              )}
             </div>
 
             {/* System Status */}
