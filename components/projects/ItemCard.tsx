@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Tables } from '@/types/database.types'
-import { Folder, FileText, Star, MoreVertical, Edit, Trash2, Eye } from 'lucide-react'
+import { Folder, FileText, Star, MoreVertical, Edit, Trash2, Eye, Paperclip } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { EditItemDialog } from './EditItemDialog'
+import { EditItemSheet } from './EditItemSheet'
 import { ViewFileDialog } from './ViewFileDialog'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -28,7 +28,21 @@ interface ItemCardProps {
 export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
+  const [attachmentCount, setAttachmentCount] = useState(0)
   const supabase = createClient()
+
+  useEffect(() => {
+    loadAttachmentCount()
+  }, [item.id])
+
+  const loadAttachmentCount = async () => {
+    const { count } = await supabase
+      .from('project_file_attachments')
+      .select('*', { count: 'exact', head: true })
+      .eq('project_item_id', item.id)
+
+    setAttachmentCount(count || 0)
+  }
 
   const handleToggleFavorite = async () => {
     const { data, error } = await supabase
@@ -74,10 +88,14 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
       <div
         className="bg-white p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all cursor-pointer group relative"
         onClick={() => {
-          if (isFolder && onOpen) {
-            onOpen()
+          if (isFolder) {
+            // Navigate to folder detail page
+            if (onOpen) {
+              onOpen()
+            }
           } else {
-            setIsViewDialogOpen(true)
+            // Navigate to file view page
+            window.location.href = `/dashboard/projects/file/${item.id}`
           }
         }}
       >
@@ -130,9 +148,20 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
 
         {/* Footer */}
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#c7c4d7]/20">
-          <span className="text-[10px] text-[#464554] font-medium">
-            {formatDistanceToNow(new Date(item.updated_at!), { addSuffix: true })}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-[#464554] font-medium">
+              {formatDistanceToNow(new Date(item.updated_at!), { addSuffix: true })}
+            </span>
+            {attachmentCount > 0 && (
+              <>
+                <span className="text-[#c7c4d7]">•</span>
+                <div className="flex items-center gap-1 text-[#4648d4]">
+                  <Paperclip className="h-3 w-3" />
+                  <span className="text-[10px] font-bold">{attachmentCount}</span>
+                </div>
+              </>
+            )}
+          </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -184,7 +213,7 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
         </div>
       </div>
 
-      <EditItemDialog
+      <EditItemSheet
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}
         item={item}

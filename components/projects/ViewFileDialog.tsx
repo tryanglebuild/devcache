@@ -1,11 +1,15 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Tables } from '@/types/database.types'
 import { FileText, X } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { createClient } from '@/lib/supabase/client'
 import ReactMarkdown from 'react-markdown'
+import { FileUploadSection } from './FileUploadSection'
 
 type ProjectItem = Tables<'project_items'>
+type FileAttachment = Tables<'project_file_attachments'>
 
 interface ViewFileDialogProps {
   isOpen: boolean
@@ -14,6 +18,30 @@ interface ViewFileDialogProps {
 }
 
 export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
+  const [attachments, setAttachments] = useState<FileAttachment[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAttachments()
+    }
+  }, [isOpen, item.id])
+
+  const loadAttachments = async () => {
+    setIsLoading(true)
+    const { data, error } = await supabase
+      .from('project_file_attachments')
+      .select('*')
+      .eq('project_item_id', item.id)
+      .order('created_at', { ascending: false })
+
+    if (!error && data) {
+      setAttachments(data)
+    }
+    setIsLoading(false)
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -22,9 +50,12 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
             <FileText className="h-6 w-6 text-[#4648d4]" />
             {item.name}
           </DialogTitle>
+          <DialogDescription className="text-[#464554]">
+            View and manage file content and attachments
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 space-y-4">
+        <div className="mt-4 space-y-6">
           {/* Description */}
           {item.description && (
             <div className="p-4 bg-[#f2f4f6] rounded-lg">
@@ -120,6 +151,16 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
                 <p>No content available</p>
               </div>
             )}
+          </div>
+
+          {/* File Attachments */}
+          <div>
+            <h3 className="text-lg font-bold text-[#191c1e] mb-3">File Attachments</h3>
+            <FileUploadSection
+              projectItemId={item.id}
+              attachments={attachments}
+              onAttachmentsChange={setAttachments}
+            />
           </div>
         </div>
       </DialogContent>

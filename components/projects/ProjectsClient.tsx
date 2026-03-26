@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
-import { Plus, Folder, FileText, Star, MoreVertical, FolderOpen } from 'lucide-react'
-import { CreateItemDialog } from './CreateItemDialog'
+import { Plus, Folder, FileText, Star } from 'lucide-react'
+import { CreateItemModal } from './CreateItemModal'
 import { ItemCard } from './ItemCard'
-import { Breadcrumb } from './Breadcrumb'
 
 type ProjectItem = Tables<'project_items'>
 
@@ -14,27 +14,14 @@ interface ProjectsClientProps {
 }
 
 export function ProjectsClient({ initialItems }: ProjectsClientProps) {
+  const router = useRouter()
   const [items, setItems] = useState<ProjectItem[]>(initialItems)
-  const [currentFolder, setCurrentFolder] = useState<ProjectItem | null>(null)
-  const [breadcrumb, setBreadcrumb] = useState<ProjectItem[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [createType, setCreateType] = useState<'folder' | 'file'>('folder')
 
   const handleOpenFolder = (folder: ProjectItem) => {
-    setCurrentFolder(folder)
-    setBreadcrumb([...breadcrumb, folder])
-  }
-
-  const handleBreadcrumbClick = (index: number) => {
-    if (index === -1) {
-      // Root
-      setCurrentFolder(null)
-      setBreadcrumb([])
-    } else {
-      const folder = breadcrumb[index]
-      setCurrentFolder(folder)
-      setBreadcrumb(breadcrumb.slice(0, index + 1))
-    }
+    // Navigate to the project detail page
+    router.push(`/dashboard/projects/${folder.id}`)
   }
 
   const handleItemCreated = (newItem: ProjectItem) => {
@@ -49,9 +36,8 @@ export function ProjectsClient({ initialItems }: ProjectsClientProps) {
     setItems(items.filter(item => item.id !== deletedId))
   }
 
-  const currentItems = items.filter(item => 
-    item.parent_id === (currentFolder?.id || null)
-  )
+  // Show only root-level items (no parent)
+  const currentItems = items.filter(item => item.parent_id === null)
 
   const folders = currentItems.filter(item => item.type === 'folder')
   const files = currentItems.filter(item => item.type === 'file')
@@ -92,12 +78,6 @@ export function ProjectsClient({ initialItems }: ProjectsClientProps) {
         </div>
       </div>
 
-      {/* Breadcrumb */}
-      <Breadcrumb 
-        items={breadcrumb} 
-        onNavigate={handleBreadcrumbClick}
-      />
-
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-white p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] flex items-center gap-3">
@@ -137,10 +117,10 @@ export function ProjectsClient({ initialItems }: ProjectsClientProps) {
       {currentItems.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-            <FolderOpen className="h-8 w-8 text-[#464554]" />
+            <Folder className="h-8 w-8 text-[#464554]" />
           </div>
           <p className="text-[#464554] font-medium mb-4">
-            {currentFolder ? 'This folder is empty' : 'No projects yet'}
+            No projects yet
           </p>
           <div className="flex gap-3 justify-center">
             <button
@@ -185,12 +165,12 @@ export function ProjectsClient({ initialItems }: ProjectsClientProps) {
         </div>
       )}
 
-      {/* Create Dialog */}
-      <CreateItemDialog
+      {/* Create Modal */}
+      <CreateItemModal
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
         type={createType}
-        parentId={currentFolder?.id || null}
+        parentId={null}
         onItemCreated={handleItemCreated}
       />
     </div>

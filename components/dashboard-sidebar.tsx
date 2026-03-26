@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import {
   LayoutDashboard,
   FolderKanban,
-  BookOpen,
+  Tag,
   Settings,
   HelpCircle,
   LogOut,
@@ -25,6 +25,11 @@ const menuItems = [
     title: 'Projects',
     href: '/dashboard/projects',
     icon: FolderKanban,
+  },
+  {
+    title: 'Tags',
+    href: '/dashboard/tags',
+    icon: Tag,
   },
   {
     title: 'Settings',
@@ -59,15 +64,6 @@ export function useSidebarContext() {
 export function DashboardSidebar() {
   const pathname = usePathname() || '/dashboard'
   const { isCollapsed, setIsCollapsed } = useSidebarContext()
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  if (!isMounted) {
-    return null
-  }
 
   return (
     <aside
