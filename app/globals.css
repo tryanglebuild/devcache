@@ -31,8 +31,13 @@
 
   /* Selection */
   ::selection {
-    background-color: rgba(192, 193, 255, 0.3);
-    color: var(--on-surface);
+    background-color: rgba(73, 75, 214, 0.2);
+    color: inherit;
+  }
+
+  ::-moz-selection {
+    background-color: rgba(73, 75, 214, 0.2);
+    color: inherit;
   }
 
   /* Scrollbar Styling */
