@@ -10,7 +10,7 @@ export default function Footer() {
             devCache
           </Link>
           <p className="text-slate-500 max-w-xs font-['Inter'] text-xs tracking-wide uppercase font-semibold">
-            © 2024 devCache Engineering. Built for velocity.
+            © 2026 devCache Engineering. Built for velocity.
           </p>
         </div>
         

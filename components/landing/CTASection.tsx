@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function CTASection() {
   return (
@@ -14,9 +15,9 @@ export default function CTASection() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <button className="btn-primary px-12 py-5 rounded-2xl font-black text-xl hover:scale-105 transition-transform shadow-2xl">
+          <Link href="/signup" className="btn-primary px-12 py-5 rounded-2xl font-black text-xl hover:scale-105 transition-transform shadow-2xl">
             Get devCache Today
-          </button>
+          </Link>
           
           <div className="text-left">
             <div className="flex -space-x-2">

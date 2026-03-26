@@ -8,6 +8,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Glass Panel Effect */
+.glass-panel {
+  background: rgba(45, 52, 73, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
 /* Base Styles */
 @layer base {
   * {

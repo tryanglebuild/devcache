@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function HeroSection() {
   return (
     <section className="relative pt-32 pb-24 px-6 md:px-12 hero-gradient grid-bg min-h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -28,9 +30,9 @@ export default function HeroSection() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button className="btn-primary glow-primary-subtle">
+          <Link href="/signup" className="btn-primary glow-primary-subtle">
             Get Started for Free
-          </button>
+          </Link>
           <button className="glass-panel px-8 py-4 rounded-xl font-bold text-lg ghost-border-strong hover-surface-bright transition-colors flex items-center gap-2 text-on-surface">
             <span className="material-symbols-outlined">play_circle</span>
             Watch the Solution
