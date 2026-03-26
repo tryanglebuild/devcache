@@ -9,7 +9,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Surface Hierarchy
+        // Shadcn UI Colors
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))',
+        },
+        
+        // Surface Hierarchy (Legacy - keeping for compatibility)
         'surface-dim': '#0b1326',
         'surface': '#0b1326',
         'surface-bright': '#31394d',
@@ -21,8 +66,7 @@ export default {
         'surface-variant': '#2d3449',
         'surface-tint': '#c0c1ff',
         
-        // Primary Colors
-        'primary': '#c0c1ff',
+        // Primary Colors (Legacy - keeping for compatibility)
         'primary-container': '#8083ff',
         'primary-dim': '#494bd6',
         'primary-fixed': '#e1e0ff',
@@ -32,8 +76,7 @@ export default {
         'on-primary-fixed': '#07006c',
         'on-primary-fixed-variant': '#2f2ebe',
         
-        // Secondary Colors
-        'secondary': '#c0c1ff',
+        // Secondary Colors (Legacy - keeping for compatibility)
         'secondary-container': '#42447b',
         'secondary-dim': '#292a60',
         'secondary-fixed': '#e1e0ff',
@@ -54,8 +97,7 @@ export default {
         'on-tertiary-fixed': '#301400',
         'on-tertiary-fixed-variant': '#703700',
         
-        // Error Colors
-        'error': '#ffb4ab',
+        // Error Colors (Legacy - keeping for compatibility)
         'error-container': '#93000a',
         'on-error': '#690005',
         'on-error-container': '#ffdad6',
@@ -73,10 +115,6 @@ export default {
         'inverse-surface': '#dae2fd',
         'inverse-on-surface': '#283044',
         'inverse-primary': '#494bd6',
-        
-        // Background
-        'background': '#0b1326',
-        'foreground': '#dae2fd',
       },
       fontFamily: {
         headline: ['var(--font-inter)', 'Inter', 'sans-serif'],

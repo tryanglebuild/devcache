@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script'
+import { Toaster } from 'react-hot-toast'
 import './globals.css'
 
 const inter = Inter({ 
@@ -33,7 +34,33 @@ export default function RootLayout({
           rel="stylesheet" 
         />
       </head>
-      <body className={`${inter.className} bg-white`}>{children}</body>
+      <body className={`${inter.className} bg-white`}>
+        {children}
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#191c1e',
+              color: '#fff',
+              borderRadius: '12px',
+              padding: '16px',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ba1a1a',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+      </body>
     </html>
   )
 }
