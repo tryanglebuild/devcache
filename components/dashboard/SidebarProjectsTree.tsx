@@ -122,7 +122,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
             }
           }}
           className={cn(
-            'w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded transition-all',
+            'w-full flex items-center gap-2 px-2 py-2 text-sm rounded transition-all',
             isCurrentPath
               ? 'bg-[#4648d4]/10 text-[#4648d4] font-semibold'
               : 'text-[#464554] hover:bg-[#e0e3e5] hover:text-[#191c1e]'
@@ -131,18 +131,18 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
         >
           {hasChildren && !isFile ? (
             <ChevronRight
-              className={cn('h-3 w-3 transition-transform shrink-0', isExpanded && 'rotate-90')}
+              className={cn('h-4 w-4 transition-transform shrink-0', isExpanded && 'rotate-90')}
             />
           ) : (
-            <div className="w-3" />
+            <div className="w-4" />
           )}
 
           {isFile ? (
-            <FileText className="h-3.5 w-3.5 shrink-0" />
+            <FileText className="h-4 w-4 shrink-0" />
           ) : isExpanded ? (
-            <FolderOpen className="h-3.5 w-3.5 shrink-0 text-[#4648d4]" />
+            <FolderOpen className="h-4 w-4 shrink-0 text-[#4648d4]" />
           ) : (
-            <Folder className="h-3.5 w-3.5 shrink-0" />
+            <Folder className="h-4 w-4 shrink-0" />
           )}
 
           <span className="truncate flex-1 text-left">{node.item.name}</span>
