@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { createContext, useContext, useState, ReactNode } from 'react'
 import {
   LayoutDashboard,
   FolderKanban,
@@ -38,9 +38,32 @@ const menuItems = [
   },
 ]
 
+// Context to share sidebar state
+const SidebarContext = createContext<{
+  isCollapsed: boolean
+  setIsCollapsed: (value: boolean) => void
+}>({
+  isCollapsed: false,
+  setIsCollapsed: () => {},
+})
+
+export function SidebarProvider({ children }: { children: ReactNode }) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  return (
+    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
+      {children}
+    </SidebarContext.Provider>
+  )
+}
+
+export function useSidebarContext() {
+  return useContext(SidebarContext)
+}
+
 export function DashboardSidebar() {
   const pathname = usePathname()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { isCollapsed, setIsCollapsed } = useSidebarContext()
 
   return (
     <aside
