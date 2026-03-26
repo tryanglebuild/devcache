@@ -2,18 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, ReactNode } from 'react'
 import {
   LayoutDashboard,
   FolderKanban,
   Tag,
-  Settings,
-  HelpCircle,
-  LogOut,
-  Plus,
   ChevronLeft,
   ChevronRight,
+  Folder,
+  FileText,
 } from 'lucide-react'
+import { useCreateItem } from '@/components/providers/CreateItemProvider'
+import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
+import { cn } from '@/lib/utils'
 
 const menuItems = [
   {
@@ -21,20 +22,11 @@ const menuItems = [
     href: '/dashboard',
     icon: LayoutDashboard,
   },
-  {
-    title: 'Projects',
-    href: '/dashboard/projects',
-    icon: FolderKanban,
-  },
+  // Projects is now handled by SidebarProjectsTree
   {
     title: 'Tags',
     href: '/dashboard/tags',
     icon: Tag,
-  },
-  {
-    title: 'Settings',
-    href: '/dashboard/settings',
-    icon: Settings,
   },
 ]
 
@@ -64,6 +56,7 @@ export function useSidebarContext() {
 export function DashboardSidebar() {
   const pathname = usePathname() || '/dashboard'
   const { isCollapsed, setIsCollapsed } = useSidebarContext()
+  const { openCreateModal } = useCreateItem()
 
   return (
     <aside
@@ -101,7 +94,46 @@ export function DashboardSidebar() {
       </button>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1">
+      <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+        {/* Quick Actions */}
+        {!isCollapsed ? (
+          <div className="flex gap-2 mb-4 pb-4 border-b border-[#c7c4d7]/20">
+            <button
+              onClick={() => openCreateModal('folder')}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg transition-all bg-white border border-[#c7c4d7]/30 text-[#4648d4] hover:bg-[#4648d4]/5 shadow-sm"
+              title="New Folder"
+            >
+              <Folder className="h-4 w-4 shrink-0" />
+              <span className="text-xs font-bold">Folder</span>
+            </button>
+            <button
+              onClick={() => openCreateModal('file')}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg transition-all bg-white border border-[#c7c4d7]/30 text-[#575992] hover:bg-[#575992]/5 shadow-sm"
+              title="New File"
+            >
+              <FileText className="h-4 w-4 shrink-0" />
+              <span className="text-xs font-bold">File</span>
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2 mb-4 pb-4 border-b border-[#c7c4d7]/20">
+            <button
+              onClick={() => openCreateModal('folder')}
+              className="w-full flex items-center justify-center p-2.5 rounded-lg transition-all bg-white border border-[#c7c4d7]/30 text-[#4648d4] hover:bg-[#4648d4]/5 shadow-sm"
+              title="New Folder"
+            >
+              <Folder className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => openCreateModal('file')}
+              className="w-full flex items-center justify-center p-2.5 rounded-lg transition-all bg-white border border-[#c7c4d7]/30 text-[#575992] hover:bg-[#575992]/5 shadow-sm"
+              title="New File"
+            >
+              <FileText className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
         {menuItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
@@ -129,52 +161,25 @@ export function DashboardSidebar() {
             </Link>
           )
         })}
+
+        {/* Projects Tree */}
+        {!isCollapsed ? (
+          <SidebarProjectsTree isCollapsed={isCollapsed} />
+        ) : (
+          <Link
+            href="/dashboard/projects"
+            className={cn(
+              'flex items-center justify-center px-3 py-2.5 rounded-lg transition-all',
+              pathname?.startsWith('/dashboard/projects')
+                ? 'bg-white text-[#4648d4] shadow-sm font-bold'
+                : 'text-[#464554] hover:text-[#191c1e] hover:bg-[#e0e3e5]'
+            )}
+            title="Projects"
+          >
+            <FolderKanban className="h-5 w-5 shrink-0" />
+          </Link>
+        )}
       </nav>
-
-      {/* New Entry Button */}
-      <div className="px-3 py-4">
-        <button
-          className={`
-            w-full py-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm
-            flex items-center gap-2 shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all
-            ${isCollapsed ? 'justify-center px-2' : 'justify-center px-3'}
-          `}
-          title={isCollapsed ? 'New Entry' : undefined}
-        >
-          <Plus className="h-4 w-4 shrink-0" />
-          {!isCollapsed && <span>New Entry</span>}
-        </button>
-      </div>
-
-      {/* Footer */}
-      <div className="border-t border-[#c7c4d7]/20 px-3 py-3 space-y-1">
-        <Link
-          href="/support"
-          className={`
-            flex items-center gap-3 px-3 py-2.5 text-[#464554] hover:bg-[#e0e3e5] rounded-lg transition-all
-            ${isCollapsed ? 'justify-center' : ''}
-          `}
-          title={isCollapsed ? 'Support' : undefined}
-        >
-          <HelpCircle className="h-5 w-5 shrink-0" />
-          {!isCollapsed && (
-            <span className="text-sm font-medium uppercase tracking-wider">Support</span>
-          )}
-        </Link>
-        <Link
-          href="/api/auth/signout"
-          className={`
-            flex items-center gap-3 px-3 py-2.5 text-[#464554] hover:bg-[#e0e3e5] rounded-lg transition-all
-            ${isCollapsed ? 'justify-center' : ''}
-          `}
-          title={isCollapsed ? 'Logout' : undefined}
-        >
-          <LogOut className="h-5 w-5 shrink-0 text-[#ba1a1a]" />
-          {!isCollapsed && (
-            <span className="text-sm font-medium uppercase tracking-wider">Logout</span>
-          )}
-        </Link>
-      </div>
     </aside>
   )
 }

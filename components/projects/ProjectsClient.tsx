@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Tables } from '@/types/database.types'
 import { Plus, Folder, FileText, Star } from 'lucide-react'
 import { CreateItemModal } from './CreateItemModal'
 import { ItemCard } from './ItemCard'
+import { FolderUploadButton } from './FolderUploadButton'
 import {
   Pagination,
   PaginationContent,
@@ -28,6 +29,7 @@ const ITEMS_PER_PAGE = 16
 
 export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [items, setItems] = useState<ProjectItem[]>(initialItems)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [createType, setCreateType] = useState<'folder' | 'file'>('folder')
@@ -37,6 +39,17 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
   const supabase = createClient()
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+
+  // Check URL parameters on mount to auto-open create modal
+  useEffect(() => {
+    const createParam = searchParams.get('create')
+    if (createParam === 'folder' || createParam === 'file') {
+      setCreateType(createParam)
+      setIsCreateDialogOpen(true)
+      // Clean up URL
+      router.replace('/dashboard/projects', { scroll: false })
+    }
+  }, [searchParams, router])
 
   const handleOpenFolder = (folder: ProjectItem) => {
     router.push(`/dashboard/projects/${folder.id}`)
@@ -54,6 +67,11 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
   const handleItemDeleted = (deletedId: string) => {
     setItems(items.filter(item => item.id !== deletedId))
     setTotalItems(prev => prev - 1)
+  }
+
+  const handleFolderUploadComplete = (newItems: ProjectItem[]) => {
+    setItems([...items, ...newItems])
+    setTotalItems(prev => prev + newItems.length)
   }
 
   // Load page data
@@ -96,10 +114,10 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // Show only root-level items (no parent)
-  const currentItems = items.filter(item => item.parent_id === null)
-  const folders = currentItems.filter(item => item.type === 'folder')
-  const files = currentItems.filter(item => item.type === 'file')
+  // Use root items only
+  const displayItems = items.filter(item => item.parent_id === null)
+  const folders = displayItems.filter(item => item.type === 'folder')
+  const files = displayItems.filter(item => item.type === 'file')
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -134,9 +152,9 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6">
+    <div className="space-y-6 pt-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-4xl font-black tracking-tight text-[#191c1e] mb-2">
             Projects
@@ -161,16 +179,20 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
               setCreateType('file')
               setIsCreateDialogOpen(true)
             }}
-            className="px-4 py-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all flex items-center gap-2"
+            className="px-4 py-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg font-bold text-sm hover:bg-[#f2f4f6] transition-all flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
             New File
           </button>
+          <FolderUploadButton
+            parentId={null}
+            onUploadComplete={handleFolderUploadComplete}
+          />
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-[#4648d4]/10 flex items-center justify-center text-[#4648d4]">
             <Folder className="h-5 w-5" />
@@ -243,7 +265,7 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
             {folders.map(folder => (
               <ItemCard
                 key={folder.id}

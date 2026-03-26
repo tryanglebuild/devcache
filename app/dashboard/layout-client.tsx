@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SidebarProvider, DashboardSidebar, useSidebarContext } from '@/components/dashboard-sidebar'
+import { CreateItemProvider } from '@/components/providers/CreateItemProvider'
 import { ProfileModal } from '@/components/dashboard/ProfileModal'
 import { SearchBar } from '@/components/dashboard/SearchBar'
 import {
@@ -13,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, LogOut } from 'lucide-react'
+import { User, LogOut, Settings } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 function DashboardContent({
@@ -119,6 +120,13 @@ function DashboardContent({
                     <User className="mr-2 h-4 w-4 text-[#4648d4]" />
                     <span className="font-medium">Profile</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => router.push('/dashboard/settings')}
+                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb]"
+                  >
+                    <Settings className="mr-2 h-4 w-4 text-[#464554]" />
+                    <span className="font-medium">Settings</span>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-[#c7c4d7]/20" />
                   <DropdownMenuItem 
                     onClick={handleLogout}
@@ -157,16 +165,18 @@ export function DashboardLayoutClient({
 }) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-[#f7f9fb]">
-        <DashboardContent 
-          displayName={displayName} 
-          jobTitle={jobTitle}
-          email={email}
-          createdAt={createdAt}
-        >
-          {children}
-        </DashboardContent>
-      </div>
+      <CreateItemProvider>
+        <div className="min-h-screen bg-[#f7f9fb]">
+          <DashboardContent 
+            displayName={displayName} 
+            jobTitle={jobTitle}
+            email={email}
+            createdAt={createdAt}
+          >
+            {children}
+          </DashboardContent>
+        </div>
+      </CreateItemProvider>
     </SidebarProvider>
   )
 }

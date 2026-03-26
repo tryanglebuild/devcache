@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
-import { FileText, Code, Eye, Edit, Trash2, Download, Paperclip } from 'lucide-react'
+import { FileText, Code, Eye, Edit, Trash2, Download, Paperclip, Copy, Check } from 'lucide-react'
 import { EditItemSheet } from './EditItemSheet'
 import { Breadcrumb } from './Breadcrumb'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import ReactMarkdown from 'react-markdown'
+import { MarkdownCodeBlock } from './MarkdownCodeBlock'
 
 type ProjectItem = Tables<'project_items'>
 type FileAttachment = Tables<'project_file_attachments'>
@@ -27,8 +28,59 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
   const [isLoadingContent, setIsLoadingContent] = useState(false)
   const [tagColors, setTagColors] = useState<Record<string, string>>({})
   const [breadcrumbPath, setBreadcrumbPath] = useState<ProjectItem[]>([])
+  const [copied, setCopied] = useState(false)
 
   const supabase = createClient()
+
+  const handleCopyContent = async () => {
+    const content = file.content || attachmentContent
+    if (!content) {
+      toast.error('No content to copy')
+      return
+    }
+
+    try {
+      let textToCopy = content
+
+      // If in rendered mode, strip markdown formatting
+      if (viewMode === 'rendered') {
+        // Remove markdown syntax for plain text
+        textToCopy = content
+          // Remove headers
+          .replace(/^#{1,6}\s+/gm, '')
+          // Remove bold/italic
+          .replace(/(\*\*|__)(.*?)\1/g, '$2')
+          .replace(/(\*|_)(.*?)\1/g, '$2')
+          // Remove links but keep text
+          .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+          // Remove inline code backticks
+          .replace(/`([^`]+)`/g, '$1')
+          // Remove code block markers
+          .replace(/```[\s\S]*?```/g, (match) => {
+            return match.replace(/```\w*\n?/g, '').replace(/```$/g, '')
+          })
+          // Remove blockquotes
+          .replace(/^>\s+/gm, '')
+          // Remove horizontal rules
+          .replace(/^(-{3,}|_{3,}|\*{3,})$/gm, '')
+          // Remove list markers
+          .replace(/^[\s]*[-*+]\s+/gm, '')
+          .replace(/^[\s]*\d+\.\s+/gm, '')
+          // Clean up extra whitespace
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+      }
+      // If in source mode, copy raw markdown
+
+      await navigator.clipboard.writeText(textToCopy)
+      setCopied(true)
+      toast.success(viewMode === 'rendered' ? 'Plain text copied' : 'Markdown copied')
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error('Copy error:', error)
+      toast.error('Failed to copy content')
+    }
+  }
 
   // Load breadcrumb path
   useEffect(() => {
@@ -212,15 +264,39 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
           </div>
 
           <div className="flex gap-2">
+            {/* Copy Content Button */}
+            <button
+              onClick={handleCopyContent}
+              className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
+              title="Copy file content"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-[#16a34a]" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
+            {/* Download Button - only show if there are attachments */}
+            {attachments.length > 0 && (
+              <button
+                onClick={() => handleDownloadAttachment(attachments[0])}
+                className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
+                title="Download file"
+              >
+                <Download className="h-4 w-4" />
+              </button>
+            )}
             <button
               onClick={() => setIsEditSheetOpen(true)}
               className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
+              title="Edit file"
             >
               <Edit className="h-4 w-4" />
             </button>
             <button
               onClick={handleDelete}
               className="p-2.5 bg-white border border-[#ba1a1a]/30 text-[#ba1a1a] rounded-lg hover:bg-[#ba1a1a]/10 transition-all"
+              title="Delete file"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -279,7 +355,34 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
         ) : viewMode === 'rendered' ? (
           <div className="prose prose-slate max-w-none">
             {file.content || attachmentContent ? (
-              <ReactMarkdown>{file.content || attachmentContent}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  code({ node, className, children, ...props }) {
+                    const content = String(children).replace(/\n$/, '')
+                    
+                    // Check if it's inline code by checking if there's a parent <pre> tag
+                    const isInline = !className?.startsWith('language-')
+                    
+                    // Inline code
+                    if (isInline) {
+                      return (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      )
+                    }
+                    
+                    // Code block with copy button
+                    return (
+                      <MarkdownCodeBlock className={className}>
+                        {content}
+                      </MarkdownCodeBlock>
+                    )
+                  },
+                }}
+              >
+                {file.content || attachmentContent}
+              </ReactMarkdown>
             ) : (
               <div className="text-center py-12 text-[#464554]">
                 <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />

@@ -8,6 +8,7 @@ import { CreateItemSheet } from './CreateItemSheet'
 import { EditItemSheet } from './EditItemSheet'
 import { ItemCard } from './ItemCard'
 import { Breadcrumb } from './Breadcrumb'
+import { FolderUploadButton } from './FolderUploadButton'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
@@ -81,6 +82,10 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
 
   const handleItemDeleted = (deletedId: string) => {
     setItems(items.filter(item => item.id !== deletedId))
+  }
+
+  const handleFolderUploadComplete = (newItems: ProjectItem[]) => {
+    setItems([...items, ...newItems])
   }
 
   const handleDelete = async () => {
@@ -217,11 +222,15 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
             setCreateType('file')
             setIsCreateSheetOpen(true)
           }}
-          className="px-4 py-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all flex items-center gap-2"
+          className="px-4 py-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg font-bold text-sm hover:bg-[#f2f4f6] transition-all flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
           New File
         </button>
+        <FolderUploadButton
+          parentId={project.id}
+          onUploadComplete={handleFolderUploadComplete}
+        />
       </div>
 
       {/* Content */}
