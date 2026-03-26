@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import {
   LayoutDashboard,
   FolderKanban,
@@ -25,11 +25,6 @@ const menuItems = [
     title: 'Projects',
     href: '/dashboard/projects',
     icon: FolderKanban,
-  },
-  {
-    title: 'Library',
-    href: '/dashboard/library',
-    icon: BookOpen,
   },
   {
     title: 'Settings',
@@ -62,8 +57,17 @@ export function useSidebarContext() {
 }
 
 export function DashboardSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname() || '/dashboard'
   const { isCollapsed, setIsCollapsed } = useSidebarContext()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <aside

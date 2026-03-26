@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SidebarProvider, DashboardSidebar, useSidebarContext } from '@/components/dashboard-sidebar'
 import { ProfileModal } from '@/components/dashboard/ProfileModal'
@@ -30,7 +30,12 @@ function DashboardContent({
 }) {
   const { isCollapsed } = useSidebarContext()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleLogout = async () => {
     try {
@@ -40,7 +45,9 @@ function DashboardContent({
       
       if (response.ok) {
         toast.success('Logged out successfully')
-        router.push('/login')
+        if (isMounted) {
+          router.push('/login')
+        }
       } else {
         toast.error('Failed to logout')
       }
