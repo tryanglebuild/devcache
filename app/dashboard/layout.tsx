@@ -28,6 +28,8 @@ export default async function DashboardLayout({
     <DashboardLayoutClient 
       displayName={displayName} 
       jobTitle={jobTitle}
+      email={user.email || ''}
+      createdAt={user.created_at}
     >
       {children}
     </DashboardLayoutClient>
