@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SidebarProvider, DashboardSidebar, useSidebarContext } from '@/components/dashboard-sidebar'
 import { ProfileModal } from '@/components/dashboard/ProfileModal'
+import { SearchBar } from '@/components/dashboard/SearchBar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,19 +77,13 @@ function DashboardContent({
       >
         {/* Top Navbar */}
         <header className="sticky top-0 z-40 bg-[#f7f9fb] border-b border-[#c7c4d7]/10">
-          <div className="flex items-center gap-4 px-6 py-4">
-            {/* Search */}
-            <div className="flex items-center flex-1 max-w-xl">
-              <div className="relative w-full group">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#464554] group-focus-within:text-[#4648d4] transition-colors text-xl">
-                  search
-                </span>
-                <input
-                  type="text"
-                  placeholder="Quick search projects, templates, or snippets..."
-                  className="w-full pl-12 pr-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-xl focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none text-sm transition-all"
-                />
-              </div>
+          <div className="flex items-center justify-between gap-4 px-6 py-4">
+            {/* Left spacer for balance */}
+            <div className="w-[200px]" />
+            
+            {/* Search - Centered */}
+            <div className="flex-1 flex justify-center max-w-2xl mx-auto">
+              <SearchBar />
             </div>
 
             {/* Right Side */}

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { RecentProjectsClient } from '@/components/dashboard/RecentProjectsClient'
+import { FavoritedItemsClient } from '@/components/dashboard/FavoritedItemsClient'
 
 // Disable caching for this page to ensure fresh data on navigation
 export const dynamic = 'force-dynamic'
@@ -15,15 +16,20 @@ export default async function DashboardPage() {
     .eq('id', user!.id)
     .single()
 
-  // Fetch project stats
+  // Fetch project stats - limit to reasonable amount for dashboard
   const { data: projectItems } = await supabase
     .from('project_items')
     .select('*')
     .eq('user_id', user!.id)
+    .order('updated_at', { ascending: false })
+    .limit(100) // Limit for performance
 
   const totalFolders = projectItems?.filter(item => item.type === 'folder').length || 0
   const totalFiles = projectItems?.filter(item => item.type === 'file').length || 0
   const totalFavorites = projectItems?.filter(item => item.is_favorite).length || 0
+
+  // Get favorite items
+  const favoriteItems = projectItems?.filter(item => item.is_favorite) || []
 
   // Fetch recent activity
   let recentActivity = null
@@ -131,16 +137,11 @@ export default async function DashboardPage() {
           {/* Favorited Templates */}
           <section>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold tracking-tight">Favorited Templates</h3>
-              <button className="text-sm font-semibold text-[#4648d4] hover:underline">Manage Favorites</button>
+              <h3 className="text-xl font-bold tracking-tight">Favorited Items</h3>
+              <a href="/dashboard/projects" className="text-sm font-semibold text-[#4648d4] hover:underline">View All Projects</a>
             </div>
             
-            <div className="text-center py-12 bg-white rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#464554] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              </div>
-              <p className="text-[#464554] font-medium">No favorite templates yet</p>
-            </div>
+            <FavoritedItemsClient items={favoriteItems} />
           </section>
         </div>
 

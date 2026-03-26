@@ -109,12 +109,23 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
         className="bg-white p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all cursor-pointer group relative"
         onClick={handleItemClick}
       >
-        {/* Favorite Star */}
-        {item.is_favorite && (
-          <div className="absolute top-3 right-3">
-            <Star className="h-4 w-4 text-[#904900] fill-[#904900]" />
-          </div>
-        )}
+        {/* Favorite Star Button - Top Right */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            handleToggleFavorite()
+          }}
+          className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-[#f2f4f6] transition-colors z-10"
+          title={item.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Star 
+            className={`h-4 w-4 transition-colors ${
+              item.is_favorite 
+                ? 'text-[#904900] fill-[#904900]' 
+                : 'text-[#c7c4d7] hover:text-[#904900]'
+            }`}
+          />
+        </button>
 
         {/* Icon */}
         <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
@@ -180,7 +191,10 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
             >
               <MoreVertical className="h-4 w-4 text-[#464554]" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent 
+              align="end"
+              className="bg-white border border-[#c7c4d7]/20 shadow-xl"
+            >
               {!isFolder && (
                 <>
                   <DropdownMenuItem onClick={(e) => {
@@ -199,13 +213,6 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
               }}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={(e) => {
-                e.stopPropagation()
-                handleToggleFavorite()
-              }}>
-                <Star className="h-4 w-4 mr-2" />
-                {item.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

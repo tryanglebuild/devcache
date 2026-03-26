@@ -13,14 +13,15 @@ export default async function ProjectsPage() {
     return null
   }
 
-  // Fetch root-level items (folders and files without parent)
-  const { data: items, error } = await supabase
+  // Fetch first page of root-level items with total count
+  const { data: items, count } = await supabase
     .from('project_items')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('user_id', user.id)
     .is('parent_id', null)
     .order('type', { ascending: false }) // folders first
     .order('name', { ascending: true })
+    .range(0, 15) // First 16 items (0-15)
 
-  return <ProjectsClient initialItems={items || []} />
+  return <ProjectsClient initialItems={items || []} initialTotal={count || 0} />
 }
