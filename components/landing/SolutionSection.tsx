@@ -1,44 +1,62 @@
 export default function SolutionSection() {
   return (
-    <section className="py-24 px-6 md:px-12 border-y border-outline-variant/10 section-surface-container-low" id="solution">
-      <div className="max-w-4xl mx-auto text-center mb-20">
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-          Meet Your <span className="text-primary">Project-Centric</span> Hub.
-        </h2>
-        <p className="text-lg text-on-surface-variant">
-          devCache isn&apos;t another social network or snippet manager. It&apos;s a high-performance vault for your engineering team&apos;s intellectual property. Private, secure, and built for speed.
-        </p>
-      </div>
-      
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="card hover:border-primary/40">
-          <span className="material-symbols-outlined text-4xl mb-6 block group-hover:scale-110 transition-transform text-primary">
-            lock
-          </span>
-          <h3 className="text-2xl font-bold mb-4">Team Privacy First</h3>
-          <p className="leading-relaxed text-on-surface-variant">
-            Your patterns stay yours. devCache creates a secure perimeter around your proprietary technical solutions.
-          </p>
-        </div>
-        
-        <div className="card hover:border-primary/40">
-          <span className="material-symbols-outlined text-4xl mb-6 block group-hover:scale-110 transition-transform text-primary">
-            account_tree
-          </span>
-          <h3 className="text-2xl font-bold mb-4">Project Lineage</h3>
-          <p className="leading-relaxed text-on-surface-variant">
-            Organize knowledge by specific projects. Understand exactly where and how a pattern was first implemented.
-          </p>
-        </div>
-        
-        <div className="card hover:border-primary/40">
-          <span className="material-symbols-outlined text-4xl mb-6 block group-hover:scale-110 transition-transform text-primary">
-            bolt
-          </span>
-          <h3 className="text-2xl font-bold mb-4">Low Latency Dev</h3>
-          <p className="leading-relaxed text-on-surface-variant">
-            Built on a distributed edge architecture. Your cache is always one keyboard shortcut away from implementation.
-          </p>
+    <section className="py-24 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="bg-indigo-600 rounded-[3rem] p-8 md:p-16 lg:p-20 flex flex-col md:flex-row items-center gap-16 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-[-20deg] translate-x-32" />
+          
+          <div className="w-full md:w-1/2 relative z-10">
+            <span className="text-indigo-200 font-extrabold tracking-[0.2em] text-[10px] uppercase mb-6 block">
+              The devCache Advantage
+            </span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-[1.15] mb-8">
+              The Project-Centric Knowledge Hub
+            </h2>
+            <p className="text-indigo-100 text-lg mb-10 leading-relaxed">
+              devCache is a vault for your engineering intellectual property. It links your technical templates and wisdom directly to projects, stacks, and teams.
+            </p>
+            <ul className="space-y-5">
+              <li className="flex items-center gap-4 text-white font-semibold">
+                <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  check_circle
+                </span>
+                Searchable by project context
+              </li>
+              <li className="flex items-center gap-4 text-white font-semibold">
+                <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  check_circle
+                </span>
+                Structured template library
+              </li>
+              <li className="flex items-center gap-4 text-white font-semibold">
+                <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  check_circle
+                </span>
+                Team-wide access controls
+              </li>
+            </ul>
+          </div>
+          
+          <div className="w-full md:w-1/2 relative z-10">
+            <div className="bg-white/70 backdrop-blur-xl border border-indigo-100/50 p-12 rounded-3xl shadow-2xl flex items-center justify-center min-h-[350px]">
+              <div className="grid grid-cols-3 gap-8">
+                <div className="w-24 h-28 bg-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/30 backdrop-blur-sm">
+                  <span className="material-symbols-outlined text-indigo-600 text-4xl">description</span>
+                  <div className="w-12 h-1.5 bg-indigo-200 rounded-full" />
+                </div>
+                <div className="w-24 h-28 bg-white/40 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/50 scale-110 shadow-2xl">
+                  <span className="material-symbols-outlined text-indigo-600 text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    folder_special
+                  </span>
+                  <div className="w-14 h-1.5 bg-indigo-300 rounded-full" />
+                </div>
+                <div className="w-24 h-28 bg-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/30 backdrop-blur-sm">
+                  <span className="material-symbols-outlined text-indigo-600 text-4xl">inventory</span>
+                  <div className="w-12 h-1.5 bg-indigo-200 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

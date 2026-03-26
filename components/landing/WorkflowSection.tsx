@@ -1,78 +1,119 @@
 export default function WorkflowSection() {
   return (
-    <section className="py-32 px-6 md:px-12 relative overflow-hidden section-surface">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-24">
-          <h2 className="text-sm tracking-[0.3em] mb-4 uppercase font-bold text-primary">
-            The Workflow
-          </h2>
-          <p className="text-3xl font-extrabold">Ship Faster, From Day Zero.</p>
+    <section className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl font-extrabold text-slate-900 mb-4">Engineered for Flow</h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+            Three simple steps to move from fragmented technical thoughts to a reusable engineering library.
+          </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative">
-          {/* Connective line (Desktop) */}
-          <div className="hidden md:block absolute top-12 left-0 w-full h-px bg-gradient-to-r from-transparent via-outline-variant/40 to-transparent -z-10" />
-          
-          {/* Step 1 */}
-          <div className="flex flex-col items-center text-center space-y-6">
-            <div className="w-24 h-24 rounded-full border-4 border-background flex items-center justify-center text-3xl font-bold shadow-xl bg-surface-container-high text-primary">
-              1
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-2xl font-bold">Capture</h4>
-              <p className="text-on-surface-variant">
-                Import existing markdown templates or create new ones directly in our high-fidelity editor. Supports all major syntaxes.
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 h-auto md:h-[650px]">
+          {/* Capture */}
+          <div className="md:col-span-7 bg-slate-50 rounded-[2.5rem] p-12 flex flex-col justify-between border border-slate-100 overflow-hidden relative group">
+            <div className="relative z-10">
+              <span className="text-indigo-600 font-extrabold mb-3 block text-xs tracking-[0.2em] uppercase">
+                Step 01
+              </span>
+              <h3 className="text-3xl font-extrabold mb-6 text-slate-900">Capture Wisdom</h3>
+              <p className="text-slate-600 max-w-sm mb-10 text-lg leading-relaxed">
+                Import existing documentation or create new entries with a clean, distraction-free interface. No friction, just pure wisdom entry.
               </p>
-              <div className="pt-4 flex justify-center">
-                <div className="glass-panel p-3 rounded-lg ghost-border font-mono text-xs text-left">
-                  <span className="text-indigo-400"># Auth_Supabase.md</span><br/>
-                  <span className="text-slate-500">// Initialize client</span><br/>
-                  <span className="text-emerald-400">const supabase = ...</span>
+              <div className="inline-flex items-center gap-3 bg-white px-6 py-4 rounded-2xl border border-slate-200 text-sm font-bold shadow-sm">
+                <span className="material-symbols-outlined text-indigo-600">edit_note</span>
+                <span className="text-slate-800">New Technical Template</span>
+              </div>
+            </div>
+            <div className="absolute right-0 bottom-0 w-2/3 h-1/2 translate-y-6 translate-x-6">
+              <div className="bg-white rounded-tl-[2rem] shadow-2xl p-8 border-l border-t border-slate-100">
+                <div className="h-4 w-40 bg-slate-100 rounded-full mb-8" />
+                <div className="space-y-4">
+                  <div className="h-4 w-full bg-indigo-50/50 rounded-full" />
+                  <div className="h-4 w-full bg-indigo-50/50 rounded-full" />
+                  <div className="h-4 w-4/5 bg-slate-50 rounded-full" />
+                  <div className="h-4 w-2/3 bg-slate-50 rounded-full" />
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Step 2 */}
-          <div className="flex flex-col items-center text-center space-y-6">
-            <div className="w-24 h-24 rounded-full border-4 border-background flex items-center justify-center text-3xl font-bold shadow-xl bg-surface-container-high text-primary">
-              2
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-2xl font-bold">Organize</h4>
-              <p className="text-on-surface-variant">
-                Group templates into logical project folders. Tag by stack, language, or complexity for instant discovery.
-              </p>
-              <div className="pt-4 flex flex-wrap gap-2 justify-center">
-                <span className="px-2 py-1 rounded bg-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase tracking-widest border border-indigo-500/30">
-                  Next.js
-                </span>
-                <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/30">
-                  Supabase
-                </span>
-                <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-widest border border-amber-500/30">
-                  Tailwind
-                </span>
-              </div>
+          {/* Organize */}
+          <div className="md:col-span-5 bg-indigo-50 rounded-[2.5rem] p-12 flex flex-col border border-indigo-100 overflow-hidden">
+            <span className="text-indigo-600 font-extrabold mb-3 block text-xs tracking-[0.2em] uppercase">
+              Step 02
+            </span>
+            <h3 className="text-3xl font-extrabold mb-6 text-slate-900">Organize Deeply</h3>
+            <p className="text-slate-600 mb-10 text-lg leading-relaxed">
+              Tag entries by stack, project, or domain. Create smart collections that surface automatically for the right teams.
+            </p>
+            <div className="mt-auto flex flex-wrap gap-3">
+              <span className="px-5 py-3 bg-white rounded-xl text-[11px] font-extrabold text-indigo-600 border border-indigo-200 uppercase flex items-center gap-2 tracking-wider">
+                <span className="material-symbols-outlined text-[16px]">category</span> Frontend
+              </span>
+              <span className="px-5 py-3 bg-white rounded-xl text-[11px] font-extrabold text-indigo-600 border border-indigo-200 uppercase flex items-center gap-2 tracking-wider">
+                <span className="material-symbols-outlined text-[16px]">category</span> Backend
+              </span>
+              <span className="px-5 py-3 bg-white rounded-xl text-[11px] font-extrabold text-indigo-600 border border-indigo-200 uppercase flex items-center gap-2 tracking-wider">
+                <span className="material-symbols-outlined text-[16px]">category</span> Infra
+              </span>
+              <span className="px-5 py-3 bg-white rounded-xl text-[11px] font-extrabold text-indigo-600 border border-indigo-200 uppercase flex items-center gap-2 tracking-wider">
+                <span className="material-symbols-outlined text-[16px]">category</span> Arch
+              </span>
             </div>
           </div>
           
-          {/* Step 3 */}
-          <div className="flex flex-col items-center text-center space-y-6">
-            <div className="w-24 h-24 rounded-full border-4 border-background flex items-center justify-center text-3xl font-bold shadow-xl bg-surface-container-high text-primary">
-              3
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-2xl font-bold">Reuse</h4>
-              <p className="text-on-surface-variant">
-                Download logic as ready-to-use snippets or clone the whole folder structure into your new project root.
+          {/* Reuse */}
+          <div className="md:col-span-12 bg-slate-900 rounded-[2.5rem] p-12 lg:p-16 flex flex-col md:flex-row items-center gap-16 border border-slate-800">
+            <div className="md:w-1/2">
+              <span className="text-indigo-400 font-extrabold mb-3 block text-xs tracking-[0.2em] uppercase">
+                Step 03
+              </span>
+              <h3 className="text-3xl lg:text-4xl font-extrabold text-white mb-6">Reuse with Velocity</h3>
+              <p className="text-slate-400 text-lg mb-10 leading-relaxed">
+                Access ready-to-use playbooks, architectural guidelines, and templates across your entire team in seconds.
               </p>
-              <button className="mt-4 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 mx-auto ghost-border bg-surface-bright">
-                <span className="material-symbols-outlined text-sm text-primary">
-                  download
-                </span>
-                Pull Pattern
+              <button className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/40">
+                Launch Cache Explorer
               </button>
+            </div>
+            <div className="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <span className="material-symbols-outlined text-2xl">description</span>
+                </div>
+                <div>
+                  <div className="text-white font-bold text-sm">Auth Workflow</div>
+                  <div className="text-slate-500 text-xs">Technical Template</div>
+                </div>
+              </div>
+              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <span className="material-symbols-outlined text-2xl">account_tree</span>
+                </div>
+                <div>
+                  <div className="text-white font-bold text-sm">Data Models</div>
+                  <div className="text-slate-500 text-xs">Core Principles</div>
+                </div>
+              </div>
+              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <span className="material-symbols-outlined text-2xl">verified_user</span>
+                </div>
+                <div>
+                  <div className="text-white font-bold text-sm">Security Audit</div>
+                  <div className="text-slate-500 text-xs">Verification Checklist</div>
+                </div>
+              </div>
+              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <span className="material-symbols-outlined text-2xl">map</span>
+                </div>
+                <div>
+                  <div className="text-white font-bold text-sm">Onboarding</div>
+                  <div className="text-slate-500 text-xs">Project Playbook</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

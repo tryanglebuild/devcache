@@ -1,67 +1,33 @@
-'use client'
-
 import Link from 'next/link'
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-32 pb-24 px-6 md:px-12 hero-gradient grid-bg min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Atmospheric Glow */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary opacity-10 blur-[120px] rounded-full -z-10" />
+    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle,#e2e8f0_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 -z-10" />
       
-      <div className="max-w-4xl text-center z-10">
-        {/* Beta Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full ghost-border text-xs font-semibold tracking-widest uppercase mb-8 bg-surface-container-high text-primary">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-          </span>
-          Now in Private Beta
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-extrabold tracking-[0.2em] uppercase mb-8 border border-indigo-100">
+          Knowledge Management Platform
         </div>
-
-        {/* Hero Headline */}
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1] text-on-background">
-          Your Engineering Wisdom, <span className="text-transparent bg-clip-text primary-gradient">Centralized.</span>
+        
+        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-8 max-w-4xl mx-auto">
+          Engineering Wisdom, <br /><span className="text-indigo-600">Centralized.</span>
         </h1>
-
-        {/* Hero Description */}
-        <p className="text-xl max-w-2xl mx-auto mb-12 leading-relaxed text-on-surface-variant">
-          Stop rewriting the same Auth, API, and UI patterns. Store your team&apos;s technical DNA in a private, high-velocity repository designed for engineers.
+        
+        <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed mb-12">
+          The high-fidelity repository for your team&apos;s architectural patterns, technical templates, and collective institutional intelligence.
         </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href="/signup" className="btn-primary glow-primary-subtle">
-            Get Started for Free
+        
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link 
+            href="/signup"
+            className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 hover:translate-y-[-2px] transition-all"
+          >
+            Start Your Private Cache
           </Link>
-          <button className="glass-panel px-8 py-4 rounded-xl font-bold text-lg ghost-border-strong hover-surface-bright transition-colors flex items-center gap-2 text-on-surface">
-            <span className="material-symbols-outlined">play_circle</span>
-            Watch the Solution
+          <button className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">
+            View Template Library
           </button>
-        </div>
-      </div>
-
-      {/* Hero Visual */}
-      <div className="mt-20 w-full max-w-6xl relative">
-        <div className="glass-panel ghost-border rounded-2xl p-4 shadow-2xl overflow-hidden">
-          {/* Placeholder for screenshot/demo */}
-        </div>
-
-        {/* Floating Decorative Elements */}
-        <div className="absolute -top-6 -right-6 w-32 h-32 glass-panel ghost-border-strong rounded-2xl flex items-center justify-center -rotate-6 hidden lg:flex">
-          <span className="material-symbols-outlined text-4xl text-primary" 
-                style={{ fontVariationSettings: "'FILL' 1" }}>
-            deployed_code
-          </span>
-        </div>
-
-        <div className="absolute -bottom-10 -left-10 w-48 h-20 glass-panel ghost-border-strong rounded-xl flex items-center px-4 gap-3 rotate-3 hidden lg:flex">
-          <div className="h-10 w-10 rounded-full flex items-center justify-center bg-emerald-500/20">
-            <span className="material-symbols-outlined text-emerald-400">check_circle</span>
-          </div>
-          <div className="text-sm">
-            <p className="font-bold">Sync Complete</p>
-            <p className="text-xs text-on-surface-variant">12.4ms latency</p>
-          </div>
         </div>
       </div>
     </section>

@@ -2,42 +2,63 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 border-t border-slate-900/50">
-      <div className="flex flex-col md:flex-row justify-between items-center px-12 py-20 w-full max-w-7xl mx-auto">
-        <div className="mb-12 md:mb-0">
-          <Link href="/" className="text-lg font-black text-slate-200 tracking-tighter flex items-center gap-2 mb-4">
-            <span className="material-symbols-outlined text-indigo-400">terminal</span>
-            devCache
-          </Link>
-          <p className="text-slate-500 max-w-xs font-['Inter'] text-xs tracking-wide uppercase font-semibold">
-            © 2026 devCache Engineering. Built for velocity.
+    <footer className="bg-slate-50 pt-24 pb-12 border-t border-slate-200">
+      <div className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-16">
+        <div className="col-span-2 md:col-span-1">
+          <div className="flex items-center gap-2 mb-8">
+            <div className="w-6 h-6 bg-gradient-to-br from-indigo-600 to-indigo-400 rounded flex items-center justify-center">
+              <span className="material-symbols-outlined text-white text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>
+                layers
+              </span>
+            </div>
+            <div className="text-lg font-black text-slate-900 tracking-tighter">devCache</div>
+          </div>
+          <p className="text-slate-500 text-sm leading-relaxed mb-8">
+            High-velocity engineering wisdom for modern development teams. Centralize your templates and patterns.
           </p>
+          <div className="flex gap-5">
+            <span className="material-symbols-outlined text-slate-400 hover:text-indigo-600 cursor-pointer text-xl transition-colors">
+              share
+            </span>
+            <span className="material-symbols-outlined text-slate-400 hover:text-indigo-600 cursor-pointer text-xl transition-colors">
+              rss_feed
+            </span>
+          </div>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-12">
-          <div className="flex flex-col gap-4">
-            <h6 className="text-slate-500 font-bold text-xs uppercase tracking-widest">Product</h6>
-            <Link href="#" className="text-slate-500 hover:text-slate-200 transition-colors font-medium text-sm">
-              Documentation
-            </Link>
-            <Link href="#" className="text-slate-500 hover:text-slate-200 transition-colors font-medium text-sm">
-              Changelog
-            </Link>
-            <Link href="#" className="text-slate-500 hover:text-slate-200 transition-colors font-medium text-sm">
-              Status
-            </Link>
-          </div>
-          
-          <div className="flex flex-col gap-4">
-            <h6 className="text-slate-500 font-bold text-xs uppercase tracking-widest">Legal</h6>
-            <Link href="#" className="text-slate-500 hover:text-slate-200 transition-colors font-medium text-sm">
-              Privacy
-            </Link>
-            <Link href="#" className="text-slate-500 hover:text-slate-200 transition-colors font-medium text-sm">
-              Terms
-            </Link>
-          </div>
+        <div>
+          <h4 className="font-extrabold text-slate-900 mb-8 text-[11px] uppercase tracking-[0.2em]">Platform</h4>
+          <ul className="space-y-4">
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Templates</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Knowledge Base</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Workflows</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Changelog</Link></li>
+          </ul>
         </div>
+        
+        <div>
+          <h4 className="font-extrabold text-slate-900 mb-8 text-[11px] uppercase tracking-[0.2em]">Resources</h4>
+          <ul className="space-y-4">
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Documentation</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Status</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Security</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Contact</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 className="font-extrabold text-slate-900 mb-8 text-[11px] uppercase tracking-[0.2em]">Legal</h4>
+          <ul className="space-y-4">
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Privacy Policy</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Terms of Service</Link></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-8 mt-24 pt-12 border-t border-slate-200 text-center">
+        <p className="text-slate-400 text-xs font-semibold tracking-wide">
+          © 2024 devCache. Engineering Wisdom, Centralized.
+        </p>
       </div>
     </footer>
   )

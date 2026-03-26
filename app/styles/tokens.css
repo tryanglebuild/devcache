@@ -1,77 +1,78 @@
 /**
  * Design System Tokens
- * Based on "The Kinetic Slate" philosophy
- * Deep navy-slate foundation with glass-like surfaces
+ * Based on "The Architectural Minimalist" philosophy
+ * Light, clean foundation with professional indigo accents
  */
 
 :root {
-  /* Surface Hierarchy - Tonal Layering */
-  --surface-dim: #0b1326;
-  --surface: #0b1326;
-  --surface-bright: #31394d;
-  --surface-container-lowest: #060e20;
-  --surface-container-low: #131b2e;
-  --surface-container: #171f33;
-  --surface-container-high: #222a3d;
-  --surface-container-highest: #2d3449;
-  --surface-variant: #2d3449;
-  --surface-tint: #c0c1ff;
+  /* Surface Hierarchy - Light Tonal Layering */
+  --surface-dim: #cfdce3;
+  --surface: #f7f9fb;
+  --surface-bright: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f0f4f7;
+  --surface-container: #e8eff3;
+  --surface-container-high: #e1e9ee;
+  --surface-container-highest: #d9e4ea;
+  --surface-variant: #d9e4ea;
+  --surface-tint: #4f46e5;
 
-  /* Primary Colors - Indigo Gradient */
-  --primary: #c0c1ff;
-  --primary-container: #8083ff;
-  --primary-dim: #494bd6;
+  /* Primary Colors - Indigo Professional */
+  --primary: #4f46e5;
+  --primary-container: #e0e0ff;
+  --primary-dim: #4338ca;
   --primary-fixed: #e1e0ff;
   --primary-fixed-dim: #c0c1ff;
-  --on-primary: #1000a9;
-  --on-primary-container: #0d0096;
+  --on-primary: #ffffff;
+  --on-primary-container: #00006e;
   --on-primary-fixed: #07006c;
   --on-primary-fixed-variant: #2f2ebe;
 
   /* Secondary Colors */
-  --secondary: #c0c1ff;
-  --secondary-container: #42447b;
-  --secondary-dim: #292a60;
-  --secondary-fixed: #e1e0ff;
-  --secondary-fixed-dim: #c0c1ff;
-  --on-secondary: #292a60;
-  --on-secondary-container: #b2b3f2;
-  --on-secondary-fixed: #13144a;
-  --on-secondary-fixed-variant: #404178;
+  --secondary: #526074;
+  --secondary-container: #d5e3fc;
+  --secondary-dim: #465468;
+  --secondary-fixed: #d5e3fc;
+  --secondary-fixed-dim: #c7d5ed;
+  --on-secondary: #f8f8ff;
+  --on-secondary-container: #455367;
+  --on-secondary-fixed: #324053;
+  --on-secondary-fixed-variant: #4e5c71;
 
-  /* Tertiary Colors - Amber/Orange */
-  --tertiary: #ffb783;
-  --tertiary-container: #d97721;
-  --tertiary-dim: #703700;
-  --tertiary-fixed: #ffdcc5;
-  --tertiary-fixed-dim: #ffb783;
-  --on-tertiary: #4f2500;
-  --on-tertiary-container: #452000;
-  --on-tertiary-fixed: #301400;
-  --on-tertiary-fixed-variant: #703700;
+  /* Tertiary Colors - Indigo Accent */
+  --tertiary: #0055d7;
+  --tertiary-container: #0266ff;
+  --tertiary-dim: #004abe;
+  --tertiary-fixed: #0266ff;
+  --tertiary-fixed-dim: #005be5;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #ffffff;
+  --on-tertiary-fixed: #ffffff;
+  --on-tertiary-fixed-variant: #dde3ff;
 
   /* Error Colors */
-  --error: #ffb4ab;
-  --error-container: #93000a;
-  --on-error: #690005;
-  --on-error-container: #ffdad6;
+  --error: #9f403d;
+  --error-container: #fe8983;
+  --error-dim: #4e0309;
+  --on-error: #fff7f6;
+  --on-error-container: #752121;
 
   /* Text Colors */
-  --on-surface: #dae2fd;
-  --on-surface-variant: #c7c4d7;
-  --on-background: #dae2fd;
+  --on-surface: #2a3439;
+  --on-surface-variant: #566166;
+  --on-background: #2a3439;
 
   /* Outline & Borders */
-  --outline: #908fa0;
-  --outline-variant: #464554;
+  --outline: #717c82;
+  --outline-variant: #a9b4b9;
 
   /* Inverse Colors */
-  --inverse-surface: #dae2fd;
-  --inverse-on-surface: #283044;
-  --inverse-primary: #494bd6;
+  --inverse-surface: #0b0f10;
+  --inverse-on-surface: #9a9d9f;
+  --inverse-primary: #ffffff;
 
   /* Background */
-  --background: #0b1326;
+  --background: #f7f9fb;
 
   /* Spacing Scale (based on 0.25rem base) */
   --spacing-1: 0.25rem;   /* 4px */

@@ -1,87 +1,81 @@
-import Image from 'next/image'
-
 export default function CapabilitiesSection() {
   return (
-    <section className="py-24 px-6 md:px-12 space-y-32">
-      {/* Markdown Render */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
-        <div className="flex-1 order-2 md:order-1">
-          <div className="code-window">
-            <div className="code-window-header">
-              <div className="code-window-dots">
-                <div className="code-window-dot code-window-dot-red" />
-                <div className="code-window-dot code-window-dot-yellow" />
-                <div className="code-window-dot code-window-dot-green" />
+    <section className="py-24 bg-slate-50 border-y border-slate-200">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+          <div>
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-8 tracking-tight">
+              Structured Wisdom Storage
+            </h2>
+            <p className="text-slate-600 text-lg mb-12 leading-relaxed">
+              We don&apos;t believe in messy folders. Your institutional knowledge is stored in high-fidelity technical templates, rendered with professional clarity. Full support for diagrams, architectural mapping, and specifications.
+            </p>
+            <div className="space-y-8">
+              <div className="flex gap-5">
+                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-indigo-600">
+                  <span className="material-symbols-outlined text-xl">article</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 mb-1">Live Technical Guidelines</h4>
+                  <p className="text-slate-500">
+                    Collaboratively update and refine team wisdom in real-time, no stale docs.
+                  </p>
+                </div>
               </div>
-              <span className="text-xs font-mono text-on-surface-variant">
-                useAuth_hook.ts
-              </span>
-            </div>
-            <div className="p-8 font-mono text-sm overflow-x-auto bg-surface-container-lowest">
-              <pre><code>
-                <span className="text-indigo-400">export const</span> <span className="text-tertiary">useAuth</span> = () =&gt; {'{'}
-                {'\n  '}<span className="text-slate-500">// Private logic cached from Project Alpha</span>
-                {'\n  '}<span className="text-primary-container">const</span> [user, setUser] = <span className="text-tertiary">useState</span>(<span className="text-on-surface-variant">null</span>);
-                {'\n\n  '}<span className="text-indigo-400">useEffect</span>(() =&gt; {'{'}
-                {'\n    '}<span className="text-slate-500">// Implementation details...</span>
-                {'\n    '}<span className="text-emerald-400">const</span> {'{'} data {'}'} = supabase.auth.<span className="text-tertiary">onAuthStateChange</span>();
-                {'\n  }'}, []);
-                {'\n\n  '}<span className="text-indigo-400">return</span> {'{'} user {'}'};
-                {'\n}'};
-              </code></pre>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex-1 order-1 md:order-2 space-y-6">
-          <h3 className="text-3xl font-bold">Markdown First Experience</h3>
-          <p className="text-lg text-on-surface-variant">
-            The code you write is the knowledge you store. Beautifully rendered markdown with syntax highlighting for 120+ languages. It&apos;s like your personal, high-speed documentation site.
-          </p>
-          <ul className="space-y-4">
-            <li className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-primary">done_all</span>
-              <span>Copy-to-clipboard integration</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-primary">done_all</span>
-              <span>Versioned snippet history</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Project Linked */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
-        <div className="flex-1 space-y-6">
-          <h3 className="text-3xl font-bold">Project-Linked Intelligence</h3>
-          <p className="text-lg text-on-surface-variant">
-            Don&apos;t just store code; store context. Track which patterns belong to which specific customer or internal project folder. Maintain a lineage of innovation.
-          </p>
-          <div className="card">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="material-symbols-outlined text-amber-400">folder_open</span>
-              <span className="font-bold">E-Commerce_Legacy_V2</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs opacity-70">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">description</span> Stripe_Integration.md
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">description</span> Webhook_Security.md
+              <div className="flex gap-5">
+                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-indigo-600">
+                  <span className="material-symbols-outlined text-xl">hub</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 mb-1">Project-Linked Intelligence</h4>
+                  <p className="text-slate-500">
+                    Automatically surface relevant templates based on your active project context.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="flex-1 relative aspect-video">
-          <Image 
-            alt="Project Organization" 
-            className="rounded-3xl shadow-2xl border border-outline-variant/20"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW7g_RzRGurgbpX6lbNySvNsXNYjQoaS1HTnaP31p4evaAsqlXZlw8zUPI2v6cteSY67qQ78gvfJ09os01bP4nJA70DlVZwbt2mPcVzngpFIkr6WPKkLXTJzJmvSbP4PEVOeQHOVv_-OX-7kiUEGwuyHDEqNaJaj9CpMV6qeC2N7CI3G77jFmM_zFtVfroC5hrFRyEMlDqP0eFyUc-bJTia1JKMnKNsJKTiY6FBxKgCtqc1hDFlRBExlUgyHTvzXv0cLDSxTGm90VV"
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
+          
+          <div className="relative">
+            <div className="absolute -top-10 -left-10 w-48 h-48 bg-indigo-200 rounded-full blur-[90px] opacity-40" />
+            <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 p-12 flex flex-col items-center">
+              <div className="w-full flex items-center justify-between mb-10 pb-6 border-b border-slate-100">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-slate-200" />
+                  <div className="w-3 h-3 rounded-full bg-slate-200" />
+                  <div className="w-3 h-3 rounded-full bg-slate-200" />
+                </div>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">
+                  Knowledge Base Explorer
+                </span>
+              </div>
+              <div className="w-full space-y-5">
+                <div className="flex items-center gap-5 p-5 rounded-2xl bg-indigo-50/50 border border-indigo-100">
+                  <span className="material-symbols-outlined text-indigo-600" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    description
+                  </span>
+                  <div>
+                    <div className="text-slate-900 font-bold text-sm">System Architecture V2</div>
+                    <div className="text-slate-500 text-xs mt-1">Template • Last updated 2d ago</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-5 p-5 rounded-2xl border border-slate-100">
+                  <span className="material-symbols-outlined text-slate-400">topic</span>
+                  <div>
+                    <div className="text-slate-900 font-bold text-sm">Service Integration Guide</div>
+                    <div className="text-slate-500 text-xs mt-1">Guideline • Core Infrastructure</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-5 p-5 rounded-2xl border border-slate-100">
+                  <span className="material-symbols-outlined text-slate-400">rule</span>
+                  <div>
+                    <div className="text-slate-900 font-bold text-sm">Authentication Playbook</div>
+                    <div className="text-slate-500 text-xs mt-1">Checklist • Security Standards</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,40 +1,32 @@
 export default function SecuritySection() {
   return (
-    <section className="py-24 px-6 md:px-12 relative section-surface-container-low">
-      <div className="max-w-5xl mx-auto text-center">
-        <span className="material-symbols-outlined text-6xl mb-8 inline-block text-primary"
-              style={{ fontVariationSettings: "'FILL' 1" }}>
-          shield
-        </span>
-        <h2 className="text-4xl font-bold mb-6">Enterprise-Grade Privacy.</h2>
-        <p className="text-xl max-w-2xl mx-auto mb-16 text-on-surface-variant">
-          Your code is your competitive advantage. We ensure it never leaves your team&apos;s perimeter.
-        </p>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div className="space-y-2">
-            <h5 className="text-2xl font-bold">256-bit</h5>
-            <p className="text-xs uppercase tracking-widest text-on-surface-variant">
-              AES Encryption
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h5 className="text-2xl font-bold">SSO</h5>
-            <p className="text-xs uppercase tracking-widest text-on-surface-variant">
-              SAML & Google Auth
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h5 className="text-2xl font-bold">SOC2</h5>
-            <p className="text-xs uppercase tracking-widest text-on-surface-variant">
-              Compliant Infra
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h5 className="text-2xl font-bold">VPC</h5>
-            <p className="text-xs uppercase tracking-widest text-on-surface-variant">
-              Private Deployment
-            </p>
+    <section className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="bg-indigo-50 border border-indigo-100 rounded-[3rem] px-8 py-20 text-center">
+          <span className="material-symbols-outlined text-indigo-600 text-6xl mb-8" style={{ fontVariationSettings: "'FILL' 1" }}>
+            shield_lock
+          </span>
+          <h2 className="text-4xl font-extrabold text-slate-900 mb-8">Enterprise-Grade Privacy</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-16 leading-relaxed">
+            Your institutional knowledge is your competitive advantage. devCache is built on a &quot;No-Peek&quot; architecture—meaning your wisdom is encrypted and never leaves your team&apos;s perimeter.
+          </p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-indigo-100/50">
+              <h4 className="font-bold text-slate-900 mb-1">SOC2 Type II</h4>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-extrabold">Compliant</p>
+            </div>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-indigo-100/50">
+              <h4 className="font-bold text-slate-900 mb-1">Zero Trust</h4>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-extrabold">Architecture</p>
+            </div>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-indigo-100/50">
+              <h4 className="font-bold text-slate-900 mb-1">SSO / SAML</h4>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-extrabold">Enterprise Ready</p>
+            </div>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-indigo-100/50">
+              <h4 className="font-bold text-slate-900 mb-1">Self-Host</h4>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-extrabold">Available</p>
+            </div>
           </div>
         </div>
       </div>
