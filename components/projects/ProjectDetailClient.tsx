@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
 import { Plus, Folder, FileText, Star, Edit, Trash2 } from 'lucide-react'
-import { CreateItemSheet } from './CreateItemSheet'
-import { EditItemSheet } from './EditItemSheet'
+import { CreateItemModal } from './CreateItemModal'
+import { EditItemModal } from './EditItemModal'
 import { ItemCard } from './ItemCard'
 import { Breadcrumb } from './Breadcrumb'
 import { FolderUploadButton } from './FolderUploadButton'
@@ -22,8 +22,8 @@ interface ProjectDetailClientProps {
 export function ProjectDetailClient({ project, allItems }: ProjectDetailClientProps) {
   const router = useRouter()
   const [items, setItems] = useState<ProjectItem[]>(allItems)
-  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
-  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [createType, setCreateType] = useState<'folder' | 'file'>('folder')
   const [breadcrumbPath, setBreadcrumbPath] = useState<ProjectItem[]>([])
   const [tagColors, setTagColors] = useState<Record<string, string>>({})
@@ -140,7 +140,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
 
           <div className="flex gap-2">
             <button
-              onClick={() => setIsEditSheetOpen(true)}
+              onClick={() => setIsEditModalOpen(true)}
               className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
             >
               <Edit className="h-4 w-4" />
@@ -210,7 +210,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
         <button
           onClick={() => {
             setCreateType('folder')
-            setIsCreateSheetOpen(true)
+            setIsCreateModalOpen(true)
           }}
           className="px-4 py-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg font-bold text-sm hover:bg-[#f2f4f6] transition-all flex items-center gap-2"
         >
@@ -220,7 +220,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
         <button
           onClick={() => {
             setCreateType('file')
-            setIsCreateSheetOpen(true)
+            setIsCreateModalOpen(true)
           }}
           className="px-4 py-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg font-bold text-sm hover:bg-[#f2f4f6] transition-all flex items-center gap-2"
         >
@@ -246,7 +246,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
             <button
               onClick={() => {
                 setCreateType('folder')
-                setIsCreateSheetOpen(true)
+                setIsCreateModalOpen(true)
               }}
               className="px-4 py-2 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg font-semibold text-sm hover:bg-[#f2f4f6] transition-all"
             >
@@ -255,7 +255,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
             <button
               onClick={() => {
                 setCreateType('file')
-                setIsCreateSheetOpen(true)
+                setIsCreateModalOpen(true)
               }}
               className="px-4 py-2 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-semibold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all"
             >
@@ -285,19 +285,19 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
         </div>
       )}
 
-      {/* Create Sheet */}
-      <CreateItemSheet
-        isOpen={isCreateSheetOpen}
-        onClose={() => setIsCreateSheetOpen(false)}
+      {/* Create Modal */}
+      <CreateItemModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
         type={createType}
         parentId={project.id}
         onItemCreated={handleItemCreated}
       />
 
-      {/* Edit Sheet */}
-      <EditItemSheet
-        isOpen={isEditSheetOpen}
-        onClose={() => setIsEditSheetOpen(false)}
+      {/* Edit Modal */}
+      <EditItemModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         item={project}
         onItemUpdated={handleItemUpdated}
       />

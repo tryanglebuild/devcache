@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { EditItemSheet } from './EditItemSheet'
+import { EditItemModal } from './EditItemModal'
 import { ViewFileDialog } from './ViewFileDialog'
 import { createClient } from '@/lib/supabase/client'
 import { trackActivity } from '@/lib/activity/track'
@@ -230,7 +230,7 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
         </div>
       </div>
 
-      <EditItemSheet
+      <EditItemModal
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}
         item={item}

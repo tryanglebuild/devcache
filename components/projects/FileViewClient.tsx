@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
 import { FileText, Code, Eye, Edit, Trash2, Download, Paperclip, Copy, Check } from 'lucide-react'
-import { EditItemSheet } from './EditItemSheet'
+import { EditItemModal } from './EditItemModal'
 import { Breadcrumb } from './Breadcrumb'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -21,7 +21,7 @@ interface FileViewClientProps {
 
 export function FileViewClient({ file, attachments: initialAttachments }: FileViewClientProps) {
   const router = useRouter()
-  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'rendered' | 'source'>('rendered')
   const [attachments, setAttachments] = useState(initialAttachments)
   const [attachmentContent, setAttachmentContent] = useState<string>('')
@@ -264,18 +264,6 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
           </div>
 
           <div className="flex gap-2">
-            {/* Copy Content Button */}
-            <button
-              onClick={handleCopyContent}
-              className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
-              title="Copy file content"
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-[#16a34a]" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </button>
             {/* Download Button - only show if there are attachments */}
             {attachments.length > 0 && (
               <button
@@ -287,7 +275,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
               </button>
             )}
             <button
-              onClick={() => setIsEditSheetOpen(true)}
+              onClick={() => setIsEditModalOpen(true)}
               className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
               title="Edit file"
             >
@@ -346,62 +334,79 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
       </div>
 
       {/* Content */}
-      <div className="bg-white p-8 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
-        {isLoadingContent ? (
-          <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-[#4648d4] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-[#464554]">Loading content...</p>
-          </div>
-        ) : viewMode === 'rendered' ? (
-          <div className="prose prose-slate max-w-none">
-            {file.content || attachmentContent ? (
-              <ReactMarkdown
-                components={{
-                  code({ node, className, children, ...props }) {
-                    const content = String(children).replace(/\n$/, '')
-                    
-                    // Check if it's inline code by checking if there's a parent <pre> tag
-                    const isInline = !className?.startsWith('language-')
-                    
-                    // Inline code
-                    if (isInline) {
-                      return (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
-                      )
-                    }
-                    
-                    // Code block with copy button
-                    return (
-                      <MarkdownCodeBlock className={className}>
-                        {content}
-                      </MarkdownCodeBlock>
-                    )
-                  },
-                }}
-              >
-                {file.content || attachmentContent}
-              </ReactMarkdown>
+      <div className="bg-white rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] overflow-hidden">
+        {/* Copy Button - Positioned at top of content */}
+        <div className="flex justify-end px-6 pt-6 pb-2 border-b border-[#c7c4d7]/20">
+          <button
+            onClick={handleCopyContent}
+            className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
+            title={viewMode === 'rendered' ? 'Copy as plain text' : 'Copy markdown source'}
+          >
+            {copied ? (
+              <Check className="h-4 w-4 text-[#16a34a]" />
             ) : (
-              <div className="text-center py-12 text-[#464554]">
-                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No content available</p>
-                {attachments.length > 0 && (
-                  <p className="text-sm mt-2">
-                    The attached file format is not supported for preview
-                  </p>
-                )}
-              </div>
+              <Copy className="h-4 w-4" />
             )}
-          </div>
-        ) : (
-          <div className="relative">
-            <pre className="bg-[#1e1e1e] text-[#d4d4d4] p-6 rounded-lg overflow-x-auto">
-              <code>{file.content || attachmentContent || '// No content'}</code>
-            </pre>
-          </div>
-        )}
+          </button>
+        </div>
+
+        <div className="p-8">
+          {isLoadingContent ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-8 h-8 border-4 border-[#4648d4] border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-[#464554]">Loading content...</p>
+            </div>
+          ) : viewMode === 'rendered' ? (
+            <div className="prose prose-slate max-w-none">
+              {file.content || attachmentContent ? (
+                <ReactMarkdown
+                  components={{
+                    code({ node, className, children, ...props }) {
+                      const content = String(children).replace(/\n$/, '')
+                      
+                      // Check if it's inline code by checking if there's a parent <pre> tag
+                      const isInline = !className?.startsWith('language-')
+                      
+                      // Inline code
+                      if (isInline) {
+                        return (
+                          <code className={className} {...props}>
+                            {children}
+                          </code>
+                        )
+                      }
+                      
+                      // Code block with copy button
+                      return (
+                        <MarkdownCodeBlock className={className}>
+                          {content}
+                        </MarkdownCodeBlock>
+                      )
+                    },
+                  }}
+                >
+                  {file.content || attachmentContent}
+                </ReactMarkdown>
+              ) : (
+                <div className="text-center py-12 text-[#464554]">
+                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No content available</p>
+                  {attachments.length > 0 && (
+                    <p className="text-sm mt-2">
+                      The attached file format is not supported for preview
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="relative">
+              <pre className="bg-[#1e1e1e] text-[#d4d4d4] p-6 rounded-lg overflow-x-auto">
+                <code>{file.content || attachmentContent || '// No content'}</code>
+              </pre>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Personal Notes */}
@@ -463,10 +468,10 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
         </div>
       )}
 
-      {/* Edit Sheet */}
-      <EditItemSheet
-        isOpen={isEditSheetOpen}
-        onClose={() => setIsEditSheetOpen(false)}
+      {/* Edit Modal */}
+      <EditItemModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         item={file}
         onItemUpdated={handleItemUpdated}
       />
