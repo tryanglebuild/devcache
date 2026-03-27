@@ -5,31 +5,31 @@ export default function CapabilitiesSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div>
             <h2 className="text-4xl font-extrabold text-slate-900 mb-8 tracking-tight">
-              Structured Wisdom Storage
+              Specialized Intelligence
             </h2>
             <p className="text-slate-600 text-lg mb-12 leading-relaxed">
-              We don&apos;t believe in messy folders. Your institutional knowledge is stored in high-fidelity technical templates, rendered with professional clarity. Full support for diagrams, architectural mapping, and specifications.
+              Each agent is a domain expert, trained on best practices and patterns. They don&apos;t just provide answers—they guide you through complex implementations with context-aware intelligence.
             </p>
             <div className="space-y-8">
               <div className="flex gap-5">
                 <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-indigo-600">
-                  <span className="material-symbols-outlined text-xl">article</span>
+                  <span className="material-symbols-outlined text-xl">psychology</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-1">Live Technical Guidelines</h4>
+                  <h4 className="font-bold text-slate-900 mb-1">Multi-Agent Orchestration</h4>
                   <p className="text-slate-500">
-                    Collaboratively update and refine team wisdom in real-time, no stale docs.
+                    Coordinate multiple specialized agents to solve complex problems collaboratively.
                   </p>
                 </div>
               </div>
               <div className="flex gap-5">
                 <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-indigo-600">
-                  <span className="material-symbols-outlined text-xl">hub</span>
+                  <span className="material-symbols-outlined text-xl">store</span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-1">Project-Linked Intelligence</h4>
+                  <h4 className="font-bold text-slate-900 mb-1">Community Marketplace</h4>
                   <p className="text-slate-500">
-                    Automatically surface relevant templates based on your active project context.
+                    Access thousands of agents created by expert developers, rated and reviewed by the community.
                   </p>
                 </div>
               </div>
@@ -46,31 +46,49 @@ export default function CapabilitiesSection() {
                   <div className="w-3 h-3 rounded-full bg-slate-200" />
                 </div>
                 <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">
-                  Knowledge Base Explorer
+                  Agent Marketplace
                 </span>
               </div>
               <div className="w-full space-y-5">
                 <div className="flex items-center gap-5 p-5 rounded-2xl bg-indigo-50/50 border border-indigo-100">
                   <span className="material-symbols-outlined text-indigo-600" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    description
+                    smart_toy
                   </span>
-                  <div>
-                    <div className="text-slate-900 font-bold text-sm">System Architecture V2</div>
-                    <div className="text-slate-500 text-xs mt-1">Template • Last updated 2d ago</div>
+                  <div className="flex-1">
+                    <div className="text-slate-900 font-bold text-sm">Supabase Expert Agent</div>
+                    <div className="text-slate-500 text-xs mt-1 flex items-center gap-2">
+                      <span className="flex items-center gap-0.5">
+                        <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                        4.9
+                      </span>
+                      • 5.2K downloads
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-5 p-5 rounded-2xl border border-slate-100">
-                  <span className="material-symbols-outlined text-slate-400">topic</span>
-                  <div>
-                    <div className="text-slate-900 font-bold text-sm">Service Integration Guide</div>
-                    <div className="text-slate-500 text-xs mt-1">Guideline • Core Infrastructure</div>
+                  <span className="material-symbols-outlined text-slate-400">smart_toy</span>
+                  <div className="flex-1">
+                    <div className="text-slate-900 font-bold text-sm">Next.js Performance</div>
+                    <div className="text-slate-500 text-xs mt-1 flex items-center gap-2">
+                      <span className="flex items-center gap-0.5">
+                        <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                        4.8
+                      </span>
+                      • 3.8K downloads
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-5 p-5 rounded-2xl border border-slate-100">
-                  <span className="material-symbols-outlined text-slate-400">rule</span>
-                  <div>
-                    <div className="text-slate-900 font-bold text-sm">Authentication Playbook</div>
-                    <div className="text-slate-500 text-xs mt-1">Checklist • Security Standards</div>
+                  <span className="material-symbols-outlined text-slate-400">psychology</span>
+                  <div className="flex-1">
+                    <div className="text-slate-900 font-bold text-sm">Full-Stack Orchestrator</div>
+                    <div className="text-slate-500 text-xs mt-1 flex items-center gap-2">
+                      <span className="flex items-center gap-0.5">
+                        <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                        4.8
+                      </span>
+                      • 4.3K downloads
+                    </div>
                   </div>
                 </div>
               </div>

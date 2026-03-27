@@ -14,7 +14,7 @@ export default function Footer() {
             <div className="text-lg font-black text-slate-900 tracking-tighter">devCache</div>
           </div>
           <p className="text-slate-500 text-sm leading-relaxed mb-8">
-            High-velocity engineering wisdom for modern development teams. Centralize your templates and patterns.
+            Agentic AI marketplace for professionals. Create, share, and orchestrate specialized AI agents across design, development, product, QA, and more.
           </p>
           <div className="flex gap-5">
             <span className="material-symbols-outlined text-slate-400 hover:text-indigo-600 cursor-pointer text-xl transition-colors">
@@ -29,9 +29,9 @@ export default function Footer() {
         <div>
           <h4 className="font-extrabold text-slate-900 mb-8 text-[11px] uppercase tracking-[0.2em]">Platform</h4>
           <ul className="space-y-4">
-            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Templates</Link></li>
-            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Knowledge Base</Link></li>
-            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Workflows</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Agents</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Marketplace</Link></li>
+            <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Orchestration</Link></li>
             <li><Link href="#" className="text-slate-500 text-sm font-medium hover:text-indigo-600 transition-colors">Changelog</Link></li>
           </ul>
         </div>
@@ -57,7 +57,7 @@ export default function Footer() {
       
       <div className="max-w-7xl mx-auto px-8 mt-24 pt-12 border-t border-slate-200 text-center">
         <p className="text-slate-400 text-xs font-semibold tracking-wide">
-          © 2024 devCache. Engineering Wisdom, Centralized.
+          © 2024 devCache. Build with AI Agents That Know Your Domain.
         </p>
       </div>
     </footer>

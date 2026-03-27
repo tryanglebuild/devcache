@@ -4,6 +4,7 @@ import ProblemSection from '@/components/landing/ProblemSection'
 import SolutionSection from '@/components/landing/SolutionSection'
 import WorkflowSection from '@/components/landing/WorkflowSection'
 import CapabilitiesSection from '@/components/landing/CapabilitiesSection'
+import MarketplaceSection from '@/components/landing/MarketplaceSection'
 import SecuritySection from '@/components/landing/SecuritySection'
 import CTASection from '@/components/landing/CTASection'
 import Footer from '@/components/landing/Footer'
@@ -17,6 +18,7 @@ export default function Home() {
       <SolutionSection />
       <WorkflowSection />
       <CapabilitiesSection />
+      <MarketplaceSection />
       <SecuritySection />
       <CTASection />
       <Footer />

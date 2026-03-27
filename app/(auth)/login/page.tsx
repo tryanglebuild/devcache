@@ -85,44 +85,44 @@ export default function LoginPage() {
           {/* Content */}
           <div className="max-w-xl">
             <h1 className="text-5xl font-black tracking-tight leading-tight mb-6">
-              Welcome Back to Your Knowledge Vault.{' '}
+              Welcome Back to Your Agent Workspace.{' '}
               <span className="bg-gradient-to-r from-[#c0c1ff] to-[#8083ff] bg-clip-text text-transparent">
-                centralized.
+                executable.
               </span>
             </h1>
             <p className="text-xl text-primary/70 font-medium mb-12">
-              Sign in to access your saved templates, project blueprints, and technical documentation.
+              Sign in to access your AI agents, orchestration workflows, and marketplace downloads.
             </p>
 
             {/* Benefits */}
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-primary">lock_open</span>
+                  <span className="material-symbols-outlined text-primary">smart_toy</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Instant Context Retrieval</h3>
-                  <p className="text-primary/60 text-sm">Pick up exactly where you left off with your project-specific knowledge bases.</p>
+                  <h3 className="font-bold text-lg">Your Specialized Agents</h3>
+                  <p className="text-primary/60 text-sm">Access your custom agents and downloaded marketplace agents instantly.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-primary">admin_panel_settings</span>
+                  <span className="material-symbols-outlined text-primary">psychology</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Secure Access</h3>
-                  <p className="text-primary/60 text-sm">Your proprietary patterns and configurations are protected and ready for reuse.</p>
+                  <h3 className="font-bold text-lg">Orchestration Workflows</h3>
+                  <p className="text-primary/60 text-sm">Continue your multi-agent workflows and collaborative projects.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-primary">speed</span>
+                  <span className="material-symbols-outlined text-primary">store</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Developer-First Experience</h3>
-                  <p className="text-primary/60 text-sm">Designed for speed, so you can spend less time searching and more time building.</p>
+                  <h3 className="font-bold text-lg">Marketplace Access</h3>
+                  <p className="text-primary/60 text-sm">Browse and download agents from experts across all disciplines.</p>
                 </div>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function LoginPage() {
           <div className="w-full max-w-md">
             <div className="mb-10">
               <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Sign In</h2>
-              <p className="text-slate-500 font-medium">Welcome back to your developer workspace.</p>
+              <p className="text-slate-500 font-medium">Welcome back to your agent workspace.</p>
             </div>
 
             {/* GitHub OAuth */}

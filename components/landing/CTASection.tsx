@@ -6,10 +6,10 @@ export default function CTASection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(79,70,229,0.35),transparent)]" />
       <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
         <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-10 tracking-tight">
-          Start Building Your Cache
+          Start Building AI Agents Today
         </h2>
         <p className="text-slate-400 text-xl max-w-2xl mx-auto mb-16 leading-relaxed">
-          Stop losing institutional knowledge. Join engineering teams centralizing their wisdom today.
+          Transform your expertise into executable intelligence. Join professionals building the future of collaborative AI across all disciplines.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <Link 
@@ -23,7 +23,7 @@ export default function CTASection() {
           </button>
         </div>
         <p className="mt-12 text-slate-500 text-sm font-semibold tracking-wide">
-          Free for up to 5 collaborators. No credit card required.
+          Free forever for individual professionals. No credit card required.
         </p>
       </div>
     </section>

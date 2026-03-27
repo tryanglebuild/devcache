@@ -7,32 +7,32 @@ export default function SolutionSection() {
           
           <div className="w-full md:w-1/2 relative z-10">
             <span className="text-indigo-200 font-extrabold tracking-[0.2em] text-[10px] uppercase mb-6 block">
-              The devCache Advantage
+              The devCache Solution
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-[1.15] mb-8">
-              The Project-Centric Knowledge Hub
+              Your Expertise as Executable Agents
             </h2>
             <p className="text-indigo-100 text-lg mb-10 leading-relaxed">
-              devCache is a vault for your engineering intellectual property. It links your technical templates and wisdom directly to projects, stacks, and teams.
+              Transform your development knowledge into specialized AI agents. Each agent embodies expertise in specific technologies, ready to guide your team through complex implementations.
             </p>
             <ul className="space-y-5">
               <li className="flex items-center gap-4 text-white font-semibold">
                 <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   check_circle
                 </span>
-                Searchable by project context
+                Specialized agents for every tech stack
               </li>
               <li className="flex items-center gap-4 text-white font-semibold">
                 <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   check_circle
                 </span>
-                Structured template library
+                Multi-agent orchestration workflows
               </li>
               <li className="flex items-center gap-4 text-white font-semibold">
                 <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   check_circle
                 </span>
-                Team-wide access controls
+                Community marketplace with ratings
               </li>
             </ul>
           </div>
@@ -41,18 +41,21 @@ export default function SolutionSection() {
             <div className="bg-white/70 backdrop-blur-xl border border-indigo-100/50 p-12 rounded-3xl shadow-2xl flex items-center justify-center min-h-[350px]">
               <div className="grid grid-cols-3 gap-8">
                 <div className="w-24 h-28 bg-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/30 backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-indigo-600 text-4xl">description</span>
+                  <span className="material-symbols-outlined text-indigo-600 text-4xl">smart_toy</span>
                   <div className="w-12 h-1.5 bg-indigo-200 rounded-full" />
+                  <div className="text-[8px] font-bold text-indigo-600">Next.js</div>
                 </div>
                 <div className="w-24 h-28 bg-white/40 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/50 scale-110 shadow-2xl">
                   <span className="material-symbols-outlined text-indigo-600 text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    folder_special
+                    psychology
                   </span>
                   <div className="w-14 h-1.5 bg-indigo-300 rounded-full" />
+                  <div className="text-[8px] font-bold text-indigo-600">Orchestrator</div>
                 </div>
                 <div className="w-24 h-28 bg-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/30 backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-indigo-600 text-4xl">inventory</span>
+                  <span className="material-symbols-outlined text-indigo-600 text-4xl">smart_toy</span>
                   <div className="w-12 h-1.5 bg-indigo-200 rounded-full" />
+                  <div className="text-[8px] font-bold text-indigo-600">Supabase</div>
                 </div>
               </div>
             </div>

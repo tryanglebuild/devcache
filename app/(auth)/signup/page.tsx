@@ -35,39 +35,39 @@ export default function SignupPage() {
           {/* Content */}
           <div className="max-w-xl">
             <h1 className="text-5xl font-black tracking-tight leading-tight mb-6">
-              The Technical DNA of your team, <span className="bg-gradient-to-r from-[#c0c1ff] to-[#8083ff] bg-clip-text text-transparent">centralized.</span>
+              Build with AI Agents That Know Your Domain, <span className="bg-gradient-to-r from-[#c0c1ff] to-[#8083ff] bg-clip-text text-transparent">executable.</span>
             </h1>
             <p className="text-xl text-primary/70 font-medium mb-12">
-              Stop rebuilding from scratch. devCache is the high-performance memory layer for modern engineering teams.
+              Create, share, and orchestrate specialized AI agents across design, development, product, QA, and more.
             </p>
 
             {/* Benefits */}
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-primary">person_add</span>
+                  <span className="material-symbols-outlined text-primary">smart_toy</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Secure Blueprint Vault</h3>
-                  <p className="text-primary/60 text-sm">Enterprise-grade security for your proprietary patterns and configurations.</p>
+                  <h3 className="font-bold text-lg">Create Specialized Agents</h3>
+                  <p className="text-primary/60 text-sm">Transform your expertise into executable AI agents for any professional domain.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-primary">group_add</span>
+                  <span className="material-symbols-outlined text-primary">store</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Cross-Project Reuse</h3>
-                  <p className="text-primary/60 text-sm">Instantly access battle-tested solutions across your entire organization.</p>
+                  <h3 className="font-bold text-lg">Access Agent Marketplace</h3>
+                  <p className="text-primary/60 text-sm">Download and customize agents created by experts across all disciplines.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-primary">edit_note</span>
+                  <span className="material-symbols-outlined text-primary">psychology</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Markdown-Native Experience</h3>
-                  <p className="text-primary/60 text-sm">Documentation and code snippets designed for the way developers actually work.</p>
+                  <h3 className="font-bold text-lg">Orchestrate Workflows</h3>
+                  <p className="text-primary/60 text-sm">Coordinate multiple agents to solve complex cross-functional problems.</p>
                 </div>
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function SignupPage() {
           <div className="w-full max-w-md">
             <div className="mb-10">
               <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Create Account</h2>
-              <p className="text-slate-500 font-medium">Get started with your developer workspace today.</p>
+              <p className="text-slate-500 font-medium">Start building with AI agents today.</p>
             </div>
 
             {/* GitHub OAuth */}

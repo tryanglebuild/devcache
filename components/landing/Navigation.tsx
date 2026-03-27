@@ -16,14 +16,14 @@ export default function Navigation() {
         </div>
         
         <div className="hidden md:flex space-x-8 items-center">
-          <Link href="#templates" className="text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1 text-sm tracking-tight">
-            Templates
+          <Link href="#agents" className="text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1 text-sm tracking-tight">
+            Agents
           </Link>
-          <Link href="#knowledge" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
-            Knowledge
+          <Link href="#marketplace" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
+            Marketplace
           </Link>
-          <Link href="#workflows" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
-            Workflows
+          <Link href="#orchestration" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
+            Orchestration
           </Link>
           <Link href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
             Pricing
