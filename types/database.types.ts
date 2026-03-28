@@ -46,6 +46,215 @@ export type Database = {
           },
         ]
       }
+      agent_collections: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          custom_config: Json | null
+          id: string
+          is_favorite: boolean | null
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          custom_config?: Json | null
+          id?: string
+          is_favorite?: boolean | null
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          custom_config?: Json | null
+          id?: string
+          is_favorite?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_collections_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_downloads: {
+        Row: {
+          agent_id: string
+          download_date: string | null
+          downloaded_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          download_date?: string | null
+          downloaded_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          download_date?: string | null
+          downloaded_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_downloads_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_executions: {
+        Row: {
+          agent_id: string
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          execution_time_ms: number | null
+          id: string
+          input_context: Json
+          output_result: Json | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_context: Json
+          output_result?: Json | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_context?: Json
+          output_result?: Json | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_executions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_ratings: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          id: string
+          rating: number
+          review: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          id?: string
+          rating: number
+          review?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          id?: string
+          rating?: number
+          review?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_ratings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_templates: {
+        Row: {
+          category: string
+          content: string
+          created_at: string | null
+          dependencies: Json | null
+          description: string | null
+          download_count: number | null
+          id: string
+          name: string
+          published_at: string | null
+          rating_average: number | null
+          rating_count: number | null
+          tags: string[] | null
+          updated_at: string | null
+          user_id: string
+          version: string
+          visibility: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string | null
+          dependencies?: Json | null
+          description?: string | null
+          download_count?: number | null
+          id?: string
+          name: string
+          published_at?: string | null
+          rating_average?: number | null
+          rating_count?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          version?: string
+          visibility?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string | null
+          dependencies?: Json | null
+          description?: string | null
+          download_count?: number | null
+          id?: string
+          name?: string
+          published_at?: string | null
+          rating_average?: number | null
+          rating_count?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          version?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       language_tags: {
         Row: {
           color: string
@@ -234,9 +443,50 @@ export type Database = {
           type: string
         }[]
       }
+      get_marketplace_stats: {
+        Args: never
+        Returns: {
+          average_rating: number
+          total_agents: number
+          total_creators: number
+          total_downloads: number
+          total_executions: number
+        }[]
+      }
       get_tag_usage_count: {
         Args: { tag_name: string; user_uuid: string }
         Returns: number
+      }
+      get_user_agent_stats: {
+        Args: { p_user_id: string }
+        Returns: {
+          average_rating: number
+          total_agents: number
+          total_downloads: number
+          total_executions: number
+          total_reviews: number
+        }[]
+      }
+      search_agents: {
+        Args: {
+          category_filter?: string
+          limit_count?: number
+          min_rating?: number
+          offset_count?: number
+          search_query?: string
+        }
+        Returns: {
+          author_name: string
+          category: string
+          created_at: string
+          description: string
+          download_count: number
+          id: string
+          name: string
+          rating_average: number
+          rating_count: number
+          tags: string[]
+        }[]
       }
     }
     Enums: {

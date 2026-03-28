@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Folder,
   FileText,
+  Store,
 } from 'lucide-react'
 import { useCreateItem } from '@/components/providers/CreateItemProvider'
 import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
@@ -21,6 +22,11 @@ const menuItems = [
     title: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    title: 'Marketplace',
+    href: '/marketplace',
+    icon: Store,
   },
   // Projects is now handled by SidebarProjectsTree
   {
