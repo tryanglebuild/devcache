@@ -203,6 +203,7 @@ export type Database = {
           category: string
           content: string
           created_at: string | null
+          deleted_at: string | null
           dependencies: Json | null
           description: string | null
           download_count: number | null
@@ -221,6 +222,7 @@ export type Database = {
           category: string
           content: string
           created_at?: string | null
+          deleted_at?: string | null
           dependencies?: Json | null
           description?: string | null
           download_count?: number | null
@@ -239,11 +241,75 @@ export type Database = {
           category?: string
           content?: string
           created_at?: string | null
+          deleted_at?: string | null
           dependencies?: Json | null
           description?: string | null
           download_count?: number | null
           id?: string
           name?: string
+          published_at?: string | null
+          rating_average?: number | null
+          rating_count?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          version?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
+      deleted_agent_templates: {
+        Row: {
+          category: string
+          content: string
+          created_at: string | null
+          deleted_at: string
+          dependencies: Json | null
+          description: string | null
+          download_count: number | null
+          id: string
+          name: string
+          original_agent_id: string
+          published_at: string | null
+          rating_average: number | null
+          rating_count: number | null
+          tags: string[] | null
+          updated_at: string | null
+          user_id: string
+          version: string
+          visibility: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string | null
+          deleted_at?: string
+          dependencies?: Json | null
+          description?: string | null
+          download_count?: number | null
+          id?: string
+          name: string
+          original_agent_id: string
+          published_at?: string | null
+          rating_average?: number | null
+          rating_count?: number | null
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          version?: string
+          visibility?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string | null
+          deleted_at?: string
+          dependencies?: Json | null
+          description?: string | null
+          download_count?: number | null
+          id?: string
+          name?: string
+          original_agent_id?: string
           published_at?: string | null
           rating_average?: number | null
           rating_count?: number | null
@@ -435,6 +501,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_deleted_templates: {
+        Args: never
+        Returns: number
+      }
       get_item_path: {
         Args: { item_id: string }
         Returns: {

@@ -2,13 +2,22 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star, Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText } from 'lucide-react'
+import { Star, Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText, Trash2, Lock, Globe } from 'lucide-react'
 import type { AgentTemplateWithStats, AgentRating } from '@/types/agents.types'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
 import { RateTemplateModal } from './RateTemplateModal'
 import toast from 'react-hot-toast'
 import ReactMarkdown from 'react-markdown'
 import { MarkdownCodeBlock } from '@/components/projects/MarkdownCodeBlock'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 interface AgentDetailClientProps {
   agent: AgentTemplateWithStats & {
@@ -42,6 +51,10 @@ export function AgentDetailClient({
   const [isRateModalOpen, setIsRateModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'rendered' | 'source'>('rendered')
   const [copied, setCopied] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [visibility, setVisibility] = useState(agent.visibility)
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false)
 
   const category = AGENT_CATEGORIES[agent.category as keyof typeof AGENT_CATEGORIES] || AGENT_CATEGORIES.general
   const isOwner = currentUserId === agent.user_id
@@ -154,6 +167,69 @@ export function AgentDetailClient({
     }
   }
 
+  const handleToggleVisibility = async () => {
+    if (!isOwner) return
+
+    setIsUpdatingVisibility(true)
+    const newVisibility = visibility === 'public' ? 'private' : 'public'
+
+    try {
+      const response = await fetch(`/api/agents/${agent.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: agent.name,
+          description: agent.description,
+          content: agent.content,
+          category: agent.category,
+          tags: agent.tags,
+          version: agent.version,
+          visibility: newVisibility,
+          dependencies: agent.dependencies
+        })
+      })
+
+      if (response.ok) {
+        setVisibility(newVisibility)
+        toast.success(`Template is now ${newVisibility}`)
+        router.refresh()
+      } else {
+        const data = await response.json()
+        toast.error(data.error || 'Failed to update visibility')
+      }
+    } catch (error) {
+      console.error('Error updating visibility:', error)
+      toast.error('An error occurred')
+    } finally {
+      setIsUpdatingVisibility(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!isOwner) return
+
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/agents/${agent.id}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        toast.success('Template moved to trash')
+        router.push('/dashboard/deleted-templates')
+      } else {
+        const data = await response.json()
+        toast.error(data.error || 'Failed to delete template')
+      }
+    } catch (error) {
+      console.error('Error deleting template:', error)
+      toast.error('An error occurred')
+    } finally {
+      setIsDeleting(false)
+      setIsDeleteDialogOpen(false)
+    }
+  }
+
   return (
     <div className="max-w-[1200px] mx-auto space-y-6">
       {/* Back Button */}
@@ -190,7 +266,36 @@ export function AgentDetailClient({
           </div>
 
           <div className="flex gap-2">
-            {agent.is_in_collection && (
+            {isOwner && (
+              <>
+                <button
+                  onClick={handleToggleVisibility}
+                  disabled={isUpdatingVisibility}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all disabled:opacity-50"
+                  title={visibility === 'public' ? 'Make private' : 'Make public'}
+                >
+                  {visibility === 'public' ? (
+                    <>
+                      <Globe className="h-4 w-4" />
+                      <span className="text-sm font-semibold">Public</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="h-4 w-4" />
+                      <span className="text-sm font-semibold">Private</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  className="p-2.5 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-all"
+                  title="Delete template"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </>
+            )}
+            {agent.is_in_collection && !isOwner && (
               <button
                 onClick={handleToggleFavorite}
                 className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
@@ -483,6 +588,41 @@ export function AgentDetailClient({
         currentRating={agent.user_rating}
         onSuccess={() => router.refresh()}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="bg-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-red-600" />
+              Delete Template
+            </DialogTitle>
+            <DialogDescription className="pt-3">
+              Are you sure you want to delete <strong className="text-[#191c1e] font-semibold">{agent.name}</strong>?
+              <span className="block mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 font-medium">
+                The template will be moved to trash and automatically deleted after 30 days.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isDeleting}
+              className="flex-1 sm:flex-none border-[#c7c4d7]/30 hover:bg-[#f2f4f6]"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all"
+            >
+              {isDeleting ? 'Deleting...' : 'Move to Trash'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -133,7 +133,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/agents/[id] - Delete agent
+// DELETE /api/agents/[id] - Soft delete agent (move to trash)
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -147,18 +147,65 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    const { error } = await supabase
+    // Get the agent data before deleting
+    const { data: agent, error: fetchError } = await supabase
+      .from('agent_templates')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .single()
+    
+    if (fetchError || !agent) {
+      return NextResponse.json(
+        { error: 'Agent not found or unauthorized' },
+        { status: 404 }
+      )
+    }
+    
+    // Move to deleted_agent_templates
+    const { error: insertError } = await supabase
+      .from('deleted_agent_templates')
+      .insert({
+        original_agent_id: agent.id,
+        user_id: agent.user_id,
+        name: agent.name,
+        description: agent.description,
+        content: agent.content,
+        version: agent.version,
+        category: agent.category,
+        tags: agent.tags,
+        visibility: agent.visibility,
+        download_count: agent.download_count,
+        rating_average: agent.rating_average,
+        rating_count: agent.rating_count,
+        dependencies: agent.dependencies,
+        created_at: agent.created_at,
+        updated_at: agent.updated_at,
+        published_at: agent.published_at,
+        deleted_at: new Date().toISOString()
+      })
+    
+    if (insertError) {
+      console.error('Error moving to trash:', insertError)
+      return NextResponse.json({ error: insertError.message }, { status: 500 })
+    }
+    
+    // Hard delete from agent_templates
+    const { error: deleteError } = await supabase
       .from('agent_templates')
       .delete()
       .eq('id', id)
       .eq('user_id', user.id)
     
-    if (error) {
-      console.error('Delete agent error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (deleteError) {
+      console.error('Delete agent error:', deleteError)
+      return NextResponse.json({ error: deleteError.message }, { status: 500 })
     }
     
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ 
+      success: true,
+      message: 'Template moved to trash. It will be permanently deleted after 30 days.'
+    })
   } catch (error) {
     console.error('DELETE /api/agents/[id] error:', error)
     return NextResponse.json(

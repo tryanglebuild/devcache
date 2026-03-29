@@ -16,6 +16,7 @@ export async function getTrendingAgents(limit: number = 10): Promise<AgentTempla
       )
     `)
     .eq('visibility', 'public')
+    .is('deleted_at', null)
     .gte('updated_at', sevenDaysAgo.toISOString())
     .order('download_count', { ascending: false })
     .order('rating_average', { ascending: false })
@@ -39,7 +40,7 @@ export async function getUserAgentCollection(userId: string): Promise<AgentTempl
     .from('agent_collections')
     .select(`
       is_favorite,
-      agent_templates (
+      agent_templates!inner (
         *,
         profiles:user_id (
           full_name
@@ -47,6 +48,7 @@ export async function getUserAgentCollection(userId: string): Promise<AgentTempl
       )
     `)
     .eq('user_id', userId)
+    .is('agent_templates.deleted_at', null)
     .order('created_at', { ascending: false })
   
   if (error) {
@@ -102,6 +104,7 @@ export async function getPublicAgents(limit: number = 20): Promise<AgentTemplate
     .from('agent_templates')
     .select('*')
     .eq('visibility', 'public')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(limit)
   
@@ -126,5 +129,31 @@ export async function getPublicAgents(limit: number = 20): Promise<AgentTemplate
   return data.map(agent => ({
     ...agent,
     author_name: profileMap.get(agent.user_id) || null
+  }))
+}
+
+export async function getUserCreatedAgents(userId: string): Promise<AgentTemplateWithStats[]> {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('agent_templates')
+    .select(`
+      *,
+      profiles:user_id (
+        full_name
+      )
+    `)
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user created agents:', error)
+    return []
+  }
+  
+  return (data || []).map(agent => ({
+    ...agent,
+    author_name: agent.profiles?.full_name || null
   }))
 }

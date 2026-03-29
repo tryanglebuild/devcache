@@ -12,6 +12,8 @@ import {
   Folder,
   FileText,
   Store,
+  Trash2,
+  FileCode,
 } from 'lucide-react'
 import { useCreateItem } from '@/components/providers/CreateItemProvider'
 import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
@@ -28,11 +30,21 @@ const menuItems = [
     href: '/marketplace',
     icon: Store,
   },
+  {
+    title: 'My Templates',
+    href: '/dashboard/my-templates',
+    icon: FileCode,
+  },
   // Projects is now handled by SidebarProjectsTree
   {
     title: 'Tags',
     href: '/dashboard/tags',
     icon: Tag,
+  },
+  {
+    title: 'Deleted',
+    href: '/dashboard/deleted-templates',
+    icon: Trash2,
   },
 ]
 
