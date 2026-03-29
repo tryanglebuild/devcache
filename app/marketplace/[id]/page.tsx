@@ -19,7 +19,7 @@ export default async function AgentDetailPage({ params }: AgentDetailPageProps) 
     .from('agent_templates')
     .select(`
       *,
-      profiles:user_id (
+      profiles (
         id,
         full_name,
         avatar_url,
@@ -30,8 +30,12 @@ export default async function AgentDetailPage({ params }: AgentDetailPageProps) 
     .single()
 
   if (error || !agent) {
+    console.error('Agent fetch error:', error)
     notFound()
   }
+
+  // Extract profile data
+  const profile = Array.isArray(agent.profiles) ? agent.profiles[0] : agent.profiles
 
   // Check if user has this agent
   let isInCollection = false
@@ -68,7 +72,7 @@ export default async function AgentDetailPage({ params }: AgentDetailPageProps) 
     .from('agent_ratings')
     .select(`
       *,
-      profiles:user_id (
+      profiles (
         full_name,
         avatar_url
       )
@@ -82,7 +86,7 @@ export default async function AgentDetailPage({ params }: AgentDetailPageProps) 
     .from('agent_templates')
     .select(`
       *,
-      profiles:user_id (
+      profiles (
         full_name
       )
     `)
@@ -96,16 +100,19 @@ export default async function AgentDetailPage({ params }: AgentDetailPageProps) 
     <AgentDetailClient
       agent={{
         ...agent,
-        author_name: agent.profiles?.full_name || null,
+        author_name: profile?.full_name || null,
         is_in_collection: isInCollection,
         is_favorite: isFavorite,
         user_rating: userRating?.rating || null
       }}
       ratings={ratings || []}
-      relatedAgents={(relatedAgents || []).map(a => ({
-        ...a,
-        author_name: a.profiles?.full_name || null
-      }))}
+      relatedAgents={(relatedAgents || []).map(a => {
+        const relatedProfile = Array.isArray(a.profiles) ? a.profiles[0] : a.profiles
+        return {
+          ...a,
+          author_name: relatedProfile?.full_name || null
+        }
+      })}
       isAuthenticated={!!user}
       currentUserId={user?.id}
     />

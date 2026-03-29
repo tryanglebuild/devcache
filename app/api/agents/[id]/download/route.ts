@@ -18,7 +18,7 @@ export async function POST(
     // Check if agent exists and is public
     const { data: agent, error: agentError } = await supabase
       .from('agent_templates')
-      .select('id, visibility')
+      .select('id, visibility, download_count')
       .eq('id', id)
       .single()
     
@@ -33,7 +33,19 @@ export async function POST(
       )
     }
     
-    // Track download (will trigger download count increment)
+    // Increment download count
+    const { error: updateError } = await supabase
+      .from('agent_templates')
+      .update({ 
+        download_count: (agent.download_count || 0) + 1 
+      })
+      .eq('id', id)
+    
+    if (updateError) {
+      console.error('Update download count error:', updateError)
+    }
+    
+    // Track download in agent_downloads table (if it exists)
     const { error: downloadError } = await supabase
       .from('agent_downloads')
       .insert({
@@ -41,36 +53,15 @@ export async function POST(
         user_id: user.id
       })
     
-    // Ignore unique constraint violations (already downloaded today)
+    // Ignore unique constraint violations (already downloaded)
     if (downloadError && downloadError.code !== '23505') {
       console.error('Track download error:', downloadError)
-      return NextResponse.json(
-        { error: downloadError.message },
-        { status: 500 }
-      )
-    }
-    
-    // Add to collection if not already there
-    const { error: collectionError } = await supabase
-      .from('agent_collections')
-      .upsert({
-        user_id: user.id,
-        agent_id: id,
-        is_favorite: false,
-        custom_config: {}
-      }, {
-        onConflict: 'user_id,agent_id',
-        ignoreDuplicates: true
-      })
-    
-    if (collectionError) {
-      console.error('Add to collection error:', collectionError)
-      // Don't fail the request if collection add fails
+      // Don't fail the request if tracking fails
     }
     
     return NextResponse.json({
       success: true,
-      message: 'Agent downloaded and added to collection'
+      message: 'Template downloaded successfully'
     })
   } catch (error) {
     console.error('POST /api/agents/[id]/download error:', error)

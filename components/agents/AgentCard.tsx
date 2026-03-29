@@ -14,8 +14,17 @@ interface AgentCardProps {
 export function AgentCard({ agent, onView, onDownload, compact = false }: AgentCardProps) {
   const category = AGENT_CATEGORIES[agent.category as keyof typeof AGENT_CATEGORIES] || AGENT_CATEGORIES.general
 
+  const handleCardClick = () => {
+    if (onView) {
+      onView(agent)
+    }
+  }
+
   return (
-    <div className="bg-white rounded-xl p-4 shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all cursor-pointer group">
+    <div 
+      onClick={handleCardClick}
+      className="bg-white rounded-xl p-4 shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all cursor-pointer group"
+    >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div 

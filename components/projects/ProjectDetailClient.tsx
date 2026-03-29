@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
-import { Plus, Folder, FileText, Star, Edit, Trash2 } from 'lucide-react'
+import { Plus, Folder, FileText, Star, Edit, Trash2, Upload } from 'lucide-react'
 import { CreateItemModal } from './CreateItemModal'
 import { EditItemModal } from './EditItemModal'
+import { PublishToMarketplaceModal } from './PublishToMarketplaceModal'
 import { ItemCard } from './ItemCard'
 import { Breadcrumb } from './Breadcrumb'
 import { FolderUploadButton } from './FolderUploadButton'
@@ -24,6 +25,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
   const [items, setItems] = useState<ProjectItem[]>(allItems)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
   const [createType, setCreateType] = useState<'folder' | 'file'>('folder')
   const [breadcrumbPath, setBreadcrumbPath] = useState<ProjectItem[]>([])
   const [tagColors, setTagColors] = useState<Record<string, string>>({})
@@ -139,6 +141,16 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
           </div>
 
           <div className="flex gap-2">
+            {project.type === 'file' && project.content && (
+              <button
+                onClick={() => setIsPublishModalOpen(true)}
+                className="p-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 px-4"
+                title="Publish to Marketplace"
+              >
+                <Upload className="h-4 w-4" />
+                <span className="text-sm font-bold">Publish</span>
+              </button>
+            )}
             <button
               onClick={() => setIsEditModalOpen(true)}
               className="p-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg hover:bg-[#f2f4f6] transition-all"
@@ -301,6 +313,19 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
         item={project}
         onItemUpdated={handleItemUpdated}
       />
+
+      {/* Publish to Marketplace Modal */}
+      {project.type === 'file' && (
+        <PublishToMarketplaceModal
+          isOpen={isPublishModalOpen}
+          onClose={() => setIsPublishModalOpen(false)}
+          projectItem={project}
+          onSuccess={() => {
+            toast.success('Template published successfully!')
+            router.push('/marketplace')
+          }}
+        />
+      )}
     </div>
   )
 }

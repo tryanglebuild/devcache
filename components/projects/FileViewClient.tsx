@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
-import { FileText, Code, Eye, Edit, Trash2, Download, Paperclip, Copy, Check } from 'lucide-react'
+import { FileText, Code, Eye, Edit, Trash2, Download, Paperclip, Copy, Check, Upload } from 'lucide-react'
 import { EditItemModal } from './EditItemModal'
+import { PublishToMarketplaceModal } from './PublishToMarketplaceModal'
 import { Breadcrumb } from './Breadcrumb'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -22,6 +23,7 @@ interface FileViewClientProps {
 export function FileViewClient({ file, attachments: initialAttachments }: FileViewClientProps) {
   const router = useRouter()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'rendered' | 'source'>('rendered')
   const [attachments, setAttachments] = useState(initialAttachments)
   const [attachmentContent, setAttachmentContent] = useState<string>('')
@@ -264,6 +266,17 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
           </div>
 
           <div className="flex gap-2">
+            {/* Publish Button */}
+            {(file.content || attachmentContent) && (
+              <button
+                onClick={() => setIsPublishModalOpen(true)}
+                className="p-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 px-4"
+                title="Publish to Marketplace"
+              >
+                <Upload className="h-4 w-4" />
+                <span className="text-sm font-bold">Publish</span>
+              </button>
+            )}
             {/* Download Button - only show if there are attachments */}
             {attachments.length > 0 && (
               <button
@@ -474,6 +487,23 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
         onClose={() => setIsEditModalOpen(false)}
         item={file}
         onItemUpdated={handleItemUpdated}
+      />
+
+      {/* Publish to Marketplace Modal */}
+      <PublishToMarketplaceModal
+        isOpen={isPublishModalOpen}
+        onClose={() => setIsPublishModalOpen(false)}
+        projectItem={{
+          id: file.id,
+          name: file.name,
+          description: file.description,
+          content: file.content || attachmentContent,
+          language_tags: file.language_tags
+        }}
+        onSuccess={() => {
+          toast.success('Template published successfully!')
+          router.push('/marketplace')
+        }}
       />
     </div>
   )
