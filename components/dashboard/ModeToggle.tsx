@@ -10,6 +10,7 @@ interface ModeToggleProps {
 
 export function ModeToggle({ onModeChange }: ModeToggleProps) {
   const [mode, setMode] = useState<DashboardMode>('unified')
+  const [isInitialized, setIsInitialized] = useState(false)
 
   // Load mode from localStorage on mount
   useEffect(() => {
@@ -17,12 +18,19 @@ export function ModeToggle({ onModeChange }: ModeToggleProps) {
     if (savedMode && ['projects', 'agents', 'unified'].includes(savedMode)) {
       setMode(savedMode)
     }
+    setIsInitialized(true)
   }, [])
+
+  // Notify parent of mode changes after initialization
+  useEffect(() => {
+    if (isInitialized) {
+      onModeChange?.(mode)
+    }
+  }, [mode, isInitialized, onModeChange])
 
   const handleModeChange = (newMode: DashboardMode) => {
     setMode(newMode)
     localStorage.setItem('dashboard-mode', newMode)
-    onModeChange?.(newMode)
   }
 
   return (

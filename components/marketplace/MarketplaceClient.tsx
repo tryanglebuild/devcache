@@ -22,7 +22,7 @@ export function MarketplaceClient({
   const router = useRouter()
   const [agents, setAgents] = useState<AgentTemplateWithStats[]>(initialAgents)
   const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMore, setHasMore] = useState(initialAgents.length >= 20)
   const [filters, setFilters] = useState<AgentSearchFilters>({
     query: '',
     category: undefined,

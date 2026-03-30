@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ChevronRight, Folder, FolderOpen, FileText, FolderKanban } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -26,6 +26,8 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const clickCountRef = useRef<{ [key: string]: number }>({})
 
   // Load items
   useEffect(() => {
@@ -83,12 +85,49 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
 
   const tree = buildTree(null)
 
-  const handleNavigate = (item: ProjectItem) => {
-    if (item.type === 'folder') {
-      router.push(`/dashboard/projects/${item.id}`)
-    } else {
-      router.push(`/dashboard/projects/file/${item.id}`)
+  const handleItemClick = (item: ProjectItem, hasChildren: boolean) => {
+    const itemId = item.id
+    
+    // If item has no children (empty folder or file), navigate immediately on single click
+    if (!hasChildren) {
+      if (item.type === 'folder') {
+        router.push(`/dashboard/projects/${item.id}`)
+      } else {
+        router.push(`/dashboard/projects/file/${item.id}`)
+      }
+      return
     }
+    
+    // For items with children, use double-click logic
+    // Increment click count
+    clickCountRef.current[itemId] = (clickCountRef.current[itemId] || 0) + 1
+    
+    // Clear existing timeout
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current)
+    }
+    
+    // Set new timeout
+    clickTimeoutRef.current = setTimeout(() => {
+      const clickCount = clickCountRef.current[itemId] || 0
+      
+      if (clickCount === 1) {
+        // Single click: toggle expansion for folders with children
+        if (item.type === 'folder') {
+          toggleExpanded(item.id)
+        }
+      } else if (clickCount >= 2) {
+        // Double click: navigate
+        if (item.type === 'folder') {
+          router.push(`/dashboard/projects/${item.id}`)
+        } else {
+          router.push(`/dashboard/projects/file/${item.id}`)
+        }
+      }
+      
+      // Reset click count
+      clickCountRef.current[itemId] = 0
+    }, 300) // 300ms delay to detect double click
   }
 
   const toggleExpanded = (id: string) => {
@@ -103,6 +142,15 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     })
   }
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const isActive = pathname?.startsWith('/dashboard/projects')
 
   const renderNode = (node: TreeNode) => {
@@ -115,12 +163,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     return (
       <div key={node.item.id}>
         <button
-          onClick={() => {
-            handleNavigate(node.item)
-            if (hasChildren && !isFile) {
-              toggleExpanded(node.item.id)
-            }
-          }}
+          onClick={() => handleItemClick(node.item, hasChildren)}
           className={cn(
             'w-full flex items-center gap-2 px-2 py-2 text-sm rounded transition-all',
             isCurrentPath
