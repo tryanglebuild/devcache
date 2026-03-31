@@ -1,9 +1,9 @@
-// Chat Messages API - Get messages for a session
+// Chat Messages API - Get messages for a session with pagination
 
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-// GET /api/chat/messages?sessionId=xxx - Get messages for a session
+// GET /api/chat/messages?sessionId=xxx&limit=50&beforeId=xxx - Get paginated messages
 export async function GET(request: Request) {
   try {
     const supabase = await createClient()
@@ -19,6 +19,8 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const sessionId = searchParams.get('sessionId')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const beforeId = searchParams.get('beforeId')
 
     if (!sessionId) {
       return NextResponse.json(
@@ -42,12 +44,15 @@ export async function GET(request: Request) {
       )
     }
 
-    // Get messages
-    const { data: messages, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true })
+    // Get paginated messages using optimized function
+    const { data: messages, error } = await supabase.rpc(
+      'get_chat_messages_paginated',
+      {
+        p_session_id: sessionId,
+        p_limit: limit,
+        p_before_id: beforeId || null,
+      }
+    )
 
     if (error) {
       console.error('Error fetching messages:', error)

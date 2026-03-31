@@ -89,24 +89,33 @@ export async function* sendMessage(request: SendMessageRequest): AsyncGenerator<
 
   if (!reader) throw new Error('No response body')
 
+  let buffer = '' // Buffer to accumulate incomplete lines
+
   try {
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
 
-      const chunk = decoder.decode(value, { stream: true })
-      const lines = chunk.split('\n').filter(line => line.trim() !== '')
+      // Decode chunk and add to buffer
+      buffer += decoder.decode(value, { stream: true })
+      
+      // Split by newlines but keep the last incomplete line in buffer
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || '' // Keep the last (potentially incomplete) line
 
       for (const line of lines) {
+        if (line.trim() === '') continue
+        
         if (line.startsWith('data: ')) {
-          const data = line.slice(6)
+          const data = line.slice(6).trim()
           if (data === '[DONE]') return
 
           try {
             const parsed = JSON.parse(data)
             if (parsed.content) yield parsed.content
           } catch (e) {
-            console.error('Error parsing SSE:', e)
+            console.error('Error parsing SSE data:', data, e)
+            // Continue processing other lines instead of breaking
           }
         }
       }

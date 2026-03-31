@@ -21,25 +21,34 @@ serve(async (req) => {
   }
 
   try {
-    // Initialize Supabase client
+    // Get JWT from Authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Initialize Supabase client with service role for database operations
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     )
 
-    // Get authenticated user
+    // Verify JWT and get user (using service role client)
+    const jwt = authHeader.replace('Bearer ', '')
     const {
       data: { user },
       error: authError,
-    } = await supabaseClient.auth.getUser()
+    } = await supabaseClient.auth.getUser(jwt)
 
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.error('Auth error:', authError)
+      return new Response(JSON.stringify({ 
+        code: 401,
+        message: authError?.message || 'Invalid JWT' 
+      }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -67,15 +76,16 @@ serve(async (req) => {
       console.error('Error saving message:', saveError)
     }
 
-    // Generate embedding for the query
-    const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
+    // Generate embedding for the query using OpenRouter
+    const embeddingResponse = await fetch('https://openrouter.ai/api/v1/embeddings', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${Deno.env.get('OPENROUTER_API_KEY')}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': Deno.env.get('APP_URL') ?? '',
       },
       body: JSON.stringify({
-        model: 'text-embedding-ada-002',
+        model: 'openai/text-embedding-ada-002',
         input: message,
       }),
     })
@@ -87,13 +97,14 @@ serve(async (req) => {
     const embeddingData = await embeddingResponse.json()
     const queryEmbedding = embeddingData.data[0].embedding
 
-    // Search templates with RAG
+    // Search templates with hybrid RAG (vector + text search)
     const { data: searchResults, error: searchError } = await supabaseClient.rpc(
-      'search_templates_with_priority',
+      'search_resources_hybrid',
       {
         p_user_id: user.id,
-        p_query_embedding: queryEmbedding,
         p_query_text: message,
+        p_query_embedding: `[${queryEmbedding.join(',')}]`,
+        p_include_marketplace: includeMarketplace,
         p_limit: 5,
       }
     )
@@ -105,13 +116,11 @@ serve(async (req) => {
     // Build context from search results
     const context = buildContext(searchResults || [])
 
-    // Get conversation history
-    const { data: history } = await supabaseClient
-      .from('chat_messages')
-      .select('role, content')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true })
-      .limit(10)
+    // Get conversation history (optimized with new function)
+    const { data: history } = await supabaseClient.rpc('get_recent_chat_context', {
+      p_session_id: sessionId,
+      p_limit: 10,
+    })
 
     // Build messages for AI
     const messages = [
@@ -184,16 +193,17 @@ serve(async (req) => {
             }
           }
 
-          // Save assistant response with template metadata
-          const templateMetadata: Record<string, any> = {}
+          // Save assistant response with resource metadata
+          const resourceMetadata: Record<string, any> = {}
           if (searchResults && searchResults.length > 0) {
             searchResults.forEach((result: any) => {
-              templateMetadata[result.agent_id] = {
+              resourceMetadata[result.resource_id] = {
+                type: result.resource_type,
+                name: result.name,
                 description: result.description,
-                is_own_template: result.is_own_template,
-                is_favorite: result.is_favorite,
-                rating_average: result.rating_average,
-                download_count: result.download_count,
+                similarity_score: result.similarity_score,
+                relevance_score: result.relevance_score,
+                tags: result.tags,
               }
             })
           }
@@ -204,7 +214,7 @@ serve(async (req) => {
             content: fullResponse,
             model_used: model,
             metadata: {
-              templates: templateMetadata,
+              resources: resourceMetadata,
             },
           })
 
@@ -235,62 +245,65 @@ serve(async (req) => {
 
 function buildContext(results: any[]): string {
   if (results.length === 0) {
-    return 'No relevant templates found in the platform.'
+    return 'No relevant templates or files found in the platform.'
   }
 
   return results
     .map(
       (r, i) => `
-${i + 1}. ${r.name} (${r.match_reason})
+${i + 1}. ${r.name} (${r.resource_type === 'project_item' ? 'Your File' : 'Marketplace Template'})
    Description: ${r.description || 'No description'}
    Tags: ${r.tags?.join(', ') || 'None'}
-   Rating: ${r.rating_average?.toFixed(1) || 'N/A'}⭐
-   Relevance: ${(r.final_score * 100).toFixed(0)}%
-   Preview: ${r.content.substring(0, 200)}...
-   Template ID: ${r.agent_id}
+   Semantic Similarity: ${(r.similarity_score * 100).toFixed(0)}%
+   Relevance Score: ${(r.relevance_score * 100).toFixed(0)}%
+   Preview: ${r.content_preview || 'No preview available'}
+   Resource ID: ${r.resource_id}
+   Type: ${r.resource_type}
 `.trim()
     )
     .join('\n\n')
 }
 
 function buildSystemPrompt(context: string): string {
-  return `You are an AI assistant for DevCache, a platform for managing development templates and code snippets.
+  return `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
 
-Your role is to RECOMMEND templates that exist in the platform to users.
+Your role is to RECOMMEND resources (templates and files) that exist in the platform to users.
 
 ${context}
 
 CRITICAL RULES - READ CAREFULLY:
-1. You can ONLY recommend templates from the context above
+1. You can ONLY recommend resources from the context above
 2. DO NOT use external knowledge or search the internet
 3. DO NOT recommend external resources, documentation, or tutorials
 4. DO NOT explain how to code or implement solutions
-5. ONLY recommend templates that appear in the context
+5. ONLY recommend resources that appear in the context
 
-If templates are available, use this EXACT format:
+If resources are available, use this EXACT format:
 
-[TEMPLATE:template_id:template_name]
+For project files: [FILE:resource_id:file_name]
+For marketplace templates: [TEMPLATE:resource_id:template_name]
 
 Then add a brief 1-sentence description of why it's relevant.
 
-EXAMPLE RESPONSE (when templates found):
-"I found the perfect template for you:
+EXAMPLE RESPONSE (when resources found):
+"I found the perfect file for you:
 
-[TEMPLATE:abc-123:Google OAuth Authentication]
-This is your favorite template with complete Google login setup."
+[FILE:abc-123:authentication-setup.md]
+This file contains your Google OAuth setup documentation."
 
-EXAMPLE RESPONSE (when NO templates found):
-"I couldn't find a relevant template in your library or the marketplace for that specific need. You can:
+EXAMPLE RESPONSE (when NO resources found):
+"I couldn't find a relevant file or template in your library or the marketplace for that specific need. You can:
 - Browse the marketplace to see all available templates
-- Create a new template for this use case"
+- Create a new file or template for this use case"
 
 IMPORTANT:
-- Maximum 3 template recommendations
-- Prioritize user's own templates and favorites
-- If the context shows "No relevant templates found", you MUST say you couldn't find anything
-- DO NOT make up template names or IDs
+- Maximum 3 resource recommendations
+- Prioritize user's own files and favorites
+- If the context shows "No relevant templates or files found", you MUST say you couldn't find anything
+- DO NOT make up resource names or IDs
 - DO NOT provide external links or documentation
 - DO NOT explain implementation steps
+- Pay attention to semantic similarity scores - higher scores mean better matches
 
-Your ONLY job is to recommend templates that exist in the platform.`
+Your ONLY job is to recommend resources that exist in the platform.`
 }
