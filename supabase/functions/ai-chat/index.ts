@@ -30,24 +30,34 @@ serve(async (req) => {
       })
     }
 
-    // Initialize Supabase client with service role for database operations
+    // Create Supabase client with user's JWT
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
     )
 
-    // Verify JWT and get user (using service role client)
+    // Get user from JWT (already validated by Supabase's verify_jwt)
     const jwt = authHeader.replace('Bearer ', '')
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser(jwt)
-
-    if (authError || !user) {
-      console.error('Auth error:', authError)
+    
+    // Decode JWT to get user ID (JWT is already validated by Supabase)
+    let userId: string
+    try {
+      const payload = JSON.parse(atob(jwt.split('.')[1]))
+      userId = payload.sub
+      
+      if (!userId) {
+        throw new Error('No user ID in JWT')
+      }
+    } catch (e) {
+      console.error('JWT decode error:', e)
       return new Response(JSON.stringify({ 
         code: 401,
-        message: authError?.message || 'Invalid JWT' 
+        message: 'Invalid JWT format' 
       }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -101,7 +111,7 @@ serve(async (req) => {
     const { data: searchResults, error: searchError } = await supabaseClient.rpc(
       'search_resources_hybrid',
       {
-        p_user_id: user.id,
+        p_user_id: userId,
         p_query_text: message,
         p_query_embedding: `[${queryEmbedding.join(',')}]`,
         p_include_marketplace: includeMarketplace,
