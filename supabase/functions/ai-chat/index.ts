@@ -30,24 +30,34 @@ serve(async (req) => {
       })
     }
 
-    // Initialize Supabase client with service role for database operations
+    // Create Supabase client with user's JWT
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
     )
 
-    // Verify JWT and get user (using service role client)
+    // Get user from JWT (already validated by Supabase's verify_jwt)
     const jwt = authHeader.replace('Bearer ', '')
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser(jwt)
-
-    if (authError || !user) {
-      console.error('Auth error:', authError)
+    
+    // Decode JWT to get user ID (JWT is already validated by Supabase)
+    let userId: string
+    try {
+      const payload = JSON.parse(atob(jwt.split('.')[1]))
+      userId = payload.sub
+      
+      if (!userId) {
+        throw new Error('No user ID in JWT')
+      }
+    } catch (e) {
+      console.error('JWT decode error:', e)
       return new Response(JSON.stringify({ 
         code: 401,
-        message: authError?.message || 'Invalid JWT' 
+        message: 'Invalid JWT format' 
       }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -98,14 +108,15 @@ serve(async (req) => {
     const queryEmbedding = embeddingData.data[0].embedding
 
     // Search templates with hybrid RAG (vector + text search)
+    // Fetch more results initially to have better options for multi-template recommendations
     const { data: searchResults, error: searchError } = await supabaseClient.rpc(
       'search_resources_hybrid',
       {
-        p_user_id: user.id,
+        p_user_id: userId,
         p_query_text: message,
         p_query_embedding: `[${queryEmbedding.join(',')}]`,
         p_include_marketplace: includeMarketplace,
-        p_limit: 5,
+        p_limit: 8, // Increased from 5 to allow better multi-template recommendations
       }
     )
 
@@ -123,10 +134,11 @@ serve(async (req) => {
     })
 
     // Build messages for AI
+    const conversationLength = (history || []).length + 1
     const messages = [
       {
         role: 'system',
-        content: buildSystemPrompt(context),
+        content: buildSystemPrompt(context, conversationLength),
       },
       ...(history || []).slice(-10),
       {
@@ -264,7 +276,9 @@ ${i + 1}. ${r.name} (${r.resource_type === 'project_item' ? 'Your File' : 'Marke
     .join('\n\n')
 }
 
-function buildSystemPrompt(context: string): string {
+function buildSystemPrompt(context: string, conversationLength: number): string {
+  const isFirstMessage = conversationLength <= 1
+  
   return `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
 
 Your role is to RECOMMEND resources (templates and files) that exist in the platform to users.
@@ -277,6 +291,14 @@ CRITICAL RULES - READ CAREFULLY:
 3. DO NOT recommend external resources, documentation, or tutorials
 4. DO NOT explain how to code or implement solutions
 5. ONLY recommend resources that appear in the context
+
+${isFirstMessage ? `
+CLARIFYING QUESTIONS STRATEGY:
+- If the user's request is vague or ambiguous, ASK 2-3 clarifying questions BEFORE recommending
+- Questions should help narrow down: technology stack, use case, complexity level, or specific features
+- Example: "I need authentication" → Ask: "What type of authentication? (OAuth, JWT, email/password?) Which platform? (web, mobile, API?)"
+- If the request is specific and clear, proceed directly to recommendations
+` : ''}
 
 If resources are available, use this EXACT format:
 
@@ -291,19 +313,51 @@ EXAMPLE RESPONSE (when resources found):
 [FILE:abc-123:authentication-setup.md]
 This file contains your Google OAuth setup documentation."
 
+EXAMPLE RESPONSE (when multiple resources found):
+"I found 3 relevant resources for you:
+
+1. [TEMPLATE:xyz-789:nextjs-auth-starter]
+   Complete authentication setup with OAuth and JWT for Next.js
+
+2. [FILE:abc-123:auth-config.ts]
+   Your existing authentication configuration file
+
+3. [TEMPLATE:def-456:supabase-auth-template]
+   Supabase authentication integration with RLS policies
+
+All three work well together - the template provides the structure, and your config file has your specific settings."
+
+EXAMPLE RESPONSE (when asking questions - first message only):
+"I can help you find the right template! To give you the best recommendation, I need to know:
+
+1. What technology stack are you using? (Next.js, React, Flutter, etc.)
+2. What's your main goal? (authentication, API integration, UI components?)
+3. What's your experience level? (beginner, intermediate, advanced?)
+
+This will help me find the most relevant resources for you."
+
 EXAMPLE RESPONSE (when NO resources found):
 "I couldn't find a relevant file or template in your library or the marketplace for that specific need. You can:
 - Browse the marketplace to see all available templates
 - Create a new file or template for this use case"
 
 IMPORTANT:
-- Maximum 3 resource recommendations
+- You can recommend 1-3 resources depending on relevance and user needs
+- When multiple resources complement each other, recommend all of them with explanations
 - Prioritize user's own files and favorites
+- Group recommendations logically (e.g., "starter template + your config file + related component")
 - If the context shows "No relevant templates or files found", you MUST say you couldn't find anything
 - DO NOT make up resource names or IDs
 - DO NOT provide external links or documentation
 - DO NOT explain implementation steps
 - Pay attention to semantic similarity scores - higher scores mean better matches
+- Consider asking questions when similarity scores are all below 60%
 
-Your ONLY job is to recommend resources that exist in the platform.`
+MULTI-TEMPLATE STRATEGY:
+- Recommend multiple templates when they serve different aspects of the same goal
+- Example: User asks for "authentication" → Recommend auth template + config file + security best practices doc
+- Explain how the resources work together or complement each other
+- Number your recommendations (1., 2., 3.) for clarity
+
+Your ONLY job is to recommend resources that exist in the platform OR ask clarifying questions to better understand user needs.`
 }
