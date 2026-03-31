@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { ChatMessage } from '@/types/chat'
 import { User, Bot, Loader2, Sparkles } from 'lucide-react'
-import ReactMarkdown from 'react-markdown'
+import { MessageContent } from './MessageContent'
 
 interface MessageListProps {
   messages: ChatMessage[]
@@ -78,9 +78,10 @@ export function MessageList({ messages, loading, streamingContent, streaming }: 
               }`}
             >
               {message.role === 'assistant' ? (
-                <div className="prose prose-sm max-w-none prose-headings:text-[#111827] prose-headings:font-semibold prose-p:text-[#374151] prose-p:leading-relaxed prose-code:text-[#4f46e5] prose-code:bg-[#ede9fe] prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-pre:bg-[#1f2937] prose-pre:text-[#f9fafb] prose-pre:text-xs">
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
-                </div>
+                <MessageContent 
+                  content={message.content}
+                  templateMetadata={message.metadata?.templates}
+                />
               ) : (
                 <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
               )}
@@ -110,9 +111,7 @@ export function MessageList({ messages, loading, streamingContent, streaming }: 
           </div>
           <div className="flex-1 max-w-[85%]">
             <div className="inline-block rounded-lg px-3 py-2 bg-[#f9fafb] text-[#111827] border border-[#e5e7eb] text-sm">
-              <div className="prose prose-sm max-w-none prose-headings:text-[#111827] prose-headings:font-semibold prose-p:text-[#374151] prose-p:leading-relaxed prose-code:text-[#4f46e5] prose-code:bg-[#ede9fe] prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-pre:bg-[#1f2937] prose-pre:text-[#f9fafb] prose-pre:text-xs">
-                <ReactMarkdown>{streamingContent}</ReactMarkdown>
-              </div>
+              <MessageContent content={streamingContent} />
             </div>
             <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-[#6b7280]">
               <Loader2 className="w-2.5 h-2.5 animate-spin text-[#4f46e5]" />

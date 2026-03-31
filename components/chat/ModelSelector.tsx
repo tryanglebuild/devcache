@@ -91,7 +91,7 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
           )}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white border-gray-200 z-[100]">
         {/* Free Models */}
         {groupedModels.free && groupedModels.free.length > 0 && (
           <SelectGroup>
@@ -100,7 +100,11 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
               Free Models (1x credits)
             </SelectLabel>
             {groupedModels.free.map(model => (
-              <SelectItem key={model.id} value={model.id} className="cursor-pointer">
+              <SelectItem 
+                key={model.id} 
+                value={model.id} 
+                className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100 text-gray-900"
+              >
                 <div className="flex items-center gap-2 w-full">
                   <span className="font-medium">{model.name}</span>
                   <span className="text-xs text-muted-foreground">({model.provider})</span>
@@ -121,7 +125,11 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
               Premium Models
             </SelectLabel>
             {groupedModels.premium.map(model => (
-              <SelectItem key={model.id} value={model.id} className="cursor-pointer">
+              <SelectItem 
+                key={model.id} 
+                value={model.id} 
+                className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100 text-gray-900"
+              >
                 <div className="flex items-center gap-2 w-full">
                   <span className="font-medium">{model.name}</span>
                   <span className="text-xs text-muted-foreground">({model.provider})</span>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script'
 import { Toaster } from 'react-hot-toast'
+import { FloatingChatButton } from '@/components/chat/FloatingChatButton'
 import './globals.css'
 
 const inter = Inter({ 
@@ -36,6 +37,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-white`}>
         {children}
+        <FloatingChatButton />
         <Toaster 
           position="top-right"
           toastOptions={{
