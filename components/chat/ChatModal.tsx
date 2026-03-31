@@ -6,11 +6,6 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ChatInterfaceWrapper } from './ChatInterfaceWrapper'
 import { SessionList } from './SessionList'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable'
 import type { ChatSession } from '@/types/chat'
 import toast from 'react-hot-toast'
 
@@ -136,51 +131,37 @@ export function ChatModal({ open, onOpenChange }: ChatModalProps) {
           </div>
         </div>
 
-        {/* Content with Resizable */}
-        <div className="flex-1 min-h-0">
-          <ResizablePanelGroup orientation="horizontal" className="h-full">
-            {/* Sidebar */}
-            <ResizablePanel
-              defaultSize={25}
-              minSize={20}
-              maxSize={40}
-              className="bg-gray-50"
-            >
-              <div className="h-full overflow-y-auto">
-                {loading ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                      <p className="text-xs text-gray-500">Loading...</p>
-                    </div>
-                  </div>
-                ) : (
-                  <SessionList
-                    sessions={sessions}
-                    currentSessionId={currentSessionId}
-                    onSelectSession={setCurrentSessionId}
-                    onNewSession={createNewSession}
-                  />
-                )}
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle 
-              withHandle 
-              className="w-1 bg-gray-200 hover:bg-blue-500 transition-colors cursor-col-resize"
-            />
-
-            {/* Chat Area */}
-            <ResizablePanel defaultSize={75} className="bg-white">
-              {currentSessionId ? (
-                <ChatInterfaceWrapper sessionId={currentSessionId} />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500">Select or create a conversation</p>
+        {/* Content */}
+        <div className="flex-1 min-h-0 flex">
+          {/* Sidebar - 20% width */}
+          <div className="w-[20%] bg-gray-50 border-r border-gray-200 overflow-y-auto">
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                  <p className="text-xs text-gray-500">Loading...</p>
                 </div>
-              )}
-            </ResizablePanel>
-          </ResizablePanelGroup>
+              </div>
+            ) : (
+              <SessionList
+                sessions={sessions}
+                currentSessionId={currentSessionId}
+                onSelectSession={setCurrentSessionId}
+                onNewSession={createNewSession}
+              />
+            )}
+          </div>
+
+          {/* Chat Area - 80% width */}
+          <div className="w-[80%] bg-white">
+            {currentSessionId ? (
+              <ChatInterfaceWrapper sessionId={currentSessionId} />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">Select or create a conversation</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

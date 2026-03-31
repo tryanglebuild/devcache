@@ -4,10 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SidebarProvider, DashboardSidebar, useSidebarContext } from '@/components/dashboard-sidebar'
 import { CreateItemProvider } from '@/components/providers/CreateItemProvider'
-import { ChatProvider, useChat } from '@/components/providers/ChatProvider'
 import { ProfileModal } from '@/components/dashboard/ProfileModal'
 import { SearchBar } from '@/components/dashboard/SearchBar'
-import { ChatSidebar } from '@/components/chat/ChatSidebar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, LogOut, Settings, MessageSquare } from 'lucide-react'
+import { User, LogOut, Settings } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 function DashboardContent({
@@ -33,7 +31,6 @@ function DashboardContent({
   createdAt?: string
 }) {
   const { isCollapsed } = useSidebarContext()
-  const { toggleChat, isChatOpen } = useChat()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
@@ -74,13 +71,10 @@ function DashboardContent({
         jobTitle={jobTitle}
         createdAt={createdAt}
       />
-
-      {/* Chat Sidebar - Persistent across pages */}
-      <ChatSidebar />
       
       {/* Main Content Area - with dynamic left margin based on sidebar state */}
       <div 
-        className={`transition-all duration-300 ${isCollapsed ? 'ml-[72px]' : 'ml-64'} ${isChatOpen ? 'mr-[600px]' : 'mr-0'}`}
+        className={`transition-all duration-300 ${isCollapsed ? 'ml-[72px]' : 'ml-64'}`}
       >
         {/* Top Navbar */}
         <header className="sticky top-0 z-40 bg-[#f7f9fb] border-b border-[#c7c4d7]/10">
@@ -95,15 +89,6 @@ function DashboardContent({
 
             {/* Right Side */}
             <div className="ml-auto flex items-center gap-4">
-              <button 
-                onClick={toggleChat}
-                className="p-2 text-[#464554] hover:bg-[#f2f4f6] rounded-full transition-colors relative"
-                title="AI Chat"
-              >
-                <MessageSquare className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-[#4648d4] rounded-full animate-pulse" />
-              </button>
-
               <button className="p-2 text-[#464554] hover:bg-[#f2f4f6] rounded-full transition-colors">
                 <span className="material-symbols-outlined">help</span>
               </button>
@@ -179,11 +164,10 @@ export function DashboardLayoutClient({
   createdAt?: string
 }) {
   return (
-    <ChatProvider>
-      <SidebarProvider>
-        <CreateItemProvider>
-          <div className="min-h-screen bg-[#f7f9fb]">
-            <DashboardContent 
+    <SidebarProvider>
+      <CreateItemProvider>
+        <div className="min-h-screen bg-[#f7f9fb]">
+          <DashboardContent 
               displayName={displayName} 
               jobTitle={jobTitle}
               email={email}
@@ -194,6 +178,5 @@ export function DashboardLayoutClient({
           </div>
         </CreateItemProvider>
       </SidebarProvider>
-    </ChatProvider>
   )
 }

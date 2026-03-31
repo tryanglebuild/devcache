@@ -13,9 +13,10 @@ import { Zap } from 'lucide-react'
 interface ChatInterfaceProps {
   session: ChatSession
   onSessionUpdate: () => void
+  onParentUpdate?: () => void
 }
 
-export function ChatInterface({ session, onSessionUpdate }: ChatInterfaceProps) {
+export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [loading, setLoading] = useState(true)
   const [streaming, setStreaming] = useState(false)
@@ -50,6 +51,9 @@ export function ChatInterface({ session, onSessionUpdate }: ChatInterfaceProps) 
       setStreaming(true)
       setStreamingContent('')
 
+      // Check if this is the first message in the session
+      const isFirstMessage = messages.length === 0
+
       // Add user message optimistically
       const userMessage: ChatMessage = {
         id: 'temp-' + Date.now(),
@@ -64,6 +68,22 @@ export function ChatInterface({ session, onSessionUpdate }: ChatInterfaceProps) 
         created_at: new Date().toISOString(),
       }
       setMessages(prev => [...prev, userMessage])
+
+      // If this is the first message, auto-generate title from first 8 words
+      if (isFirstMessage && session.title === 'New Conversation') {
+        const words = content.trim().split(/\s+/)
+        const titleWords = words.slice(0, 8)
+        const autoTitle = titleWords.join(' ') + (words.length > 8 ? '...' : '')
+        
+        try {
+          await updateSession(session.id, { title: autoTitle })
+          onSessionUpdate()
+          onParentUpdate?.() // Notify parent to reload sessions list
+        } catch (error) {
+          console.error('Failed to auto-update title:', error)
+          // Don't show error to user, it's not critical
+        }
+      }
 
       // Stream AI response
       for await (const chunk of sendMessage({

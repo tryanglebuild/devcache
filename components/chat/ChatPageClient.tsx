@@ -6,11 +6,6 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ChatInterfaceWrapper } from './ChatInterfaceWrapper'
 import { SessionList } from './SessionList'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable'
 import type { ChatSession } from '@/types/chat'
 
 export function ChatPageClient() {
@@ -99,37 +94,28 @@ export function ChatPageClient() {
       </header>
 
       {/* Main Content */}
-      <ResizablePanelGroup orientation="horizontal" className="flex-1">
-        {/* Sidebar */}
-        <ResizablePanel
-          defaultSize={20}
-          minSize={15}
-          maxSize={40}
-          className="bg-white dark:bg-gray-800"
-        >
-          <div className="h-full overflow-y-auto">
-            <SessionList
-              sessions={sessions}
-              currentSessionId={currentSessionId}
-              onSelectSession={setCurrentSessionId}
-              onNewSession={createNewSession}
-            />
-          </div>
-        </ResizablePanel>
+      <div className="flex-1 flex">
+        {/* Sidebar - 20% width */}
+        <div className="w-[20%] bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+          <SessionList
+            sessions={sessions}
+            currentSessionId={currentSessionId}
+            onSelectSession={setCurrentSessionId}
+            onNewSession={createNewSession}
+          />
+        </div>
 
-        <ResizableHandle withHandle />
-
-        {/* Chat Area */}
-        <ResizablePanel defaultSize={80} className="bg-white dark:bg-gray-900">
+        {/* Chat Area - 80% width */}
+        <div className="w-[80%] bg-white dark:bg-gray-900">
           {currentSessionId ? (
             <ChatInterfaceWrapper sessionId={currentSessionId} />
           ) : (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex items-center justify-center h-full">
               <p className="text-gray-500">Select or create a conversation</p>
             </div>
           )}
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </div>
+      </div>
     </div>
   )
 }
