@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { ChevronRight, Folder, FolderOpen, FileText, FolderKanban } from 'lucide-react'
+import { ChevronRight, Folder, FolderOpen, FileText, Copy, Trash2, Edit, Download, Star, StarOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Tables } from '@/types/database.types'
 import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
 
 type ProjectItem = Tables<'project_items'>
 
@@ -22,14 +23,33 @@ interface SidebarProjectsTreeProps {
 export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
   const [items, setItems] = useState<ProjectItem[]>([])
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set())
-  const [isProjectsExpanded, setIsProjectsExpanded] = useState(true)
+  const [contextMenu, setContextMenu] = useState<{
+    item: ProjectItem
+    x: number
+    y: number
+  } | null>(null)
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const clickCountRef = useRef<{ [key: string]: number }>({})
-  const headerClickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const headerClickCountRef = useRef<number>(0)
+
+  // Close context menu on click outside
+  useEffect(() => {
+    const handleClickOutside = () => setContextMenu(null)
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setContextMenu(null)
+    }
+    
+    if (contextMenu) {
+      document.addEventListener('click', handleClickOutside)
+      document.addEventListener('keydown', handleEscape)
+      return () => {
+        document.removeEventListener('click', handleClickOutside)
+        document.removeEventListener('keydown', handleEscape)
+      }
+    }
+  }, [contextMenu])
 
   // Load items
   useEffect(() => {
@@ -41,6 +61,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
         .from('project_items')
         .select('*')
         .eq('user_id', user.id)
+        .is('deleted_at', null)
         .order('type', { ascending: false })
         .order('name', { ascending: true })
 
@@ -101,25 +122,20 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     }
     
     // For items with children, use double-click logic
-    // Increment click count
     clickCountRef.current[itemId] = (clickCountRef.current[itemId] || 0) + 1
     
-    // Clear existing timeout
     if (clickTimeoutRef.current) {
       clearTimeout(clickTimeoutRef.current)
     }
     
-    // Set new timeout
     clickTimeoutRef.current = setTimeout(() => {
       const clickCount = clickCountRef.current[itemId] || 0
       
       if (clickCount === 1) {
-        // Single click: toggle expansion for folders with children
         if (item.type === 'folder') {
           toggleExpanded(item.id)
         }
       } else if (clickCount >= 2) {
-        // Double click: navigate
         if (item.type === 'folder') {
           router.push(`/dashboard/projects/${item.id}`)
         } else {
@@ -127,9 +143,8 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
         }
       }
       
-      // Reset click count
       clickCountRef.current[itemId] = 0
-    }, 300) // 300ms delay to detect double click
+    }, 300)
   }
 
   const toggleExpanded = (id: string) => {
@@ -144,45 +159,112 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     })
   }
 
-  const handleProjectsHeaderClick = () => {
-    // Increment click count
-    headerClickCountRef.current += 1
-    
-    // Clear existing timeout
-    if (headerClickTimeoutRef.current) {
-      clearTimeout(headerClickTimeoutRef.current)
+  const reloadItems = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data } = await supabase
+        .from('project_items')
+        .select('*')
+        .eq('user_id', user.id)
+        .is('deleted_at', null)
+        .order('type', { ascending: false })
+        .order('name', { ascending: true })
+      if (data) setItems(data)
     }
-    
-    // Set new timeout
-    headerClickTimeoutRef.current = setTimeout(() => {
-      const clickCount = headerClickCountRef.current
-      
-      if (clickCount === 1) {
-        // Single click: only toggle expansion
-        setIsProjectsExpanded(!isProjectsExpanded)
-      } else if (clickCount >= 2) {
-        // Double click: navigate to projects page
-        router.push('/dashboard/projects')
-      }
-      
-      // Reset click count
-      headerClickCountRef.current = 0
-    }, 300) // 300ms delay to detect double click
   }
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (clickTimeoutRef.current) {
-        clearTimeout(clickTimeoutRef.current)
-      }
-      if (headerClickTimeoutRef.current) {
-        clearTimeout(headerClickTimeoutRef.current)
-      }
-    }
-  }, [])
+  const handleRename = async (item: ProjectItem) => {
+    const newName = prompt(`Rename ${item.type}:`, item.name)
+    if (!newName || newName === item.name) return
 
-  const isActive = pathname?.startsWith('/dashboard/projects')
+    const { error } = await supabase
+      .from('project_items')
+      .update({ name: newName })
+      .eq('id', item.id)
+
+    if (error) {
+      toast.error('Failed to rename')
+    } else {
+      toast.success(`${item.type === 'folder' ? 'Folder' : 'File'} renamed`)
+      reloadItems()
+    }
+  }
+
+  const handleDelete = async (item: ProjectItem) => {
+    const confirmMessage = item.type === 'folder' 
+      ? `Delete folder "${item.name}" and all its contents?`
+      : `Delete file "${item.name}"?`
+    
+    if (!confirm(confirmMessage)) return
+
+    const { error } = await supabase
+      .from('project_items')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', item.id)
+
+    if (error) {
+      toast.error('Failed to delete')
+    } else {
+      toast.success('Moved to trash')
+      reloadItems()
+    }
+  }
+
+  const handleDuplicate = async (item: ProjectItem) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const newName = `${item.name} (copy)`
+    
+    const { error } = await supabase
+      .from('project_items')
+      .insert({
+        user_id: user.id,
+        name: newName,
+        type: item.type,
+        content: item.content,
+        parent_id: item.parent_id,
+      })
+
+    if (error) {
+      toast.error('Failed to duplicate')
+    } else {
+      toast.success('Duplicated successfully')
+      reloadItems()
+    }
+  }
+
+  const handleDownload = (item: ProjectItem) => {
+    if (item.type === 'folder') {
+      toast.error('Cannot download folders')
+      return
+    }
+
+    const blob = new Blob([item.content || ''], { type: 'text/markdown' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = item.name.endsWith('.md') ? item.name : `${item.name}.md`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+    toast.success('Downloaded')
+  }
+
+  const handleToggleFavorite = async (item: ProjectItem) => {
+    const { error } = await supabase
+      .from('project_items')
+      .update({ is_favorite: !item.is_favorite })
+      .eq('id', item.id)
+
+    if (error) {
+      toast.error('Failed to update')
+    } else {
+      toast.success(item.is_favorite ? 'Removed from favorites' : 'Added to favorites')
+      reloadItems()
+    }
+  }
 
   const renderNode = (node: TreeNode) => {
     const isExpanded = expandedKeys.has(node.item.id)
@@ -195,31 +277,44 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
       <div key={node.item.id}>
         <button
           onClick={() => handleItemClick(node.item, hasChildren)}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setContextMenu({
+              item: node.item,
+              x: e.clientX,
+              y: e.clientY,
+            })
+          }}
           className={cn(
-            'w-full flex items-center gap-2 px-2 py-2 text-sm rounded transition-all',
+            'w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg transition-all',
             isCurrentPath
-              ? 'bg-[#4648d4]/10 text-[#4648d4] font-semibold'
-              : 'text-[#464554] hover:bg-[#e0e3e5] hover:text-[#191c1e]'
+              ? 'bg-blue-50 text-[#4648d4] font-semibold'
+              : 'text-gray-700 hover:bg-gray-100'
           )}
           style={{ paddingLeft: `${8 + node.level * 16}px` }}
         >
           {hasChildren && !isFile ? (
             <ChevronRight
-              className={cn('h-4 w-4 transition-transform shrink-0', isExpanded && 'rotate-90')}
+              className={cn('h-3.5 w-3.5 transition-transform shrink-0', isExpanded && 'rotate-90')}
             />
           ) : (
-            <div className="w-4" />
+            <div className="w-3.5" />
           )}
 
           {isFile ? (
-            <FileText className="h-4 w-4 shrink-0" />
+            <FileText className="h-4 w-4 shrink-0 text-gray-500" />
           ) : isExpanded ? (
             <FolderOpen className="h-4 w-4 shrink-0 text-[#4648d4]" />
           ) : (
-            <Folder className="h-4 w-4 shrink-0" />
+            <Folder className="h-4 w-4 shrink-0 text-gray-500" />
           )}
 
-          <span className="truncate flex-1 text-left">{node.item.name}</span>
+          <span className="truncate flex-1 text-left text-[13px]">{node.item.name}</span>
+          
+          {node.item.is_favorite && (
+            <Star className="h-3 w-3 shrink-0 text-amber-500 fill-amber-500" />
+          )}
         </button>
 
         {isExpanded && hasChildren && !isFile && (
@@ -234,32 +329,90 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
   }
 
   return (
-    <div className="space-y-1">
-      {/* Projects Header */}
-      <button
-        onClick={handleProjectsHeaderClick}
-        className={cn(
-          'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
-          isActive
-            ? 'bg-white text-[#4648d4] shadow-sm font-bold'
-            : 'text-[#464554] hover:text-[#191c1e] hover:bg-[#e0e3e5]'
-        )}
-      >
-        <FolderKanban className="h-5 w-5 shrink-0" />
-        <span className="text-sm font-medium uppercase tracking-wider flex-1 text-left">
-          Projects
-        </span>
-        <ChevronRight
-          className={cn('h-4 w-4 transition-transform shrink-0', isProjectsExpanded && 'rotate-90')}
-        />
-      </button>
+    <>
+      <div className="space-y-0.5 max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
+        {tree.map(renderNode)}
+      </div>
 
-      {/* Tree View */}
-      {isProjectsExpanded && tree.length > 0 && (
-        <div className="pl-2 space-y-0.5 max-h-[400px] overflow-y-auto">
-          {tree.map(renderNode)}
+      {/* Custom Context Menu */}
+      {contextMenu && (
+        <div
+          className="fixed z-[100] min-w-[200px] bg-white rounded-xl shadow-2xl border border-gray-200 py-1.5"
+          style={{
+            left: `${contextMenu.x}px`,
+            top: `${contextMenu.y}px`,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => {
+              handleRename(contextMenu.item)
+              setContextMenu(null)
+            }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#4648d4] transition-colors font-medium"
+          >
+            <Edit className="h-4 w-4" />
+            Rename
+          </button>
+
+          <button
+            onClick={() => {
+              handleDuplicate(contextMenu.item)
+              setContextMenu(null)
+            }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#4648d4] transition-colors font-medium"
+          >
+            <Copy className="h-4 w-4" />
+            Duplicate
+          </button>
+
+          {contextMenu.item.type === 'file' && (
+            <button
+              onClick={() => {
+                handleDownload(contextMenu.item)
+                setContextMenu(null)
+              }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#4648d4] transition-colors font-medium"
+            >
+              <Download className="h-4 w-4" />
+              Download
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              handleToggleFavorite(contextMenu.item)
+              setContextMenu(null)
+            }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium"
+          >
+            {contextMenu.item.is_favorite ? (
+              <>
+                <StarOff className="h-4 w-4" />
+                Remove from Favorites
+              </>
+            ) : (
+              <>
+                <Star className="h-4 w-4" />
+                Add to Favorites
+              </>
+            )}
+          </button>
+
+          <div className="h-px bg-gray-200 my-1.5" />
+
+          <button
+            onClick={() => {
+              handleDelete(contextMenu.item)
+              setContextMenu(null)
+            }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete
+          </button>
         </div>
       )}
-    </div>
+    </>
   )
 }
