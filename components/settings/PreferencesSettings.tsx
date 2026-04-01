@@ -129,17 +129,48 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
               Default AI Model
             </Label>
             <Select value={defaultModel} onValueChange={setDefaultModel}>
-              <SelectTrigger className="border-[#c7c4d7]/20 bg-white">
+              <SelectTrigger className="border-[#e5e7eb] bg-white h-12 hover:border-[#4648d4] transition-colors">
                 <SelectValue placeholder="Select a model" />
               </SelectTrigger>
-              <SelectContent className="bg-white border-[#c7c4d7]/30 shadow-2xl">
+              <SelectContent className="bg-white border border-[#e5e7eb] shadow-xl p-1 min-w-[500px]">
                 {AI_MODELS.map((model) => (
                   <SelectItem 
                     key={model.id} 
                     value={model.id}
-                    className="cursor-pointer hover:bg-blue-50"
+                    className="cursor-pointer rounded-md my-0.5 pl-3 pr-10 py-3 hover:bg-[#f7f9fb] data-[state=checked]:bg-[#eef0ff] data-[state=checked]:border-l-2 data-[state=checked]:border-[#4648d4] transition-colors"
                   >
-                    {model.name} - {model.description}
+                    <div className="flex items-center justify-between gap-6 w-full pr-2">
+                      {/* Left: Model Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-sm text-[#191c1e]">
+                            {model.name}
+                          </span>
+                          <span className="px-2 py-0.5 bg-white rounded text-[10px] font-medium text-[#6b7280] border border-[#e5e7eb]">
+                            {model.provider}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6b7280] truncate">
+                          {model.description}
+                        </p>
+                      </div>
+                      
+                      {/* Right: Metrics */}
+                      <div className="flex items-center gap-4 shrink-0">
+                        <div className="text-right">
+                          <div className="text-xs font-semibold text-[#4648d4]">
+                            {model.costMultiplier}x
+                          </div>
+                          <div className="text-[10px] text-[#9ca3af]">cost</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xs font-semibold text-[#191c1e]">
+                            {model.contextWindow.split(' ')[0]}
+                          </div>
+                          <div className="text-[10px] text-[#9ca3af]">tokens</div>
+                        </div>
+                      </div>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -157,7 +188,12 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
             return (
               <div className="space-y-4">
                 {/* Model Header - Clean & Professional */}
-                <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm">
+                <div className="p-5 bg-white border-2 border-[#4648d4] rounded-lg shadow-md relative">
+                  {/* Selected Badge */}
+                  <div className="absolute -top-3 right-4 px-3 py-1 bg-[#4648d4] rounded-full shadow-sm">
+                    <span className="text-xs font-semibold text-white">Selected</span>
+                  </div>
+                  
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
