@@ -28,6 +28,8 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
   const supabase = createClient()
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const clickCountRef = useRef<{ [key: string]: number }>({})
+  const headerClickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const headerClickCountRef = useRef<number>(0)
 
   // Load items
   useEffect(() => {
@@ -142,11 +144,40 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     })
   }
 
+  const handleProjectsHeaderClick = () => {
+    // Increment click count
+    headerClickCountRef.current += 1
+    
+    // Clear existing timeout
+    if (headerClickTimeoutRef.current) {
+      clearTimeout(headerClickTimeoutRef.current)
+    }
+    
+    // Set new timeout
+    headerClickTimeoutRef.current = setTimeout(() => {
+      const clickCount = headerClickCountRef.current
+      
+      if (clickCount === 1) {
+        // Single click: only toggle expansion
+        setIsProjectsExpanded(!isProjectsExpanded)
+      } else if (clickCount >= 2) {
+        // Double click: navigate to projects page
+        router.push('/dashboard/projects')
+      }
+      
+      // Reset click count
+      headerClickCountRef.current = 0
+    }, 300) // 300ms delay to detect double click
+  }
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (clickTimeoutRef.current) {
         clearTimeout(clickTimeoutRef.current)
+      }
+      if (headerClickTimeoutRef.current) {
+        clearTimeout(headerClickTimeoutRef.current)
       }
     }
   }, [])
@@ -206,10 +237,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     <div className="space-y-1">
       {/* Projects Header */}
       <button
-        onClick={() => {
-          setIsProjectsExpanded(!isProjectsExpanded)
-          router.push('/dashboard/projects')
-        }}
+        onClick={handleProjectsHeaderClick}
         className={cn(
           'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
           isActive
