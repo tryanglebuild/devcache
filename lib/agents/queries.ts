@@ -154,6 +154,73 @@ export async function getUserCreatedAgents(userId: string): Promise<AgentTemplat
   
   return (data || []).map(agent => ({
     ...agent,
-    author_name: agent.profiles?.full_name || null
+    author_name: agent.profiles?.full_name || null,
+    is_owned: true
   }))
+}
+
+export async function getUserSavedAgents(userId: string): Promise<AgentTemplateWithStats[]> {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('agent_collections')
+    .select(`
+      is_favorite,
+      agent_templates!inner (
+        *,
+        profiles:user_id (
+          full_name
+        )
+      )
+    `)
+    .eq('user_id', userId)
+    .is('agent_templates.deleted_at', null)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user saved agents:', error)
+    return []
+  }
+  
+  return (data || [])
+    .filter(item => item.agent_templates)
+    .map(item => {
+      const template = item.agent_templates as any
+      return {
+        ...template,
+        is_favorite: item.is_favorite,
+        is_in_collection: true,
+        is_owned: false,
+        author_name: template.profiles?.full_name || null
+      }
+    }) as AgentTemplateWithStats[]
+}
+
+export async function getUserAllTemplates(userId: string): Promise<AgentTemplateWithStats[]> {
+  const [created, saved] = await Promise.all([
+    getUserCreatedAgents(userId),
+    getUserSavedAgents(userId)
+  ])
+  
+  // Combine and sort by created_at
+  return [...created, ...saved].sort((a, b) => 
+    new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+  )
+}
+
+export async function getTemplateUserTags(userId: string, agentId: string): Promise<string[]> {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('agent_template_tags')
+    .select('tag_name')
+    .eq('user_id', userId)
+    .eq('agent_id', agentId)
+  
+  if (error) {
+    console.error('Error fetching template tags:', error)
+    return []
+  }
+  
+  return (data || []).map(t => t.tag_name)
 }

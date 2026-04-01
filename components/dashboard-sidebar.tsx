@@ -178,9 +178,9 @@ export function DashboardSidebar() {
       </div>
 
       {/* Navigation - Scrollable */}
-      <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto min-h-0">
+      <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto min-h-0 flex flex-col">
         {/* Main Navigation */}
-        <div className="space-y-1">
+        <div className="space-y-1 shrink-0">
           {!isCollapsed && (
             <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
               Main
@@ -214,7 +214,7 @@ export function DashboardSidebar() {
         </div>
 
         {/* Workspace Section */}
-        <div className="space-y-1">
+        <div className="space-y-1 shrink-0">
           {!isCollapsed && (
             <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
               Workspace
@@ -247,15 +247,17 @@ export function DashboardSidebar() {
           })}
         </div>
 
-        {/* Projects Tree */}
-        <div className="space-y-1">
+        {/* Projects Tree - Takes remaining space */}
+        <div className="flex-1 flex flex-col min-h-0">
           {!isCollapsed && (
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2 shrink-0">
               Projects
             </p>
           )}
           {!isCollapsed ? (
-            <SidebarProjectsTree isCollapsed={isCollapsed} />
+            <div className="flex-1 min-h-0">
+              <SidebarProjectsTree isCollapsed={isCollapsed} />
+            </div>
           ) : (
             <Link
               href="/dashboard/projects"

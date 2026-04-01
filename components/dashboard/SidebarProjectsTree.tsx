@@ -330,7 +330,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
 
   return (
     <>
-      <div className="space-y-0.5 max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
+      <div className="space-y-0.5 h-full overflow-y-auto pr-1 custom-scrollbar">
         {tree.map(renderNode)}
       </div>
 

@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { MyTemplatesClient } from '@/components/agents/MyTemplatesClient'
-import { getUserCreatedAgents } from '@/lib/agents/queries'
+import { getUserAllTemplates } from '@/lib/agents/queries'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -14,7 +14,7 @@ export default async function MyTemplatesPage() {
     redirect('/login')
   }
 
-  const templates = await getUserCreatedAgents(user.id)
+  const templates = await getUserAllTemplates(user.id)
 
-  return <MyTemplatesClient initialTemplates={templates} />
+  return <MyTemplatesClient initialTemplates={templates} userId={user.id} />
 }

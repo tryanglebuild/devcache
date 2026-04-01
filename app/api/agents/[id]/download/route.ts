@@ -33,6 +33,39 @@ export async function POST(
       )
     }
     
+    // Check if already in collection
+    const { data: existingCollection } = await supabase
+      .from('agent_collections')
+      .select('id')
+      .eq('agent_id', id)
+      .eq('user_id', user.id)
+      .single()
+    
+    if (existingCollection) {
+      return NextResponse.json({
+        success: true,
+        message: 'Template already in your collection',
+        alreadyExists: true
+      })
+    }
+    
+    // Add to collection
+    const { error: collectionError } = await supabase
+      .from('agent_collections')
+      .insert({
+        agent_id: id,
+        user_id: user.id,
+        is_favorite: false
+      })
+    
+    if (collectionError) {
+      console.error('Add to collection error:', collectionError)
+      return NextResponse.json(
+        { error: 'Failed to add to collection' },
+        { status: 500 }
+      )
+    }
+    
     // Increment download count
     const { error: updateError } = await supabase
       .from('agent_templates')
@@ -45,7 +78,7 @@ export async function POST(
       console.error('Update download count error:', updateError)
     }
     
-    // Track download in agent_downloads table (if it exists)
+    // Track download in agent_downloads table
     const { error: downloadError } = await supabase
       .from('agent_downloads')
       .insert({
@@ -56,12 +89,11 @@ export async function POST(
     // Ignore unique constraint violations (already downloaded)
     if (downloadError && downloadError.code !== '23505') {
       console.error('Track download error:', downloadError)
-      // Don't fail the request if tracking fails
     }
     
     return NextResponse.json({
       success: true,
-      message: 'Template downloaded successfully'
+      message: 'Template saved to My Templates!'
     })
   } catch (error) {
     console.error('POST /api/agents/[id]/download error:', error)

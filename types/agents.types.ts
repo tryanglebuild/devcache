@@ -33,7 +33,9 @@ export type AgentTemplateWithStats = AgentTemplate & {
   author_name?: string
   is_in_collection?: boolean
   is_favorite?: boolean
+  is_owned?: boolean
   user_rating?: number
+  user_tags?: string[]
 }
 
 // Agent metadata structure (parsed from content frontmatter)
