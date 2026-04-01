@@ -78,7 +78,7 @@ export function AppSidebar() {
                     tooltip={item.title}
                   >
                     <Link href={item.href}>
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className="h-4 w-4 shrink-0" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -92,7 +92,7 @@ export function AppSidebar() {
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <button className="w-full flex items-center justify-center gap-2 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm py-3 px-4 shadow-lg shadow-primary/20 hover:shadow-xl transition-all group-data-[collapsible=icon]:px-2">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 shrink-0" />
               <span className="group-data-[collapsible=icon]:hidden">New Entry</span>
             </button>
           </SidebarGroupContent>
@@ -104,7 +104,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Support">
               <Link href="/support">
-                <HelpCircle className="h-4 w-4" />
+                <HelpCircle className="h-4 w-4 shrink-0" />
                 <span>Support</span>
               </Link>
             </SidebarMenuButton>
@@ -112,8 +112,8 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Logout">
               <Link href="/api/auth/signout">
-                <LogOut className="h-4 w-4 text-destructive" />
-                <span>Logout</span>
+                <LogOut className="h-4 w-4 shrink-0" />
+                <span className="text-destructive">Logout</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

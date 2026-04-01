@@ -153,7 +153,7 @@ export function DashboardSidebar() {
               className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:border-[#4648d4] hover:text-[#4648d4] hover:bg-blue-50 transition-all shadow-sm"
               title="New Folder"
             >
-              <Folder className="h-4 w-4" />
+              <Folder className="h-4 w-4 shrink-0" />
               <span className="text-xs font-semibold">Folder</span>
             </button>
             <button
@@ -161,7 +161,7 @@ export function DashboardSidebar() {
               className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:border-[#4648d4] hover:text-[#4648d4] hover:bg-blue-50 transition-all shadow-sm"
               title="New File"
             >
-              <FileText className="h-4 w-4" />
+              <FileText className="h-4 w-4 shrink-0" />
               <span className="text-xs font-semibold">File</span>
             </button>
           </div>
@@ -172,14 +172,14 @@ export function DashboardSidebar() {
               className="w-full flex items-center justify-center p-2.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:border-[#4648d4] hover:text-[#4648d4] hover:bg-blue-50 transition-all shadow-sm"
               title="New Folder"
             >
-              <Folder className="h-4.5 w-4.5" />
+              <Folder className="h-4 w-4 shrink-0" />
             </button>
             <button
               onClick={() => openCreateModal('file')}
               className="w-full flex items-center justify-center p-2.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:border-[#4648d4] hover:text-[#4648d4] hover:bg-blue-50 transition-all shadow-sm"
               title="New File"
             >
-              <FileText className="h-4.5 w-4.5" />
+              <FileText className="h-4 w-4 shrink-0" />
             </button>
           </div>
         )}
@@ -244,7 +244,7 @@ export function DashboardSidebar() {
                 )}
                 title={isCollapsed ? item.title : undefined}
               >
-                <Icon className={cn('h-4.5 w-4.5 shrink-0', isActive ? item.color : '')} />
+                <Icon className={cn('h-5 w-5 shrink-0', isActive ? item.color : '')} />
                 {!isCollapsed && (
                   <span className="text-sm font-medium">
                     {item.title}
@@ -277,7 +277,7 @@ export function DashboardSidebar() {
               )}
               title="Projects"
             >
-              <FolderKanban className="h-4.5 w-4.5 shrink-0" />
+              <FolderKanban className="h-5 w-5 shrink-0" />
             </Link>
           )}
         </div>
@@ -303,7 +303,7 @@ export function DashboardSidebar() {
               )}
               title={isCollapsed ? item.title : undefined}
             >
-              <Icon className={cn('h-4.5 w-4.5 shrink-0', isActive ? item.color : '')} />
+              <Icon className={cn('h-5 w-5 shrink-0', isActive ? item.color : '')} />
               {!isCollapsed && (
                 <span className="text-sm font-medium">
                   {item.title}
