@@ -4,10 +4,10 @@ import { useMemo } from 'react'
 import { Tables } from '@/types/database.types'
 import { BarChart3, PieChart, TrendingUp } from 'lucide-react'
 
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 
 interface TagAnalyticsProps {
-  tags: LanguageTag[]
+  tags: UserTag[]
   tagStats: Record<string, number>
 }
 

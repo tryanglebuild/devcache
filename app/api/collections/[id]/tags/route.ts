@@ -15,9 +15,19 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
+    // Join with user_tags to get color and description
     const { data, error } = await supabase
       .from('agent_template_tags')
-      .select('*')
+      .select(`
+        id,
+        tag_name,
+        created_at,
+        user_tags!inner (
+          name,
+          color,
+          description
+        )
+      `)
       .eq('agent_id', id)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
@@ -27,7 +37,16 @@ export async function GET(
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
-    return NextResponse.json(data || [])
+    // Transform data to include tag details
+    const tagsWithDetails = data?.map(item => ({
+      id: item.id,
+      tag_name: item.tag_name,
+      created_at: item.created_at,
+      color: (item.user_tags as any).color,
+      description: (item.user_tags as any).description
+    })) || []
+    
+    return NextResponse.json(tagsWithDetails)
   } catch (error) {
     console.error('GET /api/collections/[id]/tags error:', error)
     return NextResponse.json(
@@ -61,7 +80,22 @@ export async function POST(
       )
     }
     
-    // Insert tag (will fail if duplicate due to unique constraint)
+    // Verify tag exists in user_tags
+    const { data: tagExists } = await supabase
+      .from('user_tags')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('name', tag_name.trim())
+      .single()
+    
+    if (!tagExists) {
+      return NextResponse.json(
+        { error: 'Tag does not exist in your tag library. Create it first in the Tags page.' },
+        { status: 404 }
+      )
+    }
+    
+    // Insert tag reference (will fail if duplicate due to unique constraint)
     const { data, error } = await supabase
       .from('agent_template_tags')
       .insert({

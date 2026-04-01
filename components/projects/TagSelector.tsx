@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { HexColorPicker } from 'react-colorful'
 import toast from 'react-hot-toast'
 
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 
 interface TagSelectorProps {
   selectedTags: string[]
@@ -15,7 +15,7 @@ interface TagSelectorProps {
 }
 
 export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
-  const [tags, setTags] = useState<LanguageTag[]>([])
+  const [tags, setTags] = useState<UserTag[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
   const [newTagName, setNewTagName] = useState('')
@@ -30,7 +30,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
 
   const loadTags = async () => {
     const { data, error } = await supabase
-      .from('language_tags')
+      .from('user_tags')
       .select('*')
       .order('name')
 
@@ -71,7 +71,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
       }
 
       const { data, error } = await supabase
-        .from('language_tags')
+        .from('user_tags')
         .insert({
           name: newTagName.trim(),
           color: newTagColor,

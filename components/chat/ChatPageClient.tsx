@@ -13,10 +13,24 @@ export function ChatPageClient() {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    loadSessions()
+    checkAuthAndLoadSessions()
   }, [])
+
+  async function checkAuthAndLoadSessions() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      router.push('/login')
+      return
+    }
+    
+    setIsAuthenticated(true)
+    await loadSessions()
+  }
 
   async function loadSessions() {
     try {
@@ -66,12 +80,14 @@ export function ChatPageClient() {
     }
   }
 
-  if (loading) {
+  if (loading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-sm text-gray-600 dark:text-gray-400">Loading chat...</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {!isAuthenticated ? 'Checking authentication...' : 'Loading chat...'}
+          </p>
         </div>
       </div>
     )

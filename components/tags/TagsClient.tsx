@@ -18,21 +18,21 @@ import {
 import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 
-interface TagWithStats extends LanguageTag {
+interface TagWithStats extends UserTag {
   file_count: number
 }
 
 interface TagsClientProps {
-  initialTags: LanguageTag[]
+  initialTags: UserTag[]
   tagStats: Record<string, number>
 }
 
 export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
-  const [tags, setTags] = useState<LanguageTag[]>(initialTags)
+  const [tags, setTags] = useState<UserTag[]>(initialTags)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingTag, setEditingTag] = useState<LanguageTag | null>(null)
+  const [editingTag, setEditingTag] = useState<UserTag | null>(null)
   const [selectedTag, setSelectedTag] = useState<TagWithStats | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<'name' | 'usage'>('name')
@@ -82,15 +82,15 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
     , tagsWithStats[0] || { file_count: 0 })
   }, [tagsWithStats])
 
-  const handleTagCreated = (newTag: LanguageTag) => {
+  const handleTagCreated = (newTag: UserTag) => {
     setTags([...tags, newTag])
   }
 
-  const handleTagUpdated = (updatedTag: LanguageTag) => {
+  const handleTagUpdated = (updatedTag: UserTag) => {
     setTags(tags.map(tag => tag.id === updatedTag.id ? updatedTag : tag))
   }
 
-  const handleDelete = async (tag: LanguageTag) => {
+  const handleDelete = async (tag: UserTag) => {
     const fileCount = tagStats[tag.name] || 0
     const message = fileCount > 0
       ? `Delete tag "${tag.name}"? This will remove it from ${fileCount} file(s).`
@@ -101,7 +101,7 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
     }
 
     const { error } = await supabase
-      .from('language_tags')
+      .from('user_tags')
       .delete()
       .eq('id', tag.id)
 

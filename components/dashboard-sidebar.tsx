@@ -17,6 +17,7 @@ import {
   Plus,
   Sparkles,
   Settings,
+  Star,
 } from 'lucide-react'
 import { useCreateItem } from '@/components/providers/CreateItemProvider'
 import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
@@ -48,11 +49,18 @@ const workspaceItems = [
     bgColor: 'bg-emerald-50',
   },
   {
+    title: 'Favorites',
+    href: '/dashboard/favorites',
+    icon: Star,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-50',
+  },
+  {
     title: 'Tags',
     href: '/dashboard/tags',
     icon: Tag,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50',
   },
 ]
 

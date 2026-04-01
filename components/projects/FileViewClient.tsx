@@ -110,7 +110,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
       if (!file.language_tags || file.language_tags.length === 0) return
 
       const { data, error } = await supabase
-        .from('language_tags')
+        .from('user_tags')
         .select('name, color')
         .in('name', file.language_tags)
 

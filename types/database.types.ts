@@ -198,6 +198,76 @@ export type Database = {
           },
         ]
       }
+      agent_template_embeddings: {
+        Row: {
+          agent_id: string
+          content_hash: string
+          embedding: string | null
+          embedding_vector: string | null
+          id: string
+          indexed_at: string | null
+          metadata: Json | null
+        }
+        Insert: {
+          agent_id: string
+          content_hash: string
+          embedding?: string | null
+          embedding_vector?: string | null
+          id?: string
+          indexed_at?: string | null
+          metadata?: Json | null
+        }
+        Update: {
+          agent_id?: string
+          content_hash?: string
+          embedding?: string | null
+          embedding_vector?: string | null
+          id?: string
+          indexed_at?: string | null
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_template_embeddings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: true
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_template_tags: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          id: string
+          tag_name: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          id?: string
+          tag_name: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          id?: string
+          tag_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_template_tags_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_templates: {
         Row: {
           category: string
@@ -255,6 +325,138 @@ export type Database = {
           user_id?: string
           version?: string
           visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_templates_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          cost_usd: number | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          model_used: string | null
+          role: string
+          session_id: string
+          tokens_input: number | null
+          tokens_output: number | null
+        }
+        Insert: {
+          content: string
+          cost_usd?: number | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          model_used?: string | null
+          role: string
+          session_id: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+        }
+        Update: {
+          content?: string
+          cost_usd?: number | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          model_used?: string | null
+          role?: string
+          session_id?: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_search_results: {
+        Row: {
+          created_at: string | null
+          id: string
+          matched_fields: Json | null
+          message_id: string
+          relevance_score: number | null
+          resource_id: string
+          resource_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          matched_fields?: Json | null
+          message_id: string
+          relevance_score?: number | null
+          resource_id: string
+          resource_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          matched_fields?: Json | null
+          message_id?: string
+          relevance_score?: number | null
+          resource_id?: string
+          resource_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_search_results_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_sessions: {
+        Row: {
+          context_type: string | null
+          created_at: string | null
+          id: string
+          last_activity_at: string | null
+          metadata: Json | null
+          related_resource_ids: string[] | null
+          selected_model: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          context_type?: string | null
+          created_at?: string | null
+          id?: string
+          last_activity_at?: string | null
+          metadata?: Json | null
+          related_resource_ids?: string[] | null
+          selected_model?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          context_type?: string | null
+          created_at?: string | null
+          id?: string
+          last_activity_at?: string | null
+          metadata?: Json | null
+          related_resource_ids?: string[] | null
+          selected_model?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -318,36 +520,6 @@ export type Database = {
           user_id?: string
           version?: string
           visibility?: string
-        }
-        Relationships: []
-      }
-      language_tags: {
-        Row: {
-          color: string
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          color?: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          color?: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string | null
-          user_id?: string
         }
         Relationships: []
       }
@@ -447,7 +619,10 @@ export type Database = {
         Row: {
           content: string | null
           created_at: string | null
+          deleted_at: string | null
           description: string | null
+          embedding_updated_at: string | null
+          embedding_vector: string | null
           id: string
           is_favorite: boolean | null
           language_tags: string[] | null
@@ -461,7 +636,10 @@ export type Database = {
         Insert: {
           content?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           description?: string | null
+          embedding_updated_at?: string | null
+          embedding_vector?: string | null
           id?: string
           is_favorite?: boolean | null
           language_tags?: string[] | null
@@ -475,7 +653,10 @@ export type Database = {
         Update: {
           content?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           description?: string | null
+          embedding_updated_at?: string | null
+          embedding_vector?: string | null
           id?: string
           is_favorite?: boolean | null
           language_tags?: string[] | null
@@ -496,20 +677,142 @@ export type Database = {
           },
         ]
       }
+      user_connections: {
+        Row: {
+          connected_user_id: string
+          created_at: string | null
+          id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          connected_user_id: string
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          connected_user_id?: string
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_model_preferences: {
+        Row: {
+          created_at: string | null
+          default_model: string
+          favorite_models: string[] | null
+          id: string
+          model_usage_stats: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          default_model?: string
+          favorite_models?: string[] | null
+          id?: string
+          model_usage_stats?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          default_model?: string
+          favorite_models?: string[] | null
+          id?: string
+          model_usage_stats?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_tags: {
+        Row: {
+          color: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      cleanup_deleted_templates: {
-        Args: never
-        Returns: number
+      batch_update_embeddings: {
+        Args: { p_embeddings: Json }
+        Returns: {
+          error_count: number
+          success_count: number
+        }[]
+      }
+      cleanup_deleted_templates: { Args: never; Returns: number }
+      generate_template_content_hash: {
+        Args: { p_agent_id: string }
+        Returns: string
+      }
+      get_chat_messages_paginated: {
+        Args: { p_before_id?: string; p_limit?: number; p_session_id: string }
+        Returns: {
+          content: string
+          cost_usd: number
+          created_at: string
+          has_more: boolean
+          id: string
+          metadata: Json
+          model_used: string
+          role: string
+          session_id: string
+          tokens_input: number
+          tokens_output: number
+        }[]
       }
       get_item_path: {
         Args: { item_id: string }
         Returns: {
           id: string
           name: string
+          type: string
+        }[]
+      }
+      get_items_needing_embeddings: {
+        Args: { p_limit?: number; p_type?: string }
+        Returns: {
+          content: string
+          description: string
+          id: string
+          name: string
+          tags: string[]
           type: string
         }[]
       }
@@ -523,9 +826,28 @@ export type Database = {
           total_executions: number
         }[]
       }
+      get_recent_chat_context: {
+        Args: { p_limit?: number; p_session_id: string }
+        Returns: {
+          content: string
+          created_at: string
+          role: string
+        }[]
+      }
       get_tag_usage_count: {
         Args: { tag_name: string; user_uuid: string }
         Returns: number
+      }
+      get_templates_needing_indexing: {
+        Args: { p_limit?: number }
+        Returns: {
+          agent_id: string
+          content: string
+          current_hash: string
+          description: string
+          name: string
+          tags: string[]
+        }[]
       }
       get_user_agent_stats: {
         Args: { p_user_id: string }
@@ -557,6 +879,73 @@ export type Database = {
           rating_count: number
           tags: string[]
         }[]
+      }
+      search_resources: {
+        Args: {
+          p_include_marketplace?: boolean
+          p_limit?: number
+          p_query: string
+          p_user_id: string
+        }
+        Returns: {
+          content_preview: string
+          description: string
+          name: string
+          relevance_score: number
+          resource_id: string
+          resource_type: string
+          tags: string[]
+        }[]
+      }
+      search_resources_hybrid: {
+        Args: {
+          p_include_marketplace?: boolean
+          p_limit?: number
+          p_query_embedding: string
+          p_query_text: string
+          p_user_id: string
+        }
+        Returns: {
+          content_preview: string
+          description: string
+          name: string
+          relevance_score: number
+          resource_id: string
+          resource_type: string
+          similarity_score: number
+          tags: string[]
+        }[]
+      }
+      search_templates_with_priority: {
+        Args: {
+          p_limit?: number
+          p_query_embedding: string
+          p_query_text?: string
+          p_user_id: string
+        }
+        Returns: {
+          agent_id: string
+          category: string
+          content: string
+          description: string
+          download_count: number
+          final_score: number
+          is_connection_template: boolean
+          is_favorite: boolean
+          is_own_template: boolean
+          match_reason: string
+          name: string
+          priority_score: number
+          quality_score: number
+          rating_average: number
+          semantic_similarity: number
+          tags: string[]
+          user_id: string
+        }[]
+      }
+      template_needs_reindexing: {
+        Args: { p_agent_id: string }
+        Returns: boolean
       }
     }
     Enums: {

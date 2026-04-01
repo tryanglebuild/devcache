@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 
 interface CreateTagModalProps {
   isOpen: boolean
   onClose: () => void
-  onTagCreated: (tag: LanguageTag) => void
+  onTagCreated: (tag: UserTag) => void
 }
 
 export function CreateTagModal({ isOpen, onClose, onTagCreated }: CreateTagModalProps) {
@@ -70,7 +70,7 @@ export function CreateTagModal({ isOpen, onClose, onTagCreated }: CreateTagModal
       }
 
       const { data, error } = await supabase
-        .from('language_tags')
+        .from('user_tags')
         .insert({
           user_id: user.id,
           name: name.trim().toLowerCase(),

@@ -38,7 +38,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
       if (!project.language_tags || project.language_tags.length === 0) return
 
       const { data, error } = await supabase
-        .from('language_tags')
+        .from('user_tags')
         .select('name, color')
         .in('name', project.language_tags)
 

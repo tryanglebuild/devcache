@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 
 interface EditTagModalProps {
   isOpen: boolean
   onClose: () => void
-  tag: LanguageTag
-  onTagUpdated: (tag: LanguageTag) => void
+  tag: UserTag
+  onTagUpdated: (tag: UserTag) => void
 }
 
 export function EditTagModal({ isOpen, onClose, tag, onTagUpdated }: EditTagModalProps) {
@@ -79,7 +79,7 @@ export function EditTagModal({ isOpen, onClose, tag, onTagUpdated }: EditTagModa
 
     try {
       const { data, error } = await supabase
-        .from('language_tags')
+        .from('user_tags')
         .update({
           name: name.trim().toLowerCase(),
           description: description.trim() || null,

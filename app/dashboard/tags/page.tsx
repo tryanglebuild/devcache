@@ -11,7 +11,7 @@ export default async function TagsPage() {
 
   // Fetch tags
   const { data: tags } = await supabase
-    .from('language_tags')
+    .from('user_tags')
     .select('*')
     .eq('user_id', user.id)
     .order('name')

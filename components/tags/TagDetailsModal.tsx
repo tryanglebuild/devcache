@@ -8,13 +8,13 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 type ProjectItem = Tables<'project_items'>
 
 interface TagDetailsModalProps {
   isOpen: boolean
   onClose: () => void
-  tag: LanguageTag
+  tag: UserTag
   fileCount: number
 }
 

@@ -20,6 +20,14 @@ interface MyTemplatesClientProps {
   userId: string
 }
 
+interface AgentTagWithDetails {
+  id: string
+  tag_name: string
+  color: string
+  description?: string | null
+  created_at: string | null
+}
+
 type FilterView = 'all' | 'created' | 'saved' | 'public' | 'private'
 
 export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClientProps) {
@@ -29,12 +37,12 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTag, setSelectedTag] = useState<string>('all')
   const [managingTagsFor, setManagingTagsFor] = useState<string | null>(null)
-  const [templateTags, setTemplateTags] = useState<Record<string, string[]>>({})
+  const [templateTags, setTemplateTags] = useState<Record<string, AgentTagWithDetails[]>>({})
 
   // Fetch tags for all templates
   useEffect(() => {
     const fetchAllTags = async () => {
-      const tagsMap: Record<string, string[]> = {}
+      const tagsMap: Record<string, AgentTagWithDetails[]> = {}
       
       await Promise.all(
         templates.map(async (template) => {
@@ -42,7 +50,7 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
             const response = await fetch(`/api/collections/${template.id}/tags`)
             if (response.ok) {
               const data = await response.json()
-              tagsMap[template.id] = data.map((t: any) => t.tag_name)
+              tagsMap[template.id] = data
             }
           } catch (error) {
             console.error(`Error fetching tags for ${template.id}:`, error)
@@ -60,7 +68,7 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
     Object.values(templateTags).forEach(tags => {
-      tags.forEach(tag => tagSet.add(tag))
+      tags.forEach(tag => tagSet.add(tag.tag_name))
     })
     return Array.from(tagSet).sort()
   }, [templateTags])
@@ -92,7 +100,7 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
     // Filter by tag
     if (selectedTag !== 'all') {
       filtered = filtered.filter(t => 
-        templateTags[t.id]?.includes(selectedTag)
+        templateTags[t.id]?.some(tag => tag.tag_name === selectedTag)
       )
     }
 
@@ -104,11 +112,17 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
   const publicCount = templates.filter(t => t.visibility === 'public').length
   const privateCount = templates.filter(t => t.visibility === 'private').length
 
-  const handleTagsUpdated = (agentId: string, tags: string[]) => {
-    setTemplateTags(prev => ({
-      ...prev,
-      [agentId]: tags
-    }))
+  const handleTagsUpdated = (agentId: string) => {
+    // Refetch tags for this specific template
+    fetch(`/api/collections/${agentId}/tags`)
+      .then(res => res.json())
+      .then(data => {
+        setTemplateTags(prev => ({
+          ...prev,
+          [agentId]: data
+        }))
+      })
+      .catch(error => console.error('Error refetching tags:', error))
   }
 
   return (
@@ -287,17 +301,19 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
                   </div>
                   
                   {userTags.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {userTags.slice(0, 3).map((tag) => (
                         <span
-                          key={tag}
-                          className="text-xs px-2 py-1 rounded bg-[#4648d4]/10 text-[#4648d4] font-medium"
+                          key={tag.id}
+                          className="text-xs px-2.5 py-1 rounded-md font-medium text-white shadow-sm"
+                          style={{ backgroundColor: tag.color }}
+                          title={tag.description || tag.tag_name}
                         >
-                          {tag}
+                          {tag.tag_name}
                         </span>
                       ))}
                       {userTags.length > 3 && (
-                        <span className="text-xs px-2 py-1 text-[#464554]">
+                        <span className="text-xs px-2 py-1 text-[#464554] bg-[#f2f4f6] rounded-md font-medium">
                           +{userTags.length - 3}
                         </span>
                       )}
@@ -365,7 +381,7 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
           agentId={managingTagsFor}
           isOpen={!!managingTagsFor}
           onClose={() => setManagingTagsFor(null)}
-          onTagsUpdated={(tags) => handleTagsUpdated(managingTagsFor, tags)}
+          onTagsUpdated={() => handleTagsUpdated(managingTagsFor)}
         />
       )}
     </div>

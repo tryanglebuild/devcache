@@ -8,7 +8,7 @@ import { Search, Folder, FileText, Tag, X, Loader2 } from 'lucide-react'
 import { trackActivity } from '@/lib/activity/track'
 
 type ProjectItem = Tables<'project_items'>
-type LanguageTag = Tables<'language_tags'>
+type UserTag = Tables<'user_tags'>
 
 interface SearchResult {
   type: 'file' | 'folder' | 'tag'
@@ -114,7 +114,7 @@ export function SearchBar() {
       if (hasMoreTags) {
         const nextTagsPage = tagsPage + 1
         const { data: tags } = await supabase
-          .from('language_tags')
+          .from('user_tags')
           .select('id, name, description, color')
           .eq('user_id', user.id)
           .ilike('name', searchTerm)
@@ -179,7 +179,7 @@ export function SearchBar() {
 
         // Search tags - first page
         const { data: tags } = await supabase
-          .from('language_tags')
+          .from('user_tags')
           .select('id, name, description, color')
           .eq('user_id', user.id)
           .ilike('name', searchTerm)
