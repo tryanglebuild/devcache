@@ -47,6 +47,19 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
   async function handleSend(content: string) {
     if (!content.trim() || streaming) return
 
+    const userMessage: ChatMessage = {
+      id: 'temp-' + Date.now(),
+      session_id: session.id,
+      role: 'user',
+      content,
+      model_used: null,
+      tokens_input: null,
+      tokens_output: null,
+      cost_usd: null,
+      metadata: {},
+      created_at: new Date().toISOString(),
+    }
+
     try {
       setStreaming(true)
       setStreamingContent('')
@@ -55,18 +68,6 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
       const isFirstMessage = messages.length === 0
 
       // Add user message optimistically
-      const userMessage: ChatMessage = {
-        id: 'temp-' + Date.now(),
-        session_id: session.id,
-        role: 'user',
-        content,
-        model_used: null,
-        tokens_input: null,
-        tokens_output: null,
-        cost_usd: null,
-        metadata: {},
-        created_at: new Date().toISOString(),
-      }
       setMessages(prev => [...prev, userMessage])
 
       // If this is the first message, auto-generate title from first 8 words
@@ -75,31 +76,35 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
         const titleWords = words.slice(0, 8)
         const autoTitle = titleWords.join(' ') + (words.length > 8 ? '...' : '')
         
+        // Update title without triggering session reload
         try {
           await updateSession(session.id, { title: autoTitle })
-          onSessionUpdate()
-          onParentUpdate?.() // Notify parent to reload sessions list
+          // Only notify parent to update sidebar, don't reload current session
+          onParentUpdate?.()
         } catch (error) {
           console.error('Failed to auto-update title:', error)
-          // Don't show error to user, it's not critical
         }
       }
 
       // Stream AI response
+      let streamedContent = ''
       for await (const chunk of sendMessage({
         sessionId: session.id,
         message: content,
         model: selectedModel,
       })) {
-        setStreamingContent(prev => prev + chunk)
+        streamedContent += chunk
+        setStreamingContent(streamedContent)
       }
 
-      // Reload messages to get the complete conversation
+      // After streaming completes, reload messages to get the saved version with metadata
       await loadMessages()
       setStreamingContent('')
     } catch (error) {
       console.error('Failed to send message:', error)
       toast.error('Failed to send message')
+      // Remove optimistic user message on error
+      setMessages(prev => prev.filter(m => m.id !== userMessage.id))
     } finally {
       setStreaming(false)
     }
