@@ -39,10 +39,11 @@ export function ChatInterfaceWrapper({ sessionId, onSessionUpdate }: ChatInterfa
     }
   }
 
+  // Show minimal loading state - let ChatInterface handle message loading
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+      <div className="flex-1 flex items-center justify-center bg-[#ffffff]">
+        <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
       </div>
     )
   }

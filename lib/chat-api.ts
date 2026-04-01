@@ -65,8 +65,10 @@ export async function deleteSession(id: string): Promise<void> {
 }
 
 // Messages
-export async function getMessages(sessionId: string): Promise<ChatMessage[]> {
-  const res = await fetch(`${API_BASE}/messages?sessionId=${sessionId}`)
+export async function getMessages(sessionId: string, limit: number = 50): Promise<ChatMessage[]> {
+  const res = await fetch(`${API_BASE}/messages?sessionId=${sessionId}&limit=${limit}`, {
+    cache: 'no-store', // Ensure fresh data
+  })
   const data: ApiResponse<ChatMessage[]> = await res.json()
   if (!res.ok) throw new Error(data.error || 'Failed to fetch messages')
   return data.data || []

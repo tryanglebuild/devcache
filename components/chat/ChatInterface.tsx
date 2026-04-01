@@ -23,6 +23,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
   const [streamingContent, setStreamingContent] = useState('')
   const [selectedModel, setSelectedModel] = useState(session.selected_model)
 
+  // Load messages immediately on mount and when session changes
   useEffect(() => {
     loadMessages()
   }, [session.id])

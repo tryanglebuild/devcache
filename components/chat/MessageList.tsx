@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, memo } from 'react'
 import type { ChatMessage } from '@/types/chat'
 import { User, Bot, Loader2, Sparkles } from 'lucide-react'
 import { MessageContent } from './MessageContent'
@@ -12,7 +12,7 @@ interface MessageListProps {
   streaming: boolean
 }
 
-export function MessageList({ messages, loading, streamingContent, streaming }: MessageListProps) {
+export const MessageList = memo(function MessageList({ messages, loading, streamingContent, streaming }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -21,14 +21,20 @@ export function MessageList({ messages, loading, streamingContent, streaming }: 
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#ffffff]">
-        <div className="text-center">
-          <div className="relative w-8 h-8 mx-auto mb-2">
-            <div className="absolute inset-0 rounded-full border-2 border-[#f3f4f6]" />
-            <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] border-t-transparent animate-spin" />
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#ffffff]">
+        {/* Skeleton for 3 messages */}
+        {[1, 2, 3].map((i) => (
+          <div key={i} className={`flex gap-3 ${i % 2 === 0 ? 'flex-row-reverse' : 'flex-row'}`}>
+            <div className={`w-7 h-7 rounded-lg flex-shrink-0 animate-pulse ${
+              i % 2 === 0 ? 'bg-[#e5e7eb]' : 'bg-[#ddd6fe]'
+            }`} />
+            <div className={`flex-1 max-w-[85%] ${i % 2 === 0 ? 'text-right' : 'text-left'}`}>
+              <div className={`inline-block rounded-lg h-16 animate-pulse ${
+                i % 2 === 0 ? 'bg-[#e5e7eb] w-48' : 'bg-[#f3f4f6] w-64'
+              }`} />
+            </div>
           </div>
-          <p className="text-xs text-[#6b7280]">Loading...</p>
-        </div>
+        ))}
       </div>
     )
   }
@@ -124,4 +130,4 @@ export function MessageList({ messages, loading, streamingContent, streaming }: 
       <div ref={bottomRef} />
     </div>
   )
-}
+})

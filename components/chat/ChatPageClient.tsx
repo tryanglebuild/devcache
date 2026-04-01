@@ -37,10 +37,12 @@ export function ChatPageClient() {
       setLoading(true)
       const supabase = createClient()
       
+      // Only load recent sessions (last 20) for faster initial load
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
         .order('last_activity_at', { ascending: false })
+        .limit(20)
 
       if (error) throw error
 
