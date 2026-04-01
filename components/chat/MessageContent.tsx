@@ -6,6 +6,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from 'remark-gfm'
 import { TemplateCard } from './TemplateCard'
 import { FileCard } from './FileCard'
+import { FolderCard } from './FolderCard'
 
 interface MessageContentProps {
   content: string
@@ -13,7 +14,7 @@ interface MessageContentProps {
 }
 
 interface ParsedContent {
-  type: 'text' | 'template' | 'file'
+  type: 'text' | 'template' | 'file' | 'folder'
   content: string
   resourceId?: string
   resourceName?: string
@@ -21,16 +22,17 @@ interface ParsedContent {
 }
 
 /**
- * Parse message content to extract template and file cards
+ * Parse message content to extract template, file, and folder cards
  * Formats: 
  * - [TEMPLATE:template_id:template_name]
  * - [FILE:file_id:file_name]
+ * - [FOLDER:folder_id:folder_name]
  */
 function parseMessageContent(content: string, metadata?: Record<string, any>): ParsedContent[] {
   const parts: ParsedContent[] = []
   
-  // Combined regex to match both TEMPLATE and FILE tags
-  const resourceRegex = /\[(TEMPLATE|FILE):([^:]+):([^\]]+)\]/g
+  // Combined regex to match TEMPLATE, FILE, and FOLDER tags
+  const resourceRegex = /\[(TEMPLATE|FILE|FOLDER):([^:]+):([^\]]+)\]/g
   
   let lastIndex = 0
   let match
@@ -48,7 +50,7 @@ function parseMessageContent(content: string, metadata?: Record<string, any>): P
     }
 
     // Add resource card
-    const resourceType = match[1].toLowerCase() as 'template' | 'file'
+    const resourceType = match[1].toLowerCase() as 'template' | 'file' | 'folder'
     const resourceId = match[2]
     const resourceName = match[3]
     
@@ -116,6 +118,19 @@ export function MessageContent({ content, templateMetadata }: MessageContentProp
               fileName={part.resourceName}
               description={part.metadata?.description}
               projectName={part.metadata?.project_name}
+            />
+          )
+        }
+
+        // Render folder card
+        if (part.type === 'folder' && part.resourceId && part.resourceName) {
+          return (
+            <FolderCard
+              key={`folder-${part.resourceId}-${index}`}
+              folderId={part.resourceId}
+              folderName={part.resourceName}
+              description={part.metadata?.description}
+              itemCount={part.metadata?.item_count}
             />
           )
         }

@@ -41,23 +41,17 @@ serve(async (req) => {
       }
     )
 
-    // Get user from JWT (already validated by Supabase's verify_jwt)
-    const jwt = authHeader.replace('Bearer ', '')
-    
-    // Decode JWT to get user ID (JWT is already validated by Supabase)
-    let userId: string
-    try {
-      const payload = JSON.parse(atob(jwt.split('.')[1]))
-      userId = payload.sub
-      
-      if (!userId) {
-        throw new Error('No user ID in JWT')
-      }
-    } catch (e) {
-      console.error('JWT decode error:', e)
+    // Validate JWT and get user
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser()
+
+    if (authError || !user) {
+      console.error('Auth error:', authError)
       return new Response(JSON.stringify({ 
         code: 401,
-        message: 'Invalid JWT format' 
+        message: authError?.message || 'Unauthorized' 
       }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -108,15 +102,14 @@ serve(async (req) => {
     const queryEmbedding = embeddingData.data[0].embedding
 
     // Search templates with hybrid RAG (vector + text search)
-    // Fetch more results initially to have better options for multi-template recommendations
     const { data: searchResults, error: searchError } = await supabaseClient.rpc(
       'search_resources_hybrid',
       {
-        p_user_id: userId,
+        p_user_id: user.id,
         p_query_text: message,
         p_query_embedding: `[${queryEmbedding.join(',')}]`,
         p_include_marketplace: includeMarketplace,
-        p_limit: 8, // Increased from 5 to allow better multi-template recommendations
+        p_limit: 5,
       }
     )
 
@@ -134,11 +127,10 @@ serve(async (req) => {
     })
 
     // Build messages for AI
-    const conversationLength = (history || []).length + 1
     const messages = [
       {
         role: 'system',
-        content: buildSystemPrompt(context, conversationLength),
+        content: buildSystemPrompt(context),
       },
       ...(history || []).slice(-10),
       {
@@ -257,13 +249,19 @@ serve(async (req) => {
 
 function buildContext(results: any[]): string {
   if (results.length === 0) {
-    return 'No relevant templates or files found in the platform.'
+    return 'CONTEXT: No relevant resources found in the platform.'
   }
 
-  return results
-    .map(
-      (r, i) => `
-${i + 1}. ${r.name} (${r.resource_type === 'project_item' ? 'Your File' : 'Marketplace Template'})
+  const contextItems = results
+    .map((r, i) => {
+      const resourceLabel = r.resource_type === 'project_folder' 
+        ? 'Your Folder' 
+        : r.resource_type === 'project_item' 
+        ? 'Your File' 
+        : 'Marketplace Template'
+      
+      return `
+${i + 1}. ${r.name} (${resourceLabel})
    Description: ${r.description || 'No description'}
    Tags: ${r.tags?.join(', ') || 'None'}
    Semantic Similarity: ${(r.similarity_score * 100).toFixed(0)}%
@@ -272,92 +270,58 @@ ${i + 1}. ${r.name} (${r.resource_type === 'project_item' ? 'Your File' : 'Marke
    Resource ID: ${r.resource_id}
    Type: ${r.resource_type}
 `.trim()
-    )
+    })
     .join('\n\n')
+
+  return `CONTEXT: Found ${results.length} relevant resources in the platform:\n\n${contextItems}`
 }
 
-function buildSystemPrompt(context: string, conversationLength: number): string {
-  const isFirstMessage = conversationLength <= 1
-  
+function buildSystemPrompt(context: string): string {
   return `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
 
-Your role is to RECOMMEND resources (templates and files) that exist in the platform to users.
+CRITICAL RULES - YOU MUST FOLLOW THESE EXACTLY:
+
+1. RESOURCE RECOMMENDATION ONLY
+   - You can ONLY recommend resources that appear in the CONTEXT below
+   - DO NOT use external knowledge, documentation, or tutorials
+   - DO NOT recommend external resources, websites, or documentation
+   - DO NOT explain how to code or implement solutions
+   - DO NOT provide coding advice or implementation steps
+   - If NO resources are found in context, you MUST say you couldn't find anything
+
+2. RESPONSE FORMAT
+   When resources ARE found, use this EXACT format:
+   
+   For folders: [FOLDER:resource_id:folder_name]
+   For files: [FILE:resource_id:file_name]
+   For templates: [TEMPLATE:resource_id:template_name]
+   
+   Then add ONE sentence explaining why it's relevant.
+
+3. WHEN NO RESOURCES FOUND
+   If context shows "No relevant resources found", respond:
+   "I couldn't find any relevant files, folders, or templates in your library or the marketplace for that query. You can browse your projects page or the marketplace to see all available resources."
+
+4. MAXIMUM RECOMMENDATIONS
+   - Recommend maximum 3 resources
+   - Prioritize user's own files and folders over marketplace
+   - Prioritize folders when they match the query
 
 ${context}
 
-CRITICAL RULES - READ CAREFULLY:
-1. You can ONLY recommend resources from the context above
-2. DO NOT use external knowledge or search the internet
-3. DO NOT recommend external resources, documentation, or tutorials
-4. DO NOT explain how to code or implement solutions
-5. ONLY recommend resources that appear in the context
+EXAMPLE RESPONSE (resources found):
+"I found the perfect folder for you:
 
-${isFirstMessage ? `
-CLARIFYING QUESTIONS STRATEGY:
-- If the user's request is vague or ambiguous, ASK 2-3 clarifying questions BEFORE recommending
-- Questions should help narrow down: technology stack, use case, complexity level, or specific features
-- Example: "I need authentication" → Ask: "What type of authentication? (OAuth, JWT, email/password?) Which platform? (web, mobile, API?)"
-- If the request is specific and clear, proceed directly to recommendations
-` : ''}
+[FOLDER:abc-123:cgc]
+This folder contains 4 files related to CGC documentation."
 
-If resources are available, use this EXACT format:
+EXAMPLE RESPONSE (no resources):
+"I couldn't find any relevant files, folders, or templates in your library or the marketplace for that query. You can browse your projects page or the marketplace to see all available resources."
 
-For project files: [FILE:resource_id:file_name]
-For marketplace templates: [TEMPLATE:resource_id:template_name]
-
-Then add a brief 1-sentence description of why it's relevant.
-
-EXAMPLE RESPONSE (when resources found):
-"I found the perfect file for you:
-
-[FILE:abc-123:authentication-setup.md]
-This file contains your Google OAuth setup documentation."
-
-EXAMPLE RESPONSE (when multiple resources found):
-"I found 3 relevant resources for you:
-
-1. [TEMPLATE:xyz-789:nextjs-auth-starter]
-   Complete authentication setup with OAuth and JWT for Next.js
-
-2. [FILE:abc-123:auth-config.ts]
-   Your existing authentication configuration file
-
-3. [TEMPLATE:def-456:supabase-auth-template]
-   Supabase authentication integration with RLS policies
-
-All three work well together - the template provides the structure, and your config file has your specific settings."
-
-EXAMPLE RESPONSE (when asking questions - first message only):
-"I can help you find the right template! To give you the best recommendation, I need to know:
-
-1. What technology stack are you using? (Next.js, React, Flutter, etc.)
-2. What's your main goal? (authentication, API integration, UI components?)
-3. What's your experience level? (beginner, intermediate, advanced?)
-
-This will help me find the most relevant resources for you."
-
-EXAMPLE RESPONSE (when NO resources found):
-"I couldn't find a relevant file or template in your library or the marketplace for that specific need. You can:
-- Browse the marketplace to see all available templates
-- Create a new file or template for this use case"
-
-IMPORTANT:
-- You can recommend 1-3 resources depending on relevance and user needs
-- When multiple resources complement each other, recommend all of them with explanations
-- Prioritize user's own files and favorites
-- Group recommendations logically (e.g., "starter template + your config file + related component")
-- If the context shows "No relevant templates or files found", you MUST say you couldn't find anything
-- DO NOT make up resource names or IDs
-- DO NOT provide external links or documentation
-- DO NOT explain implementation steps
-- Pay attention to semantic similarity scores - higher scores mean better matches
-- Consider asking questions when similarity scores are all below 60%
-
-MULTI-TEMPLATE STRATEGY:
-- Recommend multiple templates when they serve different aspects of the same goal
-- Example: User asks for "authentication" → Recommend auth template + config file + security best practices doc
-- Explain how the resources work together or complement each other
-- Number your recommendations (1., 2., 3.) for clarity
-
-Your ONLY job is to recommend resources that exist in the platform OR ask clarifying questions to better understand user needs.`
+REMEMBER: You are FORBIDDEN from:
+- Recommending external resources
+- Explaining how to code
+- Providing implementation steps
+- Using knowledge outside the CONTEXT
+- Making up resource names or IDs`
 }
