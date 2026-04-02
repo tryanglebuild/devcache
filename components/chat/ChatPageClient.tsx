@@ -1,48 +1,31 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { Sparkles, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ChatInterfaceWrapper } from './ChatInterfaceWrapper'
 import { SessionList } from './SessionList'
 import type { ChatSession } from '@/types/chat'
 
 export function ChatPageClient() {
-  const router = useRouter()
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    checkAuthAndLoadSessions()
+    loadSessions()
   }, [])
-
-  async function checkAuthAndLoadSessions() {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      router.push('/login')
-      return
-    }
-    
-    setIsAuthenticated(true)
-    await loadSessions()
-  }
 
   async function loadSessions() {
     try {
       setLoading(true)
       const supabase = createClient()
       
-      // Only load recent sessions (last 20) for faster initial load
+      // Load all sessions for conversation history
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
         .order('last_activity_at', { ascending: false })
-        .limit(20)
 
       if (error) throw error
 
@@ -50,8 +33,6 @@ export function ChatPageClient() {
       
       if (data && data.length > 0) {
         setCurrentSessionId(data[0].id)
-      } else {
-        await createNewSession()
       }
     } catch (error) {
       console.error('Error loading sessions:', error)
@@ -82,39 +63,49 @@ export function ChatPageClient() {
     }
   }
 
-  if (loading || !isAuthenticated) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="h-full flex items-center justify-center bg-[#f7f9fb]">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {!isAuthenticated ? 'Checking authentication...' : 'Loading chat...'}
-          </p>
+          <div className="relative w-12 h-12 mx-auto mb-4">
+            <div className="absolute inset-0 rounded-full border-2 border-[#e8eff3]" />
+            <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] border-t-transparent animate-spin" />
+          </div>
+          <p className="text-sm text-[#464554] font-medium">Loading conversations...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      {/* Header */}
-      <header className="h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center px-6">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back</span>
-        </button>
-        <h1 className="ml-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
-          AI Assistant
-        </h1>
-      </header>
+    <div className="h-full flex bg-[#f7f9fb]">
+      {/* Conversation History Sidebar - 300px fixed width */}
+      <aside className="w-[300px] bg-white border-r border-[#e8eff3] flex flex-col">
+        {/* Sidebar Header */}
+        <div className="p-3 border-b border-[#e8eff3]">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#4f46e5] to-[#6366f1] flex items-center justify-center shadow-sm">
+              <Sparkles className="h-3.5 w-3.5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xs font-black text-[#191c1e] tracking-tight leading-none">
+                AI Assistant
+              </h2>
+              <p className="text-[9px] text-[#464554] mt-0.5">Conversations</p>
+            </div>
+          </div>
+          
+          <button
+            onClick={createNewSession}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-br from-[#4f46e5] to-[#6366f1] text-white rounded-lg font-semibold text-xs shadow-md shadow-[#4f46e5]/20 hover:shadow-lg hover:scale-[1.02] transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            New Chat
+          </button>
+        </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex">
-        {/* Sidebar - 20% width */}
-        <div className="w-[20%] bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+        {/* Session List */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           <SessionList
             sessions={sessions}
             currentSessionId={currentSessionId}
@@ -123,17 +114,49 @@ export function ChatPageClient() {
           />
         </div>
 
-        {/* Chat Area - 80% width */}
-        <div className="w-[80%] bg-white dark:bg-gray-900">
-          {currentSessionId ? (
-            <ChatInterfaceWrapper sessionId={currentSessionId} />
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-500">Select or create a conversation</p>
-            </div>
-          )}
+        {/* Stats Footer */}
+        <div className="p-3 border-t border-[#e8eff3] bg-[#fafbfc]">
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-[#464554] font-semibold">
+              Total Chats
+            </span>
+            <span className="px-2 py-0.5 bg-white rounded font-bold text-[#4f46e5] border border-[#e8eff3] shadow-sm">
+              {sessions.length}
+            </span>
+          </div>
         </div>
-      </div>
+      </aside>
+
+      {/* Chat Area - Flexible width */}
+      <main className="flex-1 bg-[#fafbfc] overflow-hidden">
+        {currentSessionId ? (
+          <ChatInterfaceWrapper 
+            sessionId={currentSessionId}
+            onSessionUpdate={loadSessions}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center max-w-md px-6">
+              <div className="w-16 h-16 mx-auto mb-5 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#6366f1] flex items-center justify-center shadow-lg shadow-[#4f46e5]/20">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+              <h2 className="text-xl font-black text-[#191c1e] mb-2 tracking-tight">
+                Start a Conversation
+              </h2>
+              <p className="text-sm text-[#464554] mb-5 leading-relaxed">
+                Create a new conversation or select one from your history to continue chatting with AI.
+              </p>
+              <button
+                onClick={createNewSession}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-[#4f46e5] to-[#6366f1] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 hover:shadow-xl hover:scale-105 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Create New Chat
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   )
 }

@@ -133,22 +133,24 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
   }, 0)
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#ffffff]">
-      <header className="border-b border-[#e5e7eb] px-4 py-2 bg-[#ffffff]">
-        <div className="flex items-center justify-between gap-3">
+    <div className="flex-1 flex flex-col h-full bg-white">
+      <header className="border-b border-[#e8eff3] px-5 py-3 bg-white">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0 flex items-center gap-2">
-            <h1 className="text-xs font-medium text-[#111827] truncate">{session.title}</h1>
-            <span className="text-[10px] text-[#9ca3af]">•</span>
-            <span className="text-[10px] text-[#6b7280]">{messages.length} msgs</span>
-            {totalCredits > 0 && (
-              <>
-                <span className="text-[10px] text-[#9ca3af]">•</span>
-                <div className="flex items-center gap-1">
+            <h1 className="text-xs font-bold text-[#191c1e] truncate tracking-tight">
+              {session.title}
+            </h1>
+            <div className="flex items-center gap-1.5 text-xs text-[#464554]">
+              <span className="px-1.5 py-0.5 bg-[#f2f4f6] rounded font-semibold text-[10px]">
+                {messages.length}
+              </span>
+              {totalCredits > 0 && (
+                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-br from-[#4f46e5]/10 to-[#6366f1]/10 rounded">
                   <Zap className="h-3 w-3 text-[#4f46e5]" />
-                  <span className="text-[10px] font-semibold text-[#4f46e5]">{totalCredits}</span>
+                  <span className="text-[10px] font-bold text-[#4f46e5]">{totalCredits}</span>
                 </div>
-              </>
-            )}
+              )}
+            </div>
           </div>
           <ModelSelector
             selectedModel={selectedModel}
