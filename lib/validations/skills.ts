@@ -31,6 +31,10 @@ export const updateSkillSchema = z.object({
   tags: z.array(z.string()).max(10, 'Maximum 10 tags allowed').optional(),
   priority: z.number().int().min(0).max(100).optional(),
   is_active: z.boolean().optional(),
+  content: z.string()
+    .min(10, 'Content must be at least 10 characters')
+    .max(100000, 'Content must be less than 100KB')
+    .optional(),
 })
 
 export const uploadSkillSchema = z.object({

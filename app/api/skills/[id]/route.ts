@@ -62,10 +62,10 @@ export async function PATCH(
       )
     }
 
-    // Verify ownership
+    // Verify ownership and get current skill data
     const { data: existing } = await supabase
       .from('user_skills')
-      .select('id, name')
+      .select('id, name, file_path')
       .eq('id', id)
       .eq('user_id', user.id)
       .single()
@@ -92,9 +92,30 @@ export async function PATCH(
       }
     }
 
+    // If content is being updated, update the file in storage
+    if (body.content) {
+      const { error: storageError } = await supabase.storage
+        .from('user-skills')
+        .update(existing.file_path, body.content, {
+          contentType: 'text/markdown',
+          upsert: true,
+        })
+
+      if (storageError) {
+        console.error('Storage update error:', storageError)
+        return NextResponse.json(
+          { error: 'Failed to update skill content' },
+          { status: 500 }
+        )
+      }
+    }
+
+    // Remove content from body as it's stored in storage, not database
+    const { content, ...dbUpdateData } = body
+
     const { data: skill, error } = await supabase
       .from('user_skills')
-      .update(body)
+      .update(dbUpdateData)
       .eq('id', id)
       .eq('user_id', user.id)
       .select()

@@ -32,7 +32,16 @@ export function InstructionsSettings() {
   const [isSaving, setIsSaving] = useState(false)
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [templateSearch, setTemplateSearch] = useState('')
-  const [showTemplates, setShowTemplates] = useState(false)
+  const [previewTemplate, setPreviewTemplate] = useState<InstructionTemplate | null>(null)
+  const [editingSkill, setEditingSkill] = useState<Skill | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    description: '',
+    category: 'general',
+    priority: 50,
+    content: '',
+  })
+  const [activeTab, setActiveTab] = useState('my-instructions')
   
   // Form state
   const [formData, setFormData] = useState({
@@ -91,6 +100,43 @@ export function InstructionsSettings() {
     }
   }
 
+  const handlePreviewTemplate = (template: InstructionTemplate) => {
+    // Show a simple preview modal
+    setPreviewTemplate(template)
+  }
+
+  const handleAddTemplate = async (template: InstructionTemplate) => {
+    setIsSaving(true)
+    try {
+      const response = await fetch('/api/skills', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: template.name,
+          description: template.description,
+          category: template.category,
+          priority: template.priority,
+          content: template.content,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to add template')
+      }
+
+      toast.success(`Template "${template.name}" imported successfully!`)
+      setPreviewTemplate(null)
+      await fetchSkills()
+      // Switch to My Instructions tab to show the imported template
+      setActiveTab('my-instructions')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add template')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const handleToggle = async (skillId: string, currentState: boolean) => {
     try {
       const response = await fetch(`/api/skills/${skillId}/toggle`, {
@@ -123,33 +169,51 @@ export function InstructionsSettings() {
     }
   }
 
-  const handleAddTemplate = async (template: InstructionTemplate) => {
+  const handleEditSkill = async () => {
+    if (!editingSkill || !editFormData.name || !editFormData.content) {
+      toast.error('Name and content are required')
+      return
+    }
+
     setIsSaving(true)
     try {
-      const response = await fetch('/api/skills', {
-        method: 'POST',
+      const response = await fetch(`/api/skills/${editingSkill.id}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: template.name,
-          description: template.description,
-          category: template.category,
-          priority: template.priority,
-          content: template.content,
-        }),
+        body: JSON.stringify(editFormData),
       })
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to add template')
+        throw new Error(error.error || 'Failed to update instruction')
       }
 
-      toast.success(`Template "${template.name}" added successfully!`)
-      setShowTemplates(false)
+      toast.success('Instruction updated successfully')
+      setEditingSkill(null)
       await fetchSkills()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to add template')
+      toast.error(error instanceof Error ? error.message : 'Failed to update instruction')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const openEditModal = async (skill: Skill) => {
+    try {
+      const response = await fetch(`/api/skills/${skill.id}/content`)
+      if (!response.ok) throw new Error('Failed to fetch skill content')
+      
+      const data = await response.json()
+      setEditFormData({
+        name: skill.name,
+        description: skill.description || '',
+        category: skill.category,
+        priority: skill.priority,
+        content: data.content || '',
+      })
+      setEditingSkill(skill)
+    } catch (error) {
+      toast.error('Failed to load instruction content')
     }
   }
 
@@ -186,6 +250,11 @@ export function InstructionsSettings() {
     )
   })
 
+  // Check which templates are already imported
+  const isTemplateImported = (templateName: string) => {
+    return skills.some(skill => skill.name === templateName)
+  }
+
   return (
     <div className="flex flex-col h-full bg-white rounded-lg border border-[#e5e7eb] shadow-sm overflow-hidden">
       {/* Header Section */}
@@ -206,7 +275,7 @@ export function InstructionsSettings() {
       </div>
 
       {/* Tabs Navigation - Fixed at top */}
-      <Tabs defaultValue="my-instructions" className="flex flex-col flex-1 overflow-hidden">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 overflow-hidden">
         <div className="border-b border-[#e5e7eb] bg-white shadow-sm">
           <div className="px-6">
             <TabsList className="inline-flex h-12 items-center justify-start gap-1 bg-transparent p-0 border-b-2 border-transparent">
@@ -235,7 +304,12 @@ export function InstructionsSettings() {
           <TabsContent value="my-instructions" className="mt-0">
             {/* Create Button */}
             <div className="mb-6">
-              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <Dialog open={isModalOpen} onOpenChange={(open) => {
+                setIsModalOpen(open)
+                if (!open) {
+                  setFormData({ name: '', description: '', category: 'general', priority: 50, content: '' })
+                }
+              }}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all">
                     <Plus className="mr-2 h-4 w-4" />
@@ -253,7 +327,7 @@ export function InstructionsSettings() {
                     <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
                       <FileText className="h-5 w-5 text-white" />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <DialogTitle className="text-xl font-bold text-white mb-0.5">
                         Create New Instruction
                       </DialogTitle>
@@ -537,7 +611,10 @@ export function InstructionsSettings() {
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
-                    onClick={() => setIsModalOpen(false)}
+                    onClick={() => {
+                      setIsModalOpen(false)
+                      setFormData({ name: '', description: '', category: 'general', priority: 50, content: '' })
+                    }}
                     className="border-[#e5e7eb] hover:bg-[#f7f9fb]"
                   >
                     Cancel
@@ -679,6 +756,15 @@ export function InstructionsSettings() {
                     <Button
                       size="sm"
                       variant="outline"
+                      onClick={() => openEditModal(skill)}
+                      className="border-[#e5e7eb] text-[#4648d4] hover:bg-[#f0f4ff]"
+                      title="Edit instruction"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => handleToggle(skill.id, skill.is_active)}
                       className={`border-[#e5e7eb] ${
                         skill.is_active 
@@ -736,7 +822,10 @@ export function InstructionsSettings() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredTemplates.map((template) => (
+            {filteredTemplates.map((template) => {
+              const isImported = isTemplateImported(template.name)
+              
+              return (
               <div
                 key={template.id}
                 className="group p-5 bg-white border border-[#e5e7eb] rounded-xl hover:border-[#4648d4] hover:shadow-md transition-all"
@@ -751,9 +840,16 @@ export function InstructionsSettings() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
-                        <h3 className="text-base font-semibold text-[#191c1e] mb-1 group-hover:text-[#4648d4] transition-colors">
-                          {template.name}
-                        </h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-base font-semibold text-[#191c1e] group-hover:text-[#4648d4] transition-colors">
+                            {template.name}
+                          </h3>
+                          {isImported && (
+                            <span className="px-2 py-0.5 bg-[#e5e7eb] text-[#6b7280] rounded text-xs font-medium">
+                              Imported
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-[#6b7280] leading-relaxed">
                           {template.description}
                         </p>
@@ -778,26 +874,41 @@ export function InstructionsSettings() {
                           </span>
                         ))}
                       </div>
-                      <Button
-                        size="sm"
-                        onClick={() => handleAddTemplate(template)}
-                        disabled={isSaving}
-                        className="bg-[#4648d4] hover:bg-[#3739b8] text-white shadow-sm"
-                      >
-                        {isSaving ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <>
-                            <Plus className="h-3.5 w-3.5 mr-1.5" />
-                            Add to Profile
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handlePreviewTemplate(template)}
+                          className="border-[#e5e7eb] text-[#4648d4] hover:bg-[#f0f4ff]"
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-1.5" />
+                          Preview
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleAddTemplate(template)}
+                          disabled={isSaving || isImported}
+                          className={`shadow-sm ${
+                            isImported
+                              ? 'bg-[#e5e7eb] text-[#9ca3af] cursor-not-allowed hover:bg-[#e5e7eb]'
+                              : 'bg-[#4648d4] hover:bg-[#3739b8] text-white'
+                          }`}
+                        >
+                          {isSaving ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <>
+                              <Plus className="h-3.5 w-3.5 mr-1.5" />
+                              {isImported ? 'Imported' : 'Import'}
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
 
@@ -813,6 +924,337 @@ export function InstructionsSettings() {
         </div>
       </div>
       </Tabs>
+
+      {/* Template Preview Modal */}
+      <Dialog open={!!previewTemplate} onOpenChange={(open) => !open && setPreviewTemplate(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 gap-0 bg-white flex flex-col">
+          {previewTemplate && (
+            <>
+              {/* Header */}
+              <div className="px-8 pt-6 pb-5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
+                    <span className="text-3xl">{previewTemplate.icon}</span>
+                  </div>
+                  <div className="flex-1">
+                    <DialogTitle className="text-2xl font-bold text-white mb-2">
+                      {previewTemplate.name}
+                    </DialogTitle>
+                    <DialogDescription className="text-white/90 text-sm leading-relaxed">
+                      {previewTemplate.description}
+                    </DialogDescription>
+                    <div className="flex items-center gap-2 mt-3">
+                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-lg text-xs font-medium capitalize">
+                        {previewTemplate.category}
+                      </span>
+                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-lg text-xs font-medium">
+                        Priority {previewTemplate.priority}
+                      </span>
+                      {previewTemplate.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 bg-white/10 backdrop-blur-sm text-white rounded-lg text-xs"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-8 py-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#191c1e] mb-2">Template Content</h3>
+                    <div className="p-4 bg-[#f7f9fb] border border-[#e5e7eb] rounded-lg">
+                      <pre className="text-sm text-[#191c1e] whitespace-pre-wrap font-mono leading-relaxed">
+                        {previewTemplate.content}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-8 py-4 bg-white border-t border-[#e5e7eb] flex items-center justify-between">
+                <p className="text-xs text-[#9ca3af]">
+                  Import this template to your instructions. You can edit it after importing.
+                </p>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setPreviewTemplate(null)}
+                    className="border-[#e5e7eb] hover:bg-[#f7f9fb]"
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    onClick={() => handleAddTemplate(previewTemplate)}
+                    disabled={isSaving}
+                    className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30"
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Importing...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Import to My Instructions
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Skill Modal */}
+      <Dialog open={!!editingSkill} onOpenChange={(open) => !open && setEditingSkill(null)}>
+        <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-gradient-to-br from-white via-[#fafbfc] to-[#f7f9fb] flex flex-col">
+          {/* Header with gradient - Fixed */}
+          <div className="relative px-10 pt-6 pb-5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white overflow-hidden shrink-0">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            
+            <div className="relative">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <Edit className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <DialogTitle className="text-xl font-bold text-white mb-0.5">
+                    Edit Instruction
+                  </DialogTitle>
+                  <DialogDescription className="text-white/80 text-xs">
+                    Modify and improve your custom instruction
+                  </DialogDescription>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Content - Scrollable */}
+          <div className="flex-1 overflow-y-auto px-10 py-8">
+            <div className="flex gap-8">
+              {/* Left Column - Basic Info */}
+              <div className="w-[420px] shrink-0 space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-[#191c1e]">
+                    <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white text-xs">
+                      1
+                    </div>
+                    Basic Information
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-name" className="text-sm font-medium text-[#191c1e]">
+                        Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="edit-name"
+                        value={editFormData.name}
+                        onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                        placeholder="e.g., Always provide examples"
+                        className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-category" className="text-sm font-medium text-[#191c1e]">
+                        Category
+                      </Label>
+                      <Select
+                        value={editFormData.category}
+                        onValueChange={(value) => setEditFormData({ ...editFormData, category: value })}
+                      >
+                        <SelectTrigger className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 bg-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border border-[#e5e7eb] shadow-lg">
+                          <SelectItem value="general" className="hover:bg-[#f7f9fb] cursor-pointer">📋 General</SelectItem>
+                          <SelectItem value="coding" className="hover:bg-[#f7f9fb] cursor-pointer">💻 Coding</SelectItem>
+                          <SelectItem value="writing" className="hover:bg-[#f7f9fb] cursor-pointer">✍️ Writing</SelectItem>
+                          <SelectItem value="analysis" className="hover:bg-[#f7f9fb] cursor-pointer">📊 Analysis</SelectItem>
+                          <SelectItem value="custom" className="hover:bg-[#f7f9fb] cursor-pointer">⚙️ Custom</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-description" className="text-sm font-medium text-[#191c1e]">
+                        Description <span className="text-[#9ca3af] text-xs">(Optional)</span>
+                      </Label>
+                      <Textarea
+                        id="edit-description"
+                        value={editFormData.description}
+                        onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                        placeholder="Brief description of what this instruction does"
+                        className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 min-h-[80px] resize-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-priority" className="text-sm font-medium text-[#191c1e]">
+                        Priority (0-100)
+                      </Label>
+                      <div className="space-y-3">
+                        <Input
+                          id="edit-priority"
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={editFormData.priority}
+                          onChange={(e) => setEditFormData({ ...editFormData, priority: parseInt(e.target.value) || 0 })}
+                          className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20"
+                        />
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[#9ca3af]">Low</span>
+                            <span className="font-semibold text-[#4648d4]">{editFormData.priority}%</span>
+                            <span className="text-[#9ca3af]">High</span>
+                          </div>
+                          <div className="h-2 bg-[#e5e7eb] rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-300"
+                              style={{ width: `${editFormData.priority}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Content Editor */}
+              <div className="flex-1 min-w-0 space-y-4">
+                <div className="flex items-center gap-2 text-sm font-semibold text-[#191c1e]">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white text-xs">
+                    2
+                  </div>
+                  Instruction Content
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="edit-content" className="text-sm font-medium text-[#191c1e]">
+                    Markdown Content <span className="text-red-500">*</span>
+                  </Label>
+                  
+                  {/* Markdown Toolbar */}
+                  <div className="flex items-center gap-1 p-2 bg-white border border-[#e5e7eb] rounded-t-xl shadow-sm">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const textarea = document.getElementById('edit-content') as HTMLTextAreaElement
+                        if (!textarea) return
+                        const start = textarea.selectionStart
+                        const end = textarea.selectionEnd
+                        const selectedText = editFormData.content.substring(start, end)
+                        const newText = editFormData.content.substring(0, start) + '**' + selectedText + '**' + editFormData.content.substring(end)
+                        setEditFormData({ ...editFormData, content: newText })
+                      }}
+                      title="Bold"
+                      className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                    >
+                      <Bold className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const textarea = document.getElementById('edit-content') as HTMLTextAreaElement
+                        if (!textarea) return
+                        const start = textarea.selectionStart
+                        const end = textarea.selectionEnd
+                        const selectedText = editFormData.content.substring(start, end)
+                        const newText = editFormData.content.substring(0, start) + '*' + selectedText + '*' + editFormData.content.substring(end)
+                        setEditFormData({ ...editFormData, content: newText })
+                      }}
+                      title="Italic"
+                      className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                    >
+                      <Italic className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const textarea = document.getElementById('edit-content') as HTMLTextAreaElement
+                        if (!textarea) return
+                        const start = textarea.selectionStart
+                        const end = textarea.selectionEnd
+                        const selectedText = editFormData.content.substring(start, end)
+                        const newText = editFormData.content.substring(0, start) + '`' + selectedText + '`' + editFormData.content.substring(end)
+                        setEditFormData({ ...editFormData, content: newText })
+                      }}
+                      title="Code"
+                      className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                    >
+                      <Code className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <Textarea
+                    id="edit-content"
+                    value={editFormData.content}
+                    onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
+                    placeholder="# My Instruction&#10;&#10;Content here..."
+                    className="min-h-[550px] font-mono text-sm rounded-t-none border-t-0 border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 resize-none"
+                  />
+                  <div className="flex items-center justify-between text-xs text-[#9ca3af]">
+                    <span>Use markdown formatting to structure your instruction</span>
+                    <span>{editFormData.content.length} characters</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer - Fixed */}
+          <div className="px-10 py-4 bg-white border-t border-[#e5e7eb] flex items-center justify-between shrink-0">
+            <p className="text-xs text-[#9ca3af]">
+              <span className="text-red-500">*</span> Required fields
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setEditingSkill(null)}
+                className="border-[#e5e7eb] hover:bg-[#f7f9fb]"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleEditSkill}
+                disabled={isSaving || !editFormData.name || !editFormData.content}
+                className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

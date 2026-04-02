@@ -40,6 +40,7 @@ export interface UpdateSkillRequest {
   tags?: string[]
   priority?: number
   is_active?: boolean
+  content?: string
 }
 
 export interface UploadSkillRequest {
