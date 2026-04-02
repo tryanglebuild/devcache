@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, FileText, Plus, Edit, Trash2, Eye, EyeOff, AlertCircle, Bold, Italic, Code, List, ListOrdered, Link as LinkIcon } from 'lucide-react'
+import { Loader2, FileText, Plus, Edit, Trash2, Eye, EyeOff, AlertCircle, Bold, Italic, Code, List, ListOrdered, Link as LinkIcon, Sparkles, Search } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { INSTRUCTION_TEMPLATES, type InstructionTemplate } from '@/lib/instruction-templates'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface Skill {
   id: string
@@ -29,6 +31,8 @@ export function InstructionsSettings() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [templateSearch, setTemplateSearch] = useState('')
+  const [showTemplates, setShowTemplates] = useState(false)
   
   // Form state
   const [formData, setFormData] = useState({
@@ -119,6 +123,36 @@ export function InstructionsSettings() {
     }
   }
 
+  const handleAddTemplate = async (template: InstructionTemplate) => {
+    setIsSaving(true)
+    try {
+      const response = await fetch('/api/skills', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: template.name,
+          description: template.description,
+          category: template.category,
+          priority: template.priority,
+          content: template.content,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to add template')
+      }
+
+      toast.success(`Template "${template.name}" added successfully!`)
+      setShowTemplates(false)
+      await fetchSkills()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add template')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const insertMarkdown = (before: string, after: string = '') => {
     const textarea = document.getElementById('content') as HTMLTextAreaElement
     if (!textarea) return
@@ -142,31 +176,73 @@ export function InstructionsSettings() {
     return true
   })
 
+  const filteredTemplates = INSTRUCTION_TEMPLATES.filter(template => {
+    if (!templateSearch) return true
+    const search = templateSearch.toLowerCase()
+    return (
+      template.name.toLowerCase().includes(search) ||
+      template.description.toLowerCase().includes(search) ||
+      template.tags.some(tag => tag.toLowerCase().includes(search))
+    )
+  })
+
   return (
-    <Card className="bg-white border-[#e5e7eb] shadow-sm">
-      <CardHeader className="pb-6 border-b border-[#e5e7eb]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-[#4648d4] flex items-center justify-center">
-              <FileText className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-bold text-[#191c1e]">
-                AI Instructions (Skills)
-              </CardTitle>
-              <CardDescription className="text-[#6b7280] text-sm">
-                Create custom instructions to guide the AI chat behavior
-              </CardDescription>
-            </div>
+    <div className="flex flex-col h-full bg-white rounded-lg border border-[#e5e7eb] shadow-sm overflow-hidden">
+      {/* Header Section */}
+      <div className="flex items-center justify-between px-6 py-5 border-b border-[#e5e7eb] bg-gradient-to-r from-white to-[#fafbfc]">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-lg bg-[#4648d4] flex items-center justify-center shadow-md">
+            <FileText className="h-6 w-6 text-white" />
           </div>
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all">
-                <Plus className="mr-2 h-4 w-4" />
-                New Instruction
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-gradient-to-br from-white via-[#fafbfc] to-[#f7f9fb] flex flex-col">
+          <div>
+            <h2 className="text-2xl font-bold text-[#191c1e]">
+              AI Instructions (Skills)
+            </h2>
+            <p className="text-[#6b7280] text-sm">
+              Create custom instructions to guide the AI chat behavior
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Navigation - Fixed at top */}
+      <Tabs defaultValue="my-instructions" className="flex flex-col flex-1 overflow-hidden">
+        <div className="border-b border-[#e5e7eb] bg-white shadow-sm">
+          <div className="px-6">
+            <TabsList className="inline-flex h-12 items-center justify-start gap-1 bg-transparent p-0 border-b-2 border-transparent">
+              <TabsTrigger 
+                value="my-instructions" 
+                className="relative inline-flex items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-medium transition-all border-b-2 border-transparent -mb-[2px] data-[state=active]:border-[#4648d4] data-[state=active]:text-[#4648d4] data-[state=inactive]:text-[#6b7280] hover:text-[#191c1e] hover:bg-[#f7f9fb] rounded-t-lg"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                My Instructions
+              </TabsTrigger>
+              <TabsTrigger 
+                value="templates" 
+                className="relative inline-flex items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-medium transition-all border-b-2 border-transparent -mb-[2px] data-[state=active]:border-[#4648d4] data-[state=active]:text-[#4648d4] data-[state=inactive]:text-[#6b7280] hover:text-[#191c1e] hover:bg-[#f7f9fb] rounded-t-lg"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Browse Templates
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
+
+      {/* Content Area - Scrollable */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6">
+          {/* My Instructions Tab */}
+          <TabsContent value="my-instructions" className="mt-0">
+            {/* Create Button */}
+            <div className="mb-6">
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all">
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Instruction
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-gradient-to-br from-white via-[#fafbfc] to-[#f7f9fb] flex flex-col">
               {/* Header with gradient - Fixed */}
               <div className="relative px-10 pt-6 pb-5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white overflow-hidden shrink-0">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -486,10 +562,9 @@ export function InstructionsSettings() {
                 </div>
               </div>
             </DialogContent>
-          </Dialog>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-6">
+            </Dialog>
+          </div>
+
         {/* Info Card */}
         <div className="p-5 bg-[#f7f9fb] border border-[#e5e7eb] rounded-lg mb-6">
           <div className="flex items-start gap-3">
@@ -633,7 +708,111 @@ export function InstructionsSettings() {
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </TabsContent>
+
+      {/* Templates Tab */}
+      <TabsContent value="templates" className="mt-0 h-full">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9ca3af]" />
+            <Input
+              value={templateSearch}
+              onChange={(e) => setTemplateSearch(e.target.value)}
+              placeholder="Search by name, description, or tags..."
+              className="pl-10 border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 bg-[#f7f9fb]"
+            />
+          </div>
+        </div>
+
+        {/* Templates List */}
+        {filteredTemplates.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-16 h-16 rounded-full bg-[#f7f9fb] flex items-center justify-center mb-4">
+              <Search className="h-8 w-8 text-[#9ca3af]" />
+            </div>
+            <h3 className="text-lg font-semibold text-[#191c1e] mb-1">No templates found</h3>
+            <p className="text-sm text-[#6b7280]">Try adjusting your search terms</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredTemplates.map((template) => (
+              <div
+                key={template.id}
+                className="group p-5 bg-white border border-[#e5e7eb] rounded-xl hover:border-[#4648d4] hover:shadow-md transition-all"
+              >
+                <div className="flex items-start gap-4">
+                  {/* Icon */}
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f7f9fb] to-[#e5e7eb] flex items-center justify-center shrink-0 group-hover:from-[#4648d4]/10 group-hover:to-[#6063ee]/10 transition-all">
+                    <span className="text-2xl">{template.icon}</span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <h3 className="text-base font-semibold text-[#191c1e] mb-1 group-hover:text-[#4648d4] transition-colors">
+                          {template.name}
+                        </h3>
+                        <p className="text-sm text-[#6b7280] leading-relaxed">
+                          {template.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Meta Info */}
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 bg-[#f7f9fb] text-[#464554] rounded-md text-xs font-medium capitalize">
+                          {template.category}
+                        </span>
+                        <span className="px-2.5 py-1 bg-[#4648d4]/10 text-[#4648d4] rounded-md text-xs font-medium">
+                          Priority {template.priority}
+                        </span>
+                        {template.tags.slice(0, 2).map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2.5 py-1 bg-white border border-[#e5e7eb] text-[#6b7280] rounded-md text-xs"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddTemplate(template)}
+                        disabled={isSaving}
+                        className="bg-[#4648d4] hover:bg-[#3739b8] text-white shadow-sm"
+                      >
+                        {isSaving ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <>
+                            <Plus className="h-3.5 w-3.5 mr-1.5" />
+                            Add to Profile
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Templates Count */}
+        {filteredTemplates.length > 0 && (
+          <div className="mt-6 text-center">
+            <p className="text-sm text-[#6b7280]">
+              Showing {filteredTemplates.length} of {INSTRUCTION_TEMPLATES.length} templates
+            </p>
+          </div>
+        )}
+      </TabsContent>
+        </div>
+      </div>
+      </Tabs>
+    </div>
   )
 }
