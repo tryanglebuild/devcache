@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ProfileSettings } from './ProfileSettings'
 import { SecuritySettings } from './SecuritySettings'
 import { PreferencesSettings } from './PreferencesSettings'
-import { User as UserIcon, Shield, Settings } from 'lucide-react'
+import { InstructionsSettings } from './InstructionsSettings'
+import { User as UserIcon, Shield, Settings, FileText } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import type { Database } from '@/types/database.types'
 
@@ -65,6 +66,15 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
                 </div>
                 <span className="font-semibold text-sm">Preferences</span>
               </TabsTrigger>
+              <TabsTrigger 
+                value="instructions"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+              >
+                <div className="w-8 h-8 rounded-lg bg-green-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <span className="font-semibold text-sm">Instructions</span>
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -80,6 +90,10 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
 
             <TabsContent value="preferences" className="mt-0">
               <PreferencesSettings preferences={preferences} userId={user.id} />
+            </TabsContent>
+
+            <TabsContent value="instructions" className="mt-0">
+              <InstructionsSettings />
             </TabsContent>
           </div>
         </Tabs>

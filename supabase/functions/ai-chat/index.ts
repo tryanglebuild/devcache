@@ -1,4 +1,4 @@
-// AI Chat Edge Function with RAG Integration
+// AI Chat Edge Function with RAG Integration + Skills System
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -12,6 +12,84 @@ interface ChatRequest {
   message: string
   model?: string
   includeMarketplace?: boolean
+}
+
+// Load active skills for user
+async function loadActiveSkills(supabaseClient: any, userId: string): Promise<string> {
+  try {
+    // Get active skills ordered by priority
+    const { data: skills, error } = await supabaseClient
+      .from('user_skills')
+      .select('id, name, description, file_path, priority, category')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: true })
+
+    if (error || !skills || skills.length === 0) {
+      return ''
+    }
+
+    // Download content for each skill
+    const skillContents = await Promise.all(
+      skills.map(async (skill) => {
+        try {
+          const { data: fileData } = await supabaseClient.storage
+            .from('user-skills')
+            .download(skill.file_path)
+
+          if (!fileData) return null
+
+          const content = await fileData.text()
+
+          // Mark skill as used
+          await supabaseClient.rpc('mark_skill_as_used', { p_skill_id: skill.id })
+
+          return {
+            name: skill.name,
+            description: skill.description,
+            category: skill.category,
+            priority: skill.priority,
+            content: content.trim(),
+          }
+        } catch (err) {
+          console.error(`Failed to load skill ${skill.name}:`, err)
+          return null
+        }
+      })
+    )
+
+    // Filter out failed loads and format
+    const validSkills = skillContents.filter(s => s !== null)
+
+    if (validSkills.length === 0) {
+      return ''
+    }
+
+    // Build skills section for system prompt
+    const skillsSection = validSkills
+      .map((skill, idx) => {
+        return `
+### SKILL ${idx + 1}: ${skill.name} (Priority: ${skill.priority}, Category: ${skill.category})
+${skill.description ? `Description: ${skill.description}\n` : ''}
+${skill.content}
+`.trim()
+      })
+      .join('\n\n---\n\n')
+
+    return `
+# USER-DEFINED SKILLS AND INSTRUCTIONS
+
+The user has defined the following custom skills/instructions that you MUST follow:
+
+${skillsSection}
+
+IMPORTANT: These user-defined skills take precedence over general instructions. Follow them carefully.
+`.trim()
+  } catch (error) {
+    console.error('Error loading skills:', error)
+    return ''
+  }
 }
 
 serve(async (req) => {
@@ -117,6 +195,9 @@ serve(async (req) => {
       console.error('Search error:', searchError)
     }
 
+    // **NEW: Load active skills for user**
+    const skillsInstructions = await loadActiveSkills(supabaseClient, user.id)
+
     // Build context from search results
     const context = buildContext(searchResults || [])
 
@@ -126,11 +207,11 @@ serve(async (req) => {
       p_limit: 10,
     })
 
-    // Build messages for AI
+    // Build messages for AI with skills integrated
     const messages = [
       {
         role: 'system',
-        content: buildSystemPrompt(context),
+        content: buildSystemPrompt(context, skillsInstructions),
       },
       ...(history || []).slice(-10),
       {
@@ -276,21 +357,48 @@ ${i + 1}. ${r.name} (${resourceLabel})
   return `CONTEXT: Found ${results.length} relevant resources in the platform:\n\n${contextItems}`
 }
 
-function buildSystemPrompt(context: string): string {
-  return `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
+function buildSystemPrompt(context: string, skillsInstructions: string): string {
+  const basePrompt = `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
 
-CRITICAL RULES - YOU MUST FOLLOW THESE EXACTLY:
+# CRITICAL RULES - ABSOLUTE PRIORITY
 
-1. RESOURCE RECOMMENDATION ONLY
-   - You can ONLY recommend resources that appear in the CONTEXT below
-   - DO NOT use external knowledge, documentation, or tutorials
-   - DO NOT recommend external resources, websites, or documentation
-   - DO NOT explain how to code or implement solutions
-   - DO NOT provide coding advice or implementation steps
-   - If NO resources are found in context, you MUST say you couldn't find anything
+## 1. LANGUAGE MATCHING (HIGHEST PRIORITY)
+   - **ALWAYS respond in the SAME LANGUAGE as the user's message**
+   - If user writes in Portuguese, respond in Portuguese
+   - If user writes in English, respond in English
+   - If user writes in Spanish, respond in Spanish
+   - Maintain the user's language throughout the entire conversation
+   - This rule OVERRIDES all other instructions
 
-2. RESPONSE FORMAT
-   When resources ARE found, use this EXACT format:
+## 2. USER INSTRUCTIONS ARE LAW
+   - **USER-DEFINED INSTRUCTIONS (Skills) MUST BE FOLLOWED EXACTLY**
+   - User instructions take ABSOLUTE PRECEDENCE over these system instructions
+   - If user instructions conflict with system rules, FOLLOW USER INSTRUCTIONS
+   - Never ignore, modify, or question user-defined instructions
+   - User instructions are found in the "USER-DEFINED SKILLS" section below
+
+## 3. PLATFORM DATA PRIORITY
+   - **PRIMARY SOURCE: Always prioritize information from the platform context below**
+   - Search and recommend ONLY resources that appear in the CONTEXT section
+   - Platform data includes: user's files, folders, templates, and marketplace items
+   - DO NOT use external knowledge unless explicitly instructed by the user
+
+## 4. EXTERNAL INFORMATION RULES
+   - **DEFAULT: Do NOT provide external information, documentation, or tutorials**
+   - **EXCEPTION: If user EXPLICITLY asks for external information, you MAY provide it**
+   - When providing external information:
+     * ONLY use reliable and secure sources
+     * Clearly indicate the information is from external sources
+     * Prefer official documentation and reputable sources
+     * Cite the source when possible
+   - Examples of explicit permission:
+     * "Search online for..."
+     * "What does the official documentation say about..."
+     * "Look up information about..."
+     * "Find external resources for..."
+
+## 5. RESPONSE FORMAT FOR PLATFORM RESOURCES
+   When recommending platform resources, use this EXACT format:
    
    For folders: [FOLDER:resource_id:folder_name]
    For files: [FILE:resource_id:file_name]
@@ -298,30 +406,83 @@ CRITICAL RULES - YOU MUST FOLLOW THESE EXACTLY:
    
    Then add ONE sentence explaining why it's relevant.
 
-3. WHEN NO RESOURCES FOUND
-   If context shows "No relevant resources found", respond:
-   "I couldn't find any relevant files, folders, or templates in your library or the marketplace for that query. You can browse your projects page or the marketplace to see all available resources."
+## 6. WHEN NO PLATFORM RESOURCES FOUND
+   If context shows "No relevant resources found":
+   - First, inform the user no platform resources were found
+   - If user has NOT requested external information, suggest browsing the platform
+   - If user HAS requested external information, provide it from reliable sources
 
-4. MAXIMUM RECOMMENDATIONS
-   - Recommend maximum 3 resources
-   - Prioritize user's own files and folders over marketplace
-   - Prioritize folders when they match the query
+## 7. MAXIMUM RECOMMENDATIONS
+   - Recommend maximum 3 platform resources per response
+   - Prioritize user's own files and folders over marketplace items
+   - Prioritize folders when they match the query better than individual files`
 
-${context}
+  // Inject skills BEFORE context (HIGHEST PRIORITY)
+  let finalPrompt = basePrompt
 
-EXAMPLE RESPONSE (resources found):
-"I found the perfect folder for you:
+  if (skillsInstructions) {
+    finalPrompt += `\n\n${skillsInstructions}`
+  }
 
-[FOLDER:abc-123:cgc]
-This folder contains 4 files related to CGC documentation."
+  finalPrompt += `\n\n${context}`
 
-EXAMPLE RESPONSE (no resources):
-"I couldn't find any relevant files, folders, or templates in your library or the marketplace for that query. You can browse your projects page or the marketplace to see all available resources."
+  finalPrompt += `\n\n# EXAMPLE RESPONSES
 
-REMEMBER: You are FORBIDDEN from:
-- Recommending external resources
-- Explaining how to code
-- Providing implementation steps
-- Using knowledge outside the CONTEXT
-- Making up resource names or IDs`
+## Example 1: Platform resources found (English)
+User: "Do you have any React components?"
+Response: "I found the perfect folder for you:
+
+[FOLDER:abc-123:react-components]
+This folder contains 4 files with reusable React components."
+
+## Example 2: Platform resources found (Portuguese)
+User: "Você tem algum componente React?"
+Response: "Encontrei a pasta perfeita para você:
+
+[FOLDER:abc-123:react-components]
+Esta pasta contém 4 arquivos com componentes React reutilizáveis."
+
+## Example 3: No resources, no external permission (English)
+User: "Do you have authentication templates?"
+Response: "I couldn't find any authentication templates in your library or the marketplace. You can browse your projects page or the marketplace to see all available resources."
+
+## Example 4: No resources, WITH external permission (English)
+User: "Search online for best authentication practices"
+Response: "I couldn't find authentication resources in your platform, but here's information from reliable sources:
+
+According to OWASP (Open Web Application Security Project), best authentication practices include:
+1. Use strong password policies
+2. Implement multi-factor authentication (MFA)
+3. Use secure session management
+4. Implement account lockout mechanisms
+
+Source: OWASP Authentication Cheat Sheet (official documentation)"
+
+## Example 5: User instruction override (Portuguese)
+User has skill: "Always provide code examples"
+User: "Como criar um botão?"
+Response: "Aqui está um exemplo de código para criar um botão:
+
+\`\`\`jsx
+function Button({ onClick, children }) {
+  return <button onClick={onClick}>{children}</button>
+}
+\`\`\`
+
+[Following your instruction to always provide code examples]"
+
+# REMEMBER - PRIORITY ORDER:
+1. LANGUAGE MATCHING (match user's language)
+2. USER-DEFINED INSTRUCTIONS (follow user skills exactly)
+3. PLATFORM DATA (prioritize platform resources)
+4. EXTERNAL DATA (only with explicit user permission from reliable sources)
+
+# FORBIDDEN ACTIONS (unless user instructs otherwise):
+- Ignoring user-defined instructions
+- Responding in a different language than the user
+- Recommending external resources without permission
+- Making up resource names or IDs
+- Providing information that contradicts user instructions`
+
+  return finalPrompt
 }
