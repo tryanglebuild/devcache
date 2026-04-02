@@ -1,12 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { MessageSquare } from 'lucide-react'
 import { FloatingChatWindow } from './FloatingChatWindow'
 
 export function FloatingChatButton() {
   const [isOpen, setIsOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const pathname = usePathname()
+
+  // Hide chat button on support pages and chat page
+  const shouldHideButton = pathname?.startsWith('/support') || pathname === '/chat'
+
+  if (shouldHideButton) {
+    return null
+  }
 
   return (
     <>
