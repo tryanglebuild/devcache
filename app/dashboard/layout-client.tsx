@@ -14,8 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, LogOut, Settings } from 'lucide-react'
+import { User, LogOut, Settings, HelpCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 function DashboardContent({
   children,
@@ -89,9 +90,9 @@ function DashboardContent({
 
             {/* Right Side */}
             <div className="ml-auto flex items-center gap-4">
-              <button className="p-2 text-[#464554] hover:bg-[#f2f4f6] rounded-full transition-colors">
+              <Link href="/support" className="p-2 text-[#464554] hover:bg-[#f2f4f6] rounded-full transition-colors" title="Help & Support">
                 <span className="material-symbols-outlined">help</span>
-              </button>
+              </Link>
 
               <div className="w-px h-6 bg-[#c7c4d7]/30" />
 

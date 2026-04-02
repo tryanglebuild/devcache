@@ -22,8 +22,8 @@ export default function Navigation() {
           <Link href="/marketplace" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
             Marketplace
           </Link>
-          <Link href="#orchestration" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
-            Orchestration
+          <Link href="/support" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
+            Support
           </Link>
           <Link href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium tracking-tight">
             Pricing

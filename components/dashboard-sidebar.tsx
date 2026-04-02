@@ -18,6 +18,7 @@ import {
   Sparkles,
   Settings,
   Star,
+  HelpCircle,
 } from 'lucide-react'
 import { useCreateItem } from '@/components/providers/CreateItemProvider'
 import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
@@ -71,6 +72,13 @@ const bottomMenuItems = [
     icon: Settings,
     color: 'text-gray-600',
     bgColor: 'bg-gray-50',
+  },
+  {
+    title: 'Support',
+    href: '/support',
+    icon: HelpCircle,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
   },
   {
     title: 'Deleted',
