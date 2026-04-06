@@ -2,6 +2,81 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.3.7] - 2026-04-06
+
+### 🐛 Critical Fixes
+
+#### Documentation Structure Correction
+- **Fixed output directory mismatch** - Documentation now correctly generated in `devcache_docs/{projectName}/`
+  - Previously: `init` created `devcache_docs/` but `generate` wrote to `.devcache/docs/` ❌
+  - Now: All commands use consistent `devcache_docs/{projectName}/` structure ✅
+- **Fixed push command** - Now correctly reads from `devcache_docs/{projectName}/`
+- **Fixed config outputDir** - Changed from `.devcache/docs` to `devcache_docs/{projectName}`
+
+#### Orchestrator Improvements
+- **Correct file paths** - Orchestrator now writes documentation to proper location
+- **Recursive file reading** - Push command now reads all markdown files recursively
+- **Better validation** - Added checks to ensure documentation exists before pushing
+
+### 📁 Corrected Workflow
+
+**After `devcache init`:**
+```
+devcache_docs/
+├── templates/
+│   ├── general/
+│   ├── tech/
+│   └── orchestrator.md
+├── {projectName}/        # ← Empty, ready for docs
+├── index.md
+└── .devcache.json
+```
+
+**After `devcache generate`:**
+```
+devcache_docs/
+├── templates/
+├── {projectName}/        # ← Documentation HERE!
+│   ├── project-overview.md
+│   ├── project-impact.md
+│   ├── stack-project.md
+│   ├── architecture-project.md
+│   ├── features.md
+│   └── features/
+│       ├── user-authentication.md
+│       ├── ai-chat-system.md
+│       └── ...
+├── index.md
+└── .devcache.json
+```
+
+**After `devcache push`:**
+- Uploads **ONLY** `devcache_docs/{projectName}/` folder contents
+- Maintains folder structure in Supabase
+- Includes all subdirectories (e.g., `features/`)
+
+### 🔧 Technical Changes
+- Updated `init.ts` - Changed `outputDir` configuration
+- Updated `orchestrator/index.ts` - Write to correct location
+- Updated `push.ts` - Read from correct location with recursive scanning
+- Added `STRUCTURE-FIX.md` - Complete documentation of the fix
+
+### 📝 Documentation
+- Added comprehensive fix documentation in `STRUCTURE-FIX.md`
+- Includes before/after comparisons
+- Provides validation checklist
+- Documents expected behavior for all commands
+
+### ⚠️ Breaking Changes
+**None!** This is a bug fix that makes the system work as originally intended.
+
+If you have existing projects:
+1. Your `devcache_docs/` structure is already correct
+2. Just update the package: `npm install -g devcache-hub@latest`
+3. Run `devcache generate` again to populate the project folder
+
+---
+
 ## [0.3.6] - 2026-04-06
 
 ### 🐛 Fixed
