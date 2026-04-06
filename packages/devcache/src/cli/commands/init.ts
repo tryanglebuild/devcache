@@ -81,26 +81,35 @@ export async function initCommand() {
     // Copy template files from package to project
     const packageTemplatesPath = path.join(__dirname, '../../../templates');
     
-    try {
-      // Copy general templates (both YAML and MD)
-      const generalTemplates = await fs.readdir(path.join(packageTemplatesPath, 'general'));
-      await fs.mkdir(path.join(templatesDir, 'general'), { recursive: true });
+    // Helper function to copy directory recursively
+    async function copyDir(src: string, dest: string) {
+      await fs.mkdir(dest, { recursive: true });
+      const entries = await fs.readdir(src, { withFileTypes: true });
       
-      for (const template of generalTemplates) {
-        const source = path.join(packageTemplatesPath, 'general', template);
-        const dest = path.join(templatesDir, 'general', template);
-        await fs.copyFile(source, dest);
+      for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        const destPath = path.join(dest, entry.name);
+        
+        if (entry.isDirectory()) {
+          await copyDir(srcPath, destPath);
+        } else {
+          await fs.copyFile(srcPath, destPath);
+        }
       }
+    }
 
-      // Copy tech templates (both YAML and MD)
-      const techTemplates = await fs.readdir(path.join(packageTemplatesPath, 'tech'));
-      await fs.mkdir(path.join(templatesDir, 'tech'), { recursive: true });
-      
-      for (const template of techTemplates) {
-        const source = path.join(packageTemplatesPath, 'tech', template);
-        const dest = path.join(templatesDir, 'tech', template);
-        await fs.copyFile(source, dest);
-      }
+    try {
+      // Copy general templates
+      await copyDir(
+        path.join(packageTemplatesPath, 'general'),
+        path.join(templatesDir, 'general')
+      );
+
+      // Copy tech templates
+      await copyDir(
+        path.join(packageTemplatesPath, 'tech'),
+        path.join(templatesDir, 'tech')
+      );
 
       // Copy orchestrator template
       const orchestratorSource = path.join(packageTemplatesPath, 'orchestrator.md');
