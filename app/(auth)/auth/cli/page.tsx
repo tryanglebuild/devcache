@@ -6,8 +6,9 @@ import Link from 'next/link';
 export default async function CLIAuthPage({
   searchParams,
 }: {
-  searchParams: { redirect_uri?: string };
+  searchParams: Promise<{ redirect_uri?: string }>;
 }) {
+  const params = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -101,7 +102,7 @@ export default async function CLIAuthPage({
           <CLIAuthConfirmation 
             user={user} 
             session={session} 
-            redirectUri={searchParams.redirect_uri} 
+            redirectUri={params.redirect_uri} 
           />
         </main>
       </div>
@@ -211,7 +212,7 @@ export default async function CLIAuthPage({
               <p className="text-slate-500 font-medium">Sign in to connect your terminal with devCache.</p>
             </div>
 
-            <CLIAuthForm redirectUri={searchParams.redirect_uri} />
+            <CLIAuthForm redirectUri={params.redirect_uri} />
           </div>
         </div>
 

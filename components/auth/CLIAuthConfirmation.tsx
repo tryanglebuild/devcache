@@ -14,15 +14,31 @@ interface CLIAuthConfirmationProps {
 export function CLIAuthConfirmation({ user, session, redirectUri }: CLIAuthConfirmationProps) {
   const [loading, setLoading] = useState(false);
 
+  // Debug logging
+  console.log('CLIAuthConfirmation props:', {
+    hasUser: !!user,
+    hasSession: !!session,
+    redirectUri,
+  });
+
   const handleConfirm = async () => {
-    if (!redirectUri || !session) {
-      toast.error('Invalid redirect URI or session');
+    if (!redirectUri) {
+      console.error('Missing redirect URI');
+      toast.error('Invalid redirect URI');
+      return;
+    }
+
+    if (!session) {
+      console.error('Missing session');
+      toast.error('Session expired. Please sign in again.');
       return;
     }
 
     setLoading(true);
 
     try {
+      console.log('Confirming CLI access with redirect URI:', redirectUri);
+      
       // Redirect back to CLI with tokens
       const redirectUrl = new URL(redirectUri);
       redirectUrl.searchParams.set('access_token', session.access_token);
@@ -31,13 +47,16 @@ export function CLIAuthConfirmation({ user, session, redirectUri }: CLIAuthConfi
       redirectUrl.searchParams.set('email', user.email!);
       redirectUrl.searchParams.set('expires_at', session.expires_at?.toString() || '0');
 
+      console.log('Redirecting to:', redirectUrl.toString());
       toast.success('Access granted! Redirecting to CLI...');
       
-      // Redirect
-      window.location.href = redirectUrl.toString();
+      // Small delay to show the success message
+      setTimeout(() => {
+        window.location.href = redirectUrl.toString();
+      }, 500);
     } catch (error: any) {
       console.error('Confirmation error:', error);
-      toast.error('Failed to confirm access');
+      toast.error(error.message || 'Failed to confirm access');
       setLoading(false);
     }
   };
