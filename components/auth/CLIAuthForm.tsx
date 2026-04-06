@@ -41,18 +41,19 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
         throw new Error('No session data returned');
       }
 
-      // Redirect back to CLI with tokens
-      const redirectUrl = new URL(redirectUri);
-      redirectUrl.searchParams.set('access_token', data.session.access_token);
-      redirectUrl.searchParams.set('refresh_token', data.session.refresh_token);
-      redirectUrl.searchParams.set('user_id', data.user.id);
-      redirectUrl.searchParams.set('email', data.user.email!);
-      redirectUrl.searchParams.set('expires_at', data.session.expires_at?.toString() || '0');
-
       toast.success('Authentication successful! Redirecting...');
       
-      // Redirect
-      window.location.href = redirectUrl.toString();
+      // Redirect to success page with all necessary parameters
+      const successUrl = new URL('/auth/cli/success', window.location.origin);
+      successUrl.searchParams.set('access_token', data.session.access_token);
+      successUrl.searchParams.set('refresh_token', data.session.refresh_token);
+      successUrl.searchParams.set('user_id', data.user.id);
+      successUrl.searchParams.set('email', data.user.email!);
+      successUrl.searchParams.set('expires_at', data.session.expires_at?.toString() || '0');
+      successUrl.searchParams.set('redirect_uri', redirectUri);
+      
+      // Redirect to success page
+      window.location.href = successUrl.toString();
     } catch (error: any) {
       console.error('Authentication error:', error);
       toast.error(error.message || 'Authentication failed');

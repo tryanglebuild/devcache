@@ -8,6 +8,8 @@ import { initCommand } from './commands/init';
 import { generateCommand } from './commands/generate';
 import { pushCommand } from './commands/push';
 import { loginCommand } from './commands/login';
+import { logoutCommand } from './commands/logout';
+import { profileCommand } from './commands/profile';
 
 // Load environment variables from multiple possible locations
 // 1. Current working directory .env
@@ -43,6 +45,16 @@ program
   .command('login')
   .description('Authenticate with Supabase')
   .action(loginCommand);
+
+program
+  .command('logout')
+  .description('Logout and clear session')
+  .action(logoutCommand);
+
+program
+  .command('profile')
+  .description('Display user profile information')
+  .action(profileCommand);
 
 program
   .command('status')

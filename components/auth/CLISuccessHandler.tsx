@@ -31,32 +31,14 @@ export function CLISuccessHandler() {
 
         console.log('Sending tokens to CLI:', cliRedirectUrl.toString());
 
-        // Method 1: Use an invisible iframe to trigger the callback
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = cliRedirectUrl.toString();
-        document.body.appendChild(iframe);
-
-        // Remove iframe after a short delay
+        // Method 1: Direct window location change (most reliable for localhost callbacks)
+        // This will actually navigate to the CLI callback URL
         setTimeout(() => {
-          document.body.removeChild(iframe);
-        }, 2000);
-
-        // Method 2: Also try fetch as backup
-        fetch(cliRedirectUrl.toString(), { 
-          mode: 'no-cors',
-          method: 'GET'
-        }).catch(() => {
-          console.log('Fetch method completed');
-        });
-
-        // Method 3: Image pixel as final backup
-        const img = new Image();
-        img.src = cliRedirectUrl.toString();
-        img.onerror = () => console.log('Image method completed');
+          window.location.href = cliRedirectUrl.toString();
+        }, 1000);
 
         setTokensSent(true);
-        console.log('Tokens sent to CLI successfully');
+        console.log('Tokens will be sent to CLI in 1 second');
       } catch (error) {
         console.error('Error sending tokens to CLI:', error);
       }

@@ -150,11 +150,11 @@ export default async function CLISuccessPage({
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-blue-600 flex-shrink-0 mt-0.5">info</span>
                 <div>
-                  <p className="text-sm font-semibold text-blue-900 mb-2">Next Steps</p>
+                  <p className="text-sm font-semibold text-blue-900 mb-2">Completing Authentication</p>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Return to your terminal to continue</li>
+                    <li>• Sending credentials to your terminal...</li>
+                    <li>• You will be redirected automatically</li>
                     <li>• Your session has been stored locally</li>
-                    <li>• You can now use all CLI commands</li>
                   </ul>
                 </div>
               </div>
