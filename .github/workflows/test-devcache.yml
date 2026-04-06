@@ -31,11 +31,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: './packages/devcache/package-lock.json'
           
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./packages/devcache
         
       - name: Lint code

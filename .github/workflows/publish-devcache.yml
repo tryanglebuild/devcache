@@ -19,11 +19,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: './packages/devcache/package-lock.json'
           
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./packages/devcache
         
       - name: Lint code
@@ -67,7 +65,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./packages/devcache
         
       - name: Build package
