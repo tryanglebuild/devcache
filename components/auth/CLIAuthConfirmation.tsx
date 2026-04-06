@@ -39,21 +39,18 @@ export function CLIAuthConfirmation({ user, session, redirectUri }: CLIAuthConfi
     try {
       console.log('Confirming CLI access with redirect URI:', redirectUri);
       
-      // Redirect back to CLI with tokens
-      const redirectUrl = new URL(redirectUri);
-      redirectUrl.searchParams.set('access_token', session.access_token);
-      redirectUrl.searchParams.set('refresh_token', session.refresh_token);
-      redirectUrl.searchParams.set('user_id', user.id);
-      redirectUrl.searchParams.set('email', user.email!);
-      redirectUrl.searchParams.set('expires_at', session.expires_at?.toString() || '0');
-
-      console.log('Redirecting to:', redirectUrl.toString());
-      toast.success('Access granted! Redirecting to CLI...');
+      toast.success('Access granted! Redirecting...');
       
-      // Small delay to show the success message
-      setTimeout(() => {
-        window.location.href = redirectUrl.toString();
-      }, 500);
+      // Redirect to success page with all necessary parameters
+      const successUrl = new URL('/auth/cli/success', window.location.origin);
+      successUrl.searchParams.set('access_token', session.access_token);
+      successUrl.searchParams.set('refresh_token', session.refresh_token);
+      successUrl.searchParams.set('user_id', user.id);
+      successUrl.searchParams.set('email', user.email!);
+      successUrl.searchParams.set('expires_at', session.expires_at?.toString() || '0');
+      successUrl.searchParams.set('redirect_uri', redirectUri);
+      
+      window.location.href = successUrl.toString();
     } catch (error: any) {
       console.error('Confirmation error:', error);
       toast.error(error.message || 'Failed to confirm access');
