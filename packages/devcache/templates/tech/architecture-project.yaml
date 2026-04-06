@@ -1,0 +1,42 @@
+name: architecture-project
+category: tech
+outputFile: architecture-project.md
+description: Technical architecture overview and design patterns
+analyzer: ArchitectureAnalyzer
+
+sections:
+  - heading: Architecture Overview
+    prompt: Provide comprehensive technical architecture analysis
+    required: true
+    subsections:
+      - heading: Framework
+        prompt: Identify the main framework being used
+        required: true
+      
+      - heading: Architecture Pattern
+        prompt: Identify design patterns (MVC, MVVM, Clean Architecture, etc.)
+        required: true
+      
+      - heading: Project Structure
+        prompt: Describe the folder and file organization
+        required: true
+      
+      - heading: Component Hierarchy
+        prompt: Map out the component structure and relationships
+        required: false
+      
+      - heading: Data Flow
+        prompt: Explain how data moves through the application
+        required: true
+      
+      - heading: Routing Structure
+        prompt: Describe the routing architecture
+        required: false
+      
+      - heading: State Management
+        prompt: Identify state management approach
+        required: false
+      
+      - heading: Key Design Decisions
+        prompt: Highlight important architectural choices
+        required: true

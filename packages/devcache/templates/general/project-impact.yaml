@@ -1,0 +1,34 @@
+name: project-impact
+category: general
+outputFile: project-impact.md
+description: Analysis of the problem being solved and expected impact
+analyzer: ImpactAnalyzer
+
+sections:
+  - heading: Project Impact
+    prompt: Analyze the impact and justification for this project
+    required: true
+    subsections:
+      - heading: Problem Statement
+        prompt: Clearly define the problem this project addresses
+        required: true
+      
+      - heading: Root Cause Analysis
+        prompt: Explain why this problem exists and its underlying causes
+        required: true
+      
+      - heading: Solution Approach
+        prompt: Describe how this project solves the identified problem
+        required: true
+      
+      - heading: Expected Impact
+        prompt: Detail the expected outcomes and benefits
+        required: true
+      
+      - heading: Success Metrics
+        prompt: Define how success will be measured
+        required: false
+      
+      - heading: Target Users
+        prompt: Identify who will benefit from this solution
+        required: true

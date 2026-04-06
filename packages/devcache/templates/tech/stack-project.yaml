@@ -1,0 +1,42 @@
+name: stack-project
+category: tech
+outputFile: stack-project.md
+description: Complete technology stack analysis
+analyzer: StackAnalyzer
+
+sections:
+  - heading: Technology Stack
+    prompt: Analyze the complete technology stack
+    required: true
+    subsections:
+      - heading: Core Technologies
+        prompt: List main technologies (framework, language, runtime)
+        required: true
+      
+      - heading: Production Dependencies
+        prompt: List and explain production dependencies
+        required: true
+      
+      - heading: Development Dependencies
+        prompt: List and explain development dependencies
+        required: true
+      
+      - heading: Database
+        prompt: Identify database technology and ORM
+        required: false
+      
+      - heading: Build Tools
+        prompt: Identify build and bundling tools
+        required: true
+      
+      - heading: Testing Framework
+        prompt: Identify testing tools and frameworks
+        required: false
+      
+      - heading: Deployment
+        prompt: Describe deployment configuration
+        required: false
+      
+      - heading: Environment Setup
+        prompt: Explain development environment requirements
+        required: true
