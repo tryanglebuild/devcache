@@ -2,6 +2,21 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.3.6] - 2026-04-06
+
+### 🐛 Fixed
+- **Init command recursive copy** - Fixed `ENOTSUP` error when copying template directories
+  - Added recursive `copyDir` helper function
+  - Properly handles nested directories (e.g., `templates/tech/features/`)
+  - Now correctly copies all template files and subdirectories
+
+### 🔧 Technical Changes
+- Updated `glob` dependency from `^11.0.0` to `^13.0.6` (latest stable)
+- Removed deprecation warnings for glob package
+- Improved file system operations in init command
+
+---
+
 ## [0.3.5] - 2026-04-06
 
 ### 🐛 Fixed
