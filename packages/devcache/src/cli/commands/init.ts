@@ -82,7 +82,7 @@ export async function initCommand() {
     const packageTemplatesPath = path.join(__dirname, '../../../templates');
     
     try {
-      // Copy general templates
+      // Copy general templates (both YAML and MD)
       const generalTemplates = await fs.readdir(path.join(packageTemplatesPath, 'general'));
       await fs.mkdir(path.join(templatesDir, 'general'), { recursive: true });
       
@@ -92,7 +92,7 @@ export async function initCommand() {
         await fs.copyFile(source, dest);
       }
 
-      // Copy tech templates
+      // Copy tech templates (both YAML and MD)
       const techTemplates = await fs.readdir(path.join(packageTemplatesPath, 'tech'));
       await fs.mkdir(path.join(templatesDir, 'tech'), { recursive: true });
       
@@ -102,8 +102,16 @@ export async function initCommand() {
         await fs.copyFile(source, dest);
       }
 
-      // Create orchestrator template
-      const orchestratorTemplate = `# Orchestrator Template
+      // Copy orchestrator template
+      const orchestratorSource = path.join(packageTemplatesPath, 'orchestrator.md');
+      const orchestratorDest = path.join(templatesDir, 'orchestrator.md');
+      
+      try {
+        await fs.copyFile(orchestratorSource, orchestratorDest);
+      } catch (error) {
+        // If orchestrator doesn't exist in package, create a basic one
+        console.warn(chalk.yellow('Warning: orchestrator.md not found in package, creating basic version'));
+        const basicOrchestrator = `# Orchestrator Template
 
 ## Purpose
 This template defines the orchestrator's role in managing and reviewing documentation generation.
@@ -121,12 +129,17 @@ This template defines the orchestrator's role in managing and reviewing document
 4. Review generated content
 5. Approve or request revisions
 `;
-
-      await fs.writeFile(
-        path.join(templatesDir, 'orchestrator.md'),
-        orchestratorTemplate,
-        'utf-8'
-      );
+        await fs.writeFile(orchestratorDest, basicOrchestrator, 'utf-8');
+      }
+      
+      // Copy README if exists
+      try {
+        const readmeSource = path.join(packageTemplatesPath, 'README.md');
+        const readmeDest = path.join(templatesDir, 'README.md');
+        await fs.copyFile(readmeSource, readmeDest);
+      } catch (error) {
+        // README is optional
+      }
 
       // Create index file for navigation
       const indexContent = `# ${answers.projectName} Documentation Index
@@ -141,27 +154,64 @@ This template defines the orchestrator's role in managing and reviewing document
 ### Templates
 Templates are located in \`devcache_docs/templates/\` and define how documentation should be generated.
 
+All templates are in **Markdown format (.md)** with detailed instructions for analysis, extraction, and validation.
+
 - **General Templates**: High-level project documentation
-  - project-overview.yaml
-  - project-impact.yaml
+  - project-overview-template.md
+  - project-impact-template.md
 
 - **Tech Templates**: Technical documentation
-  - architecture-project.yaml
-  - stack-project.yaml
-  - features.yaml
+  - stack-project-template.md
+  - architecture-project-template.md
+  - features-template.md
 
-- **Orchestrator**: Manages and reviews all documentation generation
+- **Orchestrator**: Manages and reviews all documentation generation (orchestrator.md)
+- **README**: Complete guide to the template system (README.md)
 
 ### Project Documentation
 Project-specific documentation will be generated in this directory (\`devcache_docs/${answers.projectName}/\`).
 
+## Template System
+
+The template system uses **Markdown files** with:
+- Detailed analysis instructions for each section
+- Built-in security validation rules
+- Example outputs for guidance
+- Cross-document consistency checks
+- Clear dependencies between templates
+
+See \`templates/README.md\` for complete documentation on creating and using templates.
+
+## Security
+
+All templates include comprehensive security validation to ensure:
+- ❌ No API keys or tokens are exposed
+- ❌ No credentials in documentation
+- ❌ No database connection strings with passwords
+- ❌ No sensitive business logic is revealed
+- ✅ Environment variables are referenced by name only
+- ✅ Generic examples are used instead of real data
+
+## Template Execution Order
+
+The orchestrator executes templates in this order:
+1. **project-overview-template.md** (Priority 1) - Foundation for all docs
+2. **project-impact-template.md** (Priority 2) - Business justification
+3. **stack-project-template.md** (Priority 2) - Technology inventory
+4. **architecture-project-template.md** (Priority 3) - System design
+5. **features-template.md** (Priority 4) - Functionality documentation
+
 ## Next Steps
-1. Run \`devcache generate\` to create documentation based on templates
-2. Review generated documents in the project folder
-3. The orchestrator will validate and approve each document
+1. Review \`templates/README.md\` to understand the template system
+2. Review \`templates/orchestrator.md\` to understand the orchestration process
+3. Run \`devcache generate\` to create documentation based on templates
+4. The orchestrator will validate and approve each document
+5. Review generated documentation in \`${answers.projectName}/\` directory
 
 ## Navigation
 - [Templates Directory](./templates/)
+- [Template System Guide](./templates/README.md)
+- [Orchestrator Documentation](./templates/orchestrator.md)
 - [Project Documentation](./${answers.projectName}/)
 `;
 
