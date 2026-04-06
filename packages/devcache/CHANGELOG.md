@@ -2,6 +2,55 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.3.2] - 2026-04-06
+
+### ✨ Added
+
+#### New CLI Commands
+- **`devcache logout`** - Logout and clear session
+  - Displays current logged-in email
+  - Asks for confirmation before logging out
+  - Clears session from local storage
+  - Shows success message
+  
+- **`devcache profile`** - Display user profile information
+  - Shows user email
+  - Displays user ID
+  - Shows session status (Active/Expired)
+  - Displays time remaining until session expires
+  - Prompts to login if not authenticated
+
+#### Improved Init Command
+- **New folder structure** - `devcache_docs/` instead of `.devcache.json`
+- **Templates directory** - Copies all templates to `devcache_docs/templates/`
+- **Orchestrator template** - Creates `orchestrator.md` with instructions
+- **Project folder** - Creates project-specific folder for documentation
+- **Navigation index** - Generates `index.md` for easy navigation
+- **Better organization** - Clear separation of templates and generated docs
+
+### 🔧 Technical Changes
+- Added `logout.ts` command implementation
+- Added `profile.ts` command implementation
+- Updated CLI index to register new commands
+- Improved init command with proper folder structure
+- Enhanced session management display
+
+### 📁 New Init Structure
+
+**After running `devcache init`:**
+```
+devcache_docs/
+├── templates/
+│   ├── general/          (project-overview.yaml, project-impact.yaml)
+│   ├── tech/             (architecture-project.yaml, stack-project.yaml, features.yaml)
+│   └── orchestrator.md   (orchestrator instructions)
+├── [project-name]/       (empty, ready for generated docs)
+├── index.md              (navigation guide)
+└── .devcache.json        (configuration)
+```
+
+---
+
 ## [0.3.1] - 2026-04-06
 
 ### 🐛 Fixed
