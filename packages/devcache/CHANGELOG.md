@@ -2,6 +2,138 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.3.8] - 2026-04-06
+
+### 🐛 Critical Fixes
+
+#### Configuration and Documentation Path Corrections
+- **Fixed outputDir configuration** - Changed from `.devcache/docs` to `devcache_docs` in init command
+  - Previously: Config had `.devcache/docs` but init created `devcache_docs/` ❌
+  - Now: Config correctly uses `devcache_docs` matching actual folder structure ✅
+- **Fixed config file location** - Now written to both project root and docs folder
+  - Root `.devcache.json` - Used by CLI commands
+  - `devcache_docs/.devcache.json` - Reference copy for documentation context
+
+#### Supabase Sync Clarification
+- **Clarified `supabase.enabled` flag behavior** - Flag only controls automatic sync, not manual push
+  - Added debug logging in push command explaining flag doesn't block manual operations
+  - Updated CLI messages to clarify manual push always works if authenticated
+  - Users can now confidently use `devcache push` even with `enabled: false`
+
+#### Improved CLI Messages
+- **Better next steps guidance** - Clear instructions after init regardless of Supabase choice
+  - Shows all available commands (generate, login, push)
+  - Explains that manual push works even if sync is disabled
+  - Helpful note when user chooses not to enable Supabase sync
+
+### 📚 Documentation Added
+
+#### Comprehensive Guides
+- **`docs/SUPABASE-SYNC.md`** - Complete explanation of Supabase sync flag
+  - What the flag controls (automatic vs manual behavior)
+  - Use cases for enabled/disabled
+  - Future features roadmap
+  - Clear comparison table
+
+- **`docs/MIGRATION-GUIDE.md`** - Migration guide from v0.3.7
+  - Step-by-step migration instructions
+  - Fresh start vs manual migration options
+  - Troubleshooting common issues
+  - Rollback instructions if needed
+
+- **`docs/FIXES-SUMMARY.md`** - Summary of all fixes in this release
+  - Before/after comparisons
+  - Root cause analysis
+  - Testing checklist
+  - User impact assessment
+
+- **`docs/FOLDER-STRUCTURE-EXPLAINED.md`** - Complete folder structure documentation
+  - Purpose of each folder
+  - Why structure is organized this way
+  - Workflow explanations
+  - Common questions answered
+
+- **`docs/TROUBLESHOOTING.md`** - Comprehensive troubleshooting guide
+  - Installation issues
+  - Generation issues
+  - Authentication issues
+  - Push issues
+  - Configuration issues
+  - Debugging tips
+
+#### Updated Documentation
+- **`README.md`** - Updated with correct folder structure and Supabase sync explanation
+  - Added folder structure diagram
+  - Clarified configuration options
+  - Explained Supabase sync behavior
+  - Added link to detailed sync documentation
+
+### 🔧 Technical Changes
+
+#### Code Improvements
+- Updated `src/cli/commands/init.ts`:
+  - Changed `outputDir` from `.devcache/docs` to `devcache_docs`
+  - Config now written to project root (primary) and docs folder (reference)
+  - Improved CLI messages with clearer next steps
+  - Added helpful note when Supabase sync is disabled
+
+- Updated `src/cli/commands/push.ts`:
+  - Added debug message explaining flag behavior
+  - Clarified that manual push works regardless of `enabled` flag
+  - Better error messages and guidance
+
+### 📁 Correct Workflow
+
+**After `devcache init`:**
+```
+.devcache.json              # Config in root (CLI reads this)
+devcache_docs/
+├── templates/              # Template definitions
+├── {projectName}/          # Empty, ready for docs
+├── index.md                # Navigation guide
+└── .devcache.json          # Config copy (reference)
+```
+
+**After `devcache generate`:**
+```
+devcache_docs/
+└── {projectName}/          # Documentation HERE!
+    ├── index.md
+    ├── general/
+    │   ├── project-overview.md
+    │   └── project-impact.md
+    └── tech/
+        ├── architecture-project.md
+        ├── stack-project.md
+        └── features.md
+```
+
+**After `devcache push`:**
+- Uploads from correct location: `devcache_docs/{projectName}/`
+- Works regardless of `supabase.enabled` flag (if authenticated)
+- Maintains folder structure in cloud
+
+### ⚠️ Breaking Changes
+
+**None!** This is a bug fix release that makes the system work as intended.
+
+### 🎯 Migration Notes
+
+If you have existing projects from v0.3.7:
+1. Update package: `npm install -g devcache-hub@latest`
+2. Your existing `devcache_docs/` structure is already correct
+3. Just run `devcache generate` again to ensure everything works
+4. See `docs/MIGRATION-GUIDE.md` for detailed instructions
+
+### 📖 Key Takeaways
+
+1. **Documentation location**: Always `devcache_docs/{projectName}/`
+2. **Config location**: `.devcache.json` in project root
+3. **Supabase sync flag**: Only controls automatic behavior, not manual push
+4. **Manual push**: Always works if you're authenticated, regardless of flag
+
+---
+
 ## [0.3.7] - 2026-04-06
 
 ### 🐛 Critical Fixes

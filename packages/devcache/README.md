@@ -37,6 +37,37 @@ devcache push
 
 ## Documentation Structure
 
+After running `devcache init`, the following structure is created:
+
+```
+your-project/
+├── .devcache.json              # Configuration file (read by CLI)
+└── devcache_docs/              # Documentation root
+    ├── index.md                # Navigation guide
+    ├── .devcache.json          # Config copy (for reference)
+    ├── templates/              # Template definitions
+    │   ├── general/            # General templates
+    │   ├── tech/               # Technical templates
+    │   ├── orchestrator.md     # Orchestrator instructions
+    │   └── README.md           # Template system guide
+    └── {project-name}/         # Generated documentation
+        ├── index.md            # Project documentation index
+        ├── general/            # General category docs
+        │   ├── project-overview.md
+        │   └── project-impact.md
+        └── tech/               # Technical category docs
+            ├── architecture-project.md
+            ├── stack-project.md
+            └── features.md
+```
+
+### Key Points
+
+- **Configuration**: `.devcache.json` in project root (used by CLI commands)
+- **Templates**: `devcache_docs/templates/` contains all template definitions
+- **Generated Docs**: `devcache_docs/{project-name}/` contains your documentation
+- **Organization**: Docs are split into `general/` and `tech/` categories
+
 DevCache generates documentation in two categories:
 
 ### General
@@ -50,21 +81,42 @@ DevCache generates documentation in two categories:
 
 ## Configuration
 
-DevCache creates a `.devcache.json` file in your project:
+DevCache creates a `.devcache.json` file in your project root:
 
 ```json
 {
   "projectName": "my-project",
-  "outputDir": ".devcache/docs",
+  "description": "Optional project description",
+  "outputDir": "devcache_docs",
   "templates": {
     "general": ["project-overview", "project-impact"],
     "tech": ["architecture-project", "stack-project", "features"]
   },
   "supabase": {
-    "enabled": true
+    "enabled": true,
+    "projectId": null
+  },
+  "analysis": {
+    "includePatterns": ["src/**/*", "app/**/*", "lib/**/*"],
+    "excludePatterns": ["node_modules/**", "dist/**", ".next/**"]
   }
 }
 ```
+
+### Supabase Sync Configuration
+
+The `supabase.enabled` flag controls automatic sync behavior:
+
+- **`true`**: Enables cloud sync features and reminders
+- **`false`**: Local-only mode (but manual `devcache push` still works!)
+
+**Important**: Even if you set `enabled: false` during init, you can always:
+1. Run `devcache login` to authenticate
+2. Run `devcache push` to manually sync your docs
+
+The flag only controls automatic behavior, not your ability to use cloud features.
+
+See [SUPABASE-SYNC.md](./docs/SUPABASE-SYNC.md) for detailed information.
 
 ## Commands
 

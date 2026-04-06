@@ -29,6 +29,12 @@ export async function pushCommand() {
     // Load configuration
     spinner.text = 'Loading configuration...';
     const config = await ConfigManager.readConfig();
+    
+    // Note: supabase.enabled flag only controls auto-sync behavior
+    // Manual push via CLI should always work if user is authenticated
+    if (config.supabase.enabled === false) {
+      Logger.debug('Supabase sync is disabled in config, but manual push is allowed');
+    }
 
     // Check if documentation exists
     const projectPath = path.join(process.cwd(), config.outputDir, config.projectName);

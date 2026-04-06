@@ -53,7 +53,7 @@ export async function initCommand() {
     const config: InitConfig = {
       projectName: answers.projectName,
       description: answers.description || undefined,
-      outputDir: '.devcache/docs',
+      outputDir: 'devcache_docs',
       templates: {
         general: ['project-overview', 'project-impact'],
         tech: ['architecture-project', 'stack-project', 'features']
@@ -230,7 +230,14 @@ The orchestrator executes templates in this order:
         'utf-8'
       );
 
-      // Write config file for reference
+      // Write config file in project root (not inside devcache_docs)
+      await fs.writeFile(
+        path.join(process.cwd(), '.devcache.json'),
+        JSON.stringify(config, null, 2),
+        'utf-8'
+      );
+      
+      // Also write a copy inside devcache_docs for reference
       await fs.writeFile(
         path.join(docsDir, '.devcache.json'),
         JSON.stringify(config, null, 2),
@@ -257,9 +264,12 @@ The orchestrator executes templates in this order:
     console.log(chalk.blue('\n📝 Next steps:'));
     console.log(chalk.gray('  1. Review'), chalk.cyan('devcache_docs/index.md'), chalk.gray('for navigation'));
     console.log(chalk.gray('  2. Run'), chalk.cyan('devcache generate'), chalk.gray('to create documentation'));
-    if (answers.enableSupabase) {
-      console.log(chalk.gray('  2. Run'), chalk.cyan('devcache login'), chalk.gray('to authenticate'));
-      console.log(chalk.gray('  3. Run'), chalk.cyan('devcache push'), chalk.gray('to sync to cloud'));
+    console.log(chalk.gray('  3. Run'), chalk.cyan('devcache login'), chalk.gray('to authenticate with Supabase'));
+    console.log(chalk.gray('  4. Run'), chalk.cyan('devcache push'), chalk.gray('to sync documentation to cloud'));
+    
+    if (!answers.enableSupabase) {
+      console.log(chalk.yellow('\n💡 Note: Supabase sync is disabled, but you can still use'), chalk.cyan('devcache push'));
+      console.log(chalk.yellow('   after running'), chalk.cyan('devcache login'), chalk.yellow('if you change your mind.'));
     }
     console.log();
 
