@@ -60,31 +60,50 @@ export async function pushCommand() {
       process.exit(1);
     }
 
-    // Read all documentation files
+    // Read all documentation files recursively
     const files: Array<{ category: 'general' | 'tech'; filename: string; content: string }> = [];
 
-    const categories: Array<'general' | 'tech'> = ['general', 'tech'];
-    
-    for (const category of categories) {
-      const categoryPath = path.join(projectPath, category);
-      
+    // Recursive function to read all .md files
+    async function readMarkdownFiles(dirPath: string, relativePath: string = ''): Promise<void> {
       try {
-        const fileNames = await fs.readdir(categoryPath);
+        const entries = await fs.readdir(dirPath, { withFileTypes: true });
         
-        for (const filename of fileNames) {
-          if (filename.endsWith('.md')) {
-            const filePath = path.join(categoryPath, filename);
-            const content = await fs.readFile(filePath, 'utf-8');
-            files.push({ category, filename, content });
+        for (const entry of entries) {
+          const fullPath = path.join(dirPath, entry.name);
+          const relPath = relativePath ? path.join(relativePath, entry.name) : entry.name;
+          
+          if (entry.isDirectory()) {
+            // Recursively read subdirectories
+            await readMarkdownFiles(fullPath, relPath);
+          } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'index.md') {
+            // Read markdown file
+            const content = await fs.readFile(fullPath, 'utf-8');
+            
+            // Determine category based on path
+            let category: 'general' | 'tech' = 'general';
+            if (relPath.startsWith('tech/') || relPath.startsWith('tech\\')) {
+              category = 'tech';
+            }
+            
+            files.push({ 
+              category, 
+              filename: relPath.replace(/\\/g, '/'), // Normalize path separators
+              content 
+            });
           }
         }
       } catch (error) {
-        Logger.warn(`Category folder not found: ${category}`);
+        Logger.warn(`Error reading directory ${dirPath}: ${error}`);
       }
     }
 
+    // Read all files from project directory
+    await readMarkdownFiles(projectPath);
+
     if (files.length === 0) {
       spinner.fail('No documentation files found');
+      console.log(chalk.yellow('\nThe project folder exists but contains no .md files.'));
+      console.log(chalk.yellow('Please run'), chalk.cyan('devcache generate'), chalk.yellow('to create documentation.'));
       process.exit(1);
     }
 

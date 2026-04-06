@@ -2,11 +2,197 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.10.0] - 2026-04-06
+
+### 🚀 Enhanced Push Command - Recursive File Discovery
+
+This release significantly improves the push command to support flexible folder structures and recursive file discovery.
+
+### ✨ New Features
+
+#### Recursive File Scanning
+- **Push now finds ALL markdown files** - No longer limited to `general/` and `tech/` folders
+  - Previously: Only scanned hardcoded `general/` and `tech/` directories ❌
+  - Now: Recursively scans entire project folder for all `.md` files ✅
+  - Supports unlimited nesting depth
+  - Works with any custom folder structure
+  - Automatically preserves folder hierarchy in cloud
+
+#### Flexible Folder Structure Support
+- **Any folder structure now works** - Organize documentation however you want
+  - Create custom folders: `features/`, `guides/`, `api/`, etc.
+  - Nest folders as deep as needed: `tech/features/auth/oauth.md`
+  - Place files at root level: `devcache_docs/project/README.md`
+  - Mix and match structures across projects
+
+#### Smart File Categorization
+- **Automatic category detection** - Files categorized based on path
+  - Files in `tech/` or subfolders → Categorized as "tech"
+  - All other files → Categorized as "general"
+  - Category preserved when uploading to cloud
+  - Maintains organization in Supabase storage
+
+### 🐛 Bug Fixes
+
+#### Push Command Error Handling
+- **Fixed "No documentation files found" error** - Better file discovery
+  - Now finds files regardless of folder structure
+  - Improved error messages when project folder is empty
+  - Clear guidance when documentation needs to be generated
+  - Warns about specific directory read errors
+
+#### Cross-Platform Compatibility
+- **Normalized path separators** - Works on Windows, macOS, and Linux
+  - Converts backslashes to forward slashes
+  - Consistent path handling across platforms
+  - Proper relative path preservation
+
+### 📁 Supported Folder Structures
+
+**Simple Structure:**
+```
+devcache_docs/project/
+├── index.md
+├── overview.md
+└── architecture.md
+```
+
+**Standard Structure:**
+```
+devcache_docs/project/
+├── index.md
+├── general/
+│   ├── overview.md
+│   └── impact.md
+└── tech/
+    ├── architecture.md
+    └── stack.md
+```
+
+**Advanced Structure (NEW!):**
+```
+devcache_docs/project/
+├── index.md
+├── general/
+│   └── overview.md
+├── tech/
+│   ├── architecture.md
+│   └── features/           ← Nested folders work!
+│       ├── auth.md
+│       ├── api.md
+│       └── realtime/       ← Multiple levels!
+│           └── websockets.md
+├── guides/                 ← Custom folders work!
+│   ├── setup.md
+│   └── deployment.md
+└── README.md               ← Root files work!
+```
+
+### 🔧 Technical Implementation
+
+#### Recursive File Reader
+```typescript
+async function readMarkdownFiles(dirPath: string, relativePath: string = ''): Promise<void> {
+  // Recursively reads all directories
+  // Finds all .md files (except index.md)
+  // Preserves relative paths
+  // Handles errors gracefully
+}
+```
+
+**Features:**
+- Depth-first directory traversal
+- Skips `index.md` (handled separately)
+- Maintains relative path structure
+- Error handling per directory
+- Cross-platform path normalization
+
+#### Category Detection Logic
+- Files in `tech/` path → `category: 'tech'`
+- All other files → `category: 'general'`
+- Path-based detection (not folder name dependent)
+- Works with nested structures
+
+### 📝 Migration Guide
+
+**No migration needed!** This is a backward-compatible enhancement.
+
+**Existing projects:**
+- Continue working with `general/` and `tech/` structure
+- Or reorganize files into custom structure
+- Both approaches fully supported
+
+**New projects:**
+- Use any folder structure you prefer
+- Create folders that match your documentation needs
+- No restrictions on organization
+
+### 🎯 Use Cases Enabled
+
+1. **Feature-based organization:**
+   ```
+   tech/features/
+   ├── authentication/
+   ├── payments/
+   └── notifications/
+   ```
+
+2. **Guide-based organization:**
+   ```
+   guides/
+   ├── getting-started/
+   ├── deployment/
+   └── troubleshooting/
+   ```
+
+3. **API documentation:**
+   ```
+   api/
+   ├── rest/
+   ├── graphql/
+   └── webhooks/
+   ```
+
+4. **Mixed organization:**
+   ```
+   general/
+   tech/
+   guides/
+   api/
+   examples/
+   ```
+
+### ✅ Validation
+
+After updating, verify push works:
+
+```bash
+# Update package
+npm install -g devcache-hub@latest
+
+# In your project
+devcache push
+
+# Should see:
+# ✓ Found X documentation files + index.md
+# ✓ Documentation pushed successfully!
+```
+
+### 🎓 Key Benefits
+
+1. **Flexibility** - Organize docs however makes sense for your project
+2. **Scalability** - Support for large documentation sets with deep nesting
+3. **Simplicity** - No need to follow rigid folder structure
+4. **Compatibility** - Works with existing projects without changes
+5. **Reliability** - Better error handling and user feedback
+
+---
+
 ## [0.9.0] - 2026-04-06
 
 ### 🎯 Major Configuration Fix
 
-This release fixes a critical configuration issue where the `.devcache.json` file was not being created in the project root, causing documentation to be generated in the wrong location.
+This release fixes critical issues with configuration file location and push command file discovery.
 
 ### 🐛 Critical Fixes
 
@@ -18,6 +204,14 @@ This release fixes a critical configuration issue where the `.devcache.json` fil
   - Root config is read by all CLI commands
   - Reference config in docs folder for context
   - No more `.devcache/` folder created by mistake
+
+#### Push Command File Discovery
+- **Fixed recursive file reading** - Push now finds ALL markdown files in project folder
+  - Previously: Only looked in `general/` and `tech/` subdirectories ❌
+  - Now: Recursively scans entire project folder for all `.md` files ✅
+  - Supports nested folders (e.g., `features/`, `guides/`, etc.)
+  - Automatically categorizes files based on path
+  - Better error messages when no files are found
 
 #### Git Configuration
 - **Updated .gitignore** - Better handling of DevCache files
@@ -62,6 +256,14 @@ Project Root
 - Reference copy still created in `devcache_docs/` for documentation context
 - Both files have identical content
 - CLI commands read from root, not from docs folder
+
+#### Push Command (`src/cli/commands/push.ts`)
+- Implemented recursive file scanning for all markdown files
+- Removed hardcoded `general/` and `tech/` folder limitation
+- Automatically categorizes files based on their path
+- Supports any folder structure within project directory
+- Better error handling and user feedback
+- Normalizes path separators for cross-platform compatibility
 
 #### Git Ignore Configuration
 - Added `.devcache/` to ignore list (incorrect folder if created)
