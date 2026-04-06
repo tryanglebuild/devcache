@@ -22,8 +22,8 @@ export function FloatingChatButton() {
     }
   }
 
-  // Hide chat button on support pages and chat page
-  const shouldHideButton = pathname?.startsWith('/support') || pathname === '/chat'
+  // Hide chat button on support pages, chat page, and CLI auth page
+  const shouldHideButton = pathname?.startsWith('/support') || pathname === '/chat' || pathname?.startsWith('/auth/cli')
 
   if (shouldHideButton) {
     return null

@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 
 interface CLIAuthFormProps {
@@ -51,6 +49,8 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
       redirectUrl.searchParams.set('email', data.user.email!);
       redirectUrl.searchParams.set('expires_at', data.session.expires_at?.toString() || '0');
 
+      toast.success('Authentication successful! Redirecting...');
+      
       // Redirect
       window.location.href = redirectUrl.toString();
     } catch (error: any) {
@@ -61,50 +61,59 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Email */}
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
+        <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">
+          Email Address
+        </label>
+        <input
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
+          placeholder="dev@example.com"
+          className="w-full bg-white border border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all"
           required
           disabled={loading}
-          className="mt-1"
         />
       </div>
 
+      {/* Password */}
       <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
+        <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">
+          Password
+        </label>
+        <input
           id="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
+          className="w-full bg-white border border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all"
           required
           disabled={loading}
-          className="mt-1"
         />
       </div>
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-      >
-        {loading ? 'Signing in...' : 'Sign in to DevCache'}
-      </Button>
-
-      <div className="text-center text-sm">
-        <a
-          href="/signup"
-          className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+      <div className="pt-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#494bd6] hover:bg-[#2f2ebe] text-white font-bold py-4 px-4 rounded-xl shadow-xl shadow-[#494bd6]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Don't have an account? Sign up
-        </a>
+          <span>{loading ? 'Authenticating...' : 'Authenticate CLI'}</span>
+          <span className="material-symbols-outlined text-xl">arrow_right_alt</span>
+        </button>
+      </div>
+
+      <div className="mt-10 text-center">
+        <p className="text-sm text-slate-500 font-medium">
+          Don't have an account?{' '}
+          <Link href="/signup" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold">
+            Create one
+          </Link>
+        </p>
       </div>
     </form>
   );
