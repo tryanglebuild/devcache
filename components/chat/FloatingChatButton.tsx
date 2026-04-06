@@ -8,7 +8,19 @@ import { FloatingChatWindow } from './FloatingChatWindow'
 export function FloatingChatButton() {
   const [isOpen, setIsOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [prefetched, setPrefetched] = useState(false)
   const pathname = usePathname()
+
+  // Prefetch sessions on hover for instant loading
+  const handleMouseEnter = () => {
+    if (!prefetched && !isOpen) {
+      // Prefetch sessions in background
+      fetch('/api/chat/sessions')
+        .then(res => res.json())
+        .catch(() => {}) // Silent fail
+      setPrefetched(true)
+    }
+  }
 
   // Hide chat button on support pages and chat page
   const shouldHideButton = pathname?.startsWith('/support') || pathname === '/chat'
@@ -23,6 +35,7 @@ export function FloatingChatButton() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
+          onMouseEnter={handleMouseEnter}
           className="fixed bottom-6 right-6 z-50 group"
           aria-label="Open chat"
         >

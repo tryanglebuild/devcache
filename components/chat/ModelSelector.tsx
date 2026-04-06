@@ -75,7 +75,7 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
   const selectedModelData = models.find(m => m.id === selectedModel)
 
   return (
-    <Select value={selectedModel} onValueChange={onModelChange} disabled={disabled || loading}>
+    <Select value={selectedModel || ''} onValueChange={onModelChange} disabled={disabled || loading}>
       <SelectTrigger className="h-6 w-auto border-none bg-transparent hover:bg-[#f3f4f6] rounded px-2 text-[10px] gap-1">
         <SelectValue>
           {selectedModelData ? (

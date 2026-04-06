@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { CreateSessionRequest } from '@/types/chat'
 
+// Optimize for fast response
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // GET /api/chat/sessions - List user's chat sessions
 export async function GET() {
   try {
@@ -18,11 +22,13 @@ export async function GET() {
       )
     }
 
+    // Limit to 50 most recent sessions for faster loading
     const { data: sessions, error } = await supabase
       .from('chat_sessions')
-      .select('*')
+      .select('id, title, context_type, selected_model, last_activity_at, created_at')
       .eq('user_id', user.id)
       .order('last_activity_at', { ascending: false })
+      .limit(50)
 
     if (error) {
       console.error('Error fetching sessions:', error)

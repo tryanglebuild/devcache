@@ -25,6 +25,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
   useEffect(() => {
     if (open) {
+      // Load sessions without blocking UI
       loadSessions()
     }
   }, [open])
@@ -45,7 +46,11 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
   async function loadSessions() {
     try {
-      setLoading(true)
+      // Don't block UI with loading state for initial load
+      const isInitialLoad = sessions.length === 0
+      if (!isInitialLoad) {
+        setLoading(true)
+      }
       
       const response = await fetch('/api/chat/sessions')
       
@@ -58,8 +63,10 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
       setSessions(data || [])
       
       if (data && data.length > 0) {
+        // Set current session immediately for faster UI
         setCurrentSessionId(data[0].id)
       } else {
+        // Create new session if none exist
         await createNewSession()
       }
     } catch (error) {

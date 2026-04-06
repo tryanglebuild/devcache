@@ -32,6 +32,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
 
   // Load messages immediately on mount and when session changes
   useEffect(() => {
+    // Start loading messages in background without blocking UI
     loadMessages()
   }, [session.id])
 
@@ -41,7 +42,12 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
 
   async function loadMessages() {
     try {
-      setLoading(true)
+      // Don't show loading spinner for initial load - show empty state instead
+      const isInitialLoad = messages.length === 0
+      if (!isInitialLoad) {
+        setLoading(true)
+      }
+      
       const data = await getMessages(session.id)
       setMessages(data)
     } catch (error) {

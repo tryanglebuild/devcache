@@ -15,7 +15,7 @@ interface ChatInterfaceWrapperProps {
 
 export function ChatInterfaceWrapper({ sessionId, onSessionUpdate, onNewChat, isExpanded }: ChatInterfaceWrapperProps) {
   const [session, setSession] = useState<ChatSession | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false) // Changed from true to false
 
   useEffect(() => {
     loadSession()
@@ -41,19 +41,8 @@ export function ChatInterfaceWrapper({ sessionId, onSessionUpdate, onNewChat, is
     }
   }
 
-  // Show minimal loading state - let ChatInterface handle message loading
-  if (loading) {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-white">
-        <div className="relative w-8 h-8">
-          <div className="absolute inset-0 rounded-full border-2 border-[#e8eff3]" />
-          <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] border-t-transparent animate-spin" />
-        </div>
-      </div>
-    )
-  }
-
-  if (!session) {
+  // Show chat interface immediately with minimal loading
+  if (!session && !loading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-white">
         <p className="text-sm text-[#464554] font-medium">Session not found</p>
@@ -61,5 +50,6 @@ export function ChatInterfaceWrapper({ sessionId, onSessionUpdate, onNewChat, is
     )
   }
 
-  return <ChatInterface session={session} onSessionUpdate={loadSession} onParentUpdate={onSessionUpdate} onNewChat={onNewChat} isExpanded={isExpanded} />
+  // Show interface even while loading session metadata
+  return <ChatInterface session={session || { id: sessionId } as ChatSession} onSessionUpdate={loadSession} onParentUpdate={onSessionUpdate} onNewChat={onNewChat} isExpanded={isExpanded} />
 }

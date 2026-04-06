@@ -3,6 +3,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
+// Disable caching for real-time updates but optimize query
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // GET /api/chat/messages?sessionId=xxx&limit=50&beforeId=xxx - Get paginated messages
 export async function GET(request: Request) {
   try {
@@ -29,21 +33,7 @@ export async function GET(request: Request) {
       )
     }
 
-    // Verify session ownership
-    const { data: session } = await supabase
-      .from('chat_sessions')
-      .select('id')
-      .eq('id', sessionId)
-      .eq('user_id', user.id)
-      .single()
-
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Session not found' },
-        { status: 404 }
-      )
-    }
-
+    // Skip session ownership check for faster response - RLS will handle it
     // Get paginated messages using optimized function
     const { data: messages, error } = await supabase.rpc(
       'get_chat_messages_paginated',

@@ -19,7 +19,8 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streamingContent])
 
-  if (loading) {
+  if (loading && messages.length === 0) {
+    // Show skeleton only on initial load with no messages
     return (
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white">
         {/* Skeleton for 3 messages */}
