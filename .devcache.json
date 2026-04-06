@@ -1,0 +1,37 @@
+{
+  "projectName": "devcache",
+  "description": "just a test",
+  "outputDir": "devcache_docs",
+  "templates": {
+    "general": [
+      "project-overview",
+      "project-impact"
+    ],
+    "tech": [
+      "architecture-project",
+      "stack-project",
+      "features"
+    ]
+  },
+  "supabase": {
+    "enabled": false,
+    "projectId": null
+  },
+  "analysis": {
+    "includePatterns": [
+      "src/**/*",
+      "app/**/*",
+      "lib/**/*"
+    ],
+    "excludePatterns": [
+      "node_modules/**",
+      "dist/**",
+      ".next/**",
+      "build/**"
+    ]
+  },
+  "generation": {
+    "aiModel": "Claude Sonnet 4.5",
+    "includeMetadata": true
+  }
+}

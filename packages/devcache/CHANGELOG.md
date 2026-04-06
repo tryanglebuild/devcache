@@ -2,6 +2,163 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.9.0] - 2026-04-06
+
+### 🎯 Major Configuration Fix
+
+This release fixes a critical configuration issue where the `.devcache.json` file was not being created in the project root, causing documentation to be generated in the wrong location.
+
+### 🐛 Critical Fixes
+
+#### Configuration File Location
+- **Fixed missing root config** - `.devcache.json` now correctly created in project root
+  - Previously: Only created inside `devcache_docs/` folder ❌
+  - Now: Created in both project root (primary) and `devcache_docs/` (reference) ✅
+- **Fixed documentation path** - Documentation now consistently generated in correct location
+  - Root config is read by all CLI commands
+  - Reference config in docs folder for context
+  - No more `.devcache/` folder created by mistake
+
+#### Git Configuration
+- **Updated .gitignore** - Better handling of DevCache files
+  - `.devcache.json` is now tracked (should be committed)
+  - `.devcache/` folder is ignored (if created by mistake)
+  - `devcache_docs/` remains ignored (generated documentation)
+
+### 📁 Correct File Structure
+
+**After `devcache init`:**
+```
+Project Root
+├── .devcache.json          ← Config file (tracked in git) ✅
+├── devcache_docs/          ← Generated docs (ignored)
+│   ├── .devcache.json      ← Reference copy
+│   ├── templates/          ← Template files
+│   ├── {projectName}/      ← Empty, ready for docs
+│   └── index.md            ← Navigation guide
+└── packages/               ← Your source code
+```
+
+**After `devcache generate`:**
+```
+Project Root
+├── .devcache.json          ← Config (CLI reads this)
+└── devcache_docs/
+    └── {projectName}/      ← Documentation HERE! ✅
+        ├── index.md
+        ├── general/
+        │   ├── project-overview.md
+        │   └── project-impact.md
+        └── tech/
+            ├── architecture-project.md
+            ├── stack-project.md
+            └── features.md
+```
+
+### 🔧 Technical Changes
+
+#### Init Command (`src/cli/commands/init.ts`)
+- Config file now written to project root as primary location
+- Reference copy still created in `devcache_docs/` for documentation context
+- Both files have identical content
+- CLI commands read from root, not from docs folder
+
+#### Git Ignore Configuration
+- Added `.devcache/` to ignore list (incorrect folder if created)
+- Added `!.devcache.json` to ensure config file is tracked
+- Organized DevCache section with clear comments
+
+### 📝 Documentation
+
+#### Updated Files
+- **`.gitignore`** - Better DevCache file handling
+- **`README.md`** - Clarified configuration file location
+- **`CHANGELOG.md`** - This comprehensive changelog entry
+
+### 🎯 Root Cause Analysis
+
+**What was happening:**
+1. `devcache init` created `.devcache.json` only inside `devcache_docs/`
+2. `devcache generate` looked for config in project root
+3. When not found, it used fallback behavior or failed silently
+4. Documentation was created in wrong location (`.devcache/docs/`)
+
+**What's fixed:**
+1. `devcache init` now creates config in project root (primary)
+2. Also creates reference copy in `devcache_docs/` (for context)
+3. `devcache generate` finds config correctly
+4. Documentation generated in correct location (`devcache_docs/{projectName}/`)
+
+### ⚠️ Breaking Changes
+
+**None!** This is a bug fix that makes the system work as originally intended.
+
+### 🚀 Migration from v0.3.8
+
+If you have an existing project:
+
+**Option 1: Fresh Start (Recommended)**
+```bash
+# Update package
+npm install -g devcache-hub@latest
+
+# Remove old config (if exists)
+rm -rf .devcache
+
+# Re-initialize
+devcache init
+
+# Generate documentation
+devcache generate
+```
+
+**Option 2: Manual Fix**
+```bash
+# Update package
+npm install -g devcache-hub@latest
+
+# Copy config to root (if it exists in devcache_docs)
+cp devcache_docs/.devcache.json .devcache.json
+
+# Remove incorrect folder (if exists)
+rm -rf .devcache
+
+# Generate documentation
+devcache generate
+```
+
+### ✅ Validation Checklist
+
+After updating, verify:
+- [ ] `.devcache.json` exists in project root
+- [ ] `devcache_docs/.devcache.json` exists (reference copy)
+- [ ] No `.devcache/` folder in project root
+- [ ] Running `devcache generate` creates files in `devcache_docs/{projectName}/`
+- [ ] `.devcache.json` is tracked in git (not ignored)
+
+### 📊 Impact
+
+**Before v0.9.0:**
+- Config file missing from root
+- Documentation in wrong location
+- Confusing folder structure
+- Git tracking issues
+
+**After v0.9.0:**
+- Config file in correct location
+- Documentation in correct location
+- Clear, consistent structure
+- Proper git tracking
+
+### 🎓 Key Learnings
+
+1. **Config location matters** - CLI commands need config in project root
+2. **Reference copies are helpful** - Keeping copy in docs folder provides context
+3. **Git tracking is important** - Config should be committed, generated docs should not
+4. **Validation is crucial** - Always verify file locations after init
+
+---
+
 ## [0.3.8] - 2026-04-06
 
 ### 🐛 Critical Fixes

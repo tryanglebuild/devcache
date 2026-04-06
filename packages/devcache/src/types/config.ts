@@ -15,6 +15,10 @@ export interface DevCacheConfig {
     includePatterns: string[];
     excludePatterns: string[];
   };
+  generation?: {
+    aiModel?: string;
+    includeMetadata?: boolean;
+  };
 }
 
 export interface ProjectMetadata {

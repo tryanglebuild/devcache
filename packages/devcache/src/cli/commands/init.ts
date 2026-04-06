@@ -20,6 +20,10 @@ interface InitConfig {
     includePatterns: string[];
     excludePatterns: string[];
   };
+  generation?: {
+    aiModel?: string;
+    includeMetadata?: boolean;
+  };
 }
 
 export async function initCommand() {
@@ -65,6 +69,10 @@ export async function initCommand() {
       analysis: {
         includePatterns: ['src/**/*', 'app/**/*', 'lib/**/*'],
         excludePatterns: ['node_modules/**', 'dist/**', '.next/**', 'build/**']
+      },
+      generation: {
+        aiModel: 'Claude Sonnet 3.5 / GPT-4',
+        includeMetadata: true
       }
     };
 

@@ -51,3 +51,8 @@ package-lock.json
 .kiro/
 docs/
 .cgcignore
+
+# DevCache
+devcache_docs/
+.devcache/
+!.devcache.json

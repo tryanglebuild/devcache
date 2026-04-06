@@ -71,8 +71,11 @@ export class Orchestrator {
           throw new Error(`Template not found for analyzer: ${name}`);
         }
 
-        // Render markdown
-        const markdown = this.templateManager.renderTemplate(template, output);
+        // Render markdown with metadata
+        const markdown = this.templateManager.renderTemplate(template, output, {
+          projectName: this.config.projectName,
+          aiModel: this.config.generation?.aiModel || 'AI-Powered Analysis'
+        });
 
         // Write to file (now includes project name in path)
         await this.fsHandler.writeDocumentation(
