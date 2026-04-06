@@ -2,6 +2,20 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.3.5] - 2026-04-06
+
+### 🐛 Fixed
+- Version bump for npm publishing
+
+---
+
+## [0.3.3] - 2026-04-06
+
+### 🐛 Fixed
+- Package publishing configuration
+
+---
+
 ## [0.3.2] - 2026-04-06
 
 ### ✨ Added
