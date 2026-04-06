@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "test-openrouter": "tsx scripts/test-openrouter.ts",
-    "generate-embeddings": "tsx scripts/generate-embeddings.ts"
+    "generate-embeddings": "tsx scripts/generate-embeddings.ts",
+    "populate:marketplace": "tsx scripts/populate-marketplace.ts",
+    "populate:advanced": "tsx scripts/populate-advanced-agents.ts",
+    "populate:expert": "tsx scripts/populate-expert-agents.ts",
+    "verify:marketplace": "tsx scripts/verify-marketplace.ts"
   },
   "dependencies": {
     "@radix-ui/react-progress": "^1.1.8",

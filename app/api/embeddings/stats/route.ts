@@ -1,10 +1,12 @@
+// API endpoint to get embedding statistics and cron logs
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await createClient()
 
+    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -13,46 +15,44 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get total templates for user
-    const { count: totalTemplates } = await supabase
-      .from('agent_templates')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+    // Get embedding statistics
+    const { data: stats, error: statsError } = await supabase
+      .rpc('get_embedding_stats')
 
-    // Get user's template IDs
-    const { data: userTemplates } = await supabase
-      .from('agent_templates')
-      .select('id')
-      .eq('user_id', user.id)
+    if (statsError) {
+      console.error('Error fetching embedding stats:', statsError)
+      return NextResponse.json({ error: statsError.message }, { status: 500 })
+    }
 
-    const templateIds = userTemplates?.map(t => t.id) || []
+    // Get recent cron logs (last 10 runs)
+    const { data: cronLogs, error: logsError } = await supabase
+      .from('embedding_cron_logs')
+      .select('*')
+      .order('run_at', { ascending: false })
+      .limit(10)
 
-    // Get templates with embeddings
-    const { count: withEmbeddings } = await supabase
-      .from('agent_template_embeddings')
-      .select('agent_id', { count: 'exact', head: true })
-      .in('agent_id', templateIds)
+    if (logsError) {
+      console.error('Error fetching cron logs:', logsError)
+      // Don't fail if logs can't be fetched
+    }
 
-    // Get last indexed timestamp
-    const { data: lastIndexed } = await supabase
-      .from('agent_template_embeddings')
-      .select('indexed_at')
-      .in('agent_id', templateIds)
-      .order('indexed_at', { ascending: false })
-      .limit(1)
-      .single()
+    // Get pending items count
+    const { data: pendingItems, error: pendingError } = await supabase
+      .rpc('get_pending_embeddings', { p_limit: 1 })
 
-    const total = totalTemplates || 0
-    const indexed = withEmbeddings || 0
+    const hasPendingItems = !pendingError && pendingItems && pendingItems.length > 0
 
     return NextResponse.json({
-      total_templates: total,
-      templates_with_embeddings: indexed,
-      templates_needing_embeddings: total - indexed,
-      last_indexed_at: lastIndexed?.indexed_at || null,
+      stats: stats?.[0] || null,
+      cron_logs: cronLogs || [],
+      has_pending_items: hasPendingItems,
+      last_updated: new Date().toISOString()
     })
   } catch (error) {
-    console.error('Error fetching embeddings stats:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('GET /api/embeddings/stats error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

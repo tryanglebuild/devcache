@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { AgentSearchFilters } from '@/types/agents.types'
+import { triggerAgentEmbedding } from '@/lib/ai/auto-embed'
 
 // GET /api/agents - List agents with filters
 export async function GET(request: Request) {
@@ -17,24 +18,36 @@ export async function GET(request: Request) {
     
     const supabase = await createClient()
     
-    // Use the search function
-    const { data, error } = await supabase.rpc('search_agents', {
-      search_query: filters.query || null,
-      category_filter: filters.category || null,
-      min_rating: filters.minRating || 0,
-      limit_count: filters.limit || 20,
-      offset_count: filters.offset || 0
-    })
+    // Get agents and total count in parallel
+    const [agentsResult, countResult] = await Promise.all([
+      supabase.rpc('search_agents', {
+        search_query: filters.query || null,
+        category_filter: filters.category || null,
+        min_rating: filters.minRating || 0,
+        limit_count: filters.limit || 20,
+        offset_count: filters.offset || 0
+      }),
+      supabase.rpc('search_agents_count', {
+        search_query: filters.query || null,
+        category_filter: filters.category || null,
+        min_rating: filters.minRating || 0
+      })
+    ])
     
-    if (error) {
-      console.error('Search agents error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (agentsResult.error) {
+      console.error('Search agents error:', agentsResult.error)
+      return NextResponse.json({ error: agentsResult.error.message }, { status: 500 })
+    }
+    
+    if (countResult.error) {
+      console.error('Count agents error:', countResult.error)
+      return NextResponse.json({ error: countResult.error.message }, { status: 500 })
     }
     
     return NextResponse.json({
-      agents: data || [],
-      total: data?.length || 0,
-      hasMore: (data?.length || 0) === (filters.limit || 20)
+      agents: agentsResult.data || [],
+      total: countResult.data || 0,
+      hasMore: (agentsResult.data?.length || 0) === (filters.limit || 20)
     })
   } catch (error) {
     console.error('GET /api/agents error:', error)
@@ -85,6 +98,11 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Create agent error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    // Generate embedding automatically in background
+    if (data?.id) {
+      triggerAgentEmbedding(data.id)
     }
     
     return NextResponse.json(data, { status: 201 })

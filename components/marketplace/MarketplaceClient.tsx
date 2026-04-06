@@ -10,19 +10,22 @@ import toast from 'react-hot-toast'
 
 interface MarketplaceClientProps {
   initialAgents: AgentTemplateWithStats[]
+  initialTotal: number
   marketplaceStats: MarketplaceStats | null
   isAuthenticated: boolean
 }
 
 export function MarketplaceClient({
   initialAgents,
+  initialTotal,
   marketplaceStats,
   isAuthenticated
 }: MarketplaceClientProps) {
   const router = useRouter()
   const [agents, setAgents] = useState<AgentTemplateWithStats[]>(initialAgents)
   const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(initialAgents.length >= 20)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(Math.ceil(initialTotal / 20))
   const [filters, setFilters] = useState<AgentSearchFilters>({
     query: '',
     category: undefined,
@@ -31,27 +34,33 @@ export function MarketplaceClient({
     limit: 20,
     offset: 0
   })
+  const itemsPerPage = 20
 
-  const fetchAgents = async (newFilters: AgentSearchFilters, append: boolean = false) => {
+  // Sync totalPages when initialTotal changes
+  useEffect(() => {
+    setTotalPages(Math.ceil(initialTotal / 20))
+  }, [initialTotal])
+
+  const fetchAgents = async (newFilters: AgentSearchFilters, page: number = 1) => {
     setLoading(true)
     try {
+      const offset = (page - 1) * itemsPerPage
       const params = new URLSearchParams()
       if (newFilters.query) params.set('query', newFilters.query)
       if (newFilters.category) params.set('category', newFilters.category)
       if (newFilters.minRating) params.set('minRating', newFilters.minRating.toString())
-      params.set('limit', (newFilters.limit || 20).toString())
-      params.set('offset', (newFilters.offset || 0).toString())
+      params.set('limit', itemsPerPage.toString())
+      params.set('offset', offset.toString())
 
       const response = await fetch(`/api/agents?${params.toString()}`)
       const data = await response.json()
 
       if (response.ok) {
-        if (append) {
-          setAgents(prev => [...prev, ...data.agents])
-        } else {
-          setAgents(data.agents)
-        }
-        setHasMore(data.hasMore)
+        setAgents(data.agents)
+        setTotalPages(Math.ceil((data.total || data.agents.length) / itemsPerPage))
+        
+        // Scroll to top when changing pages
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         toast.error('Failed to load agents')
       }
@@ -66,16 +75,42 @@ export function MarketplaceClient({
   const handleFilterChange = (newFilters: Partial<AgentSearchFilters>) => {
     const updatedFilters = { ...filters, ...newFilters, offset: 0 }
     setFilters(updatedFilters)
-    fetchAgents(updatedFilters, false)
+    setCurrentPage(1)
+    fetchAgents(updatedFilters, 1)
   }
 
-  const handleLoadMore = () => {
-    const updatedFilters = {
-      ...filters,
-      offset: (filters.offset || 0) + (filters.limit || 20)
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    fetchAgents(filters, page)
+  }
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = []
+    const maxVisible = 7
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) pages.push(i)
+        pages.push('...')
+        pages.push(totalPages)
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1)
+        pages.push('...')
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i)
+      } else {
+        pages.push(1)
+        pages.push('...')
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i)
+        pages.push('...')
+        pages.push(totalPages)
+      }
     }
-    setFilters(updatedFilters)
-    fetchAgents(updatedFilters, true)
+    
+    return pages
   }
 
   const handleViewAgent = (agent: AgentTemplateWithStats) => {
@@ -97,7 +132,7 @@ export function MarketplaceClient({
       if (response.ok) {
         toast.success(`${agent.name} added to your collection!`)
         // Refresh agent data to update download count
-        fetchAgents(filters, false)
+        fetchAgents(filters, currentPage)
       } else {
         const data = await response.json()
         toast.error(data.error || 'Failed to download agent')
@@ -154,15 +189,52 @@ export function MarketplaceClient({
             ))}
           </div>
 
-          {/* Load More */}
-          {hasMore && (
-            <div className="mt-12 text-center">
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-12 flex items-center justify-center gap-2">
+              {/* Previous Button */}
               <button
-                onClick={handleLoadMore}
-                disabled={loading}
-                className="px-8 py-3 bg-white text-[#4648d4] border-2 border-[#4648d4] rounded-lg font-bold hover:bg-[#4648d4] hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || loading}
+                className="px-4 py-2 bg-white text-[#464554] border border-[#e5e7eb] rounded-lg font-medium hover:bg-[#f2f4f6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Loading...' : 'Load More Agents'}
+                Previous
+              </button>
+
+              {/* Page Numbers */}
+              <div className="flex items-center gap-1">
+                {getPageNumbers().map((page, index) => (
+                  typeof page === 'number' ? (
+                    <button
+                      key={`page-${page}`}
+                      onClick={() => handlePageChange(page)}
+                      disabled={loading}
+                      className={`min-w-[40px] h-10 rounded-lg font-medium transition-all ${
+                        currentPage === page
+                          ? 'bg-[#4648d4] text-white'
+                          : 'bg-white text-[#464554] border border-[#e5e7eb] hover:bg-[#f2f4f6]'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      {page}
+                    </button>
+                  ) : (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="px-2 text-[#464554]"
+                    >
+                      {page}
+                    </span>
+                  )
+                ))}
+              </div>
+
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || loading}
+                className="px-4 py-2 bg-white text-[#464554] border border-[#e5e7eb] rounded-lg font-medium hover:bg-[#f2f4f6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
               </button>
             </div>
           )}

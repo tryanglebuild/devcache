@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    // Check if user owns the template or it's public
+    // Check if user owns the template or it's public (allow background generation for own templates)
     if (template.user_id !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }

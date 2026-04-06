@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { triggerAgentEmbedding } from '@/lib/ai/auto-embed'
 
 // POST /api/agents/publish - Publish a project item as an agent template
 export async function POST(request: Request) {
@@ -57,6 +58,11 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Publish agent error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    // Generate embedding automatically in background
+    if (data?.id) {
+      triggerAgentEmbedding(data.id)
     }
     
     return NextResponse.json(data, { status: 201 })

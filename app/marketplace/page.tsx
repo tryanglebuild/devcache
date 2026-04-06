@@ -9,15 +9,23 @@ export default async function MarketplacePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch initial agents and stats
-  const [agents, stats] = await Promise.all([
+  // Fetch initial agents, total count, and stats
+  const [agents, countResult, stats] = await Promise.all([
     getPublicAgents(20),
+    supabase.rpc('search_agents_count', {
+      search_query: null,
+      category_filter: null,
+      min_rating: 0
+    }),
     getMarketplaceStats()
   ])
+
+  const totalCount = countResult.data || agents.length
 
   return (
     <MarketplaceClient
       initialAgents={agents}
+      initialTotal={totalCount}
       marketplaceStats={stats}
       isAuthenticated={!!user}
     />
