@@ -1,5 +1,5 @@
 {
-  "name": "devcache",
+  "name": "devcache-hub",
   "version": "0.1.1",
   "description": "Intelligent project documentation generator with cloud sync and RAG-powered search",
   "main": "dist/index.js",

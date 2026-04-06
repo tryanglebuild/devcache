@@ -1,8 +1,8 @@
-# DevCache
+# DevCache Hub
 
 > Intelligent project documentation generator with cloud sync and RAG-powered search
 
-DevCache automatically analyzes your codebase and generates comprehensive, structured documentation. Push your docs to the cloud and leverage RAG (Retrieval-Augmented Generation) for intelligent search.
+DevCache Hub automatically analyzes your codebase and generates comprehensive, structured documentation. Push your docs to the cloud and leverage RAG (Retrieval-Augmented Generation) for intelligent search.
 
 ## Features
 
@@ -15,7 +15,7 @@ DevCache automatically analyzes your codebase and generates comprehensive, struc
 ## Installation
 
 ```bash
-npm install -g devcache
+npm install -g devcache-hub
 ```
 
 ## Quick Start
