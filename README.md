@@ -1,6 +1,6 @@
 # DevCache 
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with Next.js 16.2.
+This is a [Next.js](https://nextjs.org) project bootstrapped with Next.js 16.2. 
 
 ## Getting Started
 
