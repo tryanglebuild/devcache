@@ -1,0 +1,67 @@
+{
+  "name": "devcache",
+  "version": "0.1.1",
+  "description": "Intelligent project documentation generator with cloud sync and RAG-powered search",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "devcache": "./bin/devcache.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/cli/index.ts",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "documentation",
+    "code-analysis",
+    "cli",
+    "supabase",
+    "rag",
+    "embeddings",
+    "project-documentation",
+    "code-generator"
+  ],
+  "author": "Tryangle Build",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tryanglebuild/devcache.git",
+    "directory": "packages/devcache"
+  },
+  "bugs": {
+    "url": "https://github.com/tryanglebuild/devcache/issues"
+  },
+  "homepage": "https://github.com/tryanglebuild/devcache#readme",
+  "files": [
+    "dist",
+    "bin",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "inquirer": "^9.2.12",
+    "@supabase/supabase-js": "^2.39.7",
+    "openai": "^4.28.0",
+    "glob": "^10.3.10",
+    "yaml": "^2.3.4",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.11.19",
+    "@types/inquirer": "^9.0.7",
+    "ts-node": "^10.9.2",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "ts-jest": "^29.1.2"
+  }
+}

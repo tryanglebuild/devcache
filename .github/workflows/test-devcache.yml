@@ -1,0 +1,64 @@
+name: Test DevCache
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'packages/devcache/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'packages/devcache/**'
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './packages/devcache/package-lock.json'
+          
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./packages/devcache
+        
+      - name: Lint code
+        run: npm run lint --if-present
+        working-directory: ./packages/devcache
+        
+      - name: Run tests
+        run: npm test --if-present
+        working-directory: ./packages/devcache
+        
+      - name: Build package
+        run: npm run build
+        working-directory: ./packages/devcache
+        
+      - name: Validate build
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ Error: dist directory not found"
+            exit 1
+          fi
+          if [ ! -f "dist/cli/index.js" ]; then
+            echo "❌ Error: CLI entry point not found"
+            exit 1
+          fi
+          echo "✅ Build validated successfully"
+        working-directory: ./packages/devcache
