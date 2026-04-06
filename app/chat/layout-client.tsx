@@ -90,11 +90,15 @@ function ChatContent({
 
             {/* Right Side */}
             <div className="ml-auto flex items-center gap-3">
-              <Link href="/support" className="p-1.5 text-[#464554] hover:bg-[#f2f4f6] rounded-lg transition-colors" title="Help & Support">
-                <span className="material-symbols-outlined text-[20px]">help</span>
+              <Link 
+                href="/support" 
+                className="p-1.5 text-[#6b7280] hover:text-[#4f46e5] hover:bg-[#f3f4f6] rounded-lg transition-colors" 
+                title="Help & Support"
+              >
+                <span className="material-symbols-outlined text-[18px]">help</span>
               </Link>
 
-              <div className="w-px h-5 bg-[#c7c4d7]/20" />
+              <div className="w-px h-4 bg-[#e5e7eb]" />
 
               {/* User Dropdown */}
               <DropdownMenu>

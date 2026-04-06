@@ -76,18 +76,12 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
 
   return (
     <Select value={selectedModel} onValueChange={onModelChange} disabled={disabled || loading}>
-      <SelectTrigger className="w-[240px] border-[#e0e3e5]">
+      <SelectTrigger className="h-6 w-auto border-none bg-transparent hover:bg-[#f3f4f6] rounded px-2 text-[10px] gap-1">
         <SelectValue>
           {selectedModelData ? (
-            <div className="flex items-center gap-2">
-              {getTierIcon(selectedModelData.tier)}
-              <span className="text-sm">{selectedModelData.name}</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f2f4f6] text-[#464554] font-mono">
-                {selectedModelData.creditMultiplier}x
-              </span>
-            </div>
+            <span className="text-[10px] text-[#6b7280]">{selectedModelData.name}</span>
           ) : (
-            'Select model...'
+            <span className="text-[10px] text-[#9ca3af]">Select...</span>
           )}
         </SelectValue>
       </SelectTrigger>

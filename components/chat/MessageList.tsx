@@ -21,16 +21,16 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
 
   if (loading) {
     return (
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#ffffff]">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white">
         {/* Skeleton for 3 messages */}
         {[1, 2, 3].map((i) => (
-          <div key={i} className={`flex gap-3 ${i % 2 === 0 ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className={`w-7 h-7 rounded-lg flex-shrink-0 animate-pulse ${
+          <div key={i} className={`flex gap-4 ${i % 2 === 0 ? 'flex-row-reverse' : 'flex-row'}`}>
+            <div className={`w-9 h-9 rounded-xl flex-shrink-0 animate-pulse ${
               i % 2 === 0 ? 'bg-[#e5e7eb]' : 'bg-[#ddd6fe]'
             }`} />
-            <div className={`flex-1 max-w-[85%] ${i % 2 === 0 ? 'text-right' : 'text-left'}`}>
-              <div className={`inline-block rounded-lg h-16 animate-pulse ${
-                i % 2 === 0 ? 'bg-[#e5e7eb] w-48' : 'bg-[#f3f4f6] w-64'
+            <div className={`flex-1 max-w-[75%] ${i % 2 === 0 ? 'text-right' : 'text-left'}`}>
+              <div className={`inline-block rounded-2xl h-20 animate-pulse ${
+                i % 2 === 0 ? 'bg-[#e5e7eb] w-56' : 'bg-[#f3f4f6] w-72'
               }`} />
             </div>
           </div>
@@ -41,13 +41,16 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
 
   if (messages.length === 0 && !streaming) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#ffffff] p-6">
-        <div className="text-center max-w-xs">
-          <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-[#f9fafb] flex items-center justify-center">
-            <Sparkles className="h-6 w-6 text-[#9ca3af]" />
+      <div className="flex-1 flex items-center justify-center bg-white p-8">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#eef2ff] to-[#e0e7ff] flex items-center justify-center">
+            <Sparkles className="h-8 w-8 text-[#4f46e5]" />
           </div>
-          <p className="text-xs text-[#6b7280]">
-            How can I help you today?
+          <h3 className="text-lg font-bold text-[#111827] mb-2">
+            Start a conversation
+          </h3>
+          <p className="text-sm text-[#6b7280]">
+            Ask me anything about your projects, templates, or get help with development tasks.
           </p>
         </div>
       </div>
@@ -55,32 +58,32 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#ffffff]">
+    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white">
       {messages.map((message) => (
         <div
           key={message.id}
-          className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+          className={`flex gap-4 ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
         >
           {/* Avatar */}
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${
             message.role === 'assistant' 
-              ? 'bg-[#4f46e5]' 
-              : 'bg-[#f3f4f6]'
+              ? 'bg-gradient-to-br from-[#4f46e5] to-[#6366f1]' 
+              : 'bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb]'
           }`}>
             {message.role === 'assistant' ? (
-              <Bot className="w-4 h-4 text-white" />
+              <Bot className="w-5 h-5 text-white" />
             ) : (
-              <User className="w-4 h-4 text-[#6b7280]" />
+              <User className="w-5 h-5 text-[#6b7280]" />
             )}
           </div>
           
           {/* Message Content */}
-          <div className={`flex-1 max-w-[85%] ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
+          <div className={`flex-1 max-w-[75%] ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
             <div
-              className={`inline-block text-left rounded-lg px-3 py-2 text-sm ${
+              className={`inline-block text-left rounded-2xl px-4 py-3 text-sm shadow-sm ${
                 message.role === 'user'
-                  ? 'bg-[#4f46e5] text-white'
-                  : 'bg-[#f9fafb] text-[#111827] border border-[#e5e7eb]'
+                  ? 'bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white'
+                  : 'bg-white text-[#111827] border border-[#e5e7eb]'
               }`}
             >
               {message.role === 'assistant' ? (
@@ -93,16 +96,31 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
               )}
             </div>
             
-            {/* Credits Info */}
-            {message.role === 'assistant' && message.cost_usd && (
-              <div className="mt-1.5 flex items-center gap-2 text-[10px] text-[#9ca3af]">
-                <div className="flex items-center gap-1">
-                  <Sparkles className="h-2.5 w-2.5 text-[#4f46e5]" />
-                  <span className="font-semibold text-[#4f46e5]">{Math.ceil(message.cost_usd * 1000)}</span>
+            {/* Token Info */}
+            {message.role === 'assistant' && (message.tokens_input || message.tokens_output) && (
+              <div className="mt-2 flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-[#f3f4f6] rounded-lg">
+                  <Sparkles className="h-3 w-3 text-[#4f46e5]" />
+                  <span className="font-semibold text-[#4f46e5]">
+                    {((message.tokens_input || 0) + (message.tokens_output || 0)).toLocaleString()}
+                  </span>
+                  <span className="text-[#9ca3af]">tokens</span>
                 </div>
-                <span>•</span>
-                <span>{message.tokens_input}↑</span>
-                <span>{message.tokens_output}↓</span>
+                <div className="flex items-center gap-2 text-[#6b7280]">
+                  <span className="flex items-center gap-1">
+                    <span className="font-medium">↑</span>
+                    {(message.tokens_input || 0).toLocaleString()}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="font-medium">↓</span>
+                    {(message.tokens_output || 0).toLocaleString()}
+                  </span>
+                </div>
+                {message.cost_usd && (
+                  <span className="text-[#059669] font-semibold">
+                    ${parseFloat(message.cost_usd as any).toFixed(6)}
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -111,17 +129,19 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
 
       {/* Streaming Message */}
       {streaming && streamingContent && (
-        <div className="flex gap-3 flex-row">
-          <div className="w-7 h-7 rounded-lg bg-[#4f46e5] flex items-center justify-center flex-shrink-0">
-            <Bot className="w-4 h-4 text-white" />
+        <div className="flex gap-4 flex-row">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#6366f1] flex items-center justify-center flex-shrink-0 shadow-sm">
+            <Bot className="w-5 h-5 text-white" />
           </div>
-          <div className="flex-1 max-w-[85%]">
-            <div className="inline-block rounded-lg px-3 py-2 bg-[#f9fafb] text-[#111827] border border-[#e5e7eb] text-sm">
+          <div className="flex-1 max-w-[75%]">
+            <div className="inline-block rounded-2xl px-4 py-3 bg-white text-[#111827] border border-[#e5e7eb] text-sm shadow-sm">
               <MessageContent content={streamingContent} />
             </div>
-            <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-[#6b7280]">
-              <Loader2 className="w-2.5 h-2.5 animate-spin text-[#4f46e5]" />
-              <span>Generating...</span>
+            <div className="mt-2 flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-1.5 px-2 py-1 bg-[#eef2ff] rounded-lg">
+                <Loader2 className="w-3 h-3 animate-spin text-[#4f46e5]" />
+                <span className="text-[#4f46e5] font-medium">Generating...</span>
+              </div>
             </div>
           </div>
         </div>

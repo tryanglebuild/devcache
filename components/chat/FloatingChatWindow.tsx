@@ -191,6 +191,15 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
           </div>
           
           <div className="flex items-center gap-1">
+            {/* New Chat Button */}
+            <button
+              onClick={createNewSession}
+              className="p-2 rounded-lg hover:bg-white/10 text-white transition-colors"
+              title="New chat"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+
             {/* History Dropdown Button */}
             <div className="relative" ref={dropdownRef}>
               <button
@@ -348,6 +357,8 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
               <ChatInterfaceWrapper 
                 sessionId={currentSessionId}
                 onSessionUpdate={loadSessions}
+                onNewChat={createNewSession}
+                isExpanded={isExpanded}
               />
             ) : (
               <div className="flex items-center justify-center h-full">
@@ -367,17 +378,6 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
         </div>
 
         {/* Quick Actions Bar (only in compact mode) */}
-        {!isExpanded && (
-          <div className="flex-shrink-0 h-12 border-t border-gray-200 bg-gray-50 flex items-center justify-center gap-2 px-4">
-            <button
-              onClick={createNewSession}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              New Chat
-            </button>
-          </div>
-        )}
       </div>
     </>
   )

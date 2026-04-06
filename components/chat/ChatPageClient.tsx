@@ -133,6 +133,7 @@ export function ChatPageClient() {
           <ChatInterfaceWrapper 
             sessionId={currentSessionId}
             onSessionUpdate={loadSessions}
+            onNewChat={createNewSession}
           />
         ) : (
           <div className="flex items-center justify-center h-full">

@@ -9,9 +9,11 @@ import { Loader2 } from 'lucide-react'
 interface ChatInterfaceWrapperProps {
   sessionId: string
   onSessionUpdate?: () => void
+  onNewChat?: () => void
+  isExpanded?: boolean
 }
 
-export function ChatInterfaceWrapper({ sessionId, onSessionUpdate }: ChatInterfaceWrapperProps) {
+export function ChatInterfaceWrapper({ sessionId, onSessionUpdate, onNewChat, isExpanded }: ChatInterfaceWrapperProps) {
   const [session, setSession] = useState<ChatSession | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -59,5 +61,5 @@ export function ChatInterfaceWrapper({ sessionId, onSessionUpdate }: ChatInterfa
     )
   }
 
-  return <ChatInterface session={session} onSessionUpdate={loadSession} onParentUpdate={onSessionUpdate} />
+  return <ChatInterface session={session} onSessionUpdate={loadSession} onParentUpdate={onSessionUpdate} onNewChat={onNewChat} isExpanded={isExpanded} />
 }

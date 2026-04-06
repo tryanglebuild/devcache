@@ -455,11 +455,41 @@ serve(async (req) => {
             })
           }
 
+          // Extract token usage from the last chunk
+          let tokensInput = 0
+          let tokensOutput = 0
+          let costUsd = 0
+
+          // OpenRouter returns usage in the final chunk
+          try {
+            const lastChunk = lines[lines.length - 1]
+            if (lastChunk && lastChunk.startsWith('data: ')) {
+              const data = lastChunk.slice(6)
+              if (data !== '[DONE]') {
+                const parsed = JSON.parse(data)
+                if (parsed.usage) {
+                  tokensInput = parsed.usage.prompt_tokens || 0
+                  tokensOutput = parsed.usage.completion_tokens || 0
+                  
+                  // Calculate cost based on model pricing (OpenRouter provides this)
+                  if (parsed.usage.total_cost) {
+                    costUsd = parsed.usage.total_cost
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.error('Failed to extract token usage:', e)
+          }
+
           await supabaseClient.from('chat_messages').insert({
             session_id: sessionId,
             role: 'assistant',
             content: fullResponse,
             model_used: model,
+            tokens_input: tokensInput,
+            tokens_output: tokensOutput,
+            cost_usd: costUsd,
             context_gathering_step: 'final',
             metadata: {
               resources: resourceMetadata,

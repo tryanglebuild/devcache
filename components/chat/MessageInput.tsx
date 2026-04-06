@@ -42,31 +42,28 @@ export function MessageInput({ onSend, disabled, placeholder }: MessageInputProp
   }
 
   return (
-    <div className="border-t border-[#e5e7eb] p-3 bg-[#ffffff]">
-      <div className="flex gap-2 items-end">
+    <div className="flex gap-2 items-end">
+      <div className="flex-1 relative">
         <Textarea
           ref={textareaRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
-          placeholder={placeholder || 'Ask anything...'}
+          placeholder={placeholder || 'Type your message...'}
           disabled={disabled}
-          className="min-h-[40px] max-h-[120px] resize-none border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-1 focus:ring-[#4f46e5] rounded-lg bg-[#ffffff] text-sm placeholder:text-[#9ca3af]"
+          className="min-h-[44px] max-h-[160px] resize-none border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-1 focus:ring-[#4f46e5]/20 rounded-lg bg-white text-sm placeholder:text-[#9ca3af]"
           rows={1}
         />
-        <Button
-          onClick={handleSend}
-          disabled={disabled || !message.trim()}
-          size="icon"
-          className="h-[40px] w-[40px] shrink-0 rounded-lg bg-[#4f46e5] hover:bg-[#4338ca] disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          <Send className="h-4 w-4" />
-        </Button>
       </div>
-      <p className="text-[9px] text-[#9ca3af] mt-1.5 px-1">
-        <kbd className="px-1 py-0.5 bg-[#f3f4f6] rounded text-[8px] font-mono border border-[#e5e7eb]">↵</kbd> send • <kbd className="px-1 py-0.5 bg-[#f3f4f6] rounded text-[8px] font-mono border border-[#e5e7eb]">⇧↵</kbd> new line
-      </p>
+      <Button
+        onClick={handleSend}
+        disabled={disabled || !message.trim()}
+        size="icon"
+        className="h-[44px] w-[44px] shrink-0 rounded-lg bg-[#4f46e5] hover:bg-[#4338ca] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+      >
+        <Send className="h-4 w-4" />
+      </Button>
     </div>
   )
 }
