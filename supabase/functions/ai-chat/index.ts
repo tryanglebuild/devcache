@@ -1,4 +1,4 @@
-// AI Chat Edge Function with RAG Integration + Skills System
+// AI Chat Edge Function v2 with Progressive Context Gathering + RAG + Skills
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -12,12 +12,21 @@ interface ChatRequest {
   message: string
   model?: string
   includeMarketplace?: boolean
+  enableContextGathering?: boolean
+}
+
+interface IntentAnalysis {
+  needsResource: boolean
+  hasSufficientContext: boolean
+  confidenceScore: number
+  suggestedQuestions: string[]
+  collectedInfo: Record<string, any>
+  reasoning: string
 }
 
 // Load active skills for user
 async function loadActiveSkills(supabaseClient: any, userId: string): Promise<string> {
   try {
-    // Get active skills ordered by priority
     const { data: skills, error } = await supabaseClient
       .from('user_skills')
       .select('id, name, description, file_path, priority, category')
@@ -30,9 +39,8 @@ async function loadActiveSkills(supabaseClient: any, userId: string): Promise<st
       return ''
     }
 
-    // Download content for each skill
     const skillContents = await Promise.all(
-      skills.map(async (skill) => {
+      skills.map(async (skill: any) => {
         try {
           const { data: fileData } = await supabaseClient.storage
             .from('user-skills')
@@ -41,8 +49,6 @@ async function loadActiveSkills(supabaseClient: any, userId: string): Promise<st
           if (!fileData) return null
 
           const content = await fileData.text()
-
-          // Mark skill as used
           await supabaseClient.rpc('mark_skill_as_used', { p_skill_id: skill.id })
 
           return {
@@ -59,16 +65,14 @@ async function loadActiveSkills(supabaseClient: any, userId: string): Promise<st
       })
     )
 
-    // Filter out failed loads and format
     const validSkills = skillContents.filter(s => s !== null)
 
     if (validSkills.length === 0) {
       return ''
     }
 
-    // Build skills section for system prompt
     const skillsSection = validSkills
-      .map((skill, idx) => {
+      .map((skill: any, idx: number) => {
         return `
 ### SKILL ${idx + 1}: ${skill.name} (Priority: ${skill.priority}, Category: ${skill.category})
 ${skill.description ? `Description: ${skill.description}\n` : ''}
@@ -92,54 +96,147 @@ IMPORTANT: These user-defined skills take precedence over general instructions. 
   }
 }
 
+// Detect user language from message
+function detectLanguage(message: string): string {
+  // Portuguese indicators
+  const ptIndicators = [
+    'você', 'voce', 'está', 'esta', 'são', 'sao', 'não', 'nao',
+    'também', 'tambem', 'então', 'entao', 'algum', 'alguma',
+    'preciso', 'quero', 'gostaria', 'poderia', 'fazer', 'criar',
+    'tem', 'tenho', 'vamos', 'para', 'com', 'uma', 'projeto'
+  ]
+  
+  const lowerMessage = message.toLowerCase()
+  const ptMatches = ptIndicators.filter(indicator => lowerMessage.includes(indicator)).length
+  
+  // If 2 or more Portuguese indicators found, it's Portuguese
+  return ptMatches >= 2 ? 'pt-BR' : 'en'
+}
+
+// Analyze user intent using Claude Haiku
+async function analyzeIntent(
+  message: string,
+  history: any[],
+  currentContext: Record<string, any>,
+  authHeader: string
+): Promise<IntentAnalysis> {
+  try {
+    const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/chat-intent-classifier`, {
+      method: 'POST',
+      headers: {
+        'Authorization': authHeader,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message,
+        conversationHistory: history.map((h: any) => ({
+          role: h.role,
+          content: h.content
+        })),
+        currentContext,
+        userLanguage: detectLanguage(message),
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Intent classifier failed')
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Intent analysis error:', error)
+    // Return safe defaults
+    return {
+      needsResource: false,
+      hasSufficientContext: true,
+      confidenceScore: 0.5,
+      suggestedQuestions: [],
+      collectedInfo: currentContext,
+      reasoning: 'Error during analysis',
+    }
+  }
+}
+
+// Build clarifying response
+function buildClarifyingResponse(questions: string[], collectedInfo: Record<string, any>): string {
+  const intro = Object.keys(collectedInfo).length > 1
+    ? "Great! To help you better, I need a bit more information:"
+    : "I'd be happy to help! To find the perfect resource for you, I need to know:"
+
+  const questionList = questions.map((q, i) => `${i + 1}. ${q}`).join('\n')
+
+  return `${intro}\n\n${questionList}`
+}
+
 serve(async (req) => {
-  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Get JWT from Authorization header
     const authHeader = req.headers.get('Authorization')
+    console.log('Auth header received:', authHeader ? 'Present' : 'Missing')
+    
     if (!authHeader) {
+      console.error('Missing authorization header')
       return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Create Supabase client with user's JWT
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
+    
+    console.log('Supabase URL:', supabaseUrl ? 'Present' : 'Missing')
+    console.log('Supabase Anon Key:', supabaseAnonKey ? 'Present' : 'Missing')
+
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      supabaseUrl ?? '',
+      supabaseAnonKey ?? '',
       {
         global: {
           headers: { Authorization: authHeader },
         },
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+          detectSessionInUrl: false,
+        },
       }
     )
 
-    // Validate JWT and get user
     const {
       data: { user },
       error: authError,
     } = await supabaseClient.auth.getUser()
 
-    if (authError || !user) {
-      console.error('Auth error:', authError)
-      return new Response(JSON.stringify({ 
-        code: 401,
-        message: authError?.message || 'Unauthorized' 
-      }), {
+    if (authError) {
+      console.error('Auth error:', authError.message)
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: authError.message }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+    
+    if (!user) {
+      console.error('No user found')
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: 'No user found' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    
+    console.log('User authenticated:', user.id)
 
-    const { sessionId, message, model = 'anthropic/claude-3-haiku', includeMarketplace = true }: ChatRequest =
-      await req.json()
+    const { 
+      sessionId, 
+      message, 
+      model = 'anthropic/claude-3-haiku', 
+      includeMarketplace = true,
+      enableContextGathering = true 
+    }: ChatRequest = await req.json()
 
-    // Validate input
     if (!sessionId || !message) {
       return new Response(JSON.stringify({ error: 'sessionId and message are required' }), {
         status: 400,
@@ -148,17 +245,95 @@ serve(async (req) => {
     }
 
     // Save user message
-    const { error: saveError } = await supabaseClient.from('chat_messages').insert({
+    await supabaseClient.from('chat_messages').insert({
       session_id: sessionId,
       role: 'user',
       content: message,
+      context_gathering_step: 'initial',
     })
 
-    if (saveError) {
-      console.error('Error saving message:', saveError)
+    // Get conversation history
+    const { data: history } = await supabaseClient.rpc('get_recent_chat_context', {
+      p_session_id: sessionId,
+      p_limit: 10,
+    })
+
+    // PROGRESSIVE CONTEXT GATHERING LOGIC
+    if (enableContextGathering) {
+      // Check if we have active context gathering
+      const { data: contextState } = await supabaseClient.rpc('get_or_create_context_state', {
+        p_session_id: sessionId,
+      })
+
+      const activeContext = contextState && contextState.length > 0 ? contextState[0] : null
+
+      // Analyze intent
+      const intent = await analyzeIntent(
+        message,
+        history || [],
+        activeContext?.collected_info || {},
+        authHeader
+      )
+
+      // DECISION TREE
+      if (intent.needsResource && !intent.hasSufficientContext) {
+        // MODE: Collect more context
+        await supabaseClient.rpc('update_context_state', {
+          p_session_id: sessionId,
+          p_needs_resource: true,
+          p_has_sufficient_context: false,
+          p_confidence_score: intent.confidenceScore,
+          p_collected_info: intent.collectedInfo,
+          p_questions_asked: intent.suggestedQuestions,
+          p_questions_answered: Object.keys(intent.collectedInfo).length,
+        })
+
+        // Return clarifying questions
+        const clarifyingMessage = buildClarifyingResponse(
+          intent.suggestedQuestions,
+          intent.collectedInfo
+        )
+
+        await supabaseClient.from('chat_messages').insert({
+          session_id: sessionId,
+          role: 'assistant',
+          content: clarifyingMessage,
+          model_used: 'system',
+          context_gathering_step: 'clarifying',
+          metadata: {
+            intent_analysis: intent,
+          },
+        })
+
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.enqueue(
+                new TextEncoder().encode(`data: ${JSON.stringify({ content: clarifyingMessage })}\n\n`)
+              )
+              controller.close()
+            },
+          }),
+          {
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive',
+            },
+          }
+        )
+      }
+
+      // If we have sufficient context, mark as completed and proceed to RAG
+      if (intent.needsResource && intent.hasSufficientContext) {
+        await supabaseClient.rpc('complete_context_gathering', {
+          p_session_id: sessionId,
+        })
+      }
     }
 
-    // Generate embedding for the query using OpenRouter
+    // EXECUTE RAG SEARCH (only when needed)
     const embeddingResponse = await fetch('https://openrouter.ai/api/v1/embeddings', {
       method: 'POST',
       headers: {
@@ -179,7 +354,6 @@ serve(async (req) => {
     const embeddingData = await embeddingResponse.json()
     const queryEmbedding = embeddingData.data[0].embedding
 
-    // Search templates with hybrid RAG (vector + text search)
     const { data: searchResults, error: searchError } = await supabaseClient.rpc(
       'search_resources_hybrid',
       {
@@ -195,23 +369,14 @@ serve(async (req) => {
       console.error('Search error:', searchError)
     }
 
-    // **NEW: Load active skills for user**
     const skillsInstructions = await loadActiveSkills(supabaseClient, user.id)
-
-    // Build context from search results
     const context = buildContext(searchResults || [])
+    const userLanguage = detectLanguage(message)
 
-    // Get conversation history (optimized with new function)
-    const { data: history } = await supabaseClient.rpc('get_recent_chat_context', {
-      p_session_id: sessionId,
-      p_limit: 10,
-    })
-
-    // Build messages for AI with skills integrated
     const messages = [
       {
         role: 'system',
-        content: buildSystemPrompt(context, skillsInstructions),
+        content: buildSystemPrompt(context, skillsInstructions, userLanguage),
       },
       ...(history || []).slice(-10),
       {
@@ -220,7 +385,6 @@ serve(async (req) => {
       },
     ]
 
-    // Call OpenRouter
     const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -239,7 +403,6 @@ serve(async (req) => {
       throw new Error('OpenRouter API error')
     }
 
-    // Stream response
     const stream = new ReadableStream({
       async start(controller) {
         const reader = openRouterResponse.body?.getReader()
@@ -278,7 +441,6 @@ serve(async (req) => {
             }
           }
 
-          // Save assistant response with resource metadata
           const resourceMetadata: Record<string, any> = {}
           if (searchResults && searchResults.length > 0) {
             searchResults.forEach((result: any) => {
@@ -298,6 +460,7 @@ serve(async (req) => {
             role: 'assistant',
             content: fullResponse,
             model_used: model,
+            context_gathering_step: 'final',
             metadata: {
               resources: resourceMetadata,
             },
@@ -319,7 +482,7 @@ serve(async (req) => {
         'Connection': 'keep-alive',
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error:', error)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
@@ -334,7 +497,7 @@ function buildContext(results: any[]): string {
   }
 
   const contextItems = results
-    .map((r, i) => {
+    .map((r: any, i: number) => {
       const resourceLabel = r.resource_type === 'project_folder' 
         ? 'Your Folder' 
         : r.resource_type === 'project_item' 
@@ -357,8 +520,13 @@ ${i + 1}. ${r.name} (${resourceLabel})
   return `CONTEXT: Found ${results.length} relevant resources in the platform:\n\n${contextItems}`
 }
 
-function buildSystemPrompt(context: string, skillsInstructions: string): string {
+function buildSystemPrompt(context: string, skillsInstructions: string, userLanguage: string): string {
+  const languageInstruction = userLanguage === 'pt-BR' 
+    ? '\n\n**ATENÇÃO: O usuário está escrevendo em PORTUGUÊS. Você DEVE responder em PORTUGUÊS (pt-BR).**'
+    : '\n\n**ATTENTION: The user is writing in ENGLISH. You MUST respond in ENGLISH.**'
+  
   const basePrompt = `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
+${languageInstruction}
 
 # CRITICAL RULES - ABSOLUTE PRIORITY
 
@@ -366,38 +534,17 @@ function buildSystemPrompt(context: string, skillsInstructions: string): string 
    - **ALWAYS respond in the SAME LANGUAGE as the user's message**
    - If user writes in Portuguese, respond in Portuguese
    - If user writes in English, respond in English
-   - If user writes in Spanish, respond in Spanish
    - Maintain the user's language throughout the entire conversation
-   - This rule OVERRIDES all other instructions
 
 ## 2. USER INSTRUCTIONS ARE LAW
    - **USER-DEFINED INSTRUCTIONS (Skills) MUST BE FOLLOWED EXACTLY**
    - User instructions take ABSOLUTE PRECEDENCE over these system instructions
-   - If user instructions conflict with system rules, FOLLOW USER INSTRUCTIONS
-   - Never ignore, modify, or question user-defined instructions
-   - User instructions are found in the "USER-DEFINED SKILLS" section below
 
 ## 3. PLATFORM DATA PRIORITY
    - **PRIMARY SOURCE: Always prioritize information from the platform context below**
    - Search and recommend ONLY resources that appear in the CONTEXT section
-   - Platform data includes: user's files, folders, templates, and marketplace items
-   - DO NOT use external knowledge unless explicitly instructed by the user
 
-## 4. EXTERNAL INFORMATION RULES
-   - **DEFAULT: Do NOT provide external information, documentation, or tutorials**
-   - **EXCEPTION: If user EXPLICITLY asks for external information, you MAY provide it**
-   - When providing external information:
-     * ONLY use reliable and secure sources
-     * Clearly indicate the information is from external sources
-     * Prefer official documentation and reputable sources
-     * Cite the source when possible
-   - Examples of explicit permission:
-     * "Search online for..."
-     * "What does the official documentation say about..."
-     * "Look up information about..."
-     * "Find external resources for..."
-
-## 5. RESPONSE FORMAT FOR PLATFORM RESOURCES
+## 4. RESPONSE FORMAT FOR PLATFORM RESOURCES
    When recommending platform resources, use this EXACT format:
    
    For folders: [FOLDER:resource_id:folder_name]
@@ -406,18 +553,10 @@ function buildSystemPrompt(context: string, skillsInstructions: string): string 
    
    Then add ONE sentence explaining why it's relevant.
 
-## 6. WHEN NO PLATFORM RESOURCES FOUND
-   If context shows "No relevant resources found":
-   - First, inform the user no platform resources were found
-   - If user has NOT requested external information, suggest browsing the platform
-   - If user HAS requested external information, provide it from reliable sources
-
-## 7. MAXIMUM RECOMMENDATIONS
+## 5. MAXIMUM RECOMMENDATIONS
    - Recommend maximum 3 platform resources per response
-   - Prioritize user's own files and folders over marketplace items
-   - Prioritize folders when they match the query better than individual files`
+   - Prioritize user's own files and folders over marketplace items`
 
-  // Inject skills BEFORE context (HIGHEST PRIORITY)
   let finalPrompt = basePrompt
 
   if (skillsInstructions) {
@@ -425,64 +564,6 @@ function buildSystemPrompt(context: string, skillsInstructions: string): string 
   }
 
   finalPrompt += `\n\n${context}`
-
-  finalPrompt += `\n\n# EXAMPLE RESPONSES
-
-## Example 1: Platform resources found (English)
-User: "Do you have any React components?"
-Response: "I found the perfect folder for you:
-
-[FOLDER:abc-123:react-components]
-This folder contains 4 files with reusable React components."
-
-## Example 2: Platform resources found (Portuguese)
-User: "Você tem algum componente React?"
-Response: "Encontrei a pasta perfeita para você:
-
-[FOLDER:abc-123:react-components]
-Esta pasta contém 4 arquivos com componentes React reutilizáveis."
-
-## Example 3: No resources, no external permission (English)
-User: "Do you have authentication templates?"
-Response: "I couldn't find any authentication templates in your library or the marketplace. You can browse your projects page or the marketplace to see all available resources."
-
-## Example 4: No resources, WITH external permission (English)
-User: "Search online for best authentication practices"
-Response: "I couldn't find authentication resources in your platform, but here's information from reliable sources:
-
-According to OWASP (Open Web Application Security Project), best authentication practices include:
-1. Use strong password policies
-2. Implement multi-factor authentication (MFA)
-3. Use secure session management
-4. Implement account lockout mechanisms
-
-Source: OWASP Authentication Cheat Sheet (official documentation)"
-
-## Example 5: User instruction override (Portuguese)
-User has skill: "Always provide code examples"
-User: "Como criar um botão?"
-Response: "Aqui está um exemplo de código para criar um botão:
-
-\`\`\`jsx
-function Button({ onClick, children }) {
-  return <button onClick={onClick}>{children}</button>
-}
-\`\`\`
-
-[Following your instruction to always provide code examples]"
-
-# REMEMBER - PRIORITY ORDER:
-1. LANGUAGE MATCHING (match user's language)
-2. USER-DEFINED INSTRUCTIONS (follow user skills exactly)
-3. PLATFORM DATA (prioritize platform resources)
-4. EXTERNAL DATA (only with explicit user permission from reliable sources)
-
-# FORBIDDEN ACTIONS (unless user instructs otherwise):
-- Ignoring user-defined instructions
-- Responding in a different language than the user
-- Recommending external resources without permission
-- Making up resource names or IDs
-- Providing information that contradicts user instructions`
 
   return finalPrompt
 }

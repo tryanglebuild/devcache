@@ -9,6 +9,8 @@ import { ModelSelector } from './ModelSelector'
 import { updateSession } from '@/lib/chat-api'
 import toast from 'react-hot-toast'
 import { Zap } from 'lucide-react'
+import { useContextGathering } from '@/lib/hooks/useContextGathering'
+import { ContextGatheringProgress } from './ContextGatheringProgress'
 
 interface ChatInterfaceProps {
   session: ChatSession
@@ -22,6 +24,9 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
   const [streaming, setStreaming] = useState(false)
   const [streamingContent, setStreamingContent] = useState('')
   const [selectedModel, setSelectedModel] = useState(session.selected_model)
+  
+  // Progressive context gathering
+  const { contextState, loading: contextLoading, resetContext, refresh: refreshContext } = useContextGathering(session.id)
 
   // Load messages immediately on mount and when session changes
   useEffect(() => {
@@ -101,6 +106,9 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
       // After streaming completes, reload messages to get the saved version with metadata
       await loadMessages()
       setStreamingContent('')
+      
+      // Refresh context state after message
+      refreshContext()
     } catch (error) {
       console.error('Failed to send message:', error)
       toast.error('Failed to send message')
@@ -160,6 +168,20 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
         </div>
       </header>
 
+      {/* Context Gathering Progress Indicator */}
+      {contextState.isGathering && !contextLoading && (
+        <div className="px-5 pt-3">
+          <ContextGatheringProgress
+            progress={contextState.progress}
+            collectedInfo={contextState.collectedInfo}
+            questionsAsked={contextState.questionsAsked}
+            questionsAnswered={contextState.questionsAnswered}
+            confidenceScore={contextState.confidenceScore}
+            onDismiss={resetContext}
+          />
+        </div>
+      )}
+
       <MessageList
         messages={messages}
         loading={loading}
@@ -170,7 +192,13 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate }: Chat
       <MessageInput
         onSend={handleSend}
         disabled={streaming}
-        placeholder={streaming ? 'AI is responding...' : 'Ask anything...'}
+        placeholder={
+          contextState.isGathering
+            ? 'Answer to help find the perfect resource...'
+            : streaming
+            ? 'AI is responding...'
+            : 'Ask anything...'
+        }
       />
     </div>
   )

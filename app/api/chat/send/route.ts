@@ -68,6 +68,7 @@ export async function POST(request: Request) {
         message: body.message,
         model: body.model,
         includeMarketplace: body.includeMarketplace ?? true,
+        enableContextGathering: true, // Enable progressive context gathering
       }),
     })
 

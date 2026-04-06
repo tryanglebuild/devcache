@@ -11,7 +11,7 @@ interface ResourcePreviewModalProps {
   isOpen: boolean
   onClose: () => void
   resourceId: string
-  resourceType: 'file' | 'template'
+  resourceType: 'file' | 'folder' | 'template'
   resourceName: string
 }
 
@@ -22,6 +22,7 @@ interface ResourceData {
   language?: string
   tags?: string[]
   project_name?: string
+  resource_type?: 'file' | 'folder'
   has_attachments?: boolean
   attachment_count?: number
   attachments?: Array<{
@@ -30,6 +31,17 @@ interface ResourceData {
     file_size: number
     mime_type: string
     file_path: string
+  }>
+  // Folder-specific fields
+  item_count?: number
+  file_count?: number
+  folder_count?: number
+  items?: Array<{
+    id: string
+    name: string
+    type: 'file' | 'folder'
+    description?: string
+    created_at: string
   }>
 }
 
@@ -52,9 +64,10 @@ export function ResourcePreviewModal({
       setError(null)
 
       try {
+        // Use unified resource API for files and folders
         const endpoint =
-          resourceType === 'file'
-            ? `/api/chat/preview/file/${resourceId}`
+          resourceType === 'file' || resourceType === 'folder'
+            ? `/api/chat/preview/resource/${resourceId}`
             : `/api/chat/preview/template/${resourceId}`
 
         const response = await fetch(endpoint)
@@ -106,11 +119,13 @@ export function ResourcePreviewModal({
   if (!isOpen) return null
 
   const handleViewFull = () => {
-    const url =
-      resourceType === 'file'
-        ? `/dashboard/projects/file/${resourceId}`
-        : `/marketplace/${resourceId}`
-    window.open(url, '_blank')
+    if (resourceType === 'folder') {
+      window.open(`/dashboard/projects/${resourceId}`, '_blank')
+    } else if (resourceType === 'file') {
+      window.open(`/dashboard/projects/file/${resourceId}`, '_blank')
+    } else {
+      window.open(`/marketplace/${resourceId}`, '_blank')
+    }
   }
 
   return (
@@ -127,7 +142,11 @@ export function ResourcePreviewModal({
                 {resourceName}
               </h2>
               <p className="text-sm text-gray-500">
-                {resourceType === 'file' ? 'Your File' : 'Marketplace Template'}
+                {resourceType === 'folder' 
+                  ? 'Your Folder' 
+                  : resourceType === 'file' 
+                  ? 'Your File' 
+                  : 'Marketplace Template'}
               </p>
             </div>
           </div>
