@@ -2,6 +2,32 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.3.1] - 2026-04-06
+
+### 🐛 Fixed
+
+#### Environment Variables Loading
+- **Fixed CLI authentication** - CLI now properly loads environment variables from `.env` files
+- **Multiple .env locations** - Supports loading from:
+  - Current working directory `.env`
+  - Current working directory `.env.local`
+  - User home directory `~/.devcache/.env`
+- **Dotenv integration** - Added proper dotenv configuration in CLI entry point
+- **Better error messages** - Clearer error when Supabase credentials are missing
+
+### 🔧 Technical Changes
+- Added dotenv config loading in `src/cli/index.ts`
+- Environment variables now loaded before any command execution
+- Supports both local project and global user configurations
+
+### 📝 Usage
+Users can now configure credentials in three ways:
+1. **Global config** (recommended): `~/.devcache/.env`
+2. **Project config**: `.env` or `.env.local` in project root
+3. **Environment variables**: Export directly in shell
+
+---
+
 ## [0.3.0] - 2026-04-06
 
 ### 🎉 Major Update - OAuth Authentication & Improved Structure

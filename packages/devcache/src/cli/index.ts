@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 
+import { config } from 'dotenv';
+import { resolve } from 'path';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { initCommand } from './commands/init';
 import { generateCommand } from './commands/generate';
 import { pushCommand } from './commands/push';
 import { loginCommand } from './commands/login';
+
+// Load environment variables from multiple possible locations
+// 1. Current working directory .env
+config({ path: resolve(process.cwd(), '.env') });
+// 2. Current working directory .env.local
+config({ path: resolve(process.cwd(), '.env.local') });
+// 3. User home directory .devcache/.env
+config({ path: resolve(process.env.HOME || process.env.USERPROFILE || '', '.devcache', '.env') });
 
 const program = new Command();
 
