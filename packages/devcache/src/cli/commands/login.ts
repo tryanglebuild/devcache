@@ -5,7 +5,7 @@ import { getSupabaseClient, SessionData } from '../../supabase/client';
 import { OAuthFlow } from '../../supabase/oauth';
 import { Logger } from '../../utils';
 
-const DEFAULT_APP_URL = 'https://devcache.vercel.app'; // Your production URL
+const DEFAULT_APP_URL = 'https://devcache.dev'; // Production URL
 
 export async function loginCommand() {
   console.log(chalk.blue.bold('\n🔐 DevCache Login\n'));

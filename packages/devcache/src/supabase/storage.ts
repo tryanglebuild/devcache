@@ -274,44 +274,98 @@ export class StorageManager {
 
   /**
    * Upload complete documentation structure with project folder
+   * Processes files in chunks and triggers embedding generation
    */
   async uploadDocumentation(
     projectName: string,
     files: Array<{ category: 'general' | 'tech'; filename: string; content: string }>,
     indexContent: string,
-    description?: string
-  ): Promise<string> {
+    description?: string,
+    chunkSize: number = 5
+  ): Promise<{ projectId: string; uploadedFileIds: string[] }> {
     Logger.info('Creating project structure...');
 
     // Create main project folder
     const projectFolder = await this.createProjectStructure(projectName, description);
 
     // Upload index.md file
-    await this.uploadFile(projectFolder.id, 'index.md', indexContent);
+    const indexFile = await this.uploadFile(projectFolder.id, 'index.md', indexContent);
     Logger.debug('Uploaded index.md');
 
-    // Upload files with folder structure preservation
-    for (const file of files) {
-      // Parse the file path to extract folder structure and filename
-      const pathParts = file.filename.split('/');
-      const fileName = pathParts[pathParts.length - 1];
-      const folderPath = pathParts.slice(0, -1).join('/');
+    const uploadedFileIds: string[] = [indexFile.id];
 
-      let parentId = projectFolder.id;
+    // Process files in chunks
+    const totalFiles = files.length;
+    const chunks = Math.ceil(totalFiles / chunkSize);
 
-      // If there's a folder path, create the folder structure
-      if (folderPath) {
-        const folder = await this.createFolderByPath(projectFolder.id, folderPath);
-        parentId = folder.id;
+    for (let i = 0; i < chunks; i++) {
+      const start = i * chunkSize;
+      const end = Math.min(start + chunkSize, totalFiles);
+      const chunk = files.slice(start, end);
+
+      Logger.info(`Processing chunk ${i + 1}/${chunks} (${chunk.length} files)...`);
+
+      // Upload files in current chunk
+      const chunkFileIds: string[] = [];
+      
+      for (const file of chunk) {
+        // Parse the file path to extract folder structure and filename
+        const pathParts = file.filename.split('/');
+        const fileName = pathParts[pathParts.length - 1];
+        const folderPath = pathParts.slice(0, -1).join('/');
+
+        let parentId = projectFolder.id;
+
+        // If there's a folder path, create the folder structure
+        if (folderPath) {
+          const folder = await this.createFolderByPath(projectFolder.id, folderPath);
+          parentId = folder.id;
+        }
+
+        // Upload the file to the correct folder
+        const uploadedFile = await this.uploadFile(parentId, fileName, file.content);
+        chunkFileIds.push(uploadedFile.id);
       }
 
-      // Upload the file to the correct folder
-      await this.uploadFile(parentId, fileName, file.content);
+      uploadedFileIds.push(...chunkFileIds);
+
+      // Trigger embedding generation for this chunk (fire-and-forget)
+      this.triggerChunkEmbeddings(chunkFileIds).catch(err => {
+        Logger.warn(`Failed to trigger embeddings for chunk ${i + 1}: ${err.message}`);
+      });
+
+      Logger.success(`Chunk ${i + 1}/${chunks} uploaded (${chunkFileIds.length} files)`);
     }
 
     Logger.success(`Uploaded ${files.length + 1} files to project "${projectName}"`);
     
-    return projectFolder.id;
+    return {
+      projectId: projectFolder.id,
+      uploadedFileIds
+    };
+  }
+
+  /**
+   * Trigger embedding generation for a chunk of files
+   * Fire-and-forget approach to avoid blocking the upload process
+   */
+  private async triggerChunkEmbeddings(fileIds: string[]): Promise<void> {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    
+    // Trigger embeddings for each file in parallel
+    const promises = fileIds.map(fileId =>
+      fetch(`${baseUrl}/api/embeddings/generate-project`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ project_item_id: fileId })
+      }).catch(err => {
+        Logger.debug(`Failed to trigger embedding for file ${fileId}: ${err.message}`);
+      })
+    );
+
+    await Promise.allSettled(promises);
   }
 
   /**

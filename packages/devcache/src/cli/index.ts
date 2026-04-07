@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import chalk from 'chalk';
 import { initCommand } from './commands/init';
 import { generateCommand } from './commands/generate';
 import { pushCommand } from './commands/push';
@@ -12,6 +11,7 @@ import { statusCommand } from './commands/status';
 import { connectionCommand } from './commands/connection';
 import { guideCommand } from './commands/guide';
 import { refreshCommand } from './commands/refresh';
+import { embeddingsCommand, triggerEmbeddingsCommand } from './commands/embeddings';
 
 // Note: Supabase credentials are now stored securely in ~/.devcache/session.json
 // They are saved during login and loaded automatically by the Supabase client
@@ -75,5 +75,17 @@ program
   .option('-p, --profile', 'Refresh user session')
   .option('-a, --all', 'Refresh everything')
   .action(refreshCommand);
+
+program
+  .command('embeddings')
+  .description('View embedding statistics for your files')
+  .option('-t, --trigger', 'Trigger immediate embedding generation')
+  .action((options) => {
+    if (options.trigger) {
+      triggerEmbeddingsCommand();
+    } else {
+      embeddingsCommand();
+    }
+  });
 
 program.parse(process.argv);

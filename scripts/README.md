@@ -1,190 +1,322 @@
-# Scripts Directory
+# Embedding Scripts
 
-This directory contains utility scripts for managing embeddings, marketplace data, and development tasks.
+Scripts para gerenciar e verificar embeddings no DevCache.
 
-## Active Scripts
+## 📋 Scripts Disponíveis
 
-### 🔄 `generate-embeddings.ts`
+### 1. Check Embeddings (Verificação)
 
-**Purpose**: Batch generate embeddings for all items missing embeddings or with outdated embeddings.
+Verifica o status dos embeddings sem fazer alterações.
 
-**When to use**:
-- After importing large amounts of data
-- When migrating from old system
-- To reprocess all embeddings after algorithm changes
-- When the weekly cron job isn't enough (processes unlimited items)
-
-**Usage**:
 ```bash
-npm run generate-embeddings
-# or
-tsx scripts/generate-embeddings.ts
+npm run check-embeddings
 ```
 
-**Features**:
-- Processes items in batches of 20
-- Supports both agents and project items
-- Uses OpenRouter or OpenAI API
-- Automatic retry logic
-- Progress tracking
+**O que faz:**
+- Mostra estatísticas completas de embeddings
+- Lista itens pendentes (primeiros 10)
+- Exibe histórico de jobs recentes
+- Progress bar visual
+- Recomendações de ação
 
-**Requirements**:
-- `OPENROUTER_API_KEY` or `OPENAI_API_KEY` in `.env.local`
-- `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+**Quando usar:**
+- Verificar se todos os arquivos têm embeddings
+- Ver quantos itens estão pendentes
+- Checar histórico de jobs
+- Antes de rodar geração manual
+
+**Output exemplo:**
+```
+📊 EMBEDDING STATUS REPORT
+══════════════════════════════════════════════════════════════
+
+📁 PROJECT FILES:
+────────────────────────────────────────────────────────────
+   Total files:          25
+   With embeddings:      23 (92%)
+   Pending:              2
+
+   Progress: ████████████████████████████████████░░░░ 92%
+
+🤖 AGENT TEMPLATES (Public):
+────────────────────────────────────────────────────────────
+   Total agents:         10
+   With embeddings:      10 (100%)
+   Pending:              0
+
+   Progress: ████████████████████████████████████████ 100%
+
+📊 OVERALL STATUS:
+────────────────────────────────────────────────────────────
+   Total items:          35
+   With embeddings:      33 (94%)
+   Pending:              2
+
+   Overall: ██████████████████████████████████████░░ 94%
+
+⚠️  2 item(s) need embeddings
+   Run the embedding generation script to process them.
+```
 
 ---
 
-### 📦 `populate-marketplace.ts`
+### 2. Generate Embeddings V2 (Geração)
 
-**Purpose**: Populate the marketplace with sample agent templates.
+Gera embeddings para todos os itens pendentes.
 
-**When to use**:
-- Initial setup of development environment
-- After database reset
-- Adding new example agents
-- Testing marketplace features
-
-**Usage**:
 ```bash
-tsx scripts/populate-marketplace.ts
+npm run generate-embeddings-v2
 ```
 
-**What it does**:
-- Creates 35+ diverse agent templates
-- Categories: orchestrator, frontend, backend, cloud, testing, documentation, security, data
-- Assigns to first user in database
-- Sets visibility to public
+**O que faz:**
+- Busca até 100 itens pendentes
+- Gera embeddings usando OpenAI/OpenRouter
+- Salva no banco de dados
+- Mostra progresso em tempo real
+- Loga resultados no banco
 
-**Note**: Run this only once or after database reset to avoid duplicates.
+**Quando usar:**
+- Quando há itens pendentes
+- Após fazer push de novos arquivos
+- Para forçar geração imediata
+- Quando cron job não rodou
+
+**Output exemplo:**
+```
+🚀 EMBEDDING GENERATION
+════════════════════════════════════════════════════════════
+
+📍 Using: OpenRouter
+🌐 Referer: https://devcache.dev
+
+📦 Fetching pending items (max 100)...
+
+   Found 2 items needing embeddings
+
+────────────────────────────────────────────────────────────
+[1/2] Processing project: architecture-overview.md... ✅ (234 tokens)
+[2/2] Processing project: features-list.md... ✅ (189 tokens)
+────────────────────────────────────────────────────────────
+
+📊 RESULTS:
+────────────────────────────────────────────────────────────
+   Total processed:  2
+   Succeeded:        2 ✅
+   Failed:           0
+   Execution time:   1234ms
+
+✅ Run logged to database
+
+════════════════════════════════════════════════════════════
+✅ All embeddings generated successfully!
+════════════════════════════════════════════════════════════
+```
 
 ---
 
-### 🧪 `test-openrouter.ts`
+### 3. Generate Embeddings (Legacy)
 
-**Purpose**: Test OpenRouter API connection and configuration.
+Script antigo, mantido para compatibilidade.
 
-**When to use**:
-- Verifying API key is valid
-- Debugging embedding generation issues
-- Testing API connectivity
-- Checking rate limits
-
-**Usage**:
 ```bash
-tsx scripts/test-openrouter.ts
+npm run generate-embeddings
 ```
 
-**What it tests**:
-- API key validity
-- Embedding generation
-- Response format
-- Token usage
-- Error handling
+**Nota:** Use `generate-embeddings-v2` para a versão atualizada.
 
 ---
 
-## Archived Scripts
+## 🔄 Workflow Recomendado
 
-Scripts in `archive/` are kept for reference but not actively used:
+### Verificação Regular
 
-- `populate-advanced-agents.ts` - Old agent population script
-- `populate-expert-agents.ts` - Alternative agent templates
-- `verify-marketplace.ts` - Marketplace data verification
-- `README-populate-marketplace.md` - Old documentation
-
-## Comparison: Scripts vs Cron Job
-
-| Feature | Scripts (Manual) | Cron Job (Automatic) |
-|---------|------------------|----------------------|
-| **Execution** | On-demand | Weekly (Sundays 2 AM UTC) |
-| **Batch Size** | Unlimited | 100 items max |
-| **Use Case** | Bulk operations, migrations | Maintenance, catch missed items |
-| **Speed** | Fast (parallel processing) | Slower (rate limited) |
-| **Monitoring** | Console output | Database logs |
-| **Best For** | Development, one-time tasks | Production, ongoing maintenance |
-
-## Common Workflows
-
-### Initial Setup
 ```bash
-# 1. Populate marketplace with sample agents
-tsx scripts/populate-marketplace.ts
+# 1. Verificar status
+npm run check-embeddings
 
-# 2. Generate embeddings for all agents
-npm run generate-embeddings
+# 2. Se houver pendentes, gerar
+npm run generate-embeddings-v2
+
+# 3. Verificar novamente
+npm run check-embeddings
 ```
 
-### After Data Import
+### Após Push de Arquivos
+
 ```bash
-# Generate embeddings for newly imported items
-npm run generate-embeddings
+# Via CLI (recomendado)
+devcache push
+devcache embeddings
+
+# Ou via script
+npm run check-embeddings
+npm run generate-embeddings-v2
 ```
 
-### Debugging Embeddings
-```bash
-# 1. Test API connection
-tsx scripts/test-openrouter.ts
+### Troubleshooting
 
-# 2. Try generating embeddings
-npm run generate-embeddings
+```bash
+# 1. Verificar status detalhado
+npm run check-embeddings
+
+# 2. Ver logs de jobs anteriores
+# (incluído no output do check-embeddings)
+
+# 3. Forçar geração
+npm run generate-embeddings-v2
+
+# 4. Verificar se resolveu
+npm run check-embeddings
 ```
 
-### Production Maintenance
-- Let the weekly cron job handle it automatically
-- Check logs: `SELECT * FROM embedding_cron_logs ORDER BY run_at DESC LIMIT 5;`
-- Manual trigger if needed: `POST /api/embeddings/cron-trigger`
+---
 
-## Environment Variables
+## ⚙️ Configuração
 
-All scripts require these environment variables in `.env.local`:
+### Variáveis de Ambiente Necessárias
+
+Crie um arquivo `.env.local` na raiz do projeto:
 
 ```env
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# OpenRouter (preferred) or OpenAI
-OPENROUTER_API_KEY=sk-or-v1-your-key
-# OR
-OPENAI_API_KEY=sk-your-key
+# API Key para Embeddings (escolha uma)
+OPENROUTER_API_KEY=your-openrouter-key
+# OU
+OPENAI_API_KEY=your-openai-key
 
-# Application URL (optional)
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+# App URL (opcional)
+NEXT_PUBLIC_APP_URL=https://devcache.dev
 ```
 
-## Troubleshooting
+### Obter API Keys
 
-### "Missing API key" error
-- Ensure `OPENROUTER_API_KEY` or `OPENAI_API_KEY` is set in `.env.local`
-- Check the key is valid and has credits
+**OpenRouter (Recomendado):**
+- Acesse: https://openrouter.ai/keys
+- Crie uma conta
+- Gere uma API key
+- Adicione créditos (mínimo $5)
 
-### "Failed to get items" error
-- Verify Supabase credentials are correct
-- Check database has the required functions (`get_items_needing_embeddings`)
-- Ensure tables exist (`agent_templates`, `project_items`)
+**OpenAI (Alternativa):**
+- Acesse: https://platform.openai.com/api-keys
+- Crie uma conta
+- Gere uma API key
+- Adicione créditos
 
-### "Rate limit exceeded" error
-- Wait a few minutes and try again
-- Reduce batch size in the script
-- Use OpenRouter instead of OpenAI (higher limits)
+---
 
-### No items processed
-- Check if items actually need embeddings: `SELECT * FROM get_pending_embeddings(10);`
-- Verify items exist in database
-- Check `deleted_at` is NULL
+## 📊 Entendendo os Resultados
 
-## Adding New Scripts
+### Progress Bar
 
-When adding new scripts:
+```
+████████████████████████████████████░░░░ 90%
+```
 
-1. Create the script in `scripts/` directory
-2. Add TypeScript types and error handling
-3. Document usage in this README
-4. Add npm script in `package.json` if frequently used
-5. Test locally before committing
+- `█` = Arquivos com embeddings
+- `░` = Arquivos pendentes
+- Percentual = Cobertura atual
 
-## Related Documentation
+### Status dos Itens
 
-- [Automatic Embeddings System](../docs/features/automatic-embeddings.md)
-- [Embedding Cron Setup Guide](../docs/setup/embedding-cron-setup.md)
-- [Supabase Edge Functions](../supabase/functions/)
+- **Total**: Todos os arquivos/agents no sistema
+- **With embeddings**: Itens que já têm embeddings
+- **Pending**: Itens que precisam de embeddings
+
+### Tipos de Itens
+
+- **Project Files** (`📄`): Seus arquivos de documentação
+- **Agent Templates** (`🤖`): Templates públicos de agents
+
+---
+
+## 🐛 Troubleshooting
+
+### Erro: "Missing required environment variables"
+
+**Solução:**
+```bash
+# Verifique se .env.local existe
+cat .env.local
+
+# Verifique se as variáveis estão definidas
+echo $NEXT_PUBLIC_SUPABASE_URL
+echo $SUPABASE_SERVICE_ROLE_KEY
+```
+
+### Erro: "Missing API key for embeddings"
+
+**Solução:**
+```bash
+# Adicione uma das chaves ao .env.local
+OPENROUTER_API_KEY=sk-or-v1-...
+# OU
+OPENAI_API_KEY=sk-...
+```
+
+### Erro: "Embedding API error (401)"
+
+**Causa:** API key inválida ou sem créditos
+
+**Solução:**
+1. Verifique se a key está correta
+2. Verifique se há créditos na conta
+3. Tente gerar uma nova key
+
+### Erro: "Failed to get pending items"
+
+**Causa:** Problema de conexão com Supabase
+
+**Solução:**
+```bash
+# Verifique a conexão
+devcache connection
+
+# Verifique as credenciais
+echo $NEXT_PUBLIC_SUPABASE_URL
+echo $SUPABASE_SERVICE_ROLE_KEY
+```
+
+### Muitos Itens Pendentes
+
+**Causa:** Cron job não está rodando ou falhou
+
+**Solução:**
+```bash
+# Gere manualmente
+npm run generate-embeddings-v2
+
+# Ou via CLI
+devcache embeddings --trigger
+```
+
+---
+
+## 💡 Dicas
+
+1. **Verificação Regular**: Rode `check-embeddings` semanalmente
+2. **Após Push**: Sempre verifique embeddings após push
+3. **Batch Processing**: O script processa até 100 itens por vez
+4. **Rate Limits**: Há delay de 100ms entre itens para evitar rate limits
+5. **Logs**: Todos os runs são logados no banco para auditoria
+
+---
+
+## 📚 Mais Informações
+
+- **CLI Guide**: `devcache guide`
+- **Embedding Docs**: `packages/devcache/docs/EMBEDDINGS.md`
+- **API Docs**: Veja comentários nos scripts
+
+---
+
+## 🆘 Suporte
+
+Se encontrar problemas:
+
+1. Rode `npm run check-embeddings` para diagnóstico
+2. Verifique os logs de erro
+3. Consulte a seção de troubleshooting
+4. Abra uma issue no GitHub com os detalhes

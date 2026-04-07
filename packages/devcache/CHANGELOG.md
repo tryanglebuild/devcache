@@ -2,6 +2,109 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [Unreleased]
+
+### 🚀 New Feature: Automatic Embedding Generation
+
+#### Chunked Upload with Automatic Embeddings
+- **Files uploaded via CLI now generate embeddings automatically**
+  - Previously: Files uploaded but embeddings not generated ❌
+  - Now: Embeddings generated automatically in background ✅
+  - Processes files in chunks (5 files per chunk)
+  - AI can query files immediately after push
+
+#### How It Works
+1. Upload files in chunks of 5
+2. After each chunk upload, trigger embedding generation
+3. Embeddings generated in parallel (fire-and-forget)
+4. Progress shown in CLI during upload
+5. Summary displayed after completion
+
+#### Benefits
+- ✅ Files immediately searchable by AI
+- ✅ No waiting for weekly cron job
+- ✅ Chunked processing prevents system overload
+- ✅ Background generation doesn't block push
+- ✅ Automatic retry via cron for any failures
+
+#### Technical Details
+- Modified `StorageManager.uploadDocumentation()` to process in chunks
+- Added `triggerChunkEmbeddings()` for parallel embedding generation
+- Returns both `projectId` and `uploadedFileIds` for tracking
+- Fire-and-forget approach with error logging
+
+#### CLI Output
+```bash
+Processing chunk 1/3 (5 files)...
+✓ Chunk 1/3 uploaded (5 files)
+
+📊 Upload Summary:
+  • Files uploaded: 15
+  • Embedding generation: In progress (background)
+  • Note: Embeddings will be available in a few moments
+```
+
+### 📊 New Command: Embeddings Statistics
+
+#### `devcache embeddings` - View Embedding Coverage
+- **NEW: Check if all your files have embeddings**
+  - Shows total files vs files with embeddings
+  - Visual progress bar for quick overview
+  - Displays pending items count
+  - Shows recent embedding job history
+  - Separate stats for project files and agent templates
+
+**Example output:**
+```bash
+📊 Embedding Statistics
+
+📁 Your Project Files:
+
+  Total files: 25
+  With embeddings: 23 (92%)
+  Pending: 2
+
+  Progress: ████████████████████████████░░ 92%
+
+🤖 Agent Templates (Public):
+
+  Total agents: 10
+  With embeddings: 10 (100%)
+  Pending: 0 ✓
+
+📈 Status:
+
+  ⚠ 2 item(s) pending embedding generation
+  Embeddings are generated automatically in the background.
+  Run devcache embeddings --trigger to process them now.
+```
+
+#### `devcache embeddings --trigger` - Force Embedding Generation
+- **Manually trigger embedding generation for pending items**
+  - Processes up to 100 items immediately
+  - Shows detailed results (processed, succeeded, failed)
+  - Useful when you need embeddings right away
+  - No need to wait for weekly cron job
+
+**Usage:**
+```bash
+# View statistics
+devcache embeddings
+
+# Trigger immediate generation
+devcache embeddings --trigger
+```
+
+### 🎯 Impact
+- **Immediate availability**: Files searchable right after push
+- **Better UX**: Clear progress feedback during upload
+- **Reliability**: Chunked processing prevents timeouts
+- **Scalability**: Handles large documentation sets efficiently
+- **Visibility**: Easy to verify embedding coverage
+- **Control**: Manual trigger for immediate processing
+
+---
+
 ## [0.16.0] - 2026-04-07
 
 ### 🔄 New Feature: Refresh Command

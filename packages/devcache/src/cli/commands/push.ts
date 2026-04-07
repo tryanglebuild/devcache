@@ -114,14 +114,20 @@ export async function pushCommand() {
     spinner.text = 'Uploading to Supabase...';
     const storage = new StorageManager(supabase);
 
-    const projectId = await storage.uploadDocumentation(
+    const { projectId, uploadedFileIds } = await storage.uploadDocumentation(
       config.projectName,
       files,
       indexContent,
-      config.description
+      config.description,
+      5 // Process 5 files per chunk
     );
 
     spinner.succeed(chalk.green('Documentation pushed successfully!'));
+    
+    console.log(chalk.blue(`\n📊 Upload Summary:`));
+    console.log(chalk.gray(`  • Files uploaded: ${uploadedFileIds.length}`));
+    console.log(chalk.gray(`  • Embedding generation: In progress (background)`));
+    console.log(chalk.yellow(`  • Note: Embeddings will be available in a few moments`));
 
     // Update status cache
     await updateStatusCache(projectPath);

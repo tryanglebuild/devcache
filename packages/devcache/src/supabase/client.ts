@@ -46,6 +46,14 @@ export class DevCacheSupabaseClient {
     }
 
     this.client = createClient(this.supabaseUrl, this.supabaseKey);
+
+    // Set session in Supabase client if we have one
+    if (this.session) {
+      await this.client.auth.setSession({
+        access_token: this.session.access_token,
+        refresh_token: this.session.refresh_token,
+      });
+    }
   }
 
   /**
@@ -174,14 +182,6 @@ export class DevCacheSupabaseClient {
     try {
       const content = await fs.readFile(SESSION_FILE, 'utf-8');
       this.session = JSON.parse(content);
-
-      // Set session in Supabase client
-      if (this.client && this.session) {
-        await this.client.auth.setSession({
-          access_token: this.session.access_token,
-          refresh_token: this.session.refresh_token,
-        });
-      }
     } catch (error) {
       // Session file doesn't exist or is invalid
       this.session = null;

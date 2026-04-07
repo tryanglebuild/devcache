@@ -100,11 +100,14 @@ serve(async (req) => {
 
         // Save embedding based on type
         if (item.type === 'agent') {
+          const contentHash = generateContentHash(item)
+          
           const { error: upsertError } = await supabase
             .from('agent_template_embeddings')
             .upsert({
               agent_id: item.id,
               embedding_vector: embedding,
+              content_hash: contentHash,
               indexed_at: new Date().toISOString(),
             }, {
               onConflict: 'agent_id'
@@ -192,6 +195,25 @@ serve(async (req) => {
     )
   }
 })
+
+function generateContentHash(item: PendingItem): string {
+  // Generate simple hash of content for change detection
+  const content = [
+    item.name,
+    item.description || '',
+    item.tags?.join(',') || '',
+    item.content || '',
+  ].join('|')
+  
+  // Simple hash for Deno (not cryptographic, just for change detection)
+  let hash = 0
+  for (let i = 0; i < content.length; i++) {
+    const char = content.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16)
+}
 
 async function generateEmbedding(text: string): Promise<EmbeddingResult> {
   const useOpenAI = !!OPENAI_API_KEY
