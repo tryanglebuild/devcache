@@ -2,6 +2,179 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.11.0] - 2026-04-06
+
+### 🐛 Critical Fix - Folder Structure Preservation
+
+This release fixes a critical bug where nested folder structures were not being preserved when pushing to Supabase.
+
+### 🐛 Bug Fixes
+
+#### Folder Structure Not Preserved in Cloud
+- **Fixed nested folder upload** - Folder structure now correctly preserved in Supabase
+  - Previously: All files uploaded to flat `general/` or `tech/` folders ❌
+  - Now: Complete folder hierarchy preserved in cloud ✅
+  - Example: `tech/features/auth.md` → Creates `tech/` → `features/` → `auth.md`
+
+#### Storage Manager Improvements
+- **Implemented `createFolderByPath()`** - Recursively creates nested folder structure
+  - Splits path into parts (e.g., `tech/features/auth` → `["tech", "features", "auth"]`)
+  - Creates each folder in sequence
+  - Reuses existing folders (no duplicates)
+  - Maintains parent-child relationships
+
+- **Updated `uploadDocumentation()`** - Preserves file paths during upload
+  - Parses file path to extract folder structure
+  - Creates folder hierarchy before uploading file
+  - Places file in correct nested location
+  - Works with any depth of nesting
+
+### 📁 What This Fixes
+
+**Before v0.11.0:**
+```
+Local structure:
+devcache_docs/project/
+├── tech/
+│   └── features/
+│       └── auth.md
+
+Cloud structure (WRONG):
+project/
+├── general/
+│   └── auth.md  ← File in wrong place!
+└── tech/
+```
+
+**After v0.11.0:**
+```
+Local structure:
+devcache_docs/project/
+├── tech/
+│   └── features/
+│       └── auth.md
+
+Cloud structure (CORRECT):
+project/
+├── tech/
+│   └── features/
+│       └── auth.md  ← Exact structure preserved!
+```
+
+### 🔧 Technical Implementation
+
+#### New Method: `createFolderByPath()`
+
+```typescript
+async createFolderByPath(parentId: string, folderPath: string): Promise<ProjectFolder> {
+  // Split path: "tech/features/auth" → ["tech", "features", "auth"]
+  const parts = folderPath.split('/').filter(p => p.length > 0);
+  
+  let currentParentId = parentId;
+  
+  // Create each folder in sequence
+  for (const folderName of parts) {
+    // Check if folder exists, create if not
+    // Update currentParentId to newly created folder
+  }
+  
+  return finalFolder;
+}
+```
+
+**Features:**
+- Recursive folder creation
+- Checks for existing folders (no duplicates)
+- Maintains parent-child relationships
+- Returns the deepest folder in the path
+
+#### Updated: `uploadDocumentation()`
+
+```typescript
+for (const file of files) {
+  // Parse: "tech/features/auth.md" → folder: "tech/features", file: "auth.md"
+  const pathParts = file.filename.split('/');
+  const fileName = pathParts[pathParts.length - 1];
+  const folderPath = pathParts.slice(0, -1).join('/');
+
+  // Create folder structure if needed
+  if (folderPath) {
+    const folder = await this.createFolderByPath(projectFolder.id, folderPath);
+    parentId = folder.id;
+  }
+
+  // Upload file to correct location
+  await this.uploadFile(parentId, fileName, file.content);
+}
+```
+
+### 🎯 Impact
+
+**Who is affected:**
+- Anyone using nested folder structures (v0.10.0 users)
+- Projects with custom folders like `features/`, `guides/`, `api/`
+- Any structure deeper than 1 level
+
+**What to do:**
+1. Update to v0.11.0
+2. Run `devcache push` again
+3. Your folder structure will now be correctly preserved in Supabase
+
+### ✅ Validation
+
+After updating, verify the fix:
+
+```bash
+# Update package
+npm install -g devcache-hub@latest
+
+# Push documentation
+devcache push
+
+# Check in Supabase dashboard
+# Folder structure should match your local structure exactly
+```
+
+### 📊 Examples
+
+**Simple nested structure:**
+```
+Local: tech/features/auth.md
+Cloud: project/tech/features/auth.md ✅
+```
+
+**Deep nesting:**
+```
+Local: tech/features/auth/oauth/google.md
+Cloud: project/tech/features/auth/oauth/google.md ✅
+```
+
+**Multiple branches:**
+```
+Local:
+├── tech/features/auth.md
+├── tech/api/rest.md
+└── guides/setup/install.md
+
+Cloud:
+project/
+├── tech/
+│   ├── features/
+│   │   └── auth.md
+│   └── api/
+│       └── rest.md
+└── guides/
+    └── setup/
+        └── install.md
+✅ All preserved!
+```
+
+### 🙏 Thanks
+
+Thanks to users who reported this issue! Your feedback helps make DevCache better.
+
+---
+
 ## [0.10.0] - 2026-04-06
 
 ### 🚀 Enhanced Push Command - Recursive File Discovery

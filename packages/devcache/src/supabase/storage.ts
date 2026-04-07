@@ -77,6 +77,80 @@ export class StorageManager {
   }
 
   /**
+   * Create or get folder by path (supports nested folders)
+   */
+  async createFolderByPath(
+    parentId: string,
+    folderPath: string
+  ): Promise<ProjectFolder> {
+    const client = this.supabaseClient.getClient();
+    const session = await this.supabaseClient.getSession();
+
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+
+    // Split path into parts (e.g., "tech/features/auth" -> ["tech", "features", "auth"])
+    const parts = folderPath.split('/').filter(p => p.length > 0);
+    
+    let currentParentId = parentId;
+    
+    // Create each folder in the path
+    for (const folderName of parts) {
+      // Check if folder already exists
+      const { data: existing, error: searchError } = await client
+        .from('project_items')
+        .select('*')
+        .eq('user_id', session.user_id)
+        .eq('parent_id', currentParentId)
+        .eq('name', folderName)
+        .eq('type', 'folder')
+        .maybeSingle();
+
+      if (searchError) {
+        throw new Error(`Failed to search for folder: ${searchError.message}`);
+      }
+
+      if (existing) {
+        currentParentId = existing.id;
+        continue;
+      }
+
+      // Create folder
+      const { data, error } = await client
+        .from('project_items')
+        .insert({
+          user_id: session.user_id,
+          parent_id: currentParentId,
+          name: folderName,
+          type: 'folder',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to create folder "${folderName}": ${error.message}`);
+      }
+
+      Logger.debug(`Created folder: ${folderName}`);
+      currentParentId = data.id;
+    }
+
+    // Return the last created/found folder
+    const { data: finalFolder, error } = await client
+      .from('project_items')
+      .select('*')
+      .eq('id', currentParentId)
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to get final folder: ${error.message}`);
+    }
+
+    return finalFolder as ProjectFolder;
+  }
+
+  /**
    * Create category folder (general or tech)
    */
   async createCategoryFolder(
@@ -216,14 +290,23 @@ export class StorageManager {
     await this.uploadFile(projectFolder.id, 'index.md', indexContent);
     Logger.debug('Uploaded index.md');
 
-    // Create category folders
-    const generalFolder = await this.createCategoryFolder(projectFolder.id, 'general');
-    const techFolder = await this.createCategoryFolder(projectFolder.id, 'tech');
-
-    // Upload files
+    // Upload files with folder structure preservation
     for (const file of files) {
-      const parentId = file.category === 'general' ? generalFolder.id : techFolder.id;
-      await this.uploadFile(parentId, file.filename, file.content);
+      // Parse the file path to extract folder structure and filename
+      const pathParts = file.filename.split('/');
+      const fileName = pathParts[pathParts.length - 1];
+      const folderPath = pathParts.slice(0, -1).join('/');
+
+      let parentId = projectFolder.id;
+
+      // If there's a folder path, create the folder structure
+      if (folderPath) {
+        const folder = await this.createFolderByPath(projectFolder.id, folderPath);
+        parentId = folder.id;
+      }
+
+      // Upload the file to the correct folder
+      await this.uploadFile(parentId, fileName, file.content);
     }
 
     Logger.success(`Uploaded ${files.length + 1} files to project "${projectName}"`);
