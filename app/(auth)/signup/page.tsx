@@ -109,8 +109,11 @@ export default function SignupPage() {
               <p className="text-slate-500 font-medium">Start building with AI agents today.</p>
             </div>
 
-            {/* GitHub OAuth */}
-            <OAuthButton provider="github" />
+            {/* OAuth Buttons */}
+            <div className="space-y-3">
+              <OAuthButton provider="github" mode="signup" />
+              <OAuthButton provider="google" mode="signup" />
+            </div>
 
             {/* Divider */}
             <div className="relative my-8">

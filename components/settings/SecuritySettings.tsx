@@ -1,14 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, Lock, AlertTriangle, User as UserIcon } from 'lucide-react'
+import { Loader2, Lock, AlertTriangle, User as UserIcon, Link2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import LinkedAccountsManager from '@/components/auth/LinkedAccountsManager'
+import { DeleteAccountDialog } from '@/components/settings/DeleteAccountDialog'
+import { useSearchParams } from 'next/navigation'
 
 interface SecuritySettingsProps {
   user: SupabaseUser
@@ -21,6 +24,29 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
     newPassword: '',
     confirmPassword: '',
   })
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const searchParams = useSearchParams()
+
+  // Check for error messages from OAuth callback
+  useEffect(() => {
+    const error = searchParams.get('error')
+    const message = searchParams.get('message')
+    
+    if (error && message) {
+      // Show toast based on error type
+      if (error === 'identity_exists') {
+        toast.error(message, { duration: 6000, id: 'identity-exists' })
+      } else if (error === 'linking_disabled') {
+        toast.error(message, { duration: 6000, id: 'linking-disabled' })
+      } else {
+        toast.error(message, { duration: 5000, id: 'oauth-error' })
+      }
+      
+      // Clean up URL parameters after showing toast
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, '', newUrl)
+    }
+  }, [searchParams])
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,6 +89,26 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
 
   return (
     <div className="space-y-6">
+      {/* Linked Accounts */}
+      <Card className="bg-gradient-to-br from-white to-blue-50/30 border-[#c7c4d7]/20 shadow-xl">
+        <CardHeader className="pb-6 border-b border-[#c7c4d7]/10">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <Link2 className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-black text-[#191c1e]">Linked Accounts</CardTitle>
+              <CardDescription className="text-[#464554] text-sm">
+                Manage your login methods and connected accounts
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <LinkedAccountsManager />
+        </CardContent>
+      </Card>
+
       {/* Change Password */}
       <Card className="bg-gradient-to-br from-white to-emerald-50/30 border-[#c7c4d7]/20 shadow-xl">
         <CardHeader className="pb-6 border-b border-[#c7c4d7]/10">
@@ -247,12 +293,20 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
           <Button
             variant="destructive"
             className="font-bold"
-            onClick={() => toast.error('Account deletion not yet implemented')}
+            onClick={() => setDeleteDialogOpen(true)}
           >
+            <AlertTriangle className="mr-2 h-4 w-4" />
             Delete Account
           </Button>
         </CardContent>
       </Card>
+
+      {/* Delete Account Dialog */}
+      <DeleteAccountDialog
+        userEmail={user.email || ''}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+      />
     </div>
   )
 }

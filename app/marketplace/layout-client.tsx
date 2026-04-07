@@ -44,19 +44,24 @@ function MarketplaceContent({
 
   const handleLogout = async () => {
     try {
+      toast.loading('Logging out...')
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
       })
 
       if (response.ok) {
+        toast.dismiss()
         toast.success('Logged out successfully')
-        if (isMounted) {
-          router.push('/login')
-        }
+        router.push('/login')
+        router.refresh()
       } else {
-        toast.error('Failed to logout')
+        toast.dismiss()
+        const data = await response.json()
+        toast.error(data.error || 'Failed to logout')
       }
     } catch (error) {
+      toast.dismiss()
+      console.error('Logout error:', error)
       toast.error('An error occurred during logout')
     }
   }
