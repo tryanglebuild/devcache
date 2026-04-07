@@ -11,29 +11,41 @@ export interface SessionData {
   user_id: string;
   email: string;
   expires_at: number;
+  // DevCache project credentials (saved during login)
+  supabase_url: string;
+  supabase_anon_key: string;
 }
 
 export class DevCacheSupabaseClient {
   private client: SupabaseClient | null = null;
   private session: SessionData | null = null;
+  private supabaseUrl: string = '';
+  private supabaseKey: string = '';
 
   /**
-   * Initialize Supabase client with environment variables
+   * Initialize Supabase client with environment variables or saved session credentials
    */
   async initialize(): Promise<void> {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    // Try to load existing session first to get saved credentials
+    await this.loadSession();
 
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error(
-        'Supabase credentials not found. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.'
-      );
+    // Priority 1: Use credentials from saved session (most reliable)
+    if (this.session?.supabase_url && this.session?.supabase_anon_key) {
+      this.supabaseUrl = this.session.supabase_url;
+      this.supabaseKey = this.session.supabase_anon_key;
+    }
+    // Priority 2: Use environment variables (fallback for first-time setup)
+    else if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      this.supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      this.supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    }
+    // Priority 3: Use hardcoded DevCache credentials (last resort)
+    else {
+      this.supabaseUrl = 'https://qeplvargpuusbrzwfluw.supabase.co';
+      this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlcGx2YXJncHV1c2JyendmbHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTY5NTksImV4cCI6MjA5MDA5Mjk1OX0.75E00sD0-D_3LzPPEpP9xnEasqxOoiQ8ouUBkjBWfxk';
     }
 
-    this.client = createClient(supabaseUrl, supabaseKey);
-
-    // Try to load existing session
-    await this.loadSession();
+    this.client = createClient(this.supabaseUrl, this.supabaseKey);
   }
 
   /**
@@ -57,13 +69,15 @@ export class DevCacheSupabaseClient {
       throw new Error('No session data returned from authentication');
     }
 
-    // Store session
+    // Store session with DevCache credentials
     this.session = {
       access_token: data.session.access_token,
       refresh_token: data.session.refresh_token,
       user_id: data.user.id,
       email: data.user.email!,
       expires_at: data.session.expires_at || 0,
+      supabase_url: this.supabaseUrl,
+      supabase_anon_key: this.supabaseKey,
     };
 
     await this.saveSession();
@@ -106,12 +120,15 @@ export class DevCacheSupabaseClient {
       throw new Error('Session expired. Please login again.');
     }
 
+    // Preserve DevCache credentials when refreshing
     this.session = {
       access_token: data.session.access_token,
       refresh_token: data.session.refresh_token,
       user_id: data.session.user.id,
       email: data.session.user.email!,
       expires_at: data.session.expires_at || 0,
+      supabase_url: this.session.supabase_url,
+      supabase_anon_key: this.session.supabase_anon_key,
     };
 
     await this.saveSession();
@@ -121,13 +138,18 @@ export class DevCacheSupabaseClient {
    * Save OAuth session (public method for OAuth flow)
    */
   async saveOAuthSession(session: SessionData): Promise<void> {
-    this.session = session;
+    // Ensure session includes DevCache credentials
+    this.session = {
+      ...session,
+      supabase_url: session.supabase_url || this.supabaseUrl || 'https://qeplvargpuusbrzwfluw.supabase.co',
+      supabase_anon_key: session.supabase_anon_key || this.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlcGx2YXJncHV1c2JyendmbHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTY5NTksImV4cCI6MjA5MDA5Mjk1OX0.75E00sD0-D_3LzPPEpP9xnEasqxOoiQ8ouUBkjBWfxk',
+    };
 
     // Set session in Supabase client
     if (this.client) {
       await this.client.auth.setSession({
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
+        access_token: this.session.access_token,
+        refresh_token: this.session.refresh_token,
       });
     }
 

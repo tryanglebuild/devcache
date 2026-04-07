@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import { getSupabaseClient } from '../../supabase/client';
 import { StorageManager } from '../../supabase/storage';
 import { ConfigManager, Logger } from '../../utils';
+import { updateStatusCache } from './status';
 
 export async function pushCommand() {
   const spinner = ora('Initializing...').start();
@@ -121,6 +122,9 @@ export async function pushCommand() {
     );
 
     spinner.succeed(chalk.green('Documentation pushed successfully!'));
+
+    // Update status cache
+    await updateStatusCache(projectPath);
 
     // Get project URL
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://devcache.vercel.app';

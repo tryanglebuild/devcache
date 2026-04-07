@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-import { config } from 'dotenv';
-import { resolve } from 'path';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { initCommand } from './commands/init';
@@ -10,21 +8,20 @@ import { pushCommand } from './commands/push';
 import { loginCommand } from './commands/login';
 import { logoutCommand } from './commands/logout';
 import { profileCommand } from './commands/profile';
+import { statusCommand } from './commands/status';
+import { connectionCommand } from './commands/connection';
+import { guideCommand } from './commands/guide';
+import { refreshCommand } from './commands/refresh';
 
-// Load environment variables from multiple possible locations
-// 1. Current working directory .env
-config({ path: resolve(process.cwd(), '.env') });
-// 2. Current working directory .env.local
-config({ path: resolve(process.cwd(), '.env.local') });
-// 3. User home directory .devcache/.env
-config({ path: resolve(process.env.HOME || process.env.USERPROFILE || '', '.devcache', '.env') });
+// Note: Supabase credentials are now stored securely in ~/.devcache/session.json
+// They are saved during login and loaded automatically by the Supabase client
 
 const program = new Command();
 
 program
   .name('devcache')
   .description('Intelligent project documentation generator with cloud sync')
-  .version('0.1.0');
+  .version('0.16.0');
 
 program
   .command('init')
@@ -58,9 +55,25 @@ program
 
 program
   .command('status')
-  .description('Check synchronization status')
-  .action(() => {
-    console.log(chalk.blue('Status command coming soon!'));
-  });
+  .description('Check documentation status and pending changes')
+  .action(statusCommand);
+
+program
+  .command('connection')
+  .description('Test connection to DevCache database')
+  .action(connectionCommand);
+
+program
+  .command('guide')
+  .description('Interactive guide for using DevCache')
+  .action(guideCommand);
+
+program
+  .command('refresh')
+  .description('Refresh cache, session, or everything')
+  .option('-c, --cache', 'Clear status cache')
+  .option('-p, --profile', 'Refresh user session')
+  .option('-a, --all', 'Refresh everything')
+  .action(refreshCommand);
 
 program.parse(process.argv);

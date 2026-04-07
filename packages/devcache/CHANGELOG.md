@@ -2,6 +2,649 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.16.0] - 2026-04-07
+
+### 🔄 New Feature: Refresh Command
+
+#### Refresh Command - Clear Cache & Refresh Session
+- **NEW: `devcache refresh` command with multiple options**
+  - Interactive menu for choosing what to refresh
+  - Command-line flags for direct execution
+  - Clear status cache
+  - Refresh user session/token
+  - Refresh everything at once
+
+**Usage Options:**
+
+1. **Interactive Menu:**
+   ```bash
+   devcache refresh
+   ```
+   Choose from menu: Cache, Profile, All, or Cancel
+
+2. **Direct Commands:**
+   ```bash
+   devcache refresh --cache     # Clear status cache only
+   devcache refresh --profile   # Refresh session only
+   devcache refresh --all       # Refresh everything
+   ```
+
+**What Each Option Does:**
+
+**Cache Refresh (`--cache`):**
+- Clears `.devcache/status-cache.json`
+- Next `devcache status` shows all files as new
+- Useful when cache gets out of sync
+- Safe operation, no data loss
+
+**Profile Refresh (`--profile`):**
+- Refreshes authentication token
+- Extends session expiry
+- Validates credentials
+- Shows new expiration time
+- Useful when session is about to expire
+
+**All Refresh (`--all`):**
+- Combines cache + profile refresh
+- Complete system refresh
+- Recommended for troubleshooting
+
+### 🎯 Use Cases
+
+**When to Refresh Cache:**
+- Status showing incorrect file states
+- After manual file operations
+- Cache corruption suspected
+- Want fresh status check
+
+**When to Refresh Profile:**
+- Session about to expire
+- Authentication issues
+- After long idle period
+- Before important operations
+
+**When to Refresh All:**
+- General troubleshooting
+- Starting fresh work session
+- After system updates
+- Periodic maintenance
+
+### 💡 Pro Tips
+
+- Run `devcache refresh --all` before important pushes
+- Use `devcache refresh --profile` to extend session
+- Clear cache if status looks wrong
+- Combine with `devcache connection` for full health check
+
+---
+
+## 📦 Complete Feature Set (v0.9.0 - v0.16.0)
+
+### Authentication & Security
+- ✅ OAuth and Email/Password login
+- ✅ Secure credential storage in `~/.devcache/session.json`
+- ✅ Session management and refresh
+- ✅ No dependency on local `.env.local` files
+- ✅ Always connects to DevCache project (qeplvargpuusbrzwfluw)
+
+### Project Management
+- ✅ Project initialization with folder structure
+- ✅ Configuration file (`.devcache.json`)
+- ✅ AI-powered documentation generation
+- ✅ Automatic folder creation (general, tech, features)
+
+### Documentation Workflow
+- ✅ Status tracking with MD5 hashing
+- ✅ Push to cloud with automatic cache update
+- ✅ Recursive file discovery
+- ✅ Folder structure preservation in cloud
+
+### Utilities & Troubleshooting
+- ✅ Connection testing
+- ✅ Profile management
+- ✅ Interactive guide
+- ✅ Cache and session refresh
+- ✅ Comprehensive error messages
+
+### Commands Available
+```bash
+devcache login          # Authenticate
+devcache logout         # Clear session
+devcache profile        # View user info
+devcache init           # Initialize project
+devcache generate       # Generate docs
+devcache status         # Check pending changes
+devcache push           # Sync to cloud
+devcache connection     # Test connectivity
+devcache refresh        # Refresh cache/session
+devcache guide          # Interactive guide
+```
+
+---
+
+## [0.15.0] - 2026-04-07
+
+### 📚 New Feature: Interactive Guide
+
+#### Guide Command - Learn DevCache Effectively
+- **NEW: `devcache guide` command**
+  - Interactive menu-driven guide
+  - Comprehensive documentation on all features
+  - Best practices and pro tips
+  - Troubleshooting help
+  - Command reference
+
+**Guide Topics:**
+- 🚀 Getting Started - Quick start guide
+- 🔐 Authentication - Login and session management
+- 📁 Project Initialization - Setup and configuration
+- ✨ Documentation Generation - AI-powered docs
+- ⭐ Best Practices - Quality documentation tips
+- 🔄 Recommended Workflow - Step-by-step process
+- 📋 Command Reference - All available commands
+- 🔧 Troubleshooting - Common issues and solutions
+- 💡 Pro Tips - Advanced usage and automation
+
+**Features:**
+- Interactive navigation
+- Color-coded sections
+- Practical examples
+- Copy-paste ready commands
+- Context-sensitive help
+
+**Usage:**
+```bash
+devcache guide
+```
+
+Then navigate through topics using arrow keys and Enter.
+
+### 🎯 Why This Matters
+
+The guide command provides:
+- **Onboarding**: New users learn quickly
+- **Reference**: Quick lookup for commands
+- **Best Practices**: Learn optimal workflows
+- **Troubleshooting**: Self-service problem solving
+- **Tips**: Discover advanced features
+
+### 💡 Pro Tip
+
+Run `devcache guide` anytime you need help or want to learn more about DevCache features!
+
+## [0.14.0] - 2026-04-07
+
+### ✨ New Features
+
+#### Status Command - Track Documentation Changes
+- **NEW: `devcache status` command**
+  - Shows new, modified, and unchanged documentation files
+  - Tracks changes using MD5 hash comparison
+  - Displays pending files that need to be pushed
+  - Cache stored in `.devcache/status-cache.json`
+  - Updates automatically after successful push
+
+**Example output:**
+```
+📊 Documentation Status
+
+✨ New files (2):
+  + tech/features/auth.md
+  + tech/features/payments.md
+
+📝 Modified files (1):
+  ~ general/project-overview.md
+
+✓ Unchanged files: 5
+
+📤 3 file(s) pending push
+```
+
+#### Connection Command - Test Database Connectivity
+- **NEW: `devcache connection` command**
+  - Tests Supabase client initialization
+  - Verifies user authentication
+  - Tests database connection and schema
+  - Checks write permissions
+  - Displays existing projects
+  - Helpful for troubleshooting push issues
+
+**Connection test steps:**
+1. ✓ Supabase client initialized
+2. ✓ Authenticated as user@email.com
+3. ✓ Database connection successful
+4. ✓ DevCache credentials found
+5. ✓ Write permissions verified
+
+### 🔧 Technical Details
+
+**Status Command:**
+- Uses MD5 hashing to detect file changes
+- Compares current files with last push state
+- Recursive directory scanning
+- Ignores non-markdown files
+- Cache updated automatically after `devcache push`
+
+**Connection Command:**
+- Tests all connection layers
+- Validates session credentials
+- Queries `project_items` table
+- Checks RLS policies
+- Provides detailed error messages
+
+### 🎯 Use Cases
+
+**Status Command:**
+- Check what changed before pushing
+- Verify documentation is up to date
+- Track file modifications over time
+- See pending changes at a glance
+
+**Connection Command:**
+- Troubleshoot push failures
+- Verify authentication is working
+- Test database connectivity
+- Confirm credentials are saved correctly
+
+## [0.13.0] - 2026-04-07
+
+### 🔒 Security: Secure Credential Management
+
+#### Credentials Saved During Login (Secure Approach)
+- **DevCache credentials now saved securely in `~/.devcache/session.json`**
+  - Previously: Relied on local project's `.env.local` ❌
+  - Now: Credentials saved during login process ✅
+  - No hardcoded credentials in source code
+  - Credentials stored locally and encrypted with user session
+
+#### How It Works
+1. User runs `devcache login`
+2. Authenticates with DevCache (qeplvargpuusbrzwfluw)
+3. Session + DevCache credentials saved to `~/.devcache/session.json`
+4. All subsequent commands use saved credentials
+5. Credentials refreshed automatically with session
+
+#### Security Benefits
+- ✅ No hardcoded credentials in source code
+- ✅ Credentials stored per-user, not per-project
+- ✅ Works from any directory/project
+- ✅ No dependency on local `.env.local` files
+- ✅ Credentials tied to authenticated session
+
+#### Credential Priority (Fallback Chain)
+1. **Saved session credentials** (most secure, preferred)
+2. Environment variables (for development/testing)
+3. Hardcoded fallback (last resort, only in client initialization)
+
+### 🎯 Impact
+- Users must login once to save credentials
+- Push works from any project directory
+- No need to configure Supabase in each project
+- Consistent and secure authentication
+
+## [0.12.1] - 2026-04-07
+
+### 🐛 Bug Fixes
+
+#### Environment Variable Loading from Subdirectories
+- **Fixed "table not found" error when running commands from subdirectories**
+  - Previously: CLI only looked for `.env.local` in current directory ❌
+  - Now: Searches up the directory tree (like Git) to find environment files ✅
+  - Users can run `devcache push` from any subdirectory (e.g., `devcache_docs/`)
+  - Ensures Supabase credentials are always loaded correctly
+
+### 🔧 Technical Changes
+- Added `findEnvFile()` function that walks up directory tree
+- Searches for `.env.local` and `.env` in parent directories
+- Stops at filesystem root if no file found
+- Maintains backward compatibility with existing setups
+
+## [0.12.0] - 2026-04-06
+
+### 🎯 Major Init Command Improvements
+
+This release fixes critical issues with folder structure creation and documentation organization.
+
+### ✨ New Features
+
+#### Automatic Folder Structure Creation
+- **Init now creates complete folder structure** - All necessary folders created upfront
+  - Previously: Only created project folder, subfolders missing ❌
+  - Now: Creates `general/`, `tech/`, and `features/` folders automatically ✅
+  - AI can immediately start creating files in correct locations
+  - No need to manually create folders
+
+#### Enhanced Index.md with Clear Instructions
+- **Added comprehensive file creation guide** - Step-by-step instructions in index.md
+  - Visual folder structure diagram
+  - Explicit path construction rules
+  - Examples of correct and incorrect paths
+  - File creation checklist
+  - Features documentation explanation
+
+### 📁 New Folder Structure
+
+**After `devcache init`:**
+```
+devcache_docs/
+└── {projectName}/
+    ├── index.md           # Main entry point with instructions
+    ├── general/           # General documentation
+    ├── tech/              # Technical documentation
+    └── features/          # Feature-specific docs
+```
+
+### 🔧 Technical Changes
+- Modified `initCommand()` to create all folders upfront
+- Updated `index.md` template with detailed instructions
+- Added folder structure validation
+- Improved console output to show created folders
+
+### 🎯 Impact
+- **Faster setup** - No manual folder creation needed
+- **Better AI guidance** - Clear instructions prevent errors
+- **Consistent structure** - All projects follow same pattern
+- **Fewer errors** - AI creates files in correct locations
+
+## [0.11.1] - 2026-04-06
+
+### 📝 Documentation Improvements
+
+#### Orchestrator Template Updates
+- **Added critical file location instructions** to prevent AI errors
+  - "CRITICAL: File Location Rules" section
+  - "Quick Start - File Creation Guide"
+  - "File Location Validation" checklist
+  - Examples of correct and incorrect paths
+
+### 🎯 Impact
+- AI agents now create files in correct locations
+- Reduced documentation generation errors
+- Clearer guidance for file organization
+
+## [0.11.0] - 2026-04-06
+
+### 🐛 Bug Fixes
+
+#### Folder Structure Preservation in Cloud
+- **Fixed: Push now preserves complete folder hierarchy**
+  - Previously: Uploaded all files to flat `general/` or `tech/` folders ❌
+  - Now: Maintains exact local structure in Supabase ✅
+  - Supports unlimited nesting depth
+  - Recursive folder creation in cloud
+
+### 🔧 Technical Changes
+- Implemented `createFolderByPath()` method
+- Updated `uploadDocumentation()` to preserve hierarchy
+- Recursive folder creation in Supabase
+- Path normalization for cross-platform compatibility
+
+### 🎯 Impact
+- Complex folder structures now work correctly
+- Features can be organized in subfolders
+- Cloud storage mirrors local structure exactly
+
+## [0.10.0] - 2026-04-06
+
+### 🐛 Bug Fixes
+
+#### Recursive File Discovery in Push Command
+- **Fixed: Push now finds ALL markdown files**
+  - Previously: Only looked in hardcoded `general/` and `tech/` folders ❌
+  - Now: Recursively scans entire project directory ✅
+  - Supports unlimited nesting depth
+  - Finds files regardless of folder structure
+
+### 🔧 Technical Changes
+- Implemented `readMarkdownFiles()` recursive function
+- Removed hardcoded folder paths
+- Dynamic category detection based on path
+- Better error handling for directory scanning
+
+### 🎯 Impact
+- No more "No documentation files found" errors
+- Flexible folder organization
+- Supports custom folder structures
+
+## [0.9.0] - 2026-04-06
+
+### 🐛 Bug Fixes
+
+#### Configuration File Location
+- **Fixed: `.devcache.json` now created in correct location**
+  - Previously: Created in wrong directory ❌
+  - Now: Created in project root ✅
+  - Also creates reference copy in `devcache_docs/`
+
+#### Git Ignore Updates
+- **Updated `.gitignore` to track configuration**
+  - Tracks `.devcache.json` (configuration)
+  - Ignores `.devcache/` folder (cache and temp files)
+
+### 🔧 Technical Changes
+- Fixed path resolution in init command
+- Updated `.gitignore` patterns
+- Improved file creation logic
+
+### 🎯 Impact
+- Configuration file in correct location
+- Better version control integration
+- Cleaner repository structure
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Install
+npm install -g devcache-hub
+
+# Authenticate
+devcache login
+
+# Initialize project
+cd your-project
+devcache init
+
+# Generate documentation
+devcache generate
+
+# Check status
+devcache status
+
+# Push to cloud
+devcache push
+
+# Get help
+devcache guide
+```
+
+## 📚 Documentation
+
+- Run `devcache guide` for interactive guide
+- Run `devcache --help` for command reference
+- Visit https://devcache.dev for full documentation
+
+## 🐛 Issues & Support
+
+- GitHub: https://github.com/tryanglebuild/devcache/issues
+- Email: support@devcache.dev
+
+### 📚 New Feature: Interactive Guide
+
+#### Guide Command - Learn DevCache Effectively
+- **NEW: `devcache guide` command**
+  - Interactive menu-driven guide
+  - Comprehensive documentation on all features
+  - Best practices and pro tips
+  - Troubleshooting help
+  - Command reference
+
+**Guide Topics:**
+- 🚀 Getting Started - Quick start guide
+- 🔐 Authentication - Login and session management
+- 📁 Project Initialization - Setup and configuration
+- ✨ Documentation Generation - AI-powered docs
+- ⭐ Best Practices - Quality documentation tips
+- 🔄 Recommended Workflow - Step-by-step process
+- 📋 Command Reference - All available commands
+- 🔧 Troubleshooting - Common issues and solutions
+- 💡 Pro Tips - Advanced usage and automation
+
+**Features:**
+- Interactive navigation
+- Color-coded sections
+- Practical examples
+- Copy-paste ready commands
+- Context-sensitive help
+
+**Usage:**
+```bash
+devcache guide
+```
+
+Then navigate through topics using arrow keys and Enter.
+
+### 🎯 Why This Matters
+
+The guide command provides:
+- **Onboarding**: New users learn quickly
+- **Reference**: Quick lookup for commands
+- **Best Practices**: Learn optimal workflows
+- **Troubleshooting**: Self-service problem solving
+- **Tips**: Discover advanced features
+
+### 💡 Pro Tip
+
+Run `devcache guide` anytime you need help or want to learn more about DevCache features!
+
+## [0.14.0] - 2026-04-07
+
+### ✨ New Features
+
+#### Status Command - Track Documentation Changes
+- **NEW: `devcache status` command**
+  - Shows new, modified, and unchanged documentation files
+  - Tracks changes using MD5 hash comparison
+  - Displays pending files that need to be pushed
+  - Cache stored in `.devcache/status-cache.json`
+  - Updates automatically after successful push
+
+**Example output:**
+```
+📊 Documentation Status
+
+✨ New files (2):
+  + tech/features/auth.md
+  + tech/features/payments.md
+
+📝 Modified files (1):
+  ~ general/project-overview.md
+
+✓ Unchanged files: 5
+
+📤 3 file(s) pending push
+```
+
+#### Connection Command - Test Database Connectivity
+- **NEW: `devcache connection` command**
+  - Tests Supabase client initialization
+  - Verifies user authentication
+  - Tests database connection and schema
+  - Checks write permissions
+  - Displays existing projects
+  - Helpful for troubleshooting push issues
+
+**Connection test steps:**
+1. ✓ Supabase client initialized
+2. ✓ Authenticated as user@email.com
+3. ✓ Database connection successful
+4. ✓ DevCache credentials found
+5. ✓ Write permissions verified
+
+### 🔧 Technical Details
+
+**Status Command:**
+- Uses MD5 hashing to detect file changes
+- Compares current files with last push state
+- Recursive directory scanning
+- Ignores non-markdown files
+- Cache updated automatically after `devcache push`
+
+**Connection Command:**
+- Tests all connection layers
+- Validates session credentials
+- Queries `project_items` table
+- Checks RLS policies
+- Provides detailed error messages
+
+### 🎯 Use Cases
+
+**Status Command:**
+- Check what changed before pushing
+- Verify documentation is up to date
+- Track file modifications over time
+- See pending changes at a glance
+
+**Connection Command:**
+- Troubleshoot push failures
+- Verify authentication is working
+- Test database connectivity
+- Confirm credentials are saved correctly
+
+## [0.13.0] - 2026-04-07
+
+### 🔒 Security: Secure Credential Management
+
+#### Credentials Saved During Login (Secure Approach)
+- **DevCache credentials now saved securely in `~/.devcache/session.json`**
+  - Previously: Relied on local project's `.env.local` ❌
+  - Now: Credentials saved during login process ✅
+  - No hardcoded credentials in source code
+  - Credentials stored locally and encrypted with user session
+
+#### How It Works
+1. User runs `devcache login`
+2. Authenticates with DevCache (qeplvargpuusbrzwfluw)
+3. Session + DevCache credentials saved to `~/.devcache/session.json`
+4. All subsequent commands use saved credentials
+5. Credentials refreshed automatically with session
+
+#### Security Benefits
+- ✅ No hardcoded credentials in source code
+- ✅ Credentials stored per-user, not per-project
+- ✅ Works from any directory/project
+- ✅ No dependency on local `.env.local` files
+- ✅ Credentials tied to authenticated session
+
+#### Credential Priority (Fallback Chain)
+1. **Saved session credentials** (most secure, preferred)
+2. Environment variables (for development/testing)
+3. Hardcoded fallback (last resort, only in client initialization)
+
+### 🎯 Impact
+- Users must login once to save credentials
+- Push works from any project directory
+- No need to configure Supabase in each project
+- Consistent and secure authentication
+
+## [0.12.1] - 2026-04-07
+
+### 🐛 Bug Fixes
+
+#### Environment Variable Loading from Subdirectories
+- **Fixed "table not found" error when running commands from subdirectories**
+  - Previously: CLI only looked for `.env.local` in current directory ❌
+  - Now: Searches up the directory tree (like Git) to find environment files ✅
+  - Users can run `devcache push` from any subdirectory (e.g., `devcache_docs/`)
+  - Ensures Supabase credentials are always loaded correctly
+
+### 🔧 Technical Changes
+- Added `findEnvFile()` function that walks up directory tree
+- Searches for `.env.local` and `.env` in parent directories
+- Stops at filesystem root if no file found
+- Maintains backward compatibility with existing setups
+
 ## [0.12.0] - 2026-04-06
 
 ### 🎯 Major Init Command Improvements

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import ora from 'ora';
-import { getSupabaseClient } from '../../supabase/client';
+import { getSupabaseClient, SessionData } from '../../supabase/client';
 import { OAuthFlow } from '../../supabase/oauth';
 import { Logger } from '../../utils';
 
@@ -60,7 +60,14 @@ export async function loginCommand() {
       const spinner = ora('Waiting for authentication...').start();
 
       try {
-        const session = await oauth.startFlow(appUrl);
+        const oauthResult = await oauth.startFlow(appUrl);
+        
+        // Convert OAuthResult to SessionData with DevCache credentials
+        const session: SessionData = {
+          ...oauthResult,
+          supabase_url: 'https://qeplvargpuusbrzwfluw.supabase.co',
+          supabase_anon_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlcGx2YXJncHV1c2JyendmbHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTY5NTksImV4cCI6MjA5MDA5Mjk1OX0.75E00sD0-D_3LzPPEpP9xnEasqxOoiQ8ouUBkjBWfxk',
+        };
         
         // Save session
         await supabase.saveOAuthSession(session);
