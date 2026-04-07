@@ -83,8 +83,12 @@ export async function initCommand() {
     const templatesDir = path.join(docsDir, 'templates');
     const projectDir = path.join(docsDir, answers.projectName);
     
+    // Create project subdirectories
     await fs.mkdir(templatesDir, { recursive: true });
     await fs.mkdir(projectDir, { recursive: true });
+    await fs.mkdir(path.join(projectDir, 'general'), { recursive: true });
+    await fs.mkdir(path.join(projectDir, 'tech'), { recursive: true });
+    await fs.mkdir(path.join(projectDir, 'features'), { recursive: true });
 
     // Copy template files from package to project
     const packageTemplatesPath = path.join(__dirname, '../../../templates');
@@ -166,6 +170,63 @@ This template defines the orchestrator's role in managing and reviewing document
 - **Description**: ${answers.description || 'No description provided'}
 - **Generated**: ${new Date().toISOString()}
 
+---
+
+## 🚨 IMPORTANT: File Creation Instructions
+
+### Where to Create Documentation Files
+
+**ALL documentation files MUST be created in the following structure:**
+
+\`\`\`
+devcache_docs/${answers.projectName}/
+├── index.md                    ← Project index (auto-generated)
+├── general/                    ← General documentation folder
+│   ├── project-overview.md     ← Create here
+│   └── project-impact.md       ← Create here
+├── tech/                       ← Technical documentation folder
+│   ├── architecture-project.md ← Create here
+│   ├── stack-project.md        ← Create here
+│   └── features.md             ← Create here (overview)
+└── features/                   ← Individual feature documentation
+    ├── feature-name-1.md       ← Create here (for high-impact features)
+    ├── feature-name-2.md       ← Create here
+    └── ...
+\`\`\`
+
+### File Creation Rules
+
+1. **Read Configuration First**
+   - Open \`.devcache.json\` in project root
+   - Extract \`projectName\` value
+   - Use this to construct paths
+
+2. **Construct Correct Paths**
+   - Base path: \`devcache_docs/${answers.projectName}/\`
+   - General docs: \`devcache_docs/${answers.projectName}/general/\`
+   - Tech docs: \`devcache_docs/${answers.projectName}/tech/\`
+   - Features: \`devcache_docs/${answers.projectName}/features/\`
+
+3. **Never Create Files In**
+   - ❌ Project root
+   - ❌ \`docs/\` folder
+   - ❌ \`devcache_docs/\` root (without project name)
+   - ❌ Any other location
+
+### Example File Paths
+
+**Correct:**
+- ✅ \`devcache_docs/${answers.projectName}/general/project-overview.md\`
+- ✅ \`devcache_docs/${answers.projectName}/tech/architecture-project.md\`
+- ✅ \`devcache_docs/${answers.projectName}/features/authentication.md\`
+
+**Wrong:**
+- ❌ \`docs/project-overview.md\`
+- ❌ \`devcache_docs/project-overview.md\`
+- ❌ \`project-overview.md\`
+
+---
+
 ## Documentation Structure
 
 ### Templates
@@ -186,7 +247,12 @@ All templates are in **Markdown format (.md)** with detailed instructions for an
 - **README**: Complete guide to the template system (README.md)
 
 ### Project Documentation
-Project-specific documentation will be generated in this directory (\`devcache_docs/${answers.projectName}/\`).
+Project-specific documentation will be generated in: \`devcache_docs/${answers.projectName}/\`
+
+**Folder Structure:**
+- \`general/\` - High-level overview and business context
+- \`tech/\` - Technical architecture and implementation
+- \`features/\` - Individual feature documentation (for high-impact features)
 
 ## Template System
 
@@ -216,7 +282,24 @@ The orchestrator executes templates in this order:
 2. **project-impact-template.md** (Priority 2) - Business justification
 3. **stack-project-template.md** (Priority 2) - Technology inventory
 4. **architecture-project-template.md** (Priority 3) - System design
-5. **features-template.md** (Priority 4) - Functionality documentation
+5. **features-template.md** (Priority 4) - Functionality documentation + individual feature files
+
+## Features Documentation
+
+The features template generates TWO types of documentation:
+
+1. **Main Overview** (\`tech/features.md\`)
+   - Complete list of all features
+   - Impact scores and rankings
+   - Brief descriptions
+   - Links to detailed docs
+
+2. **Individual Feature Docs** (\`features/[feature-name].md\`)
+   - Created for features with impact ≥ 6
+   - Detailed implementation information
+   - Configuration steps
+   - Integration points
+   - Security considerations
 
 ## Next Steps
 1. Review \`templates/README.md\` to understand the template system
@@ -266,6 +349,9 @@ The orchestrator executes templates in this order:
     console.log(chalk.gray('  │   ├── tech/'));
     console.log(chalk.gray('  │   └── orchestrator.md'));
     console.log(chalk.gray(`  ├── ${answers.projectName}/`));
+    console.log(chalk.gray(`  │   ├── general/          ← Create general docs here`));
+    console.log(chalk.gray(`  │   ├── tech/             ← Create tech docs here`));
+    console.log(chalk.gray(`  │   └── features/         ← Create feature docs here`));
     console.log(chalk.gray('  ├── index.md'));
     console.log(chalk.gray('  └── .devcache.json'));
 

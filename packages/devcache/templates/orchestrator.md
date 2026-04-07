@@ -5,6 +5,181 @@ The orchestrator is the central intelligence that manages, coordinates, and vali
 
 ---
 
+## 🚨 QUICK START - File Creation Guide
+
+**Before creating ANY file, follow these steps:**
+
+1. **Read Configuration**
+   ```bash
+   cat .devcache.json
+   ```
+   Extract: `projectName` and `outputDir`
+
+2. **Verify Project Folder Exists**
+   ```bash
+   ls -la devcache_docs/{projectName}/
+   ```
+   Should show: `general/` and `tech/` folders
+
+3. **Create Files in Correct Location**
+   - General docs → `devcache_docs/{projectName}/general/`
+   - Tech docs → `devcache_docs/{projectName}/tech/`
+   - Index → `devcache_docs/{projectName}/index.md`
+
+4. **Never Create Files In**
+   - ❌ Project root
+   - ❌ `docs/` folder
+   - ❌ `.devcache/` folder
+   - ❌ `devcache_docs/` root (without project name)
+
+**Example Paths:**
+```
+✅ devcache_docs/my-project/general/project-overview.md
+✅ devcache_docs/my-project/tech/architecture-project.md
+❌ docs/project-overview.md
+❌ devcache_docs/project-overview.md
+❌ project-overview.md
+```
+
+---
+
+## 📁 CRITICAL: File Location Rules
+
+### Absolute Rule for File Creation
+**ALL documentation files MUST be created inside the project-specific folder within `devcache_docs/`**
+
+### Correct File Structure
+
+After `devcache init`, the structure is:
+```
+project-root/
+├── .devcache.json          ← Configuration file
+└── devcache_docs/          ← Documentation root
+    ├── templates/          ← Template definitions (DO NOT MODIFY)
+    ├── {projectName}/      ← YOUR PROJECT FOLDER (CREATE FILES HERE!)
+    │   └── (empty)         ← Ready for documentation
+    └── index.md            ← Navigation guide
+```
+
+After documentation generation, it MUST look like:
+```
+project-root/
+├── .devcache.json
+└── devcache_docs/
+    ├── templates/
+    ├── {projectName}/      ← ALL FILES GO HERE!
+    │   ├── index.md        ← Project index
+    │   ├── general/        ← General documentation
+    │   │   ├── project-overview.md
+    │   │   └── project-impact.md
+    │   └── tech/           ← Technical documentation
+    │       ├── architecture-project.md
+    │       ├── stack-project.md
+    │       └── features.md
+    └── index.md
+```
+
+### Path Construction Rules
+
+1. **Read project name from `.devcache.json`**:
+   ```json
+   {
+     "projectName": "my-project",
+     "outputDir": "devcache_docs"
+   }
+   ```
+
+2. **Construct base path**:
+   ```
+   Base Path = devcache_docs/{projectName}/
+   ```
+
+3. **Create files in correct locations**:
+   - General docs: `devcache_docs/{projectName}/general/`
+   - Tech docs: `devcache_docs/{projectName}/tech/`
+   - Index: `devcache_docs/{projectName}/index.md`
+
+### ❌ WRONG - Do NOT Create Files Here
+
+```
+project-root/
+├── docs/                   ← WRONG!
+├── documentation/          ← WRONG!
+├── .devcache/             ← WRONG!
+└── general/               ← WRONG!
+```
+
+### ✅ CORRECT - Always Create Files Here
+
+```
+project-root/
+└── devcache_docs/
+    └── {projectName}/     ← CORRECT! Always here!
+        ├── general/
+        └── tech/
+```
+
+### Validation Before Creating Files
+
+Before creating ANY file, verify:
+
+1. **Check `.devcache.json` exists** in project root
+2. **Read `projectName`** from configuration
+3. **Verify `devcache_docs/{projectName}/` folder exists**
+4. **Create subdirectories** if needed (`general/`, `tech/`)
+5. **Write files** to correct location
+
+### Example: Creating project-overview.md
+
+```typescript
+// 1. Read config
+const config = readFile('.devcache.json')
+const projectName = config.projectName  // e.g., "my-project"
+
+// 2. Construct path
+const basePath = `devcache_docs/${projectName}/`
+const filePath = `${basePath}general/project-overview.md`
+
+// 3. Verify folder exists
+if (!exists(`${basePath}general/`)) {
+  createFolder(`${basePath}general/`)
+}
+
+// 4. Write file
+writeFile(filePath, content)
+```
+
+### Common Mistakes to Avoid
+
+1. **Creating files in project root** ❌
+   ```
+   project-root/project-overview.md  ← WRONG!
+   ```
+
+2. **Creating files in devcache_docs root** ❌
+   ```
+   devcache_docs/project-overview.md  ← WRONG!
+   ```
+
+3. **Creating files in wrong project folder** ❌
+   ```
+   devcache_docs/wrong-name/project-overview.md  ← WRONG!
+   ```
+
+4. **Creating new documentation folder** ❌
+   ```
+   project-root/docs/project-overview.md  ← WRONG!
+   ```
+
+### ✅ Always Correct
+
+```
+devcache_docs/{projectName}/general/project-overview.md  ← CORRECT!
+devcache_docs/{projectName}/tech/architecture-project.md  ← CORRECT!
+```
+
+---
+
 ## Core Responsibilities
 
 ### 1. Template Management
@@ -208,6 +383,13 @@ All templates MUST be markdown (.md) files with this structure:
 ## Post-Generation Review Checklist
 
 After all templates execute, the orchestrator MUST verify:
+
+### File Location Validation (CRITICAL)
+- [ ] All files created in `devcache_docs/{projectName}/` folder
+- [ ] No files created in project root
+- [ ] No files created in `devcache_docs/` root
+- [ ] No new documentation folders created outside structure
+- [ ] Project name matches `.devcache.json` configuration
 
 ### Document Quality
 - [ ] All required documents generated

@@ -2,6 +2,242 @@
 
 All notable changes to DevCache will be documented in this file.
 
+## [0.12.0] - 2026-04-06
+
+### 🎯 Major Init Command Improvements
+
+This release fixes critical issues with folder structure creation and documentation organization.
+
+### ✨ New Features
+
+#### Automatic Folder Structure Creation
+- **Init now creates complete folder structure** - All necessary folders created upfront
+  - Previously: Only created project folder, subfolders missing ❌
+  - Now: Creates `general/`, `tech/`, and `features/` folders automatically ✅
+  - AI can immediately start creating files in correct locations
+  - No need to manually create folders
+
+#### Enhanced Index.md with Clear Instructions
+- **Added comprehensive file creation guide** - Step-by-step instructions in index.md
+  - Visual folder structure diagram
+  - Explicit path construction rules
+  - Examples of correct and incorrect paths
+  - File creation checklist
+  - Features documentation explanation
+
+### 📁 New Folder Structure
+
+**After `devcache init`:**
+```
+devcache_docs/
+├── templates/
+│   ├── general/
+│   ├── tech/
+│   └── orchestrator.md
+├── {projectName}/
+│   ├── general/          ← NEW! Created automatically
+│   ├── tech/             ← NEW! Created automatically
+│   └── features/         ← NEW! Created automatically
+├── index.md
+└── .devcache.json
+```
+
+### 🐛 Bug Fixes
+
+#### Missing Folder Structure
+- **Fixed: Folders not created during init** - Now creates all necessary folders
+  - `general/` folder created for general documentation
+  - `tech/` folder created for technical documentation
+  - `features/` folder created for individual feature docs
+  - Prevents "folder not found" errors during generation
+
+#### Unclear File Location Instructions
+- **Fixed: AI creating files in wrong locations** - Enhanced index.md with explicit instructions
+  - Added "🚨 IMPORTANT: File Creation Instructions" section
+  - Included visual folder structure
+  - Added path construction rules
+  - Provided correct and incorrect examples
+  - Explained features documentation system
+
+### 📝 Updated Index.md Content
+
+The index.md now includes:
+
+1. **File Creation Instructions Section**
+   - Where to create files
+   - How to construct paths
+   - What to avoid
+   - Example file paths
+
+2. **Visual Folder Structure**
+   ```
+   devcache_docs/{projectName}/
+   ├── general/
+   ├── tech/
+   └── features/
+   ```
+
+3. **Features Documentation Explanation**
+   - Main overview file location
+   - Individual feature docs location
+   - When to create individual docs (impact ≥ 6)
+
+4. **File Creation Rules**
+   - Read configuration first
+   - Construct correct paths
+   - Never create in wrong locations
+
+### 🔧 Technical Changes
+
+#### Init Command (`src/cli/commands/init.ts`)
+```typescript
+// Create project subdirectories
+await fs.mkdir(path.join(projectDir, 'general'), { recursive: true });
+await fs.mkdir(path.join(projectDir, 'tech'), { recursive: true });
+await fs.mkdir(path.join(projectDir, 'features'), { recursive: true });
+```
+
+#### Enhanced Console Output
+```
+📁 Created structure:
+  devcache_docs/
+  ├── {projectName}/
+  │   ├── general/          ← Create general docs here
+  │   ├── tech/             ← Create tech docs here
+  │   └── features/         ← Create feature docs here
+```
+
+### 🎯 Impact
+
+**Who benefits:**
+- Users generating documentation via AI (Kiro)
+- Anyone using `devcache generate` command
+- Developers extending the system
+
+**What's improved:**
+- Folders exist before file creation (no errors)
+- Clear instructions prevent wrong file locations
+- Features folder ready for detailed documentation
+- Better user experience during init
+
+### ✅ Validation
+
+After updating, verify the structure:
+
+```bash
+# Run init
+devcache init
+
+# Check structure
+ls -la devcache_docs/your-project/
+# Should show: general/ tech/ features/
+
+# Read instructions
+cat devcache_docs/index.md
+# Should show clear file creation instructions
+```
+
+### 📊 Before vs After
+
+**Before v0.12.0:**
+```
+devcache_docs/
+└── project/
+    └── (empty)  ← No folders!
+```
+
+**After v0.12.0:**
+```
+devcache_docs/
+└── project/
+    ├── general/   ← Ready!
+    ├── tech/      ← Ready!
+    └── features/  ← Ready!
+```
+
+### 🎓 Key Benefits
+
+1. **No manual folder creation** - Everything ready after init
+2. **Clear instructions** - AI knows exactly where to create files
+3. **Features support** - Folder ready for detailed feature docs
+4. **Better UX** - Visual feedback shows folder structure
+5. **Fewer errors** - Folders exist before file creation
+
+---
+
+## [0.11.1] - 2026-04-06
+
+### 📝 Documentation Improvements
+
+#### Enhanced Orchestrator Template with File Location Rules
+- **Added explicit file location instructions** - Clear guidance on where to create documentation files
+  - Added "CRITICAL: File Location Rules" section at the top
+  - Added "Quick Start - File Creation Guide" for immediate reference
+  - Added "File Location Validation" to post-generation checklist
+  - Included examples of correct and incorrect paths
+
+#### Problem Solved
+When using AI assistants (like Kiro) to generate documentation based on templates, files were being created in wrong locations:
+- ❌ Creating files in project root
+- ❌ Creating files in `docs/` folder
+- ❌ Creating files in `devcache_docs/` root without project name
+
+Now the orchestrator template explicitly instructs:
+- ✅ Always read project name from `.devcache.json`
+- ✅ Always create files in `devcache_docs/{projectName}/`
+- ✅ Verify folder structure before creating files
+- ✅ Validate file locations after generation
+
+### 📁 Updated Template Structure
+
+The orchestrator template now includes:
+
+1. **Quick Start Guide** - Immediate reference for file creation
+2. **Path Construction Rules** - Step-by-step path building
+3. **Common Mistakes Section** - What NOT to do
+4. **Validation Checklist** - Verify correct file locations
+5. **Code Examples** - TypeScript examples for path construction
+
+### 🎯 Impact
+
+**Who benefits:**
+- Users generating documentation via AI chat (Kiro)
+- Anyone using templates manually
+- Developers extending the template system
+
+**What's improved:**
+- Consistent file locations across all generation methods
+- Clear instructions prevent common mistakes
+- Better validation catches location errors early
+
+### 📖 Template Updates
+
+Updated `packages/devcache/templates/orchestrator.md` with:
+
+```markdown
+## 🚨 QUICK START - File Creation Guide
+
+1. Read Configuration from .devcache.json
+2. Verify Project Folder Exists
+3. Create Files in Correct Location
+4. Never Create Files In wrong locations
+
+Example Paths:
+✅ devcache_docs/my-project/general/project-overview.md
+❌ docs/project-overview.md
+```
+
+### ✅ Validation
+
+After updating, when using AI to generate docs:
+
+1. AI will read `.devcache.json` first
+2. AI will verify `devcache_docs/{projectName}/` exists
+3. AI will create files in correct location
+4. AI will validate file locations after creation
+
+---
+
 ## [0.11.0] - 2026-04-06
 
 ### 🐛 Critical Fix - Folder Structure Preservation
