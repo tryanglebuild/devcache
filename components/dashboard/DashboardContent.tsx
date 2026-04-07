@@ -8,6 +8,7 @@ import { TrendingAgentsCarousel } from '@/components/agents/TrendingAgentsCarous
 import { AgentMarketplaceSection } from '@/components/agents/AgentMarketplaceSection'
 import { MyAgentsLibrary } from '@/components/agents/MyAgentsLibrary'
 import { ModeToggle, DashboardMode } from '@/components/dashboard/ModeToggle'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface DashboardContentProps {
   displayName: string
@@ -19,6 +20,7 @@ interface DashboardContentProps {
   userStats?: any
   publicAgents: any[]
   recentActivity: any
+  isLoadingLazy?: boolean
 }
 
 export function DashboardContent({
@@ -30,7 +32,8 @@ export function DashboardContent({
   marketplaceStats,
   userStats,
   publicAgents,
-  recentActivity
+  recentActivity,
+  isLoadingLazy = false
 }: DashboardContentProps) {
   const [mode, setMode] = useState<DashboardMode>('unified')
 
@@ -67,7 +70,7 @@ export function DashboardContent({
       )}
 
       {/* Trending Agents Section */}
-      {showAgents && trendingAgents.length > 0 && (
+      {showAgents && (
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -85,7 +88,19 @@ export function DashboardContent({
               View Marketplace →
             </a>
           </div>
-          <TrendingAgentsCarousel agents={trendingAgents} />
+          {isLoadingLazy ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+                  <Skeleton className="h-32 w-full mb-4" />
+                  <Skeleton className="h-6 w-full mb-2" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              ))}
+            </div>
+          ) : trendingAgents.length > 0 ? (
+            <TrendingAgentsCarousel agents={trendingAgents} />
+          ) : null}
         </section>
       )}
 
@@ -94,7 +109,7 @@ export function DashboardContent({
         {/* Left Column - Marketplace & Projects */}
         <div className="lg:col-span-2 space-y-12">
           {/* Agent Marketplace Preview */}
-          {showAgents && publicAgents.length > 0 && (
+          {showAgents && (
             <section>
               <div className="flex items-center justify-between mb-6">
                 <div>
@@ -110,10 +125,22 @@ export function DashboardContent({
                   Browse All
                 </a>
               </div>
-              <AgentMarketplaceSection
-                agents={publicAgents}
-                showFilters={false}
-              />
+              {isLoadingLazy ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+                      <Skeleton className="h-24 w-full mb-4" />
+                      <Skeleton className="h-6 w-full mb-2" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  ))}
+                </div>
+              ) : publicAgents.length > 0 ? (
+                <AgentMarketplaceSection
+                  agents={publicAgents}
+                  showFilters={false}
+                />
+              ) : null}
             </section>
           )}
 
@@ -198,7 +225,19 @@ export function DashboardContent({
                 </div>
                 
                 <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
-                  {recentActivity && recentActivity.length > 0 ? (
+                  {isLoadingLazy ? (
+                    <div className="space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="flex items-start gap-3 p-3">
+                          <Skeleton className="w-8 h-8 rounded-lg flex-shrink-0" />
+                          <div className="flex-1">
+                            <Skeleton className="h-4 w-full mb-2" />
+                            <Skeleton className="h-3 w-24" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : recentActivity && recentActivity.length > 0 ? (
                     <div className="space-y-3">
                       {recentActivity.map((activity: any) => {
                         const item = activity.project_items

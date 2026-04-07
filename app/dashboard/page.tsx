@@ -1,11 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
-import { DashboardContent } from '@/components/dashboard/DashboardContent'
+import { DashboardContentWrapper } from '@/components/dashboard/DashboardContentWrapper'
 import {
-  getTrendingAgents,
   getUserAgentCollection,
   getMarketplaceStats,
-  getUserAgentStats,
-  getPublicAgents
+  getUserAgentStats
 } from '@/lib/agents/queries'
 
 // Disable caching for this page to ensure fresh data on navigation
@@ -16,72 +14,37 @@ export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user!.id)
-    .single()
-
-  // Fetch project stats
-  const { data: projectItems } = await supabase
-    .from('project_items')
-    .select('*')
-    .eq('user_id', user!.id)
-    .order('updated_at', { ascending: false })
-    .limit(100)
-
-  const totalFolders = projectItems?.filter(item => item.type === 'folder').length || 0
-  const totalFiles = projectItems?.filter(item => item.type === 'file').length || 0
-  const totalFavorites = projectItems?.filter(item => item.is_favorite).length || 0
-  const favoriteItems = projectItems?.filter(item => item.is_favorite) || []
-
-  // Fetch agent data
-  const [trendingAgents, userAgents, marketplaceStats, userStats, publicAgents] = await Promise.all([
-    getTrendingAgents(10),
+  // Fetch only critical data for initial render
+  const [profile, projectItems, userAgents, marketplaceStats, userStats] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user!.id)
+      .single()
+      .then(({ data }) => data),
+    supabase
+      .from('project_items')
+      .select('*')
+      .eq('user_id', user!.id)
+      .order('updated_at', { ascending: false })
+      .limit(20) // Reduced from 100 to 20 for faster initial load
+      .then(({ data }) => data),
     getUserAgentCollection(user!.id),
     getMarketplaceStats(),
-    getUserAgentStats(user!.id),
-    getPublicAgents(6)
+    getUserAgentStats(user!.id)
   ])
 
-  // Fetch recent activity
-  let recentActivity = null
-  try {
-    const { data } = await supabase
-      .from('activity_log')
-      .select(`
-        id,
-        action_type,
-        created_at,
-        project_items (
-          id,
-          name,
-          type,
-          description
-        )
-      `)
-      .eq('user_id', user!.id)
-      .order('created_at', { ascending: false })
-      .limit(10)
-    
-    recentActivity = data
-  } catch (error) {
-    console.error('Failed to fetch activity:', error)
-  }
-
+  const favoriteItems = projectItems?.filter(item => item.is_favorite) || []
   const displayName = profile?.full_name || user!.email?.split('@')[0] || 'User'
 
   return (
-    <DashboardContent
+    <DashboardContentWrapper
       displayName={displayName}
       projectItems={projectItems || []}
       favoriteItems={favoriteItems}
-      trendingAgents={trendingAgents}
       userAgents={userAgents}
       marketplaceStats={marketplaceStats || undefined}
       userStats={userStats || undefined}
-      publicAgents={publicAgents}
-      recentActivity={recentActivity}
     />
   )
 }
