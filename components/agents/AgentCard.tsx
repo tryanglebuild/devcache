@@ -1,6 +1,8 @@
 'use client'
 
 import { Star, Download, Eye } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { AgentTemplateWithStats } from '@/types/agents.types'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
 
@@ -13,10 +15,13 @@ interface AgentCardProps {
 
 export function AgentCard({ agent, onView, onDownload, compact = false }: AgentCardProps) {
   const category = AGENT_CATEGORIES[agent.category as keyof typeof AGENT_CATEGORIES] || AGENT_CATEGORIES.general
+  const router = useRouter()
 
   const handleCardClick = () => {
     if (onView) {
       onView(agent)
+    } else {
+      router.push(`/marketplace/${agent.id}`)
     }
   }
 
@@ -96,7 +101,7 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
         </div>
 
         <div className="flex items-center gap-2">
-          {onView && (
+          {onView ? (
             <button
               onClick={(e) => {
                 e.stopPropagation()
@@ -107,6 +112,15 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
               <Eye className="w-4 h-4" />
               View
             </button>
+          ) : (
+            <Link
+              href={`/marketplace/${agent.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-[#4648d4] hover:text-[#6063ee] font-semibold text-xs flex items-center gap-1 transition-colors"
+            >
+              <Eye className="w-4 h-4" />
+              View
+            </Link>
           )}
           
           {onDownload && agent.visibility === 'public' && (

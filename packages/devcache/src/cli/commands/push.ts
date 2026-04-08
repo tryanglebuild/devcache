@@ -133,7 +133,7 @@ export async function pushCommand() {
     await updateStatusCache(projectPath);
 
     // Get project URL
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://devcache.vercel.app';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://devcache.dev';
     console.log(chalk.blue('\n✨ View your project at:'));
     console.log(chalk.cyan(`  ${appUrl}/dashboard/projects/file/${projectId}`));
     console.log();

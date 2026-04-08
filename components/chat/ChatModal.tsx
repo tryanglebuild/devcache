@@ -77,6 +77,16 @@ export function ChatModal({ open, onOpenChange }: ChatModalProps) {
     }
   }
 
+  function handleDeleteSessions(ids: string[]) {
+    setSessions((prev) => {
+      const remaining = prev.filter((s) => !ids.includes(s.id))
+      if (currentSessionId && ids.includes(currentSessionId)) {
+        setCurrentSessionId(remaining.length > 0 ? remaining[0].id : null)
+      }
+      return remaining
+    })
+  }
+
   function handleExpandToPage() {
     router.push('/chat')
     onOpenChange(false)
@@ -148,6 +158,7 @@ export function ChatModal({ open, onOpenChange }: ChatModalProps) {
                 currentSessionId={currentSessionId}
                 onSelectSession={setCurrentSessionId}
                 onNewSession={createNewSession}
+                onDeleteSessions={handleDeleteSessions}
               />
             )}
           </div>

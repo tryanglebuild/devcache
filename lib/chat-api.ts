@@ -71,7 +71,14 @@ export async function getMessages(sessionId: string, limit: number = 50): Promis
   })
   const data: ApiResponse<ChatMessage[]> = await res.json()
   if (!res.ok) throw new Error(data.error || 'Failed to fetch messages')
-  return data.data || []
+  
+  // Process messages to extract thinking from metadata
+  const messages = (data.data || []).map(msg => ({
+    ...msg,
+    thinking: msg.metadata?.thinking || []
+  }))
+  
+  return messages
 }
 
 export async function* sendMessage(request: SendMessageRequest): AsyncGenerator<string> {
@@ -114,7 +121,28 @@ export async function* sendMessage(request: SendMessageRequest): AsyncGenerator<
 
           try {
             const parsed = JSON.parse(data)
-            if (parsed.content) yield parsed.content
+            
+            // Handle thinking steps from ai-chat2 (format: { thinking: {...} })
+            if (parsed.thinking) {
+              yield `__THINKING__:${JSON.stringify(parsed.thinking)}`
+            }
+            // Handle tool call events (show progress to user)
+            else if (parsed.tool_call) {
+              yield `__THINKING__:${JSON.stringify({
+                type: 'tool_call',
+                title: `Using tool: ${parsed.tool_call.name}`,
+                description: `Searching for: ${JSON.stringify(parsed.tool_call.params)}`,
+                timestamp: Date.now()
+              })}`
+            }
+            // Handle content chunks
+            else if (parsed.content) {
+              yield parsed.content
+            }
+            // Handle errors
+            else if (parsed.error) {
+              console.error('SSE error from server:', parsed.error)
+            }
           } catch (e) {
             console.error('Error parsing SSE data:', data, e)
             // Continue processing other lines instead of breaking

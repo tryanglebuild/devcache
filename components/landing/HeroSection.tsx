@@ -1,6 +1,20 @@
 import Link from 'next/link'
+import type { MarketplaceStats } from '@/types/agents.types'
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  stats?: MarketplaceStats | null
+}
+
+export default function HeroSection({ stats }: HeroSectionProps) {
+  const totalAgents = stats?.total_agents ?? 0
+  const avgRating = stats?.average_rating?.toFixed(1) ?? '0.0'
+  const totalDownloads = stats?.total_downloads ?? 0
+
+  const formatCount = (n: number) => {
+    if (n >= 1000) return `${(n / 1000).toFixed(1)}K+`
+    return n > 0 ? `${n}+` : '0'
+  }
+
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle,#e2e8f0_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 -z-10" />
@@ -25,25 +39,27 @@ export default function HeroSection() {
           >
             Start Building Agents
           </Link>
-          <button className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">
+          <Link href="/marketplace" className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">
             Explore Marketplace
-          </button>
+          </Link>
         </div>
         
-        <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-indigo-600 text-lg">check_circle</span>
-            <span>1,247+ Agents</span>
+        {totalAgents > 0 && (
+          <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-indigo-600 text-lg">check_circle</span>
+              <span>{formatCount(totalAgents)} Agents</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-indigo-600 text-lg">star</span>
+              <span>{avgRating}★ Average</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-indigo-600 text-lg">download</span>
+              <span>{formatCount(totalDownloads)} Downloads</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-indigo-600 text-lg">star</span>
-            <span>4.8★ Average</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-indigo-600 text-lg">download</span>
-            <span>15K+ Downloads</span>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   )

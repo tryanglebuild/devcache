@@ -8,17 +8,25 @@ import MarketplaceSection from '@/components/landing/MarketplaceSection'
 import SecuritySection from '@/components/landing/SecuritySection'
 import CTASection from '@/components/landing/CTASection'
 import Footer from '@/components/landing/Footer'
+import { getTrendingAgents, getMarketplaceStats } from '@/lib/agents/queries'
 
-export default function Home() {
+export const revalidate = 3600 // revalidate every hour
+
+export default async function Home() {
+  const [trendingAgents, marketplaceStats] = await Promise.all([
+    getTrendingAgents(6),
+    getMarketplaceStats(),
+  ])
+
   return (
     <main className="min-h-screen bg-white">
       <Navigation />
-      <HeroSection />
+      <HeroSection stats={marketplaceStats} />
       <ProblemSection />
       <SolutionSection />
-      <WorkflowSection />
+      <WorkflowSection agents={trendingAgents.slice(0, 4)} />
       <CapabilitiesSection />
-      <MarketplaceSection />
+      <MarketplaceSection agents={trendingAgents} stats={marketplaceStats} />
       <SecuritySection />
       <CTASection />
       <Footer />

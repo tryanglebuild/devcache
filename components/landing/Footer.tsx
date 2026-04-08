@@ -57,7 +57,7 @@ export default function Footer() {
       
       <div className="max-w-7xl mx-auto px-8 mt-24 pt-12 border-t border-slate-200 text-center">
         <p className="text-slate-400 text-xs font-semibold tracking-wide">
-          © 2024 devCache. Build with AI Agents That Know Your Domain.
+          © {new Date().getFullYear()} devCache. Build with AI Agents That Know Your Domain.
         </p>
       </div>
     </footer>

@@ -24,6 +24,16 @@ export interface ChatMessage {
   cost_usd: number | null
   metadata: Record<string, any>
   created_at: string
+  thinking?: ThinkingStep[]
+}
+
+export interface ThinkingStep {
+  type: 'analysis' | 'search' | 'tool_call' | 'tool_result' | 'context' | 'search_start' | 'search_complete' | 'context_loaded' | 'generating'
+  title: string
+  description?: string
+  data?: any
+  timestamp: number
+  duration?: number
 }
 
 export interface SearchResult {
@@ -82,7 +92,8 @@ export interface SendMessageRequest {
   sessionId: string
   message: string
   model?: string
-  includeMarketplace?: boolean
+  // Note: ai-chat2 handles RAG search and context gathering automatically
+  // includeMarketplace and enableContextGathering are no longer needed
 }
 
 export interface UpdatePreferencesRequest {

@@ -1,48 +1,58 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { ChatInterface } from './ChatInterface'
 import type { ChatSession } from '@/types/chat'
-import { Loader2 } from 'lucide-react'
 
 interface ChatInterfaceWrapperProps {
   sessionId: string
+  initialSession?: ChatSession | null
   onSessionUpdate?: () => void
   onNewChat?: () => void
   isExpanded?: boolean
 }
 
-export function ChatInterfaceWrapper({ sessionId, onSessionUpdate, onNewChat, isExpanded }: ChatInterfaceWrapperProps) {
-  const [session, setSession] = useState<ChatSession | null>(null)
-  const [loading, setLoading] = useState(false) // Changed from true to false
+export function ChatInterfaceWrapper({ sessionId, initialSession, onSessionUpdate, onNewChat, isExpanded }: ChatInterfaceWrapperProps) {
+  const [session, setSession] = useState<ChatSession | null>(initialSession ?? null)
+  const [loading, setLoading] = useState(!initialSession)
 
   useEffect(() => {
+    // If a pre-loaded session was supplied and it matches, use it directly
+    if (initialSession && initialSession.id === sessionId) {
+      setSession(initialSession)
+      setLoading(false)
+      return
+    }
     loadSession()
   }, [sessionId])
 
   async function loadSession() {
     try {
       setLoading(true)
-      const supabase = createClient()
-      
-      const { data, error } = await supabase
-        .from('chat_sessions')
-        .select('*')
-        .eq('id', sessionId)
-        .single()
-
-      if (error) throw error
+      const res = await fetch(`/api/chat/sessions/${sessionId}`)
+      if (!res.ok) throw new Error('Session not found')
+      const { data } = await res.json()
       setSession(data)
     } catch (error) {
       console.error('Error loading session:', error)
+      setSession(null)
     } finally {
       setLoading(false)
     }
   }
 
-  // Show chat interface immediately with minimal loading
-  if (!session && !loading) {
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-white">
+        <div className="relative w-8 h-8">
+          <div className="absolute inset-0 rounded-full border-2 border-[#e8eff3]" />
+          <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] border-t-transparent animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
     return (
       <div className="flex-1 flex items-center justify-center bg-white">
         <p className="text-sm text-[#464554] font-medium">Session not found</p>
@@ -50,6 +60,13 @@ export function ChatInterfaceWrapper({ sessionId, onSessionUpdate, onNewChat, is
     )
   }
 
-  // Show interface even while loading session metadata
-  return <ChatInterface session={session || { id: sessionId } as ChatSession} onSessionUpdate={loadSession} onParentUpdate={onSessionUpdate} onNewChat={onNewChat} isExpanded={isExpanded} />
+  return (
+    <ChatInterface
+      session={session}
+      onSessionUpdate={loadSession}
+      onParentUpdate={onSessionUpdate}
+      onNewChat={onNewChat}
+      isExpanded={isExpanded}
+    />
+  )
 }

@@ -21,7 +21,8 @@ import {
   Settings, 
   HelpCircle, 
   LogOut,
-  Plus
+  Plus,
+  MessageSquare
 } from 'lucide-react'
 
 const menuItems = [
@@ -39,6 +40,11 @@ const menuItems = [
     title: 'Library',
     href: '/dashboard/library',
     icon: Library,
+  },
+  {
+    title: 'Chat',
+    href: '/chat',
+    icon: MessageSquare,
   },
   {
     title: 'Settings',

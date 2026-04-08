@@ -1,18 +1,26 @@
 'use client'
 
 import { useEffect, useRef, memo } from 'react'
-import type { ChatMessage } from '@/types/chat'
+import type { ChatMessage, ThinkingStep } from '@/types/chat'
 import { User, Bot, Loader2, Sparkles } from 'lucide-react'
 import { MessageContent } from './MessageContent'
+import { ThinkingProcess } from './ThinkingProcess'
 
 interface MessageListProps {
   messages: ChatMessage[]
   loading: boolean
   streamingContent: string
   streaming: boolean
+  streamingThinking?: ThinkingStep[]
 }
 
-export const MessageList = memo(function MessageList({ messages, loading, streamingContent, streaming }: MessageListProps) {
+export const MessageList = memo(function MessageList({ 
+  messages, 
+  loading, 
+  streamingContent, 
+  streaming,
+  streamingThinking = []
+}: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -80,6 +88,13 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
           
           {/* Message Content */}
           <div className={`flex-1 max-w-[75%] ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
+            {/* Show thinking process for assistant messages */}
+            {message.role === 'assistant' && message.thinking && message.thinking.length > 0 && (
+              <div className="mb-3">
+                <ThinkingProcess steps={message.thinking} isComplete={true} />
+              </div>
+            )}
+            
             <div
               className={`inline-block text-left rounded-2xl px-4 py-3 text-sm shadow-sm ${
                 message.role === 'user'
@@ -129,21 +144,32 @@ export const MessageList = memo(function MessageList({ messages, loading, stream
       ))}
 
       {/* Streaming Message */}
-      {streaming && streamingContent && (
+      {streaming && (streamingContent || streamingThinking.length > 0) && (
         <div className="flex gap-4 flex-row">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#6366f1] flex items-center justify-center flex-shrink-0 shadow-sm">
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 max-w-[75%]">
-            <div className="inline-block rounded-2xl px-4 py-3 bg-white text-[#111827] border border-[#e5e7eb] text-sm shadow-sm">
-              <MessageContent content={streamingContent} />
-            </div>
-            <div className="mt-2 flex items-center gap-2 text-xs">
-              <div className="flex items-center gap-1.5 px-2 py-1 bg-[#eef2ff] rounded-lg">
-                <Loader2 className="w-3 h-3 animate-spin text-[#4f46e5]" />
-                <span className="text-[#4f46e5] font-medium">Generating...</span>
+            {/* Show thinking process during streaming */}
+            {streamingThinking.length > 0 && (
+              <div className="mb-3">
+                <ThinkingProcess steps={streamingThinking} isComplete={false} />
               </div>
-            </div>
+            )}
+            
+            {streamingContent && (
+              <>
+                <div className="inline-block rounded-2xl px-4 py-3 bg-white text-[#111827] border border-[#e5e7eb] text-sm shadow-sm">
+                  <MessageContent content={streamingContent} />
+                </div>
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-[#eef2ff] rounded-lg">
+                    <Loader2 className="w-3 h-3 animate-spin text-[#4f46e5]" />
+                    <span className="text-[#4f46e5] font-medium">Generating...</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

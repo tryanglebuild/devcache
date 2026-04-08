@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { ChatSession, ChatMessage } from '@/types/chat'
+import type { ChatSession, ChatMessage, ThinkingStep } from '@/types/chat'
 import { getMessages, sendMessage } from '@/lib/chat-api'
 import { MessageList } from './MessageList'
 import { MessageInput } from './MessageInput'
@@ -25,6 +25,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
   const [loading, setLoading] = useState(true)
   const [streaming, setStreaming] = useState(false)
   const [streamingContent, setStreamingContent] = useState('')
+  const [streamingThinking, setStreamingThinking] = useState<ThinkingStep[]>([])
   const [selectedModel, setSelectedModel] = useState(session.selected_model)
   
   // Progressive context gathering
@@ -77,6 +78,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
     try {
       setStreaming(true)
       setStreamingContent('')
+      setStreamingThinking([])
 
       // Check if this is the first message in the session
       const isFirstMessage = messages.length === 0
@@ -102,18 +104,28 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
 
       // Stream AI response
       let streamedContent = ''
+      const thinkingSteps: ThinkingStep[] = []
+      
       for await (const chunk of sendMessage({
         sessionId: session.id,
         message: content,
         model: selectedModel,
       })) {
-        streamedContent += chunk
-        setStreamingContent(streamedContent)
+        // Check if chunk is a thinking step or content
+        if (chunk.startsWith('__THINKING__:')) {
+          const thinkingData = JSON.parse(chunk.substring(13))
+          thinkingSteps.push(thinkingData)
+          setStreamingThinking([...thinkingSteps])
+        } else {
+          streamedContent += chunk
+          setStreamingContent(streamedContent)
+        }
       }
 
       // After streaming completes, reload messages to get the saved version with metadata
       await loadMessages()
       setStreamingContent('')
+      setStreamingThinking([])
       
       // Refresh context state after message
       refreshContext()
@@ -166,6 +178,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
         loading={loading}
         streamingContent={streamingContent}
         streaming={streaming}
+        streamingThinking={streamingThinking}
       />
 
       {/* Bottom Bar - Redesigned */}

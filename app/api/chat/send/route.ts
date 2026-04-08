@@ -54,8 +54,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Call Edge Function
-    const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/ai-chat`
+    // Call Edge Function (ai-chat2 - new version with RAG + tool calling)
+    const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/ai-chat2`
     
     const response = await fetch(edgeFunctionUrl, {
       method: 'POST',
@@ -67,8 +67,8 @@ export async function POST(request: Request) {
         sessionId: body.sessionId,
         message: body.message,
         model: body.model,
-        includeMarketplace: body.includeMarketplace ?? true,
-        enableContextGathering: true, // Enable progressive context gathering
+        // Note: ai-chat2 handles RAG search automatically, no need for includeMarketplace flag
+        // Note: ai-chat2 doesn't use progressive context gathering, it uses RAG-first approach
       }),
     })
 

@@ -1,4 +1,10 @@
-export default function WorkflowSection() {
+import type { AgentTemplateWithStats } from '@/types/agents.types'
+
+interface WorkflowSectionProps {
+  agents?: AgentTemplateWithStats[]
+}
+
+export default function WorkflowSection({ agents = [] }: WorkflowSectionProps) {
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -78,54 +84,20 @@ export default function WorkflowSection() {
               </button>
             </div>
             <div className="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                  <span className="material-symbols-outlined text-2xl">smart_toy</span>
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm">Supabase Expert</div>
-                  <div className="text-slate-500 text-xs flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
-                    4.9 • 5.2K downloads
+              {agents.map((agent) => (
+                <div key={agent.id} className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                    <span className="material-symbols-outlined text-2xl">smart_toy</span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-white font-bold text-sm truncate">{agent.name}</div>
+                    <div className="text-slate-500 text-xs flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                      {(agent.rating_average || 0).toFixed(1)} • {agent.download_count || 0} downloads
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                  <span className="material-symbols-outlined text-2xl">smart_toy</span>
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm">Next.js Architect</div>
-                  <div className="text-slate-500 text-xs flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
-                    4.8 • 3.8K downloads
-                  </div>
-                </div>
-              </div>
-              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                  <span className="material-symbols-outlined text-2xl">smart_toy</span>
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm">Security Specialist</div>
-                  <div className="text-slate-500 text-xs flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
-                    4.9 • 6.1K downloads
-                  </div>
-                </div>
-              </div>
-              <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                  <span className="material-symbols-outlined text-2xl">psychology</span>
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm">Full-Stack Orchestrator</div>
-                  <div className="text-slate-500 text-xs flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
-                    4.8 • 4.3K downloads
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

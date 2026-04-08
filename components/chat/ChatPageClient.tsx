@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Sparkles, Plus } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { ChatInterfaceWrapper } from './ChatInterfaceWrapper'
 import { SessionList } from './SessionList'
 import type { ChatSession } from '@/types/chat'
@@ -19,21 +18,22 @@ export function ChatPageClient() {
   async function loadSessions() {
     try {
       setLoading(true)
-      const supabase = createClient()
-      
-      // Load all sessions for conversation history
-      const { data, error } = await supabase
-        .from('chat_sessions')
-        .select('*')
-        .order('last_activity_at', { ascending: false })
+      const response = await fetch('/api/chat/sessions')
 
-      if (error) throw error
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.error || 'Failed to load sessions')
+      }
+
+      const { data } = await response.json()
 
       setSessions(data || [])
-      
-      if (data && data.length > 0) {
-        setCurrentSessionId(data[0].id)
-      }
+
+      // Only set currentSessionId if none is selected yet
+      setCurrentSessionId((prev) => {
+        if (prev) return prev
+        return data && data.length > 0 ? data[0].id : null
+      })
     } catch (error) {
       console.error('Error loading sessions:', error)
     } finally {
@@ -41,26 +41,53 @@ export function ChatPageClient() {
     }
   }
 
+  // Silent refresh – updates the sessions list in the sidebar without
+  // touching the page-level loading state (so ChatInterfaceWrapper never unmounts)
+  async function refreshSessions() {
+    try {
+      const response = await fetch('/api/chat/sessions')
+      if (!response.ok) return
+      const { data } = await response.json()
+      setSessions(data || [])
+    } catch {
+      // Non-critical, ignore
+    }
+  }
+
   async function createNewSession() {
     try {
-      const supabase = createClient()
-      
-      const { data, error } = await supabase
-        .from('chat_sessions')
-        .insert({
+      const response = await fetch('/api/chat/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           title: 'New Conversation',
           context_type: 'general',
-        })
-        .select()
-        .single()
+        }),
+      })
 
-      if (error) throw error
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.error || 'Failed to create session')
+      }
+
+      const { data } = await response.json()
 
       setSessions((prev) => [data, ...prev])
       setCurrentSessionId(data.id)
     } catch (error) {
       console.error('Error creating session:', error)
     }
+  }
+
+  function handleDeleteSessions(ids: string[]) {
+    setSessions((prev) => {
+      const remaining = prev.filter((s) => !ids.includes(s.id))
+      // If the current session was deleted, switch to the first remaining one
+      if (currentSessionId && ids.includes(currentSessionId)) {
+        setCurrentSessionId(remaining.length > 0 ? remaining[0].id : null)
+      }
+      return remaining
+    })
   }
 
   if (loading) {
@@ -111,6 +138,7 @@ export function ChatPageClient() {
             currentSessionId={currentSessionId}
             onSelectSession={setCurrentSessionId}
             onNewSession={createNewSession}
+            onDeleteSessions={handleDeleteSessions}
           />
         </div>
 
@@ -132,7 +160,8 @@ export function ChatPageClient() {
         {currentSessionId ? (
           <ChatInterfaceWrapper 
             sessionId={currentSessionId}
-            onSessionUpdate={loadSessions}
+            initialSession={sessions.find((s) => s.id === currentSessionId) ?? null}
+            onSessionUpdate={refreshSessions}
             onNewChat={createNewSession}
           />
         ) : (

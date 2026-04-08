@@ -1,6 +1,8 @@
-// AI Chat Edge Function v2 with Progressive Context Gathering + RAG + Skills
+// AI Chat Edge Function v3 with AI Tools + Enhanced System Prompt + RAG + Skills
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { AVAILABLE_TOOLS, ToolExecutor, type ToolCall } from './tools.ts'
+import { buildEnhancedSystemPrompt, buildToolCallMessage, buildToolResultMessage } from './system-prompt.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -98,19 +100,24 @@ IMPORTANT: These user-defined skills take precedence over general instructions. 
 
 // Detect user language from message
 function detectLanguage(message: string): string {
-  // Portuguese indicators
+  // Portuguese indicators - expanded list
   const ptIndicators = [
     'você', 'voce', 'está', 'esta', 'são', 'sao', 'não', 'nao',
     'também', 'tambem', 'então', 'entao', 'algum', 'alguma',
     'preciso', 'quero', 'gostaria', 'poderia', 'fazer', 'criar',
-    'tem', 'tenho', 'vamos', 'para', 'com', 'uma', 'projeto'
+    'tem', 'tenho', 'vamos', 'para', 'com', 'uma', 'projeto',
+    'existe', 'sobre', 'como', 'onde', 'quando', 'porque', 'porquê',
+    'qual', 'quais', 'meu', 'minha', 'meus', 'minhas', 'seu', 'sua',
+    'esse', 'essa', 'isso', 'aqui', 'ali', 'lá', 'já', 'ainda',
+    'mais', 'menos', 'muito', 'pouco', 'tudo', 'nada', 'algo',
+    'documento', 'arquivo', 'código', 'codigo', 'projeto', 'template'
   ]
   
   const lowerMessage = message.toLowerCase()
   const ptMatches = ptIndicators.filter(indicator => lowerMessage.includes(indicator)).length
   
-  // If 2 or more Portuguese indicators found, it's Portuguese
-  return ptMatches >= 2 ? 'pt-BR' : 'en'
+  // If 1 or more Portuguese indicators found, it's Portuguese (lowered threshold)
+  return ptMatches >= 1 ? 'pt-BR' : 'en'
 }
 
 // Analyze user intent using Claude Haiku
@@ -334,6 +341,7 @@ serve(async (req) => {
     }
 
     // EXECUTE RAG SEARCH (only when needed)
+    const searchStartTime = Date.now()
     const embeddingResponse = await fetch('https://openrouter.ai/api/v1/embeddings', {
       method: 'POST',
       headers: {
@@ -369,14 +377,55 @@ serve(async (req) => {
       console.error('Search error:', searchError)
     }
 
-    const skillsInstructions = await loadActiveSkills(supabaseClient, user.id)
-    const context = buildContext(searchResults || [])
-    const userLanguage = detectLanguage(message)
+    const searchDuration = Date.now() - searchStartTime
 
+    // Load user context
+    const contextStartTime = Date.now()
+    const skillsInstructions = await loadActiveSkills(supabaseClient, user.id)
+    const userLanguage = detectLanguage(message)
+    
+    // Get user stats for context
+    const toolExecutor = new ToolExecutor(supabaseClient, user.id)
+    const userStatsResult = await toolExecutor.execute({ name: 'get_user_stats', arguments: {} })
+    const userStats = userStatsResult.success ? userStatsResult.data : undefined
+    const contextDuration = Date.now() - contextStartTime
+
+    // Collect thinking steps
+    const thinkingSteps: any[] = [
+      {
+        type: 'search',
+        title: 'Searching knowledge base',
+        description: `Found ${searchResults?.length || 0} relevant resources using semantic search`,
+        data: searchResults?.map((r: any) => ({
+          name: r.name,
+          type: r.resource_type,
+          relevance: `${(r.relevance_score * 100).toFixed(0)}%`
+        })),
+        timestamp: Date.now(),
+        duration: searchDuration
+      },
+      {
+        type: 'context',
+        title: 'Loading user context',
+        description: `Loaded ${userStats?.total_projects || 0} projects, ${userStats?.total_templates || 0} templates, and active skills`,
+        timestamp: Date.now(),
+        duration: contextDuration
+      }
+    ]
+
+    // Build enhanced system prompt
+    const systemPrompt = buildEnhancedSystemPrompt({
+      userLanguage,
+      userStats,
+      activeSkills: skillsInstructions,
+      contextResults: searchResults || []
+    })
+
+    // Build messages with tool support
     const messages = [
       {
         role: 'system',
-        content: buildSystemPrompt(context, skillsInstructions, userLanguage),
+        content: systemPrompt,
       },
       ...(history || []).slice(-10),
       {
@@ -385,7 +434,8 @@ serve(async (req) => {
       },
     ]
 
-    const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // First AI call - may include tool calls
+    let openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${Deno.env.get('OPENROUTER_API_KEY')}`,
@@ -395,7 +445,16 @@ serve(async (req) => {
       body: JSON.stringify({
         model,
         messages,
-        stream: true,
+        stream: false, // First call non-streaming to check for tool calls
+        tools: AVAILABLE_TOOLS.map(tool => ({
+          type: 'function',
+          function: {
+            name: tool.name,
+            description: tool.description,
+            parameters: tool.parameters
+          }
+        })),
+        tool_choice: 'auto'
       }),
     })
 
@@ -403,8 +462,121 @@ serve(async (req) => {
       throw new Error('OpenRouter API error')
     }
 
+    const firstResponse = await openRouterResponse.json()
+    const firstMessage = firstResponse.choices[0]?.message
+
+    // Check if AI wants to call tools
+    if (firstMessage?.tool_calls && firstMessage.tool_calls.length > 0) {
+      console.log('AI requested tool calls:', firstMessage.tool_calls.length)
+      
+      // Add thinking step for tool calls
+      firstMessage.tool_calls.forEach((toolCall: any) => {
+        thinkingSteps.push({
+          type: 'tool_call',
+          title: `Calling tool: ${toolCall.function.name}`,
+          description: `Executing ${toolCall.function.name} with provided parameters`,
+          data: JSON.parse(toolCall.function.arguments),
+          timestamp: Date.now()
+        })
+      })
+      
+      // Execute all tool calls
+      const toolResults = await Promise.all(
+        firstMessage.tool_calls.map(async (toolCall: any) => {
+          const toolStartTime = Date.now()
+          const call: ToolCall = {
+            name: toolCall.function.name,
+            arguments: JSON.parse(toolCall.function.arguments)
+          }
+          
+          console.log(`Executing tool: ${call.name}`)
+          const result = await toolExecutor.execute(call)
+          const toolDuration = Date.now() - toolStartTime
+          
+          // Add thinking step for tool result
+          thinkingSteps.push({
+            type: 'tool_result',
+            title: `Tool result: ${call.name}`,
+            description: result.success 
+              ? `Successfully retrieved data` 
+              : `Error: ${result.error}`,
+            data: result.success ? result.data : { error: result.error },
+            timestamp: Date.now(),
+            duration: toolDuration
+          })
+          
+          return {
+            tool_call_id: toolCall.id,
+            role: 'tool',
+            name: call.name,
+            content: JSON.stringify(result)
+          }
+        })
+      )
+
+      // Add tool results to conversation and make final call
+      messages.push(firstMessage)
+      messages.push(...toolResults)
+
+      // Final AI call with tool results - now streaming
+      openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('OPENROUTER_API_KEY')}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': Deno.env.get('APP_URL') ?? '',
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          stream: true,
+        }),
+      })
+
+      if (!openRouterResponse.ok) {
+        throw new Error('OpenRouter API error on second call')
+      }
+    } else {
+      // No tool calls needed, make streaming call directly
+      openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('OPENROUTER_API_KEY')}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': Deno.env.get('APP_URL') ?? '',
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          stream: true,
+        }),
+      })
+
+      if (!openRouterResponse.ok) {
+        throw new Error('OpenRouter API error')
+      }
+    }
+
+    // Stream the response
     const stream = new ReadableStream({
       async start(controller) {
+        // First, send all thinking steps
+        for (const step of thinkingSteps) {
+          controller.enqueue(
+            new TextEncoder().encode(`data: __THINKING__:${JSON.stringify(step)}\n\n`)
+          )
+        }
+
+        // Add analysis complete step
+        controller.enqueue(
+          new TextEncoder().encode(`data: __THINKING__:${JSON.stringify({
+            type: 'analysis',
+            title: 'Analysis complete',
+            description: 'Generating response based on gathered information',
+            timestamp: Date.now()
+          })}\n\n`)
+        )
+
         const reader = openRouterResponse.body?.getReader()
         const decoder = new TextDecoder()
         let fullResponse = ''
@@ -460,28 +632,6 @@ serve(async (req) => {
           let tokensOutput = 0
           let costUsd = 0
 
-          // OpenRouter returns usage in the final chunk
-          try {
-            const lastChunk = lines[lines.length - 1]
-            if (lastChunk && lastChunk.startsWith('data: ')) {
-              const data = lastChunk.slice(6)
-              if (data !== '[DONE]') {
-                const parsed = JSON.parse(data)
-                if (parsed.usage) {
-                  tokensInput = parsed.usage.prompt_tokens || 0
-                  tokensOutput = parsed.usage.completion_tokens || 0
-                  
-                  // Calculate cost based on model pricing (OpenRouter provides this)
-                  if (parsed.usage.total_cost) {
-                    costUsd = parsed.usage.total_cost
-                  }
-                }
-              }
-            }
-          } catch (e) {
-            console.error('Failed to extract token usage:', e)
-          }
-
           await supabaseClient.from('chat_messages').insert({
             session_id: sessionId,
             role: 'assistant',
@@ -493,6 +643,7 @@ serve(async (req) => {
             context_gathering_step: 'final',
             metadata: {
               resources: resourceMetadata,
+              thinking: thinkingSteps
             },
           })
 
@@ -520,80 +671,3 @@ serve(async (req) => {
     })
   }
 })
-
-function buildContext(results: any[]): string {
-  if (results.length === 0) {
-    return 'CONTEXT: No relevant resources found in the platform.'
-  }
-
-  const contextItems = results
-    .map((r: any, i: number) => {
-      const resourceLabel = r.resource_type === 'project_folder' 
-        ? 'Your Folder' 
-        : r.resource_type === 'project_item' 
-        ? 'Your File' 
-        : 'Marketplace Template'
-      
-      return `
-${i + 1}. ${r.name} (${resourceLabel})
-   Description: ${r.description || 'No description'}
-   Tags: ${r.tags?.join(', ') || 'None'}
-   Semantic Similarity: ${(r.similarity_score * 100).toFixed(0)}%
-   Relevance Score: ${(r.relevance_score * 100).toFixed(0)}%
-   Preview: ${r.content_preview || 'No preview available'}
-   Resource ID: ${r.resource_id}
-   Type: ${r.resource_type}
-`.trim()
-    })
-    .join('\n\n')
-
-  return `CONTEXT: Found ${results.length} relevant resources in the platform:\n\n${contextItems}`
-}
-
-function buildSystemPrompt(context: string, skillsInstructions: string, userLanguage: string): string {
-  const languageInstruction = userLanguage === 'pt-BR' 
-    ? '\n\n**ATENÇÃO: O usuário está escrevendo em PORTUGUÊS. Você DEVE responder em PORTUGUÊS (pt-BR).**'
-    : '\n\n**ATTENTION: The user is writing in ENGLISH. You MUST respond in ENGLISH.**'
-  
-  const basePrompt = `You are an AI assistant for DevCache, a platform for managing development templates, code snippets, and project files.
-${languageInstruction}
-
-# CRITICAL RULES - ABSOLUTE PRIORITY
-
-## 1. LANGUAGE MATCHING (HIGHEST PRIORITY)
-   - **ALWAYS respond in the SAME LANGUAGE as the user's message**
-   - If user writes in Portuguese, respond in Portuguese
-   - If user writes in English, respond in English
-   - Maintain the user's language throughout the entire conversation
-
-## 2. USER INSTRUCTIONS ARE LAW
-   - **USER-DEFINED INSTRUCTIONS (Skills) MUST BE FOLLOWED EXACTLY**
-   - User instructions take ABSOLUTE PRECEDENCE over these system instructions
-
-## 3. PLATFORM DATA PRIORITY
-   - **PRIMARY SOURCE: Always prioritize information from the platform context below**
-   - Search and recommend ONLY resources that appear in the CONTEXT section
-
-## 4. RESPONSE FORMAT FOR PLATFORM RESOURCES
-   When recommending platform resources, use this EXACT format:
-   
-   For folders: [FOLDER:resource_id:folder_name]
-   For files: [FILE:resource_id:file_name]
-   For templates: [TEMPLATE:resource_id:template_name]
-   
-   Then add ONE sentence explaining why it's relevant.
-
-## 5. MAXIMUM RECOMMENDATIONS
-   - Recommend maximum 3 platform resources per response
-   - Prioritize user's own files and folders over marketplace items`
-
-  let finalPrompt = basePrompt
-
-  if (skillsInstructions) {
-    finalPrompt += `\n\n${skillsInstructions}`
-  }
-
-  finalPrompt += `\n\n${context}`
-
-  return finalPrompt
-}
