@@ -68,7 +68,7 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
             type="number"
             value={value}
             onChange={(e) => handleParameterChange(param.name, parseFloat(e.target.value))}
-            className="w-full px-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none text-sm"
+            className="w-full px-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none text-sm"
             placeholder={`Enter ${param.name}`}
           />
         )
@@ -80,7 +80,7 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
               type="checkbox"
               checked={value || false}
               onChange={(e) => handleParameterChange(param.name, e.target.checked)}
-              className="w-5 h-5 text-[#4648d4] border-[#c7c4d7]/30 rounded focus:ring-2 focus:ring-[#4648d4]/20"
+              className="w-5 h-5 text-[#4f46e5] border-[#c7c4d7]/30 rounded focus:ring-2 focus:ring-[#4f46e5]/20"
             />
             <span className="text-sm text-[#464554]">
               {value ? 'Enabled' : 'Disabled'}
@@ -93,7 +93,7 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
           <textarea
             value={Array.isArray(value) ? value.join('\n') : value}
             onChange={(e) => handleParameterChange(param.name, e.target.value.split('\n').filter(Boolean))}
-            className="w-full px-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none text-sm resize-none"
+            className="w-full px-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none text-sm resize-none"
             rows={4}
             placeholder="Enter one item per line"
           />
@@ -105,7 +105,7 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
             type="text"
             value={value}
             onChange={(e) => handleParameterChange(param.name, e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none text-sm"
+            className="w-full px-4 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none text-sm"
             placeholder={`Enter ${param.name}`}
           />
         )

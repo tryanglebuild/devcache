@@ -30,16 +30,16 @@ export const MessageList = memo(function MessageList({
   if (loading && messages.length === 0) {
     // Show skeleton only on initial load with no messages
     return (
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white dark:bg-surface-container">
         {/* Skeleton for 3 messages */}
         {[1, 2, 3].map((i) => (
           <div key={i} className={`flex gap-4 ${i % 2 === 0 ? 'flex-row-reverse' : 'flex-row'}`}>
             <div className={`w-9 h-9 rounded-xl flex-shrink-0 animate-pulse ${
-              i % 2 === 0 ? 'bg-[#e5e7eb]' : 'bg-[#ddd6fe]'
+              i % 2 === 0 ? 'bg-[#e5e7eb] dark:bg-white/[0.09]' : 'bg-[#ddd6fe] dark:bg-[#7c7ff5]/20'
             }`} />
             <div className={`flex-1 max-w-[75%] ${i % 2 === 0 ? 'text-right' : 'text-left'}`}>
               <div className={`inline-block rounded-2xl h-20 animate-pulse ${
-                i % 2 === 0 ? 'bg-[#e5e7eb] w-56' : 'bg-[#f3f4f6] w-72'
+                i % 2 === 0 ? 'bg-[#e5e7eb] dark:bg-white/[0.09] w-56' : 'bg-[#f3f4f6] dark:bg-surface-container-high w-72'
               }`} />
             </div>
           </div>
@@ -50,15 +50,15 @@ export const MessageList = memo(function MessageList({
 
   if (messages.length === 0 && !streaming) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white p-8">
+      <div className="flex-1 flex items-center justify-center bg-white dark:bg-surface-container p-8">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#eef2ff] to-[#e0e7ff] flex items-center justify-center">
-            <Sparkles className="h-8 w-8 text-[#4f46e5]" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#eef2ff] to-[#e0e7ff] dark:from-[#7c7ff5]/10 dark:to-[#7c7ff5]/10 flex items-center justify-center">
+            <Sparkles className="h-8 w-8 text-[#4f46e5] dark:text-[#7c7ff5]" />
           </div>
-          <h3 className="text-lg font-bold text-[#111827] mb-2">
+          <h3 className="text-lg font-bold text-[#111827] dark:text-on-surface mb-2">
             Start a conversation
           </h3>
-          <p className="text-sm text-[#6b7280]">
+          <p className="text-sm text-[#6b7280] dark:text-on-surface-variant">
             Ask me anything about your projects, templates, or get help with development tasks.
           </p>
         </div>
@@ -67,7 +67,7 @@ export const MessageList = memo(function MessageList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white">
+    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-white dark:bg-surface-container">
       {messages.map((message) => (
         <div
           key={message.id}
@@ -77,12 +77,12 @@ export const MessageList = memo(function MessageList({
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${
             message.role === 'assistant' 
               ? 'bg-gradient-to-br from-[#4f46e5] to-[#6366f1]' 
-              : 'bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb]'
+              : 'bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb] dark:from-surface-container-high dark:to-surface-container-high'
           }`}>
             {message.role === 'assistant' ? (
               <Bot className="w-5 h-5 text-white" />
             ) : (
-              <User className="w-5 h-5 text-[#6b7280]" />
+              <User className="w-5 h-5 text-[#6b7280] dark:text-on-surface-variant" />
             )}
           </div>
           
@@ -99,7 +99,7 @@ export const MessageList = memo(function MessageList({
               className={`inline-block text-left rounded-2xl px-4 py-3 text-sm shadow-sm ${
                 message.role === 'user'
                   ? 'bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white'
-                  : 'bg-white text-[#111827] border border-[#e5e7eb]'
+                  : 'bg-white dark:bg-surface-container text-[#111827] dark:text-on-surface border border-[#e5e7eb] dark:border-white/[0.09]'
               }`}
             >
               {message.role === 'assistant' ? (
@@ -115,14 +115,14 @@ export const MessageList = memo(function MessageList({
             {/* Token Info */}
             {message.role === 'assistant' && (message.tokens_input || message.tokens_output) && (
               <div className="mt-2 flex items-center gap-3 text-xs">
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-[#f3f4f6] rounded-lg">
-                  <Sparkles className="h-3 w-3 text-[#4f46e5]" />
-                  <span className="font-semibold text-[#4f46e5]">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-[#f3f4f6] dark:bg-surface-container-high rounded-lg">
+                  <Sparkles className="h-3 w-3 text-[#4f46e5] dark:text-[#7c7ff5]" />
+                  <span className="font-semibold text-[#4f46e5] dark:text-[#7c7ff5]">
                     {((message.tokens_input || 0) + (message.tokens_output || 0)).toLocaleString()}
                   </span>
-                  <span className="text-[#9ca3af]">tokens</span>
+                  <span className="text-[#9ca3af] dark:text-on-surface-variant">tokens</span>
                 </div>
-                <div className="flex items-center gap-2 text-[#6b7280]">
+                <div className="flex items-center gap-2 text-[#6b7280] dark:text-on-surface-variant">
                   <span className="flex items-center gap-1">
                     <span className="font-medium">↑</span>
                     {(message.tokens_input || 0).toLocaleString()}
@@ -159,13 +159,13 @@ export const MessageList = memo(function MessageList({
             
             {streamingContent && (
               <>
-                <div className="inline-block rounded-2xl px-4 py-3 bg-white text-[#111827] border border-[#e5e7eb] text-sm shadow-sm">
+                <div className="inline-block rounded-2xl px-4 py-3 bg-white dark:bg-surface-container text-[#111827] dark:text-on-surface border border-[#e5e7eb] dark:border-white/[0.09] text-sm shadow-sm">
                   <MessageContent content={streamingContent} />
                 </div>
                 <div className="mt-2 flex items-center gap-2 text-xs">
-                  <div className="flex items-center gap-1.5 px-2 py-1 bg-[#eef2ff] rounded-lg">
-                    <Loader2 className="w-3 h-3 animate-spin text-[#4f46e5]" />
-                    <span className="text-[#4f46e5] font-medium">Generating...</span>
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-[#eef2ff] dark:bg-[#7c7ff5]/10 rounded-lg">
+                    <Loader2 className="w-3 h-3 animate-spin text-[#4f46e5] dark:text-[#7c7ff5]" />
+                    <span className="text-[#4f46e5] dark:text-[#7c7ff5] font-medium">Generating...</span>
                   </div>
                 </div>
               </>

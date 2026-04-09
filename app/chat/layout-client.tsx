@@ -83,7 +83,7 @@ function ChatContent({
         className={`transition-all duration-300 ${isCollapsed ? 'ml-[72px]' : 'ml-64'}`}
       >
         {/* Top Navbar */}
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-[#e8eff3]">
+        <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#0d1121]/90 backdrop-blur-md border-b border-[#e8eff3] dark:border-white/[0.06]">
           <div className="flex items-center justify-between gap-4 px-6 py-2.5">
             {/* Left spacer for balance */}
             <div className="w-[200px]" />
@@ -97,50 +97,50 @@ function ChatContent({
             <div className="ml-auto flex items-center gap-3">
               <Link 
                 href="/support" 
-                className="p-1.5 text-[#6b7280] hover:text-[#4f46e5] hover:bg-[#f3f4f6] rounded-lg transition-colors" 
+                className="p-1.5 text-[#6b7280] dark:text-on-surface-variant hover:text-[#4f46e5] hover:bg-[#f3f4f6] dark:hover:bg-surface-container-high rounded-lg transition-colors" 
                 title="Help & Support"
               >
                 <span className="material-symbols-outlined text-[18px]">help</span>
               </Link>
 
-              <div className="w-px h-4 bg-[#e5e7eb]" />
+              <div className="w-px h-4 bg-[#e5e7eb] dark:bg-white/[0.09]" />
 
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <div className="text-right hidden sm:block">
-                      <p className="text-xs font-bold text-[#191c1e] leading-none">{displayName}</p>
-                      <p className="text-[9px] text-[#464554] font-medium tracking-wide">{jobTitle}</p>
+                      <p className="text-xs font-bold text-[#191c1e] dark:text-on-surface leading-none">{displayName}</p>
+                      <p className="text-[9px] text-[#464554] dark:text-on-surface-variant font-medium tracking-wide">{jobTitle}</p>
                     </div>
                     <div className="w-8 h-8 rounded-lg border border-[#4f46e5]/10 bg-gradient-to-br from-[#4f46e5] to-[#6366f1] flex items-center justify-center text-white font-bold text-xs shadow-sm">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white border border-[#c7c4d7]/20">
-                  <DropdownMenuLabel className="font-bold text-[#191c1e]">
+                <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09]">
+                  <DropdownMenuLabel className="font-bold text-[#191c1e] dark:text-on-surface">
                     My Account
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20" />
+                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20 dark:bg-white/[0.09]" />
                   <DropdownMenuItem 
                     onClick={() => setIsProfileModalOpen(true)}
-                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb]"
+                    className="cursor-pointer hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high focus:bg-[#f7f9fb] dark:focus:bg-surface-container-high"
                   >
-                    <User className="mr-2 h-4 w-4 text-[#4648d4]" />
+                    <User className="mr-2 h-4 w-4 text-[#4f46e5]" />
                     <span className="font-medium">Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => router.push('/dashboard/settings')}
-                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb]"
+                    className="cursor-pointer hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high focus:bg-[#f7f9fb] dark:focus:bg-surface-container-high"
                   >
-                    <Settings className="mr-2 h-4 w-4 text-[#464554]" />
+                    <Settings className="mr-2 h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
                     <span className="font-medium">Settings</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20" />
+                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20 dark:bg-white/[0.09]" />
                   <DropdownMenuItem 
                     onClick={handleLogout}
-                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb] text-[#ba1a1a]"
+                    className="cursor-pointer hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high focus:bg-[#f7f9fb] dark:focus:bg-surface-container-high text-[#ba1a1a] dark:text-destructive"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span className="font-medium">Logout</span>

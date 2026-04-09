@@ -169,7 +169,7 @@ export function CreateItemModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Brief description..."
               rows={3}
-              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] text-sm resize-none"
+              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none"
             />
           </div>
 
@@ -195,7 +195,7 @@ export function CreateItemModal({
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="# My Document&#10;&#10;Start writing..."
                 rows={8}
-                className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] text-sm font-mono resize-none"
+                className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm font-mono resize-none"
               />
             </div>
           )}
@@ -213,9 +213,9 @@ export function CreateItemModal({
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <div className="px-6 py-4 border-2 border-dashed border-[#c7c4d7]/40 rounded-xl hover:border-[#4648d4] hover:bg-[#4648d4]/5 transition-all cursor-pointer group">
+              <div className="px-6 py-4 border-2 border-dashed border-[#c7c4d7]/40 rounded-xl hover:border-[#4f46e5] hover:bg-[#4f46e5]/5 transition-all cursor-pointer group">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <Upload className="h-8 w-8 text-[#464554] group-hover:text-[#4648d4]" />
+                  <Upload className="h-8 w-8 text-[#464554] group-hover:text-[#4f46e5]" />
                   <p className="font-bold text-sm">Choose Files</p>
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function CreateItemModal({
               <div className="mt-3 space-y-2">
                 {files.map((file, index) => (
                   <div key={index} className="flex items-center gap-2 p-2 bg-[#f2f4f6] rounded-lg">
-                    <FileText className="h-4 w-4 text-[#4648d4]" />
+                    <FileText className="h-4 w-4 text-[#4f46e5]" />
                     <span className="text-sm flex-1 truncate">{file.name}</span>
                     <button type="button" onClick={() => removeFile(index)}>
                       <X className="h-4 w-4" />
@@ -250,7 +250,7 @@ export function CreateItemModal({
           <Button
             type="submit"
             disabled={isLoading || !name.trim()}
-            className="flex-1 bg-gradient-to-br from-[#4648d4] to-[#6063ee]"
+            className="flex-1 bg-gradient-to-br from-[#4f46e5] to-[#4338ca]"
           >
             {isLoading ? 'Creating...' : 'Create'}
           </Button>

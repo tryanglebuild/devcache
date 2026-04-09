@@ -43,26 +43,26 @@ export function TemplateCard({
               </p>
             )}
           </div>
-          <Eye className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0" />
+          <Eye className="w-4 h-4 text-gray-400 dark:text-on-surface-variant group-hover:text-gray-600 dark:group-hover:text-on-surface transition-colors flex-shrink-0" />
         </div>
 
         {/* Metadata */}
         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
           {isFavorite && (
-            <div className="flex items-center gap-1 text-gray-500">
+            <div className="flex items-center gap-1 text-gray-500 dark:text-on-surface-variant">
               <Star className="w-3 h-3 fill-current" />
               <span>Favorite</span>
             </div>
           )}
           {isOwn && (
-            <div className="flex items-center gap-1 text-gray-500">
+            <div className="flex items-center gap-1 text-gray-500 dark:text-on-surface-variant">
               <User className="w-3 h-3" />
               <span>Your template</span>
             </div>
           )}
           {rating !== undefined && rating > 0 && (
             <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-gray-400 text-gray-400" />
+              <Star className="w-3 h-3 fill-gray-400 dark:fill-on-surface-variant text-gray-400 dark:text-on-surface-variant" />
               <span>{rating.toFixed(1)}</span>
             </div>
           )}
@@ -75,7 +75,7 @@ export function TemplateCard({
         </div>
 
         {/* Hover indicator */}
-        <div className="absolute inset-0 rounded-lg ring-2 ring-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        <div className="absolute inset-0 rounded-lg ring-2 ring-gray-400 dark:ring-white/[0.2] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
       </button>
 
       <ResourcePreviewModal

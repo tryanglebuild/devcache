@@ -140,19 +140,19 @@ export function MessageContent({ content, templateMetadata }: MessageContentProp
           <div
             key={`text-${index}`}
             className="prose prose-sm max-w-none 
-              prose-headings:text-gray-900 prose-headings:font-semibold prose-headings:mb-2
-              prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-3
-              prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-gray-900 prose-strong:font-semibold
-              prose-code:text-blue-600 prose-code:bg-blue-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
+              prose-headings:text-gray-900 dark:prose-headings:text-on-surface prose-headings:font-semibold prose-headings:mb-2
+              prose-p:text-gray-700 dark:prose-p:text-on-surface prose-p:leading-relaxed prose-p:mb-3
+              prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+              prose-strong:text-gray-900 dark:prose-strong:text-on-surface prose-strong:font-semibold
+              prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-blue-50 dark:prose-code:bg-blue-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
               prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:text-sm prose-pre:rounded-lg prose-pre:p-0 prose-pre:my-4
               prose-ul:list-disc prose-ul:pl-5 prose-ul:space-y-1 prose-ul:my-3
               prose-ol:list-decimal prose-ol:pl-5 prose-ol:space-y-1 prose-ol:my-3
-              prose-li:text-gray-700 prose-li:my-1
-              prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
+              prose-li:text-gray-700 dark:prose-li:text-on-surface prose-li:my-1
+              prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600 dark:prose-blockquote:text-on-surface-variant
               prose-table:border-collapse prose-table:w-full
-              prose-th:border prose-th:border-gray-300 prose-th:bg-gray-50 prose-th:p-2 prose-th:text-left
-              prose-td:border prose-td:border-gray-300 prose-td:p-2"
+              prose-th:border prose-th:border-gray-300 dark:prose-th:border-white/[0.09] prose-th:bg-gray-50 dark:prose-th:bg-surface-container-high prose-th:p-2 prose-th:text-left
+              prose-td:border prose-td:border-gray-300 dark:prose-td:border-white/[0.09] prose-td:p-2"
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}

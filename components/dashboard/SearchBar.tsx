@@ -257,21 +257,21 @@ export function SearchBar() {
   return (
     <div ref={searchRef} className="relative w-full max-w-xl">
       <div className="relative group">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#464554] group-focus-within:text-[#4648d4] transition-colors" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#464554] dark:text-on-surface-variant group-focus-within:text-[#4f46e5] dark:group-focus-within:text-[#7c7ff5] transition-colors" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length >= 2 && setIsOpen(true)}
           placeholder="Quick search projects, templates, or snippets..."
-          className="w-full pl-12 pr-10 py-2.5 bg-white border border-[#c7c4d7]/20 rounded-xl focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none text-sm transition-all"
+          className="w-full pl-12 pr-10 py-2.5 bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09] rounded-xl focus:ring-2 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] outline-none text-sm transition-all"
         />
         {query && (
           <button
             onClick={clearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-[#f2f4f6] rounded-full transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded-full transition-colors"
           >
-            <X className="h-4 w-4 text-[#464554]" />
+            <X className="h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
           </button>
         )}
       </div>
@@ -280,10 +280,10 @@ export function SearchBar() {
       {isOpen && (
         <div 
           ref={dropdownRef}
-          className="absolute top-full mt-2 w-full bg-white border border-[#c7c4d7]/20 rounded-xl shadow-xl max-h-96 overflow-y-auto z-50"
+          className="absolute top-full mt-2 w-full bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09] rounded-xl shadow-xl max-h-96 overflow-y-auto z-50"
         >
           {isLoading ? (
-            <div className="p-4 text-center text-[#464554] text-sm">
+            <div className="p-4 text-center text-[#464554] dark:text-on-surface-variant text-sm">
               Searching...
             </div>
           ) : results.length > 0 ? (
@@ -293,13 +293,13 @@ export function SearchBar() {
                   <button
                     key={`${result.type}-${result.id}`}
                     onClick={() => handleResultClick(result)}
-                    className="w-full px-4 py-3 hover:bg-[#f7f9fb] transition-colors flex items-start gap-3 text-left"
+                    className="w-full px-4 py-3 hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high transition-colors flex items-start gap-3 text-left"
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                       result.type === 'folder' 
-                        ? 'bg-[#4648d4]/10 text-[#4648d4]'
+                        ? 'bg-[#4f46e5]/10 dark:bg-[#7c7ff5]/15 text-[#4f46e5] dark:text-[#7c7ff5]'
                         : result.type === 'file'
-                        ? 'bg-[#575992]/10 text-[#575992]'
+                        ? 'bg-[#575992]/10 dark:bg-[#8b8cc7]/15 text-[#575992] dark:text-[#a5a6e6]'
                         : 'bg-[#904900]/10 text-[#904900]'
                     }`}>
                       {result.type === 'folder' && <Folder className="h-4 w-4" />}
@@ -308,15 +308,15 @@ export function SearchBar() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-[#191c1e] text-sm truncate">
+                        <p className="font-semibold text-[#191c1e] dark:text-on-surface text-sm truncate">
                           {result.name}
                         </p>
-                        <span className="text-[10px] font-bold text-[#464554] uppercase tracking-wider flex-shrink-0">
+                        <span className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-wider flex-shrink-0">
                           {result.type}
                         </span>
                       </div>
                       {result.description && (
-                        <p className="text-xs text-[#464554] truncate mt-0.5">
+                        <p className="text-xs text-[#464554] dark:text-on-surface-variant truncate mt-0.5">
                           {result.description}
                         </p>
                       )}
@@ -327,7 +327,7 @@ export function SearchBar() {
               
               {/* Loading more indicator */}
               {isLoadingMore && (
-                <div className="p-4 flex items-center justify-center gap-2 text-[#464554] text-sm border-t border-[#c7c4d7]/10">
+                <div className="p-4 flex items-center justify-center gap-2 text-[#464554] dark:text-on-surface-variant text-sm border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span>Loading more...</span>
                 </div>
@@ -335,13 +335,13 @@ export function SearchBar() {
               
               {/* End of results indicator */}
               {!hasMoreItems && !hasMoreTags && !isLoadingMore && results.length > 0 && (
-                <div className="p-3 text-center text-xs text-[#464554] border-t border-[#c7c4d7]/10">
+                <div className="p-3 text-center text-xs text-[#464554] dark:text-on-surface-variant border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
                   End of results
                 </div>
               )}
             </>
           ) : (
-            <div className="p-4 text-center text-[#464554] text-sm">
+            <div className="p-4 text-center text-[#464554] dark:text-on-surface-variant text-sm">
               No results found for "{query}"
             </div>
           )}

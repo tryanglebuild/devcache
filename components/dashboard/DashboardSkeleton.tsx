@@ -18,7 +18,7 @@ export function DashboardSkeleton() {
       <section className="mb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+            <div key={i} className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
               <Skeleton className="h-6 w-32 mb-4" />
               <Skeleton className="h-8 w-20 mb-2" />
               <Skeleton className="h-4 w-40" />
@@ -38,7 +38,7 @@ export function DashboardSkeleton() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+            <div key={i} className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
               <Skeleton className="h-32 w-full mb-4" />
               <Skeleton className="h-6 w-full mb-2" />
               <Skeleton className="h-4 w-3/4" />
@@ -75,7 +75,7 @@ export function DashboardSkeleton() {
                   <Skeleton className="h-7 w-32" />
                   <Skeleton className="h-5 w-20" />
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+                <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
                   <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
                       <Skeleton key={i} className="h-16 w-full" />

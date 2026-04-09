@@ -8,7 +8,7 @@ interface TemplateMetadataProps {
 
 export function TemplateMetadata({ createdAt, deletedAt, expiresAt }: TemplateMetadataProps) {
   return (
-    <div className="bg-gradient-to-br from-[#4648d4]/5 to-[#4648d4]/10 p-6 rounded-xl border-2 border-[#4648d4]/20">
+    <div className="bg-gradient-to-br from-[#4f46e5]/5 to-[#4f46e5]/10 p-6 rounded-xl border-2 border-[#4f46e5]/20">
       <h2 className="text-lg font-bold text-[#191c1e] mb-4">Template Metadata</h2>
       <div className="bg-white p-4 rounded-lg space-y-3">
         <div className="flex items-center gap-2 text-sm">

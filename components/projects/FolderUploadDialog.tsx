@@ -33,7 +33,7 @@ export function FolderUploadDialog({
 
   function renderTree(node: FolderNode, level: number = 0): React.ReactElement {
     const Icon = node.type === 'folder' ? Folder : FileText
-    const color = node.type === 'folder' ? 'text-[#4648d4]' : 'text-[#464554]'
+    const color = node.type === 'folder' ? 'text-[#4f46e5]' : 'text-[#464554]'
 
     return (
       <div key={node.path}>
@@ -58,7 +58,7 @@ export function FolderUploadDialog({
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Folder className="h-5 w-5 text-[#4648d4]" />
+            <Folder className="h-5 w-5 text-[#4f46e5]" />
             {isUploading ? 'Uploading Folder' : 'Upload Folder Preview'}
           </DialogTitle>
         </DialogHeader>
@@ -90,7 +90,7 @@ export function FolderUploadDialog({
                 <span className="text-sm font-bold text-[#191c1e]">
                   Progress: {uploadProgress.completed} / {uploadProgress.total}
                 </span>
-                <span className="text-sm font-bold text-[#4648d4]">
+                <span className="text-sm font-bold text-[#4f46e5]">
                   {progressPercentage}%
                 </span>
               </div>
@@ -98,7 +98,7 @@ export function FolderUploadDialog({
               {/* Progress Bar */}
               <div className="w-full h-2 bg-[#e5e7eb] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-300"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
@@ -152,7 +152,7 @@ export function FolderUploadDialog({
           {!isUploading && (
             <Button
               onClick={onConfirm}
-              className="flex-1 bg-gradient-to-br from-[#4648d4] to-[#6063ee]"
+              className="flex-1 bg-gradient-to-br from-[#4f46e5] to-[#4338ca]"
             >
               Upload Folder
             </Button>

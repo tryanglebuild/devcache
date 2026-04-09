@@ -283,7 +283,7 @@ export function FolderUploadButton({
       <button
         onClick={() => fileInputRef.current?.click()}
         disabled={isUploading}
-        className="px-4 py-2.5 bg-white border border-[#c7c4d7]/30 text-[#191c1e] rounded-lg font-bold text-sm hover:bg-[#f2f4f6] transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 py-2.5 bg-white dark:bg-surface-container border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg font-bold text-sm hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Upload className="h-4 w-4" />
         Upload Files
@@ -293,7 +293,7 @@ export function FolderUploadButton({
       <button
         onClick={() => folderInputRef.current?.click()}
         disabled={isUploading}
-        className="px-4 py-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 py-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 hover:shadow-xl transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FolderUp className="h-4 w-4" />
         Upload Folder

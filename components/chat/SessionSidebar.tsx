@@ -57,21 +57,21 @@ export function SessionSidebar({
   }, [sessions])
 
   return (
-    <aside className="w-72 border-r border-[#e5e7eb] bg-white flex flex-col">
+    <aside className="w-72 border-r border-[#e5e7eb] dark:border-white/[0.09] bg-white dark:bg-surface-container flex flex-col">
       {/* Header - Minimalist */}
-      <div className="p-4 border-b border-[#e5e7eb]">
-        <h2 className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Conversations</h2>
+        <div className="p-4 border-b border-[#e5e7eb] dark:border-white/[0.09]">
+          <h2 className="text-xs font-semibold text-[#9ca3af] dark:text-on-surface-variant uppercase tracking-wide">Conversations</h2>
       </div>
 
       {/* Sessions List */}
       <div className="flex-1 overflow-y-auto">
         {sessions.length === 0 ? (
           <div className="p-8 text-center">
-            <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[#f3f4f6] flex items-center justify-center">
-              <MessageSquare className="w-5 h-5 text-[#9ca3af]" />
-            </div>
-            <p className="text-sm text-[#6b7280]">No chats yet</p>
-            <p className="text-xs text-[#9ca3af] mt-1">Start a conversation</p>
+              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[#f3f4f6] dark:bg-surface-container-high flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-[#9ca3af] dark:text-on-surface-variant" />
+              </div>
+              <p className="text-sm text-[#6b7280] dark:text-on-surface-variant">No chats yet</p>
+              <p className="text-xs text-[#9ca3af] dark:text-on-surface-variant/70 mt-1">Start a conversation</p>
           </div>
         ) : (
           <div className="p-2 space-y-0.5">
@@ -85,8 +85,8 @@ export function SessionSidebar({
                   className={`
                     group relative flex flex-col gap-1 p-2.5 rounded-lg cursor-pointer transition-colors
                     ${isActive
-                      ? 'bg-[#f3f4f6]' 
-                      : 'hover:bg-[#f9fafb]'
+                      ? 'bg-[#f3f4f6] dark:bg-surface-container-high' 
+                      : 'hover:bg-[#f9fafb] dark:hover:bg-surface-container-low'
                     }
                   `}
                   onClick={() => onSelectSession(session)}
@@ -94,10 +94,10 @@ export function SessionSidebar({
                   {/* Title Row */}
                   <div className="flex items-start gap-2">
                     <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${
-                      isActive ? 'text-[#4f46e5]' : 'text-[#9ca3af]'
+                      isActive ? 'text-[#4f46e5] dark:text-[#7c7ff5]' : 'text-[#9ca3af] dark:text-on-surface-variant'
                     }`} />
                     <span className={`flex-1 truncate text-sm leading-tight ${
-                      isActive ? 'text-[#111827] font-medium' : 'text-[#374151]'
+                      isActive ? 'text-[#111827] dark:text-on-surface font-medium' : 'text-[#374151] dark:text-on-surface'
                     }`}>
                       {session.title}
                     </span>
@@ -116,7 +116,7 @@ export function SessionSidebar({
 
                   {/* Token Usage Row - Minimalist */}
                   {usage && usage.totalTokens > 0 && (
-                    <div className="flex items-center gap-2 ml-5 text-[10px] text-[#9ca3af]">
+                    <div className="flex items-center gap-2 ml-5 text-[10px] text-[#9ca3af] dark:text-on-surface-variant">
                       <span>{usage.totalTokens.toLocaleString()} tokens</span>
                       <span>·</span>
                       <span className="text-[#059669]">${usage.totalCost.toFixed(4)}</span>
@@ -130,8 +130,8 @@ export function SessionSidebar({
       </div>
 
       {/* Footer Stats - Minimalist */}
-      <div className="p-3 border-t border-[#e5e7eb]">
-        <div className="flex items-center justify-between text-[10px] text-[#9ca3af]">
+      <div className="p-3 border-t border-[#e5e7eb] dark:border-white/[0.09]">
+        <div className="flex items-center justify-between text-[10px] text-[#9ca3af] dark:text-on-surface-variant">
           <span>{sessions.length} {sessions.length === 1 ? 'chat' : 'chats'}</span>
           {Object.keys(sessionUsage).length > 0 && (
             <span>

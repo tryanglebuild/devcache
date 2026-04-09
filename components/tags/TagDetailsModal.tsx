@@ -127,11 +127,11 @@ export function TagDetailsModal({ isOpen, onClose, tag, fileCount }: TagDetailsM
                 className="w-full p-4 bg-white hover:bg-[#f8f9fa] border border-[#c7c4d7]/20 rounded-lg transition-all group text-left"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#f2f4f6] flex items-center justify-center flex-shrink-0 group-hover:bg-[#4648d4]/10 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-[#f2f4f6] flex items-center justify-center flex-shrink-0 group-hover:bg-[#4f46e5]/10 transition-colors">
                     {file.type === 'folder' ? (
-                      <Folder className="h-5 w-5 text-[#4648d4]" />
+                      <Folder className="h-5 w-5 text-[#4f46e5]" />
                     ) : (
-                      <FileText className="h-5 w-5 text-[#4648d4]" />
+                      <FileText className="h-5 w-5 text-[#4f46e5]" />
                     )}
                   </div>
                   

@@ -119,16 +119,16 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-[#191c1e] mb-2">
+          <h2 className="text-4xl font-black tracking-tight text-[#191c1e] dark:text-on-surface mb-2">
             Language Tags
           </h2>
-          <p className="text-[#464554] font-medium">
+          <p className="text-[#464554] dark:text-on-surface-variant font-medium">
             Organize and manage tags for your projects
           </p>
         </div>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="px-6 py-3 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all flex items-center gap-2"
+          className="px-6 py-3 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 hover:shadow-xl transition-all flex items-center gap-2"
         >
           <Plus className="h-5 w-5" />
           New Tag
@@ -137,44 +137,44 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+        <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-[#4648d4]/10 flex items-center justify-center text-[#4648d4]">
+            <div className="w-12 h-12 rounded-lg bg-[#4f46e5]/10 flex items-center justify-center text-[#4f46e5] dark:text-[#7c7ff5]">
               <TagIcon className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-[11px] font-bold text-[#464554] uppercase tracking-widest">
+              <p className="text-[11px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">
                 Total Tags
               </p>
-              <p className="text-2xl font-black text-[#191c1e]">{tags.length}</p>
+              <p className="text-2xl font-black text-[#191c1e] dark:text-on-surface">{tags.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+        <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-lg bg-[#10b981]/10 flex items-center justify-center text-[#10b981]">
               <FileText className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-[11px] font-bold text-[#464554] uppercase tracking-widest">
+              <p className="text-[11px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">
                 Tagged Files
               </p>
-              <p className="text-2xl font-black text-[#191c1e]">{totalFiles}</p>
+              <p className="text-2xl font-black text-[#191c1e] dark:text-on-surface">{totalFiles}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+        <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-lg bg-[#f59e0b]/10 flex items-center justify-center text-[#f59e0b]">
               <TrendingUp className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-[11px] font-bold text-[#464554] uppercase tracking-widest">
+              <p className="text-[11px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">
                 Most Used
               </p>
-              <p className="text-lg font-black text-[#191c1e] truncate">
+              <p className="text-lg font-black text-[#191c1e] dark:text-on-surface truncate">
                 {mostUsedTag?.name || 'N/A'}
               </p>
             </div>
@@ -186,7 +186,7 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
       <div className="space-y-3">
         <button
           onClick={() => setShowAnalytics(!showAnalytics)}
-          className="flex items-center gap-2 text-sm font-bold text-[#464554] hover:text-[#191c1e] transition-colors"
+          className="flex items-center gap-2 text-sm font-bold text-[#464554] dark:text-on-surface-variant hover:text-[#191c1e] dark:hover:text-on-surface transition-colors"
         >
           {showAnalytics ? (
             <ChevronUp className="h-4 w-4" />
@@ -202,10 +202,10 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+      <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#464554]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#464554] dark:text-on-surface-variant" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -219,8 +219,8 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
               onClick={() => setSortBy('name')}
               className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                 sortBy === 'name'
-                  ? 'bg-[#4648d4] text-white'
-                  : 'bg-[#f2f4f6] text-[#464554] hover:bg-[#e8eaed]'
+                  ? 'bg-[#4f46e5] text-white'
+                  : 'bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant hover:bg-[#e8eaed] dark:hover:bg-surface-container-highest'
               }`}
             >
               A-Z
@@ -229,8 +229,8 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
               onClick={() => setSortBy('usage')}
               className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
                 sortBy === 'usage'
-                  ? 'bg-[#4648d4] text-white'
-                  : 'bg-[#f2f4f6] text-[#464554] hover:bg-[#e8eaed]'
+                  ? 'bg-[#4f46e5] text-white'
+                  : 'bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant hover:bg-[#e8eaed] dark:hover:bg-surface-container-highest'
               }`}
             >
               <BarChart3 className="h-4 w-4" />
@@ -242,17 +242,17 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
 
       {/* Tags Grid */}
       {filteredTags.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-            <TagIcon className="h-8 w-8 text-[#464554]" />
+        <div className="text-center py-16 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] dark:bg-surface-container-high flex items-center justify-center">
+            <TagIcon className="h-8 w-8 text-[#464554] dark:text-on-surface-variant" />
           </div>
-          <p className="text-[#464554] font-medium mb-4">
+          <p className="text-[#464554] dark:text-on-surface-variant font-medium mb-4">
             {searchQuery ? 'No tags found' : 'No tags yet'}
           </p>
           {!searchQuery && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-6 py-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all"
+              className="px-6 py-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 hover:shadow-xl transition-all"
             >
               Create Your First Tag
             </button>
@@ -263,7 +263,7 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
           {filteredTags.map((tag) => (
             <div
               key={tag.id}
-              className="bg-white p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all group relative cursor-pointer"
+              className="bg-white dark:bg-surface-container p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] hover:shadow-lg dark:hover:border-white/[0.12] transition-all group relative cursor-pointer"
               onClick={() => setSelectedTag(tag)}
             >
               <div className="flex items-start justify-between mb-3">
@@ -276,10 +276,10 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger 
-                    className="p-1 hover:bg-[#f2f4f6] rounded transition-colors opacity-0 group-hover:opacity-100"
+                    className="p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded transition-colors opacity-0 group-hover:opacity-100"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MoreVertical className="h-4 w-4 text-[#464554]" />
+                    <MoreVertical className="h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem 
@@ -306,20 +306,20 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
                 </DropdownMenu>
               </div>
 
-              <h3 className="font-bold text-[#191c1e] mb-1 uppercase tracking-wider">
+              <h3 className="font-bold text-[#191c1e] dark:text-on-surface mb-1 uppercase tracking-wider">
                 {tag.name}
               </h3>
 
               {tag.description && (
-                <p className="text-xs text-[#464554] line-clamp-2 mb-3">
+                <p className="text-xs text-[#464554] dark:text-on-surface-variant line-clamp-2 mb-3">
                   {tag.description}
                 </p>
               )}
 
               {/* Usage Badge */}
-              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#c7c4d7]/20">
-                <FileText className="h-3.5 w-3.5 text-[#464554]" />
-                <span className="text-xs font-bold text-[#464554]">
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#c7c4d7]/20 dark:border-white/[0.06]">
+                <FileText className="h-3.5 w-3.5 text-[#464554] dark:text-on-surface-variant" />
+                <span className="text-xs font-bold text-[#464554] dark:text-on-surface-variant">
                   {tag.file_count} {tag.file_count === 1 ? 'file' : 'files'}
                 </span>
               </div>

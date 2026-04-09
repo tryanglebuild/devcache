@@ -26,7 +26,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
     <div className="p-8">
       {/* Header with gradient accent */}
       <div className="mb-10 relative">
-        <div className="absolute -left-4 top-0 w-1 h-16 bg-gradient-to-b from-[#4648d4] to-[#6063ee] rounded-full" />
+        <div className="absolute -left-4 top-0 w-1 h-16 bg-gradient-to-b from-[#4f46e5] to-[#4338ca] rounded-full" />
         <h1 className="text-4xl font-black text-[#191c1e] mb-3 tracking-tight">
           Account Settings
         </h1>
@@ -43,7 +43,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
             <TabsList className="flex flex-col h-fit w-full bg-gradient-to-br from-white to-[#f7f9fb] border border-[#c7c4d7]/20 p-3 rounded-2xl shadow-lg gap-2">
               <TabsTrigger 
                 value="profile"
-                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4f46e5] data-active:to-[#4338ca] data-active:text-white data-active:shadow-lg data-active:shadow-[#4f46e5]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
               >
                 <div className="w-8 h-8 rounded-lg bg-blue-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
                   <UserIcon className="h-4 w-4" />
@@ -52,7 +52,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
               </TabsTrigger>
               <TabsTrigger 
                 value="security"
-                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4f46e5] data-active:to-[#4338ca] data-active:text-white data-active:shadow-lg data-active:shadow-[#4f46e5]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
               >
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
                   <Shield className="h-4 w-4" />
@@ -61,7 +61,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
               </TabsTrigger>
               <TabsTrigger 
                 value="preferences"
-                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4f46e5] data-active:to-[#4338ca] data-active:text-white data-active:shadow-lg data-active:shadow-[#4f46e5]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
               >
                 <div className="w-8 h-8 rounded-lg bg-purple-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
                   <Settings className="h-4 w-4" />
@@ -70,7 +70,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
               </TabsTrigger>
               <TabsTrigger 
                 value="instructions"
-                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4f46e5] data-active:to-[#4338ca] data-active:text-white data-active:shadow-lg data-active:shadow-[#4f46e5]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
               >
                 <div className="w-8 h-8 rounded-lg bg-green-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
                   <FileText className="h-4 w-4" />
@@ -79,7 +79,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
               </TabsTrigger>
               <TabsTrigger 
                 value="usage"
-                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4f46e5] data-active:to-[#4338ca] data-active:text-white data-active:shadow-lg data-active:shadow-[#4f46e5]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
               >
                 <div className="w-8 h-8 rounded-lg bg-amber-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
                   <BarChart3 className="h-4 w-4" />
@@ -88,7 +88,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
               </TabsTrigger>
               <TabsTrigger 
                 value="developer"
-                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4648d4] data-active:to-[#6063ee] data-active:text-white data-active:shadow-lg data-active:shadow-[#4648d4]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
+                className="w-full justify-start gap-3 px-4 py-3.5 rounded-xl data-active:bg-gradient-to-br data-active:from-[#4f46e5] data-active:to-[#4338ca] data-active:text-white data-active:shadow-lg data-active:shadow-[#4f46e5]/30 transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium"
               >
                 <div className="w-8 h-8 rounded-lg bg-slate-50 data-active:bg-white/20 flex items-center justify-center transition-colors">
                   <Code2 className="h-4 w-4" />

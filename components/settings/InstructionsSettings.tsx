@@ -260,7 +260,7 @@ export function InstructionsSettings() {
       {/* Header Section */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-[#e5e7eb] bg-gradient-to-r from-white to-[#fafbfc]">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-[#4648d4] flex items-center justify-center shadow-md">
+          <div className="w-12 h-12 rounded-lg bg-[#4f46e5] flex items-center justify-center shadow-md">
             <FileText className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -281,14 +281,14 @@ export function InstructionsSettings() {
             <TabsList className="inline-flex h-12 items-center justify-start gap-1 bg-transparent p-0 border-b-2 border-transparent">
               <TabsTrigger 
                 value="my-instructions" 
-                className="relative inline-flex items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-medium transition-all border-b-2 border-transparent -mb-[2px] data-[state=active]:border-[#4648d4] data-[state=active]:text-[#4648d4] data-[state=inactive]:text-[#6b7280] hover:text-[#191c1e] hover:bg-[#f7f9fb] rounded-t-lg"
+                className="relative inline-flex items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-medium transition-all border-b-2 border-transparent -mb-[2px] data-[state=active]:border-[#4f46e5] data-[state=active]:text-[#4f46e5] data-[state=inactive]:text-[#6b7280] hover:text-[#191c1e] hover:bg-[#f7f9fb] rounded-t-lg"
               >
                 <FileText className="h-4 w-4 mr-2" />
                 My Instructions
               </TabsTrigger>
               <TabsTrigger 
                 value="templates" 
-                className="relative inline-flex items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-medium transition-all border-b-2 border-transparent -mb-[2px] data-[state=active]:border-[#4648d4] data-[state=active]:text-[#4648d4] data-[state=inactive]:text-[#6b7280] hover:text-[#191c1e] hover:bg-[#f7f9fb] rounded-t-lg"
+                className="relative inline-flex items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-medium transition-all border-b-2 border-transparent -mb-[2px] data-[state=active]:border-[#4f46e5] data-[state=active]:text-[#4f46e5] data-[state=inactive]:text-[#6b7280] hover:text-[#191c1e] hover:bg-[#f7f9fb] rounded-t-lg"
               >
                 <Sparkles className="h-4 w-4 mr-2" />
                 Browse Templates
@@ -311,14 +311,14 @@ export function InstructionsSettings() {
                 }
               }}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all">
+                  <Button className="bg-gradient-to-r from-[#4f46e5] to-[#4338ca] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4f46e5]/30 transition-all">
                     <Plus className="mr-2 h-4 w-4" />
                     New Instruction
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-gradient-to-br from-white via-[#fafbfc] to-[#f7f9fb] flex flex-col">
               {/* Header with gradient - Fixed */}
-              <div className="relative px-10 pt-6 pb-5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white overflow-hidden shrink-0">
+              <div className="relative px-10 pt-6 pb-5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white overflow-hidden shrink-0">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
                 
@@ -347,7 +347,7 @@ export function InstructionsSettings() {
                     {/* Basic Info Section */}
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-sm font-semibold text-[#191c1e]">
-                        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white text-xs">
+                        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white text-xs">
                           1
                         </div>
                         Basic Information
@@ -363,7 +363,7 @@ export function InstructionsSettings() {
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             placeholder="e.g., Always provide examples"
-                            className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20"
+                            className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20"
                           />
                         </div>
                         
@@ -375,7 +375,7 @@ export function InstructionsSettings() {
                             value={formData.category}
                             onValueChange={(value) => setFormData({ ...formData, category: value })}
                           >
-                            <SelectTrigger className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 bg-white">
+                            <SelectTrigger className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 bg-white">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="bg-white border border-[#e5e7eb] shadow-lg">
@@ -397,7 +397,7 @@ export function InstructionsSettings() {
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             placeholder="Brief description of what this instruction does"
-                            className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 min-h-[80px] resize-none"
+                            className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 min-h-[80px] resize-none"
                           />
                         </div>
 
@@ -413,17 +413,17 @@ export function InstructionsSettings() {
                               max="100"
                               value={formData.priority}
                               onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
-                              className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20"
+                              className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20"
                             />
                             <div className="space-y-2">
                               <div className="flex items-center justify-between text-xs">
                                 <span className="text-[#9ca3af]">Low</span>
-                                <span className="font-semibold text-[#4648d4]">{formData.priority}%</span>
+                                <span className="font-semibold text-[#4f46e5]">{formData.priority}%</span>
                                 <span className="text-[#9ca3af]">High</span>
                               </div>
                               <div className="h-2 bg-[#e5e7eb] rounded-full overflow-hidden">
                                 <div 
-                                  className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-300"
+                                  className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-300"
                                   style={{ width: `${formData.priority}%` }}
                                 />
                               </div>
@@ -439,26 +439,26 @@ export function InstructionsSettings() {
                     {/* Info Card */}
                     <div className="p-4 bg-gradient-to-br from-[#f7f9fb] to-white border border-[#e5e7eb] rounded-xl">
                       <div className="flex items-start gap-2 mb-2">
-                        <AlertCircle className="h-4 w-4 text-[#4648d4] shrink-0 mt-0.5" />
+                        <AlertCircle className="h-4 w-4 text-[#4f46e5] shrink-0 mt-0.5" />
                         <h4 className="text-xs font-semibold text-[#191c1e]">
                           Quick Tips
                         </h4>
                       </div>
                       <ul className="space-y-1.5 text-xs text-[#6b7280]">
                         <li className="flex items-start gap-1.5">
-                          <span className="text-[#4648d4] shrink-0">•</span>
+                          <span className="text-[#4f46e5] shrink-0">•</span>
                           <span>Use markdown for formatting</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-[#4648d4] shrink-0">•</span>
+                          <span className="text-[#4f46e5] shrink-0">•</span>
                           <span>Be specific and clear</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-[#4648d4] shrink-0">•</span>
+                          <span className="text-[#4f46e5] shrink-0">•</span>
                           <span>Higher priority = applied first</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-[#4648d4] shrink-0">•</span>
+                          <span className="text-[#4f46e5] shrink-0">•</span>
                           <span>Toggle on/off anytime</span>
                         </li>
                       </ul>
@@ -468,7 +468,7 @@ export function InstructionsSettings() {
                   {/* Right Column - Content Editor */}
                   <div className="flex-1 min-w-0 space-y-4">
                     <div className="flex items-center gap-2 text-sm font-semibold text-[#191c1e]">
-                      <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white text-xs">
+                      <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white text-xs">
                         2
                       </div>
                       Instruction Content
@@ -487,7 +487,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('**', '**')}
                           title="Bold"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <Bold className="h-4 w-4" />
                         </Button>
@@ -497,7 +497,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('*', '*')}
                           title="Italic"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <Italic className="h-4 w-4" />
                         </Button>
@@ -507,7 +507,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('`', '`')}
                           title="Code"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <Code className="h-4 w-4" />
                         </Button>
@@ -518,7 +518,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('# ')}
                           title="Heading 1"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4] font-semibold text-xs"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5] font-semibold text-xs"
                         >
                           H1
                         </Button>
@@ -528,7 +528,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('## ')}
                           title="Heading 2"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4] font-semibold text-xs"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5] font-semibold text-xs"
                         >
                           H2
                         </Button>
@@ -538,7 +538,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('### ')}
                           title="Heading 3"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4] font-semibold text-xs"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5] font-semibold text-xs"
                         >
                           H3
                         </Button>
@@ -549,7 +549,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('- ')}
                           title="Bullet List"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <List className="h-4 w-4" />
                         </Button>
@@ -559,7 +559,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('1. ')}
                           title="Numbered List"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <ListOrdered className="h-4 w-4" />
                         </Button>
@@ -570,7 +570,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('[', '](url)')}
                           title="Link"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <LinkIcon className="h-4 w-4" />
                         </Button>
@@ -580,7 +580,7 @@ export function InstructionsSettings() {
                           variant="ghost"
                           onClick={() => insertMarkdown('```\n', '\n```')}
                           title="Code Block"
-                          className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                          className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                         >
                           <Code className="h-4 w-4" />
                           <span className="ml-1 text-xs">Block</span>
@@ -592,7 +592,7 @@ export function InstructionsSettings() {
                         value={formData.content}
                         onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                         placeholder="# My Instruction&#10;&#10;Always provide code examples when explaining concepts.&#10;&#10;## Guidelines&#10;&#10;- Use clear, concise language&#10;- Include practical examples&#10;- Be specific about requirements"
-                        className="min-h-[550px] font-mono text-sm rounded-t-none border-t-0 border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 resize-none"
+                        className="min-h-[550px] font-mono text-sm rounded-t-none border-t-0 border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 resize-none"
                       />
                       <div className="flex items-center justify-between text-xs text-[#9ca3af]">
                         <span>Use markdown formatting to structure your instruction</span>
@@ -622,7 +622,7 @@ export function InstructionsSettings() {
                   <Button
                     onClick={handleCreate}
                     disabled={isSaving || !formData.name || !formData.content}
-                    className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-[#4f46e5] to-[#4338ca] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4f46e5]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? (
                       <>
@@ -646,7 +646,7 @@ export function InstructionsSettings() {
         <div className="p-5 bg-[#f7f9fb] border border-[#e5e7eb] rounded-lg mb-6">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded bg-white border border-[#e5e7eb] flex items-center justify-center shrink-0">
-              <AlertCircle className="h-4 w-4 text-[#4648d4]" />
+              <AlertCircle className="h-4 w-4 text-[#4f46e5]" />
             </div>
             <div>
               <h4 className="text-sm font-semibold text-[#191c1e] mb-1">
@@ -680,7 +680,7 @@ export function InstructionsSettings() {
             size="sm"
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => setFilter('all')}
-            className={filter === 'all' ? 'bg-[#4648d4]' : ''}
+            className={filter === 'all' ? 'bg-[#4f46e5]' : ''}
           >
             All ({skills.length})
           </Button>
@@ -705,7 +705,7 @@ export function InstructionsSettings() {
         {/* Instructions List */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#4648d4]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#4f46e5]" />
           </div>
         ) : filteredSkills.length === 0 ? (
           <div className="text-center py-12 bg-[#f7f9fb] rounded-lg border border-[#e5e7eb]">
@@ -724,7 +724,7 @@ export function InstructionsSettings() {
                 key={skill.id}
                 className={`p-4 rounded-lg border transition-all ${
                   skill.is_active
-                    ? 'bg-white border-[#4648d4] shadow-sm'
+                    ? 'bg-white border-[#4f46e5] shadow-sm'
                     : 'bg-[#f7f9fb] border-[#e5e7eb] opacity-60'
                 }`}
               >
@@ -735,7 +735,7 @@ export function InstructionsSettings() {
                       <span className="px-2 py-0.5 bg-[#f7f9fb] rounded text-xs font-medium text-[#464554] border border-[#e5e7eb]">
                         {skill.category}
                       </span>
-                      <span className="px-2 py-0.5 bg-[#4648d4] text-white rounded text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-[#4f46e5] text-white rounded text-xs font-medium">
                         Priority: {skill.priority}
                       </span>
                       {skill.is_active && (
@@ -757,7 +757,7 @@ export function InstructionsSettings() {
                       size="sm"
                       variant="outline"
                       onClick={() => openEditModal(skill)}
-                      className="border-[#e5e7eb] text-[#4648d4] hover:bg-[#f0f4ff]"
+                      className="border-[#e5e7eb] text-[#4f46e5] hover:bg-[#f0f4ff]"
                       title="Edit instruction"
                     >
                       <Edit className="h-4 w-4" />
@@ -806,7 +806,7 @@ export function InstructionsSettings() {
               value={templateSearch}
               onChange={(e) => setTemplateSearch(e.target.value)}
               placeholder="Search by name, description, or tags..."
-              className="pl-10 border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 bg-[#f7f9fb]"
+              className="pl-10 border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 bg-[#f7f9fb]"
             />
           </div>
         </div>
@@ -828,11 +828,11 @@ export function InstructionsSettings() {
               return (
               <div
                 key={template.id}
-                className="group p-5 bg-white border border-[#e5e7eb] rounded-xl hover:border-[#4648d4] hover:shadow-md transition-all"
+                className="group p-5 bg-white border border-[#e5e7eb] rounded-xl hover:border-[#4f46e5] hover:shadow-md transition-all"
               >
                 <div className="flex items-start gap-4">
                   {/* Icon */}
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f7f9fb] to-[#e5e7eb] flex items-center justify-center shrink-0 group-hover:from-[#4648d4]/10 group-hover:to-[#6063ee]/10 transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f7f9fb] to-[#e5e7eb] flex items-center justify-center shrink-0 group-hover:from-[#4f46e5]/10 group-hover:to-[#4338ca]/10 transition-all">
                     <span className="text-2xl">{template.icon}</span>
                   </div>
 
@@ -841,7 +841,7 @@ export function InstructionsSettings() {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-base font-semibold text-[#191c1e] group-hover:text-[#4648d4] transition-colors">
+                          <h3 className="text-base font-semibold text-[#191c1e] group-hover:text-[#4f46e5] transition-colors">
                             {template.name}
                           </h3>
                           {isImported && (
@@ -862,7 +862,7 @@ export function InstructionsSettings() {
                         <span className="px-2.5 py-1 bg-[#f7f9fb] text-[#464554] rounded-md text-xs font-medium capitalize">
                           {template.category}
                         </span>
-                        <span className="px-2.5 py-1 bg-[#4648d4]/10 text-[#4648d4] rounded-md text-xs font-medium">
+                        <span className="px-2.5 py-1 bg-[#4f46e5]/10 text-[#4f46e5] rounded-md text-xs font-medium">
                           Priority {template.priority}
                         </span>
                         {template.tags.slice(0, 2).map((tag) => (
@@ -879,7 +879,7 @@ export function InstructionsSettings() {
                           size="sm"
                           variant="outline"
                           onClick={() => handlePreviewTemplate(template)}
-                          className="border-[#e5e7eb] text-[#4648d4] hover:bg-[#f0f4ff]"
+                          className="border-[#e5e7eb] text-[#4f46e5] hover:bg-[#f0f4ff]"
                         >
                           <Eye className="h-3.5 w-3.5 mr-1.5" />
                           Preview
@@ -891,7 +891,7 @@ export function InstructionsSettings() {
                           className={`shadow-sm ${
                             isImported
                               ? 'bg-[#e5e7eb] text-[#9ca3af] cursor-not-allowed hover:bg-[#e5e7eb]'
-                              : 'bg-[#4648d4] hover:bg-[#3739b8] text-white'
+                              : 'bg-[#4f46e5] hover:bg-[#3739b8] text-white'
                           }`}
                         >
                           {isSaving ? (
@@ -931,7 +931,7 @@ export function InstructionsSettings() {
           {previewTemplate && (
             <>
               {/* Header */}
-              <div className="px-8 pt-6 pb-5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white">
+              <div className="px-8 pt-6 pb-5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
                     <span className="text-3xl">{previewTemplate.icon}</span>
@@ -993,7 +993,7 @@ export function InstructionsSettings() {
                   <Button
                     onClick={() => handleAddTemplate(previewTemplate)}
                     disabled={isSaving}
-                    className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30"
+                    className="bg-gradient-to-r from-[#4f46e5] to-[#4338ca] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4f46e5]/30"
                   >
                     {isSaving ? (
                       <>
@@ -1018,7 +1018,7 @@ export function InstructionsSettings() {
       <Dialog open={!!editingSkill} onOpenChange={(open) => !open && setEditingSkill(null)}>
         <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-gradient-to-br from-white via-[#fafbfc] to-[#f7f9fb] flex flex-col">
           {/* Header with gradient - Fixed */}
-          <div className="relative px-10 pt-6 pb-5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white overflow-hidden shrink-0">
+          <div className="relative px-10 pt-6 pb-5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white overflow-hidden shrink-0">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
             
@@ -1046,7 +1046,7 @@ export function InstructionsSettings() {
               <div className="w-[420px] shrink-0 space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-sm font-semibold text-[#191c1e]">
-                    <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white text-xs">
+                    <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white text-xs">
                       1
                     </div>
                     Basic Information
@@ -1062,7 +1062,7 @@ export function InstructionsSettings() {
                         value={editFormData.name}
                         onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                         placeholder="e.g., Always provide examples"
-                        className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20"
+                        className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20"
                       />
                     </div>
                     
@@ -1074,7 +1074,7 @@ export function InstructionsSettings() {
                         value={editFormData.category}
                         onValueChange={(value) => setEditFormData({ ...editFormData, category: value })}
                       >
-                        <SelectTrigger className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 bg-white">
+                        <SelectTrigger className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 bg-white">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-white border border-[#e5e7eb] shadow-lg">
@@ -1096,7 +1096,7 @@ export function InstructionsSettings() {
                         value={editFormData.description}
                         onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
                         placeholder="Brief description of what this instruction does"
-                        className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 min-h-[80px] resize-none"
+                        className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 min-h-[80px] resize-none"
                       />
                     </div>
 
@@ -1112,17 +1112,17 @@ export function InstructionsSettings() {
                           max="100"
                           value={editFormData.priority}
                           onChange={(e) => setEditFormData({ ...editFormData, priority: parseInt(e.target.value) || 0 })}
-                          className="border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20"
+                          className="border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20"
                         />
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-[#9ca3af]">Low</span>
-                            <span className="font-semibold text-[#4648d4]">{editFormData.priority}%</span>
+                            <span className="font-semibold text-[#4f46e5]">{editFormData.priority}%</span>
                             <span className="text-[#9ca3af]">High</span>
                           </div>
                           <div className="h-2 bg-[#e5e7eb] rounded-full overflow-hidden">
                             <div 
-                              className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-300"
+                              className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-300"
                               style={{ width: `${editFormData.priority}%` }}
                             />
                           </div>
@@ -1136,7 +1136,7 @@ export function InstructionsSettings() {
               {/* Right Column - Content Editor */}
               <div className="flex-1 min-w-0 space-y-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-[#191c1e]">
-                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white text-xs">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white text-xs">
                     2
                   </div>
                   Instruction Content
@@ -1163,7 +1163,7 @@ export function InstructionsSettings() {
                         setEditFormData({ ...editFormData, content: newText })
                       }}
                       title="Bold"
-                      className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                      className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                     >
                       <Bold className="h-4 w-4" />
                     </Button>
@@ -1181,7 +1181,7 @@ export function InstructionsSettings() {
                         setEditFormData({ ...editFormData, content: newText })
                       }}
                       title="Italic"
-                      className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                      className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                     >
                       <Italic className="h-4 w-4" />
                     </Button>
@@ -1199,7 +1199,7 @@ export function InstructionsSettings() {
                         setEditFormData({ ...editFormData, content: newText })
                       }}
                       title="Code"
-                      className="hover:bg-[#f7f9fb] hover:text-[#4648d4]"
+                      className="hover:bg-[#f7f9fb] hover:text-[#4f46e5]"
                     >
                       <Code className="h-4 w-4" />
                     </Button>
@@ -1210,7 +1210,7 @@ export function InstructionsSettings() {
                     value={editFormData.content}
                     onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
                     placeholder="# My Instruction&#10;&#10;Content here..."
-                    className="min-h-[550px] font-mono text-sm rounded-t-none border-t-0 border-[#e5e7eb] focus:border-[#4648d4] focus:ring-[#4648d4]/20 resize-none"
+                    className="min-h-[550px] font-mono text-sm rounded-t-none border-t-0 border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-[#4f46e5]/20 resize-none"
                   />
                   <div className="flex items-center justify-between text-xs text-[#9ca3af]">
                     <span>Use markdown formatting to structure your instruction</span>
@@ -1237,7 +1237,7 @@ export function InstructionsSettings() {
               <Button
                 onClick={handleEditSkill}
                 disabled={isSaving || !editFormData.name || !editFormData.content}
-                className="bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4648d4]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-[#4f46e5] to-[#4338ca] hover:from-[#3739b8] hover:to-[#4f52d9] text-white shadow-lg shadow-[#4f46e5]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSaving ? (
                   <>

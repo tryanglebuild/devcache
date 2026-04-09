@@ -12,7 +12,7 @@ export function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeTogglePro
         onClick={() => onViewModeChange('rendered')}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
           viewMode === 'rendered'
-            ? 'bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white shadow-lg'
+            ? 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg'
             : 'text-[#464554] hover:bg-[#f2f4f6]'
         }`}
       >
@@ -23,7 +23,7 @@ export function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeTogglePro
         onClick={() => onViewModeChange('source')}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
           viewMode === 'source'
-            ? 'bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white shadow-lg'
+            ? 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg'
             : 'text-[#464554] hover:bg-[#f2f4f6]'
         }`}
       >

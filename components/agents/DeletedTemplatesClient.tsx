@@ -186,7 +186,7 @@ export function DeletedTemplatesClient() {
                       onClick={() => setSelectedIndex(index)}
                       className={`w-full text-left p-3 rounded-lg transition-all ${
                         isSelected
-                          ? 'bg-[#4648d4]/10 border-2 border-[#4648d4]'
+                          ? 'bg-[#4f46e5]/10 border-2 border-[#4f46e5]'
                           : 'bg-[#f2f4f6] hover:bg-[#e5e7eb] border-2 border-transparent'
                       }`}
                     >
@@ -252,7 +252,7 @@ export function DeletedTemplatesClient() {
                   name={selectedTemplate.name}
                   description={selectedTemplate.description}
                   categoryIcon={AGENT_CATEGORIES[selectedTemplate.category as keyof typeof AGENT_CATEGORIES]?.icon || 'smart_toy'}
-                  categoryColor={AGENT_CATEGORIES[selectedTemplate.category as keyof typeof AGENT_CATEGORIES]?.color || '#4648d4'}
+                  categoryColor={AGENT_CATEGORIES[selectedTemplate.category as keyof typeof AGENT_CATEGORIES]?.color || '#4f46e5'}
                 />
               </div>
 
@@ -261,7 +261,7 @@ export function DeletedTemplatesClient() {
                 <div className="mb-6">
                   <TemplateTags
                     tags={selectedTemplate.tags}
-                    color={AGENT_CATEGORIES[selectedTemplate.category as keyof typeof AGENT_CATEGORIES]?.color || '#4648d4'}
+                    color={AGENT_CATEGORIES[selectedTemplate.category as keyof typeof AGENT_CATEGORIES]?.color || '#4f46e5'}
                   />
                 </div>
               )}
@@ -288,7 +288,7 @@ export function DeletedTemplatesClient() {
               <div className="flex gap-3 mt-6 pt-6 border-t border-[#e5e7eb]">
                 <Button
                   onClick={() => setActionType('restore')}
-                  className="flex-1 bg-[#4648d4] hover:bg-[#6063ee] text-white shadow-lg"
+                  className="flex-1 bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-lg"
                 >
                   <span className="material-symbols-outlined text-lg mr-2">
                     restore
@@ -341,7 +341,7 @@ export function DeletedTemplatesClient() {
           </p>
           <Button
             onClick={() => router.push('/dashboard/projects')}
-            className="bg-[#4648d4] hover:bg-[#6063ee] text-white"
+            className="bg-[#4f46e5] hover:bg-[#4338ca] text-white"
           >
             Go to Projects
           </Button>
@@ -355,7 +355,7 @@ export function DeletedTemplatesClient() {
             <DialogTitle className="text-xl flex items-center gap-2">
               {actionType === 'restore' ? (
                 <>
-                  <span className="material-symbols-outlined text-[#4648d4] text-xl">
+                  <span className="material-symbols-outlined text-[#4f46e5] text-xl">
                     restore
                   </span>
                   Restore Template
@@ -373,7 +373,7 @@ export function DeletedTemplatesClient() {
               {actionType === 'restore' ? (
                 <>
                   Restore <strong className="text-[#191c1e] font-semibold">{selectedTemplate?.name}</strong> back to your templates?
-                  <span className="block mt-3 p-3 bg-[#4648d4]/5 border border-[#4648d4]/20 rounded-lg text-sm text-[#4648d4] font-medium">
+                  <span className="block mt-3 p-3 bg-[#4f46e5]/5 border border-[#4f46e5]/20 rounded-lg text-sm text-[#4f46e5] font-medium">
                     It will be available immediately after restoration.
                   </span>
                 </>
@@ -409,7 +409,7 @@ export function DeletedTemplatesClient() {
               disabled={actionLoading}
               className={`flex-1 sm:flex-none shadow-lg hover:shadow-xl transition-all ${
                 actionType === 'restore'
-                  ? 'bg-[#4648d4] hover:bg-[#6063ee] text-white'
+                  ? 'bg-[#4f46e5] hover:bg-[#4338ca] text-white'
                   : 'bg-red-600 hover:bg-red-700 text-white'
               }`}
             >

@@ -80,7 +80,7 @@ export function EditItemSheet({
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-3xl bg-white border-l border-[#c7c4d7]/20 p-0 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-br from-[#4648d4] to-[#6063ee] px-8 py-8 shrink-0">
+        <div className="bg-gradient-to-br from-[#4f46e5] to-[#4338ca] px-8 py-8 shrink-0">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-xl">
@@ -109,7 +109,7 @@ export function EditItemSheet({
                 onChange={(e) => setName(e.target.value)}
                 required
                 placeholder="Enter name..."
-                className="w-full h-12 bg-white border-[#c7c4d7]/30 focus:border-[#4648d4] focus:ring-[#4648d4] placeholder:text-gray-400"
+                className="w-full h-12 bg-white border-[#c7c4d7]/30 focus:border-[#4f46e5] focus:ring-[#4f46e5] placeholder:text-gray-400"
               />
             </div>
 
@@ -123,7 +123,7 @@ export function EditItemSheet({
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Brief description of this item..."
                 rows={3}
-                className="w-full px-4 py-3 bg-white border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-[#4648d4] text-sm resize-none placeholder:text-gray-400"
+                className="w-full px-4 py-3 bg-white border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm resize-none placeholder:text-gray-400"
               />
             </div>
 
@@ -148,7 +148,7 @@ export function EditItemSheet({
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add your personal comments, observations, or reminders about this item..."
                 rows={6}
-                className="w-full px-4 py-3 bg-white border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-[#4648d4] text-sm resize-none placeholder:text-gray-400"
+                className="w-full px-4 py-3 bg-white border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm resize-none placeholder:text-gray-400"
               />
               <p className="text-xs text-[#464554] mt-2 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#904900]"></span>
@@ -174,7 +174,7 @@ export function EditItemSheet({
               type="submit"
               form="edit-item-form"
               disabled={isLoading || !name.trim()}
-              className="flex-1 h-12 bg-gradient-to-br from-[#4648d4] to-[#6063ee] hover:shadow-xl font-semibold text-white shadow-lg shadow-[#4648d4]/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 h-12 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] hover:shadow-xl font-semibold text-white shadow-lg shadow-[#4f46e5]/25 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">

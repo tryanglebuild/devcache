@@ -43,10 +43,10 @@ export function ChatInterfaceWrapper({ sessionId, initialSession, onSessionUpdat
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white">
+      <div className="flex-1 flex items-center justify-center bg-white dark:bg-surface-container">
         <div className="relative w-8 h-8">
-          <div className="absolute inset-0 rounded-full border-2 border-[#e8eff3]" />
-          <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] border-t-transparent animate-spin" />
+          <div className="absolute inset-0 rounded-full border-2 border-[#e8eff3] dark:border-white/[0.09]" />
+          <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] dark:border-[#7c7ff5] border-t-transparent animate-spin" />
         </div>
       </div>
     )
@@ -54,8 +54,8 @@ export function ChatInterfaceWrapper({ sessionId, initialSession, onSessionUpdat
 
   if (!session) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white">
-        <p className="text-sm text-[#464554] font-medium">Session not found</p>
+      <div className="flex-1 flex items-center justify-center bg-white dark:bg-surface-container">
+        <p className="text-sm text-[#464554] dark:text-on-surface-variant font-medium">Session not found</p>
       </div>
     )
   }

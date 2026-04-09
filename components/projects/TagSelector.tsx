@@ -19,7 +19,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
   const [newTagName, setNewTagName] = useState('')
-  const [newTagColor, setNewTagColor] = useState('#4648d4')
+  const [newTagColor, setNewTagColor] = useState('#4f46e5')
   const [isSaving, setIsSaving] = useState(false)
   
   const supabase = createClient()
@@ -92,7 +92,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
       setTags([...tags, data])
       onTagsChange([...selectedTags, data.name])
       setNewTagName('')
-      setNewTagColor('#4648d4')
+      setNewTagColor('#4f46e5')
       setIsCreating(false)
       toast.success('Tag created successfully')
     } catch (error) {
@@ -106,7 +106,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="w-6 h-6 border-3 border-[#4648d4] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-6 h-6 border-3 border-[#4f46e5] border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
@@ -116,7 +116,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
       {/* Selected Tags Count */}
       {selectedTags.length > 0 && (
         <div className="flex items-center gap-2 text-sm">
-          <div className="w-2 h-2 rounded-full bg-[#4648d4]"></div>
+          <div className="w-2 h-2 rounded-full bg-[#4f46e5]"></div>
           <span className="font-semibold text-[#191c1e]">
             {selectedTags.length} tag{selectedTags.length > 1 ? 's' : ''} selected
           </span>
@@ -137,7 +137,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
                   group relative px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all
                   ${isSelected
                     ? 'text-white shadow-lg scale-105'
-                    : 'bg-white border-2 border-[#c7c4d7]/30 text-[#464554] hover:border-[#4648d4]/50 hover:shadow-md'
+                    : 'bg-white border-2 border-[#c7c4d7]/30 text-[#464554] hover:border-[#4f46e5]/50 hover:shadow-md'
                   }
                 `}
                 style={isSelected ? { 
@@ -175,13 +175,13 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
         <button
           type="button"
           onClick={() => setIsCreating(true)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-br from-[#4648d4]/10 to-[#6063ee]/10 hover:from-[#4648d4]/20 hover:to-[#6063ee]/20 border-2 border-dashed border-[#4648d4]/30 rounded-xl text-[#4648d4] font-semibold text-sm transition-all"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-br from-[#4f46e5]/10 to-[#4338ca]/10 hover:from-[#4f46e5]/20 hover:to-[#4338ca]/20 border-2 border-dashed border-[#4f46e5]/30 rounded-xl text-[#4f46e5] font-semibold text-sm transition-all"
         >
           <Plus className="h-4 w-4" />
           Create New Tag
         </button>
       ) : (
-        <div className="p-6 bg-white border-2 border-[#4648d4]/20 rounded-xl space-y-4 shadow-lg">
+        <div className="p-6 bg-white border-2 border-[#4f46e5]/20 rounded-xl space-y-4 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-bold text-[#191c1e]">Create New Tag</h4>
             <button
@@ -189,7 +189,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
               onClick={() => {
                 setIsCreating(false)
                 setNewTagName('')
-                setNewTagColor('#4648d4')
+                setNewTagColor('#4f46e5')
               }}
               className="p-1 hover:bg-[#f2f4f6] rounded transition-colors"
             >
@@ -206,7 +206,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
               value={newTagName}
               onChange={(e) => setNewTagName(e.target.value.toLowerCase())}
               placeholder="e.g., javascript, python, react"
-              className="w-full h-10 px-3 bg-[#f7f9fb] border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-[#4648d4] text-sm placeholder:text-gray-400"
+              className="w-full h-10 px-3 bg-[#f7f9fb] border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm placeholder:text-gray-400"
             />
             <p className="text-xs text-[#464554] mt-1.5">
               Lowercase letters, numbers, hyphens, and periods only
@@ -244,7 +244,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
               onClick={() => {
                 setIsCreating(false)
                 setNewTagName('')
-                setNewTagColor('#4648d4')
+                setNewTagColor('#4f46e5')
               }}
               disabled={isSaving}
               className="flex-1 h-10 px-4 bg-white border border-[#c7c4d7]/40 text-[#464554] rounded-lg hover:bg-[#f2f4f6] font-semibold text-sm transition-all disabled:opacity-50"
@@ -255,7 +255,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
               type="button"
               onClick={handleCreateTag}
               disabled={isSaving || !newTagName.trim()}
-              className="flex-1 h-10 px-4 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg hover:shadow-lg font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 h-10 px-4 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg hover:shadow-lg font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? (
                 <span className="flex items-center justify-center gap-2">

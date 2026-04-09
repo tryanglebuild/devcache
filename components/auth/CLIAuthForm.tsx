@@ -65,7 +65,7 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">
+        <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1 dark:text-on-surface-variant">
           Email Address
         </label>
         <input
@@ -74,7 +74,7 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="dev@example.com"
-          className="w-full bg-white border border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all"
+          className="w-full bg-white border border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all dark:bg-surface-container dark:border-white/[0.09] dark:focus:border-[#7c7ff5] dark:focus:ring-[#7c7ff5]/10 dark:text-on-surface dark:placeholder-on-surface-variant/50"
           required
           disabled={loading}
         />
@@ -82,7 +82,7 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
 
       {/* Password */}
       <div>
-        <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">
+        <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1 dark:text-on-surface-variant">
           Password
         </label>
         <input
@@ -91,7 +91,7 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          className="w-full bg-white border border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all"
+          className="w-full bg-white border border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all dark:bg-surface-container dark:border-white/[0.09] dark:focus:border-[#7c7ff5] dark:focus:ring-[#7c7ff5]/10 dark:text-on-surface dark:placeholder-on-surface-variant/50"
           required
           disabled={loading}
         />
@@ -101,7 +101,7 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#494bd6] hover:bg-[#2f2ebe] text-white font-bold py-4 px-4 rounded-xl shadow-xl shadow-[#494bd6]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-[#494bd6] hover:bg-[#2f2ebe] text-white font-bold py-4 px-4 rounded-xl shadow-xl shadow-[#494bd6]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-[#7c7ff5] dark:hover:bg-[#9b9df7] dark:text-[#0d1121] dark:shadow-[#7c7ff5]/10"
         >
           <span>{loading ? 'Authenticating...' : 'Authenticate CLI'}</span>
           <span className="material-symbols-outlined text-xl">arrow_right_alt</span>
@@ -109,9 +109,9 @@ export function CLIAuthForm({ redirectUri }: CLIAuthFormProps) {
       </div>
 
       <div className="mt-10 text-center">
-        <p className="text-sm text-slate-500 font-medium">
+        <p className="text-sm text-slate-500 font-medium dark:text-on-surface-variant">
           Don't have an account?{' '}
-          <Link href="/signup" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold">
+          <Link href="/signup" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold dark:text-[#7c7ff5]">
             Create one
           </Link>
         </p>

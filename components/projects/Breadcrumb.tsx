@@ -27,7 +27,7 @@ export function Breadcrumb({ items, currentPage }: BreadcrumbProps) {
         <BreadcrumbItem>
           <BreadcrumbLink 
             href="/dashboard/projects"
-            className="flex items-center gap-2 text-[#464554] hover:text-[#4648d4] transition-colors"
+            className="flex items-center gap-2 text-[#464554] hover:text-[#4f46e5] transition-colors"
           >
             <FolderKanban className="h-4 w-4" />
             <span className="font-semibold">Projects</span>
@@ -48,13 +48,13 @@ export function Breadcrumb({ items, currentPage }: BreadcrumbProps) {
               </BreadcrumbSeparator>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="font-semibold text-[#4648d4]">
+                  <BreadcrumbPage className="font-semibold text-[#4f46e5]">
                     {item.name}
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink 
                     href={href}
-                    className="font-semibold text-[#464554] hover:text-[#4648d4] transition-colors"
+                    className="font-semibold text-[#464554] hover:text-[#4f46e5] transition-colors"
                   >
                     {item.name}
                   </BreadcrumbLink>
@@ -71,7 +71,7 @@ export function Breadcrumb({ items, currentPage }: BreadcrumbProps) {
               <ChevronRight className="h-4 w-4" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
-              <BreadcrumbPage className="font-semibold text-[#4648d4]">
+              <BreadcrumbPage className="font-semibold text-[#4f46e5]">
                 {currentPage}
               </BreadcrumbPage>
             </BreadcrumbItem>

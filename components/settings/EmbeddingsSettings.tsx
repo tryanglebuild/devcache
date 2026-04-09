@@ -90,7 +90,7 @@ export function EmbeddingsSettings() {
       <CardContent className="pt-6">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#4648d4]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#4f46e5]" />
           </div>
         ) : (
           <div className="space-y-6">
@@ -101,7 +101,7 @@ export function EmbeddingsSettings() {
                   <span className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
                     Total Templates
                   </span>
-                  <Database className="h-4 w-4 text-[#4648d4]" />
+                  <Database className="h-4 w-4 text-[#4f46e5]" />
                 </div>
                 <div className="text-3xl font-bold text-[#191c1e]">
                   {stats?.total_templates || 0}
@@ -139,13 +139,13 @@ export function EmbeddingsSettings() {
                 <span className="text-sm font-semibold text-[#191c1e]">
                   Indexing Progress
                 </span>
-                <span className="text-sm font-bold text-[#4648d4]">
+                <span className="text-sm font-bold text-[#4f46e5]">
                   {percentage}%
                 </span>
               </div>
               <div className="w-full h-3 bg-white rounded-full overflow-hidden border border-[#e5e7eb]">
                 <div
-                  className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-500"
                   style={{ width: `${percentage}%` }}
                 />
               </div>
@@ -158,7 +158,7 @@ export function EmbeddingsSettings() {
             <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded bg-[#f7f9fb] border border-[#e5e7eb] flex items-center justify-center shrink-0">
-                  <Database className="h-4 w-4 text-[#4648d4]" />
+                  <Database className="h-4 w-4 text-[#4f46e5]" />
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-[#191c1e] mb-1">
@@ -196,7 +196,7 @@ export function EmbeddingsSettings() {
               <Button
                 onClick={handleGenerateEmbeddings}
                 disabled={isGenerating || stats?.templates_needing_embeddings === 0}
-                className="bg-[#4648d4] hover:bg-[#3739b8] text-white font-semibold shadow-sm hover:shadow-md transition-all"
+                className="bg-[#4f46e5] hover:bg-[#3739b8] text-white font-semibold shadow-sm hover:shadow-md transition-all"
               >
                 {isGenerating ? (
                   <>

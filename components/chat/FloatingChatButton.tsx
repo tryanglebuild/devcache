@@ -41,7 +41,7 @@ export function FloatingChatButton() {
         >
           <div className="relative">
             {/* Main Button */}
-            <div className="w-14 h-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 hover:scale-110 hover:shadow-xl flex items-center justify-center transition-all duration-300 ease-out">
+            <div className="w-14 h-14 rounded-full shadow-lg dark:shadow-none bg-blue-600 hover:bg-blue-700 hover:scale-110 hover:shadow-xl flex items-center justify-center transition-all duration-300 ease-out">
               <MessageSquare className="w-6 h-6 text-white" />
             </div>
 
@@ -53,7 +53,7 @@ export function FloatingChatButton() {
             )}
 
             {/* Pulse Animation */}
-            <div className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20" />
+            <div className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20 dark:opacity-10" />
           </div>
         </button>
       )}

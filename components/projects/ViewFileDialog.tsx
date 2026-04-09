@@ -47,7 +47,7 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <FileText className="h-6 w-6 text-[#4648d4]" />
+            <FileText className="h-6 w-6 text-[#4f46e5]" />
             {item.name}
           </DialogTitle>
           <DialogDescription className="text-[#464554]">
@@ -69,7 +69,7 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
               {item.language_tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-[#4648d4]/10 text-[#4648d4] rounded-lg text-xs font-bold uppercase tracking-wider"
+                  className="px-3 py-1 bg-[#4f46e5]/10 text-[#4f46e5] rounded-lg text-xs font-bold uppercase tracking-wider"
                 >
                   {tag}
                 </span>
@@ -116,7 +116,7 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
                     code: ({ children, className }) => {
                       const isInline = !className
                       return isInline ? (
-                        <code className="px-1.5 py-0.5 bg-[#f2f4f6] text-[#4648d4] rounded text-sm font-mono">
+                        <code className="px-1.5 py-0.5 bg-[#f2f4f6] text-[#4f46e5] rounded text-sm font-mono">
                           {children}
                         </code>
                       ) : (
@@ -126,7 +126,7 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
                       )
                     },
                     blockquote: ({ children }) => (
-                      <blockquote className="border-l-4 border-[#4648d4] pl-4 italic text-[#464554] my-4">
+                      <blockquote className="border-l-4 border-[#4f46e5] pl-4 italic text-[#464554] my-4">
                         {children}
                       </blockquote>
                     ),
@@ -135,7 +135,7 @@ export function ViewFileDialog({ isOpen, onClose, item }: ViewFileDialogProps) {
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#4648d4] hover:underline"
+                        className="text-[#4f46e5] hover:underline"
                       >
                         {children}
                       </a>

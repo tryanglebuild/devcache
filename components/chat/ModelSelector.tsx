@@ -76,16 +76,16 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
 
   return (
     <Select value={selectedModel || ''} onValueChange={onModelChange} disabled={disabled || loading}>
-      <SelectTrigger className="h-6 w-auto border-none bg-transparent hover:bg-[#f3f4f6] rounded px-2 text-[10px] gap-1">
+      <SelectTrigger className="h-6 w-auto border-none bg-transparent hover:bg-[#f3f4f6] dark:hover:bg-surface-container-high rounded px-2 text-[10px] gap-1">
         <SelectValue>
           {selectedModelData ? (
-            <span className="text-[10px] text-[#6b7280]">{selectedModelData.name}</span>
+            <span className="text-[10px] text-[#6b7280] dark:text-on-surface-variant">{selectedModelData.name}</span>
           ) : (
-            <span className="text-[10px] text-[#9ca3af]">Select...</span>
+            <span className="text-[10px] text-[#9ca3af] dark:text-on-surface-variant">Select...</span>
           )}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="bg-white border-gray-200 z-[100]">
+      <SelectContent className="bg-white dark:bg-surface-container border-gray-200 dark:border-white/[0.09] z-[100]">
         {/* Free Models */}
         {groupedModels.free && groupedModels.free.length > 0 && (
           <SelectGroup>
@@ -97,7 +97,7 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
               <SelectItem 
                 key={model.id} 
                 value={model.id} 
-                className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100 text-gray-900"
+                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-container-high focus:bg-gray-100 dark:focus:bg-surface-container-high text-gray-900 dark:text-on-surface"
               >
                 <div className="flex items-center gap-2 w-full">
                   <span className="font-medium">{model.name}</span>
@@ -114,7 +114,7 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
         {/* Premium Models */}
         {groupedModels.premium && groupedModels.premium.length > 0 && (
           <SelectGroup>
-            <SelectLabel className="flex items-center gap-2 text-[#4648d4]">
+            <SelectLabel className="flex items-center gap-2 text-[#4f46e5] dark:text-[#7c7ff5]">
               <Sparkles className="h-3 w-3" />
               Premium Models
             </SelectLabel>
@@ -122,12 +122,12 @@ export function ModelSelector({ selectedModel, onModelChange, disabled }: ModelS
               <SelectItem 
                 key={model.id} 
                 value={model.id} 
-                className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100 text-gray-900"
+                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-container-high focus:bg-gray-100 dark:focus:bg-surface-container-high text-gray-900 dark:text-on-surface"
               >
                 <div className="flex items-center gap-2 w-full">
                   <span className="font-medium">{model.name}</span>
                   <span className="text-xs text-muted-foreground">({model.provider})</span>
-                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-[#4648d4]/10 text-[#4648d4] font-bold">
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-[#4f46e5]/10 text-[#4f46e5] dark:text-[#7c7ff5] font-bold">
                     {model.creditMultiplier}x
                   </span>
                 </div>

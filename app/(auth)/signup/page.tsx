@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import SignupForm from '@/components/auth/SignupForm'
 import OAuthButton from '@/components/auth/OAuthButton'
+import { DevCacheLogo } from '@/components/ui/DevCacheLogo'
 
 export const metadata: Metadata = {
   title: 'Create New Account | devCache',
@@ -23,13 +24,8 @@ export default function SignupPage() {
         
         <div className="relative z-10">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 mb-20 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-primary/20 backdrop-blur-md rounded-lg flex items-center justify-center border border-primary/30">
-              <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                terminal
-              </span>
-            </div>
-            <span className="text-2xl font-bold tracking-tighter">devCache</span>
+          <Link href="/" className="mb-20 hover:opacity-80 transition-opacity inline-flex">
+            <DevCacheLogo size="lg" theme="dark" />
           </Link>
 
           {/* Content */}
@@ -86,18 +82,13 @@ export default function SignupPage() {
       </aside>
 
       {/* Right Side - Form */}
-      <main className="w-full lg:w-1/2 flex flex-col bg-slate-50 relative">
+      <main className="w-full lg:w-1/2 flex flex-col bg-slate-50 dark:bg-surface-container-low relative">
         {/* Mobile Logo */}
-        <div className="lg:hidden p-8 flex justify-between items-center bg-white border-b border-slate-200">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-[#494bd6] rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
-                terminal
-              </span>
-            </div>
-            <span className="text-xl font-bold tracking-tighter text-slate-900">devCache</span>
+        <div className="lg:hidden p-8 flex justify-between items-center bg-white border-b border-slate-200 dark:bg-surface-container dark:border-white/[0.09]">
+          <Link href="/" className="hover:opacity-80 transition-opacity inline-flex">
+            <DevCacheLogo size="sm" theme="light" />
           </Link>
-          <Link href="/docs" className="text-sm font-semibold text-[#494bd6]">
+          <Link href="/docs" className="text-sm font-semibold text-[#494bd6] dark:text-[#7c7ff5]">
             Docs
           </Link>
         </div>
@@ -105,8 +96,8 @@ export default function SignupPage() {
         <div className="flex-grow flex items-center justify-center p-8 md:p-16 lg:p-24">
           <div className="w-full max-w-md">
             <div className="mb-10">
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Create Account</h2>
-              <p className="text-slate-500 font-medium">Start building with AI agents today.</p>
+              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 dark:text-on-surface">Create Account</h2>
+              <p className="text-slate-500 font-medium dark:text-on-surface-variant">Start building with AI agents today.</p>
             </div>
 
             {/* OAuth Buttons */}
@@ -118,10 +109,10 @@ export default function SignupPage() {
             {/* Divider */}
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
+                <div className="w-full border-t border-slate-200 dark:border-white/[0.09]" />
               </div>
               <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                <span className="px-4 bg-slate-50 text-slate-400 font-bold">Or use email</span>
+                <span className="px-4 bg-slate-50 text-slate-400 font-bold dark:bg-surface-container-low dark:text-on-surface-variant">Or use email</span>
               </div>
             </div>
 
@@ -129,9 +120,9 @@ export default function SignupPage() {
             <SignupForm />
 
             <div className="mt-10 text-center">
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-slate-500 font-medium dark:text-on-surface-variant">
                 Already part of devCache?{' '}
-                <Link href="/login" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold">
+                <Link href="/login" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold dark:text-[#7c7ff5]">
                   Sign in
                 </Link>
               </p>
@@ -140,13 +131,13 @@ export default function SignupPage() {
         </div>
 
         {/* Footer */}
-        <footer className="p-8 border-t border-slate-200 bg-white">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+        <footer className="p-8 border-t border-slate-200 bg-white dark:border-white/[0.09] dark:bg-surface-container">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest dark:text-on-surface-variant">
             <div>© 2024 DEVHUB. ALL RIGHTS RESERVED.</div>
             <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-[#494bd6]">Privacy</Link>
-              <Link href="/terms" className="hover:text-[#494bd6]">Terms</Link>
-              <Link href="/support" className="hover:text-[#494bd6]">Support</Link>
+              <Link href="/privacy" className="hover:text-[#494bd6] dark:hover:text-[#7c7ff5]">Privacy</Link>
+              <Link href="/terms" className="hover:text-[#494bd6] dark:hover:text-[#7c7ff5]">Terms</Link>
+              <Link href="/support" className="hover:text-[#494bd6] dark:hover:text-[#7c7ff5]">Support</Link>
             </div>
           </div>
         </footer>

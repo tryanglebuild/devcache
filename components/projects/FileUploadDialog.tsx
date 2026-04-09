@@ -69,7 +69,7 @@ export function FileUploadDialog({
               <span className="text-sm font-bold text-[#191c1e]">
                 Progress: {uploadProgress.completed} / {uploadProgress.total}
               </span>
-              <span className="text-sm font-bold text-[#4648d4]">
+              <span className="text-sm font-bold text-[#4f46e5]">
                 {progressPercentage}%
               </span>
             </div>
@@ -77,14 +77,14 @@ export function FileUploadDialog({
             {/* Progress Bar */}
             <div className="w-full h-3 bg-[#e5e7eb] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-300 shadow-lg"
+                className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-300 shadow-lg"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
 
             {uploadProgress.current && (
               <p className="text-xs text-[#464554] flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4648d4] animate-pulse"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4f46e5] animate-pulse"></span>
                 Current: {uploadProgress.current}
               </p>
             )}
@@ -118,10 +118,10 @@ export function FileUploadDialog({
               {files.map((file, index) => (
                 <div 
                   key={index} 
-                  className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#f8f9fa] to-[#f2f4f6] rounded-xl border border-[#c7c4d7]/20 hover:border-[#4648d4]/40 transition-all group"
+                  className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#f8f9fa] to-[#f2f4f6] rounded-xl border border-[#c7c4d7]/20 hover:border-[#4f46e5]/40 transition-all group"
                 >
                   <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
-                    <FileText className="h-5 w-5 text-[#4648d4]" />
+                    <FileText className="h-5 w-5 text-[#4f46e5]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-[#191c1e] truncate">
@@ -150,7 +150,7 @@ export function FileUploadDialog({
         {!isUploading && (
           <Button
             onClick={onConfirm}
-            className="flex-1 h-12 bg-gradient-to-br from-[#4648d4] to-[#6063ee] hover:from-[#3a3cb8] hover:to-[#4f52d4] transition-all duration-200 text-white font-semibold"
+            className="flex-1 h-12 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] hover:from-[#3a3cb8] hover:to-[#4f52d4] transition-all duration-200 text-white font-semibold"
           >
             Upload {files.length} File{files.length > 1 ? 's' : ''}
           </Button>

@@ -52,7 +52,7 @@ export function MessageInput({ onSend, disabled, placeholder }: MessageInputProp
           onInput={handleInput}
           placeholder={placeholder || 'Type your message...'}
           disabled={disabled}
-          className="min-h-[44px] max-h-[160px] resize-none border-[#e5e7eb] focus:border-[#4f46e5] focus:ring-1 focus:ring-[#4f46e5]/20 rounded-lg bg-white text-sm placeholder:text-[#9ca3af]"
+          className="min-h-[44px] max-h-[160px] resize-none border-[#e5e7eb] dark:border-white/[0.09] focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] focus:ring-1 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 rounded-lg bg-white dark:bg-surface-container text-sm placeholder:text-[#9ca3af] dark:placeholder:text-on-surface-variant/50"
           rows={1}
         />
       </div>
@@ -60,7 +60,7 @@ export function MessageInput({ onSend, disabled, placeholder }: MessageInputProp
         onClick={handleSend}
         disabled={disabled || !message.trim()}
         size="icon"
-        className="h-[44px] w-[44px] shrink-0 rounded-lg bg-[#4f46e5] hover:bg-[#4338ca] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="h-[44px] w-[44px] shrink-0 rounded-lg bg-[#4f46e5] dark:bg-[#7c7ff5] hover:bg-[#4338ca] dark:hover:bg-[#9b9df7] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <Send className="h-4 w-4" />
       </Button>

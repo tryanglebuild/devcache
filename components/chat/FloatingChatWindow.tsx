@@ -176,7 +176,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
       {/* Floating Chat Window */}
       <div
         className={`
-          fixed bottom-6 right-6 bg-white rounded-2xl shadow-2xl
+          fixed bottom-6 right-6 bg-white dark:bg-surface-container rounded-2xl shadow-2xl dark:shadow-none dark:ring-1 dark:ring-white/[0.08]
           flex flex-col overflow-hidden transition-all duration-300 ease-out
           ${isExpanded ? 'z-50 w-[90vw] h-[85vh] max-w-6xl' : 'z-50 w-[500px] h-[700px]'}
         `}
@@ -185,7 +185,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
         }}
       >
         {/* Header */}
-        <div className="flex-shrink-0 h-14 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-between px-4">
+        <div className="flex-shrink-0 h-14 border-b border-gray-200 dark:border-white/[0.09] bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
               <MessageSquare className="w-5 h-5 text-white" />
@@ -223,11 +223,11 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
               {/* History Dropdown */}
               {showHistoryDropdown && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50">
+                <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-surface-container rounded-xl shadow-2xl dark:shadow-none dark:ring-1 dark:ring-white/[0.08] border border-gray-200 dark:border-white/[0.09] overflow-hidden z-50">
                   {/* Dropdown Header */}
-                  <div className="p-3 border-b border-gray-200 bg-gray-50">
+                  <div className="p-3 border-b border-gray-200 dark:border-white/[0.09] bg-gray-50 dark:bg-surface-container-high">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-gray-900">Chat History</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-on-surface">Chat History</h3>
                       <button
                         onClick={createNewSession}
                         className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
@@ -243,23 +243,23 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
                     {loading ? (
                       <div className="p-8 text-center">
                         <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                        <p className="text-xs text-gray-500">Loading...</p>
+                        <p className="text-xs text-gray-500 dark:text-on-surface-variant">Loading...</p>
                       </div>
                     ) : sessions.length === 0 ? (
                       <div className="p-8 text-center">
-                        <MessageSquare className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">No conversations yet</p>
+                        <MessageSquare className="w-8 h-8 text-gray-300 dark:text-on-surface-variant/40 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500 dark:text-on-surface-variant">No conversations yet</p>
                       </div>
                     ) : (
                       sessions.map((session) => (
                         <div
                           key={session.id}
-                          className={`p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                            session.id === currentSessionId ? 'bg-blue-50' : ''
+                          className={`p-3 border-b border-gray-100 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-surface-container-high transition-colors ${
+                            session.id === currentSessionId ? 'bg-blue-50 dark:bg-blue-500/10' : ''
                           }`}
                         >
                           <div className="flex items-start gap-2">
-                            <MessageSquare className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                            <MessageSquare className="w-4 h-4 text-gray-400 dark:text-on-surface-variant mt-1 flex-shrink-0" />
                             
                             <div className="flex-1 min-w-0">
                               {editingSessionId === session.id ? (
@@ -272,18 +272,18 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
                                       if (e.key === 'Enter') saveTitle(session.id)
                                       if (e.key === 'Escape') cancelEditing()
                                     }}
-                                    className="flex-1 px-2 py-1 text-sm border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="flex-1 px-2 py-1 text-sm border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-surface-container text-gray-900 dark:text-on-surface"
                                     autoFocus
                                   />
                                   <button
                                     onClick={() => saveTitle(session.id)}
-                                    className="p-1 text-green-600 hover:bg-green-50 rounded"
+                                    className="p-1 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 rounded"
                                   >
                                     <Check className="w-3.5 h-3.5" />
                                   </button>
                                   <button
                                     onClick={cancelEditing}
-                                    className="p-1 text-gray-400 hover:bg-gray-100 rounded"
+                                    className="p-1 text-gray-400 dark:text-on-surface-variant hover:bg-gray-100 dark:hover:bg-surface-container-high rounded"
                                   >
                                     <X className="w-3.5 h-3.5" />
                                   </button>
@@ -293,10 +293,10 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
                                   onClick={() => handleSelectSession(session.id)}
                                   className="w-full text-left"
                                 >
-                                  <p className="text-sm font-medium text-gray-900 truncate">
+                                  <p className="text-sm font-medium text-gray-900 dark:text-on-surface truncate">
                                     {session.title}
                                   </p>
-                                  <p className="text-xs text-gray-500 mt-0.5">
+                                  <p className="text-xs text-gray-500 dark:text-on-surface-variant mt-0.5">
                                     {new Date(session.last_activity_at).toLocaleDateString()}
                                   </p>
                                 </button>
@@ -306,7 +306,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
                             {editingSessionId !== session.id && (
                               <button
                                 onClick={() => startEditingTitle(session)}
-                                className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                className="p-1 text-gray-400 dark:text-on-surface-variant hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded transition-colors"
                                 title="Edit title"
                               >
                                 <Edit2 className="w-3.5 h-3.5" />
@@ -359,7 +359,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
         {/* Content */}
         <div className="flex-1 min-h-0 flex">
           {/* Chat Area */}
-          <div className="flex-1 bg-white overflow-hidden">
+          <div className="flex-1 bg-white dark:bg-surface-container overflow-hidden">
             {currentSessionId ? (
               <ChatInterfaceWrapper 
                 sessionId={currentSessionId}
@@ -370,8 +370,8 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
             ) : (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                  <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500">Select or create a conversation</p>
+                  <MessageSquare className="w-12 h-12 text-gray-300 dark:text-on-surface-variant/40 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 dark:text-on-surface-variant">Select or create a conversation</p>
                   <button
                     onClick={createNewSession}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"

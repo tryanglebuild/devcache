@@ -106,7 +106,7 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
   return (
     <>
       <div
-        className="bg-white p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] hover:shadow-lg transition-all cursor-pointer group relative"
+        className="bg-white dark:bg-surface-container p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] hover:shadow-lg dark:hover:border-white/[0.12] transition-all cursor-pointer group relative"
         onClick={handleItemClick}
       >
         {/* Favorite Star Button - Top Right */}
@@ -115,14 +115,14 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
             e.stopPropagation()
             handleToggleFavorite()
           }}
-          className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-[#f2f4f6] transition-colors z-10"
+          className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-colors z-10"
           title={item.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
         >
           <Star 
             className={`h-4 w-4 transition-colors ${
               item.is_favorite 
                 ? 'text-[#904900] fill-[#904900]' 
-                : 'text-[#c7c4d7] hover:text-[#904900]'
+                : 'text-[#c7c4d7] dark:text-on-surface-variant/40 hover:text-[#904900]'
             }`}
           />
         </button>
@@ -130,20 +130,20 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
         {/* Icon */}
         <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
           isFolder 
-            ? 'bg-[#4648d4]/10 text-[#4648d4]' 
-            : 'bg-[#575992]/10 text-[#575992]'
+            ? 'bg-[#4f46e5]/10 text-[#4f46e5]' 
+            : 'bg-[#575992]/10 text-[#575992] dark:text-[#7c7ff5]'
         }`}>
           <Icon className="h-6 w-6" />
         </div>
 
         {/* Name */}
-        <h3 className="font-bold text-[#191c1e] mb-1 truncate pr-6">
+        <h3 className="font-bold text-[#191c1e] dark:text-on-surface mb-1 truncate pr-6">
           {item.name}
         </h3>
 
         {/* Description */}
         {item.description && (
-          <p className="text-xs text-[#464554] mb-3 line-clamp-2">
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-3 line-clamp-2">
             {item.description}
           </p>
         )}
@@ -154,13 +154,13 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
             {item.language_tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="px-2 py-0.5 bg-[#f2f4f6] text-[#464554] rounded text-[10px] font-bold uppercase tracking-wider"
+                className="px-2 py-0.5 bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant rounded text-[10px] font-bold uppercase tracking-wider"
               >
                 {tag}
               </span>
             ))}
             {item.language_tags.length > 3 && (
-              <span className="px-2 py-0.5 bg-[#f2f4f6] text-[#464554] rounded text-[10px] font-bold">
+              <span className="px-2 py-0.5 bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant rounded text-[10px] font-bold">
                 +{item.language_tags.length - 3}
               </span>
             )}
@@ -168,15 +168,15 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#c7c4d7]/20">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#c7c4d7]/20 dark:border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-[#464554] font-medium">
+            <span className="text-[10px] text-[#464554] dark:text-on-surface-variant font-medium">
               {formatDistanceToNow(new Date(item.updated_at!), { addSuffix: true })}
             </span>
             {attachmentCount > 0 && (
               <>
-                <span className="text-[#c7c4d7]">•</span>
-                <div className="flex items-center gap-1 text-[#4648d4]">
+                <span className="text-[#c7c4d7] dark:text-on-surface-variant/30">•</span>
+                <div className="flex items-center gap-1 text-[#4f46e5] dark:text-[#7c7ff5]">
                   <Paperclip className="h-3 w-3" />
                   <span className="text-[10px] font-bold">{attachmentCount}</span>
                 </div>
@@ -187,13 +187,13 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
           <DropdownMenu>
             <DropdownMenuTrigger
               onClick={(e) => e.stopPropagation()}
-              className="p-1 hover:bg-[#f2f4f6] rounded transition-colors"
+              className="p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded transition-colors"
             >
-              <MoreVertical className="h-4 w-4 text-[#464554]" />
+              <MoreVertical className="h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end"
-              className="bg-white border border-[#c7c4d7]/20 shadow-xl"
+              className="bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09] shadow-xl"
             >
               {!isFolder && (
                 <>

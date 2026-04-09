@@ -83,7 +83,7 @@ function DashboardContent({
         className={`transition-all duration-300 ${isCollapsed ? 'ml-[72px]' : 'ml-64'}`}
       >
         {/* Top Navbar */}
-        <header className="sticky top-0 z-40 bg-[#f7f9fb] border-b border-[#c7c4d7]/10">
+        <header className="sticky top-0 z-40 bg-[#f7f9fb] dark:bg-surface border-b border-[#c7c4d7]/10 dark:border-white/[0.06]">
           <div className="flex items-center justify-between gap-4 px-6 py-4">
             {/* Left spacer for balance */}
             <div className="w-[200px]" />
@@ -95,48 +95,48 @@ function DashboardContent({
 
             {/* Right Side */}
             <div className="ml-auto flex items-center gap-4">
-              <Link href="/support" className="p-2 text-[#464554] hover:bg-[#f2f4f6] rounded-full transition-colors" title="Help & Support">
+              <Link href="/support" className="p-2 text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded-full transition-colors" title="Help & Support">
                 <span className="material-symbols-outlined">help</span>
               </Link>
 
-              <div className="w-px h-6 bg-[#c7c4d7]/30" />
+              <div className="w-px h-6 bg-[#c7c4d7]/30 dark:bg-white/[0.09]" />
 
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <div className="text-right">
-                      <p className="text-sm font-bold text-[#191c1e] leading-none">{displayName}</p>
-                      <p className="text-[10px] text-[#464554] font-medium tracking-wide">{jobTitle}</p>
+                      <p className="text-sm font-bold text-[#191c1e] dark:text-on-surface leading-none">{displayName}</p>
+                      <p className="text-[10px] text-[#464554] dark:text-on-surface-variant font-medium tracking-wide">{jobTitle}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full border-2 border-[#4648d4]/10 bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white font-bold text-sm">
+                    <div className="w-10 h-10 rounded-full border-2 border-[#4f46e5]/10 dark:border-[#7c7ff5]/20 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white font-bold text-sm">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white border border-[#c7c4d7]/20">
-                  <DropdownMenuLabel className="font-bold text-[#191c1e]">
+                <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09]">
+                  <DropdownMenuLabel className="font-bold text-[#191c1e] dark:text-on-surface">
                     My Account
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20" />
+                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20 dark:bg-white/[0.06]" />
                   <DropdownMenuItem 
                     onClick={() => setIsProfileModalOpen(true)}
-                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb]"
+                    className="cursor-pointer hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high focus:bg-[#f7f9fb] dark:focus:bg-surface-container-high"
                   >
-                    <User className="mr-2 h-4 w-4 text-[#4648d4]" />
+                    <User className="mr-2 h-4 w-4 text-[#4f46e5]" />
                     <span className="font-medium">Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => router.push('/dashboard/settings')}
-                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb]"
+                    className="cursor-pointer hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high focus:bg-[#f7f9fb] dark:focus:bg-surface-container-high"
                   >
                     <Settings className="mr-2 h-4 w-4 text-[#464554]" />
                     <span className="font-medium">Settings</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20" />
+                  <DropdownMenuSeparator className="bg-[#c7c4d7]/20 dark:bg-white/[0.06]" />
                   <DropdownMenuItem 
                     onClick={handleLogout}
-                    className="cursor-pointer hover:bg-[#f7f9fb] focus:bg-[#f7f9fb] text-[#ba1a1a]"
+                    className="cursor-pointer hover:bg-[#f7f9fb] dark:hover:bg-surface-container-high focus:bg-[#f7f9fb] dark:focus:bg-surface-container-high text-[#ba1a1a] dark:text-red-400"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span className="font-medium">Logout</span>
@@ -172,7 +172,7 @@ export function DashboardLayoutClient({
   return (
     <SidebarProvider>
       <CreateItemProvider>
-        <div className="min-h-screen bg-[#f7f9fb]">
+        <div className="min-h-screen bg-[#f7f9fb] dark:bg-surface">
           <DashboardContent 
               displayName={displayName} 
               jobTitle={jobTitle}

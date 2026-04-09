@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Layers, Star, ArrowDownToLine } from 'lucide-react'
 import type { MarketplaceStats } from '@/types/agents.types'
 
 interface HeroSectionProps {
@@ -17,46 +18,58 @@ export default function HeroSection({ stats }: HeroSectionProps) {
 
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle,#e2e8f0_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 -z-10" />
+      <div className="grid-bg absolute inset-0 opacity-40 -z-10" />
       
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-extrabold tracking-[0.2em] uppercase mb-8 border border-indigo-100">
+        <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-[#7c7ff5]/10 text-indigo-700 dark:text-[#7c7ff5] text-[10px] font-extrabold tracking-[0.2em] uppercase mb-8 border border-indigo-100 dark:border-[#7c7ff5]/20">
           Agentic AI Marketplace
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-8 max-w-4xl mx-auto">
-          Build with AI Agents <br /><span className="text-gray-700">That Know Your Domain</span>
+        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-on-surface tracking-tight leading-[1.1] mb-8 max-w-4xl mx-auto text-balance">
+          Your expertise shouldn&apos;t live in your head.
         </h1>
         
-        <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed mb-12">
-          Create, share, and orchestrate specialized AI agents for design, development, product, QA, and more. Your expertise, executable.
+        <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-on-surface-variant leading-relaxed mb-12">
+          DevCache turns your best work into AI agents — specialized, shareable, and ready to use across every project your team touches.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link 
             href="/signup"
-            className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 hover:translate-y-[-2px] transition-all"
+            className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 dark:shadow-indigo-900/30 hover:translate-y-[-2px] transition-all"
           >
-            Start Building Agents
+            Start building free
           </Link>
-          <Link href="/marketplace" className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">
+          <Link href="/marketplace" className="w-full sm:w-auto bg-white dark:bg-surface-container border border-slate-200 dark:border-white/[0.09] text-slate-700 dark:text-on-surface px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 dark:hover:bg-surface-container-high transition-all">
             Explore Marketplace
           </Link>
         </div>
         
-        {totalAgents > 0 && (
-          <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500">
+        {totalAgents > 0 ? (
+          <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500 dark:text-on-surface-variant">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-gray-500 text-lg">check_circle</span>
+              <Layers size={14} strokeWidth={2} className="text-gray-500 dark:text-gray-400" />
               <span>{formatCount(totalAgents)} Agents</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-gray-500 text-lg">star</span>
+              <Star size={14} strokeWidth={2} className="text-gray-500 dark:text-gray-400 fill-gray-500 dark:fill-gray-400" />
               <span>{avgRating}★ Average</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-gray-500 text-lg">download</span>
+              <ArrowDownToLine size={14} strokeWidth={2} className="text-gray-500 dark:text-gray-400" />
               <span>{formatCount(totalDownloads)} Downloads</span>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500 dark:text-on-surface-variant">
+            <div className="flex items-center gap-2">
+              <span>Agents for every stack</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>Public or private, you decide</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>Works with any AI coding tool</span>
             </div>
           </div>
         )}

@@ -289,8 +289,8 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
           className={cn(
             'w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg transition-all',
             isCurrentPath
-              ? 'bg-blue-50 text-[#4648d4] font-semibold'
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'bg-blue-50 dark:bg-[#7c7ff5]/10 text-[#4f46e5] dark:text-[#7c7ff5] font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-surface-container-high'
           )}
           style={{ paddingLeft: `${8 + node.level * 16}px` }}
         >
@@ -303,17 +303,17 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
           )}
 
           {isFile ? (
-            <FileText className="h-4 w-4 shrink-0 text-gray-500" />
+            <FileText className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
           ) : isExpanded ? (
-            <FolderOpen className="h-4 w-4 shrink-0 text-[#4648d4]" />
+            <FolderOpen className="h-4 w-4 shrink-0 text-[#4f46e5] dark:text-[#7c7ff5]" />
           ) : (
-            <Folder className="h-4 w-4 shrink-0 text-gray-500" />
+            <Folder className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
           )}
 
           <span className="truncate flex-1 text-left text-[13px]">{node.item.name}</span>
           
           {node.item.is_favorite && (
-            <Star className="h-3 w-3 shrink-0 text-gray-400 fill-gray-400" />
+            <Star className="h-3 w-3 shrink-0 text-gray-400 dark:text-gray-500 fill-gray-400 dark:fill-gray-500" />
           )}
         </button>
 
@@ -337,7 +337,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
       {/* Custom Context Menu */}
       {contextMenu && (
         <div
-          className="fixed z-[100] min-w-[200px] bg-white rounded-xl shadow-2xl border border-gray-200 py-1.5"
+          className="fixed z-[100] min-w-[200px] bg-white dark:bg-surface-container rounded-xl shadow-2xl border border-gray-200 dark:border-white/[0.09] py-1.5"
           style={{
             left: `${contextMenu.x}px`,
             top: `${contextMenu.y}px`,
@@ -349,7 +349,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
               handleRename(contextMenu.item)
               setContextMenu(null)
             }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#4648d4] transition-colors font-medium"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors font-medium"
           >
             <Edit className="h-4 w-4" />
             Rename
@@ -360,7 +360,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
               handleDuplicate(contextMenu.item)
               setContextMenu(null)
             }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#4648d4] transition-colors font-medium"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors font-medium"
           >
             <Copy className="h-4 w-4" />
             Duplicate
@@ -372,7 +372,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
                 handleDownload(contextMenu.item)
                 setContextMenu(null)
               }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#4648d4] transition-colors font-medium"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors font-medium"
             >
               <Download className="h-4 w-4" />
               Download
@@ -384,7 +384,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
               handleToggleFavorite(contextMenu.item)
               setContextMenu(null)
             }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-400/10 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-medium"
           >
             {contextMenu.item.is_favorite ? (
               <>
@@ -399,14 +399,14 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
             )}
           </button>
 
-          <div className="h-px bg-gray-200 my-1.5" />
+          <div className="h-px bg-gray-200 dark:bg-white/[0.06] my-1.5" />
 
           <button
             onClick={() => {
               handleDelete(contextMenu.item)
               setContextMenu(null)
             }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 transition-colors font-medium"
           >
             <Trash2 className="h-4 w-4" />
             Delete

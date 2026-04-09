@@ -162,7 +162,7 @@ export function FileUploadSection({
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="w-full px-4 py-3 border-2 border-dashed border-[#c7c4d7]/30 rounded-lg hover:border-[#4648d4] hover:bg-[#4648d4]/5 transition-all flex items-center justify-center gap-2 text-[#464554] hover:text-[#4648d4] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 border-2 border-dashed border-[#c7c4d7]/30 rounded-lg hover:border-[#4f46e5] hover:bg-[#4f46e5]/5 transition-all flex items-center justify-center gap-2 text-[#464554] hover:text-[#4f46e5] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Upload className="h-5 w-5" />
           <span className="font-semibold text-sm">
@@ -185,7 +185,7 @@ export function FileUploadSection({
               key={attachment.id}
               className="flex items-center gap-3 p-3 bg-[#f2f4f6] rounded-lg group"
             >
-              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-[#4648d4]">
+              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-[#4f46e5]">
                 <File className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -199,7 +199,7 @@ export function FileUploadSection({
               <div className="flex gap-1">
                 <button
                   onClick={() => handleDownload(attachment)}
-                  className="p-2 hover:bg-white rounded-lg transition-colors text-[#4648d4]"
+                  className="p-2 hover:bg-white rounded-lg transition-colors text-[#4f46e5]"
                   title="Download"
                 >
                   <Download className="h-4 w-4" />

@@ -111,7 +111,7 @@ export function EditItemModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Brief description..."
               rows={3}
-              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] text-sm resize-none"
+              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none"
             />
           </div>
 
@@ -136,7 +136,7 @@ export function EditItemModal({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add your personal comments, observations, or reminders..."
               rows={6}
-              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] text-sm resize-none"
+              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none"
             />
             <p className="text-xs text-[#464554] mt-2 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#904900]"></span>
@@ -158,7 +158,7 @@ export function EditItemModal({
           <Button
             type="submit"
             disabled={isLoading || !name.trim()}
-            className="flex-1 bg-gradient-to-br from-[#4648d4] to-[#6063ee]"
+            className="flex-1 bg-gradient-to-br from-[#4f46e5] to-[#4338ca]"
           >
             {isLoading ? 'Saving...' : 'Save Changes'}
           </Button>

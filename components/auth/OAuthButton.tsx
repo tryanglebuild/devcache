@@ -71,16 +71,16 @@ export default function OAuthButton({ provider, mode = 'signup' }: OAuthButtonPr
 
   const getButtonStyles = () => {
     if (provider === 'github') {
-      return 'bg-slate-900 hover:bg-black text-white'
+      return 'bg-slate-900 hover:bg-black text-white dark:bg-white dark:hover:bg-slate-200 dark:text-[#0d1121]'
     }
-    return 'bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200'
+    return 'bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 dark:bg-surface-container-high dark:hover:bg-surface-container-highest dark:text-on-surface dark:border-white/[0.09]'
   }
 
   return (
     <button
       onClick={handleOAuthSignIn}
       disabled={isLoading}
-      className={`w-full flex items-center justify-center gap-3 font-bold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-slate-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyles()}`}
+      className={`w-full flex items-center justify-center gap-3 font-bold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-slate-200 dark:shadow-none active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyles()}`}
     >
       {getProviderIcon()}
       <span>{isLoading ? 'Connecting...' : getProviderLabel()}</span>

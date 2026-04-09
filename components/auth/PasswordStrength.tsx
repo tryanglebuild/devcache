@@ -36,14 +36,14 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
   return (
     <div className="mt-4">
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+        <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 dark:text-on-surface-variant">
           Security Strength
         </span>
         <span className={`text-[10px] uppercase font-bold tracking-widest ${getStrengthColor(strength)}`}>
           {getStrengthLabel(strength)}
         </span>
       </div>
-      <div className="h-1.5 w-full bg-slate-200 rounded-full flex gap-1">
+      <div className="h-1.5 w-full bg-slate-200 rounded-full flex gap-1 dark:bg-surface-container-high">
         {[0, 1, 2].map((index) => (
           <div
             key={index}
@@ -54,7 +54,7 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
                   : strength === 'medium'
                   ? 'bg-amber-400'
                   : 'bg-emerald-400'
-                : 'bg-slate-100'
+                : 'bg-slate-100 dark:bg-surface-container'
             }`}
           />
         ))}

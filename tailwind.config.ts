@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 export default {
+  darkMode: 'class',
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,112 +10,132 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Shadcn UI Colors
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        // Shadcn UI Colors (vars hold full oklch values — use var() directly)
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'var(--secondary)',
+          foreground: 'var(--secondary-foreground)',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: 'var(--destructive)',
+          foreground: 'var(--destructive-foreground)',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'var(--popover)',
+          foreground: 'var(--popover-foreground)',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)',
         },
         sidebar: {
-          DEFAULT: 'hsl(var(--sidebar))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
+          DEFAULT: 'var(--sidebar)',
+          foreground: 'var(--sidebar-foreground)',
+          primary: 'var(--sidebar-primary)',
+          'primary-foreground': 'var(--sidebar-primary-foreground)',
+          accent: 'var(--sidebar-accent)',
+          'accent-foreground': 'var(--sidebar-accent-foreground)',
+          border: 'var(--sidebar-border)',
+          ring: 'var(--sidebar-ring)',
         },
-        
-        // Surface Hierarchy (Legacy - keeping for compatibility)
-        'surface-dim': '#0b1326',
-        'surface': '#0b1326',
-        'surface-bright': '#31394d',
-        'surface-container-lowest': '#060e20',
-        'surface-container-low': '#131b2e',
-        'surface-container': '#171f33',
-        'surface-container-high': '#222a3d',
-        'surface-container-highest': '#2d3449',
-        'surface-variant': '#2d3449',
-        'surface-tint': '#c0c1ff',
-        
-        // Primary Colors (Legacy - keeping for compatibility)
-        'primary-container': '#8083ff',
-        'primary-dim': '#494bd6',
-        'primary-fixed': '#e1e0ff',
-        'primary-fixed-dim': '#c0c1ff',
-        'on-primary': '#1000a9',
-        'on-primary-container': '#0d0096',
-        'on-primary-fixed': '#07006c',
-        'on-primary-fixed-variant': '#2f2ebe',
-        
-        // Secondary Colors (Legacy - keeping for compatibility)
-        'secondary-container': '#42447b',
-        'secondary-dim': '#292a60',
-        'secondary-fixed': '#e1e0ff',
-        'secondary-fixed-dim': '#c0c1ff',
-        'on-secondary': '#292a60',
-        'on-secondary-container': '#b2b3f2',
-        'on-secondary-fixed': '#13144a',
-        'on-secondary-fixed-variant': '#404178',
-        
-        // Tertiary Colors
-        'tertiary': '#ffb783',
-        'tertiary-container': '#d97721',
-        'tertiary-dim': '#703700',
-        'tertiary-fixed': '#ffdcc5',
-        'tertiary-fixed-dim': '#ffb783',
-        'on-tertiary': '#4f2500',
-        'on-tertiary-container': '#452000',
-        'on-tertiary-fixed': '#301400',
-        'on-tertiary-fixed-variant': '#703700',
-        
-        // Error Colors (Legacy - keeping for compatibility)
-        'error-container': '#93000a',
-        'on-error': '#690005',
-        'on-error-container': '#ffdad6',
-        
-        // Text Colors
-        'on-surface': '#dae2fd',
-        'on-surface-variant': '#c7c4d7',
-        'on-background': '#dae2fd',
-        
-        // Outline & Borders
-        'outline': '#908fa0',
-        'outline-variant': '#464554',
-        
-        // Inverse Colors
-        'inverse-surface': '#dae2fd',
-        'inverse-on-surface': '#283044',
-        'inverse-primary': '#494bd6',
+
+        // Surface Hierarchy (from tokens.css)
+        'surface': 'var(--surface)',
+        'surface-bright': 'var(--surface-bright)',
+        'surface-dim': 'var(--surface-dim)',
+        'surface-container-lowest': 'var(--surface-container-lowest)',
+        'surface-container-low': 'var(--surface-container-low)',
+        'surface-container': 'var(--surface-container)',
+        'surface-container-high': 'var(--surface-container-high)',
+        'surface-container-highest': 'var(--surface-container-highest)',
+        'surface-variant': 'var(--surface-variant)',
+        'surface-tint': 'var(--surface-tint)',
+
+        // Text Colors (from tokens.css)
+        'on-surface': 'var(--on-surface)',
+        'on-surface-variant': 'var(--on-surface-variant)',
+        'on-background': 'var(--on-background)',
+
+        // Outline & Borders (from tokens.css)
+        'outline': 'var(--outline)',
+        'outline-variant': 'var(--outline-variant)',
+
+        // Primary (from tokens.css)
+        'primary-container': 'var(--primary-container)',
+        'primary-dim': 'var(--primary-dim)',
+        'primary-fixed': 'var(--primary-fixed)',
+        'primary-fixed-dim': 'var(--primary-fixed-dim)',
+        'on-primary': 'var(--on-primary)',
+        'on-primary-container': 'var(--on-primary-container)',
+        'on-primary-fixed': 'var(--on-primary-fixed)',
+        'on-primary-fixed-variant': 'var(--on-primary-fixed-variant)',
+
+        // Secondary (from tokens.css)
+        'secondary-container': 'var(--secondary-container)',
+        'secondary-dim': 'var(--secondary-dim)',
+        'secondary-fixed': 'var(--secondary-fixed)',
+        'secondary-fixed-dim': 'var(--secondary-fixed-dim)',
+        'on-secondary': 'var(--on-secondary)',
+        'on-secondary-container': 'var(--on-secondary-container)',
+        'on-secondary-fixed': 'var(--on-secondary-fixed)',
+        'on-secondary-fixed-variant': 'var(--on-secondary-fixed-variant)',
+
+        // Tertiary (from tokens.css)
+        'tertiary': 'var(--tertiary)',
+        'tertiary-container': 'var(--tertiary-container)',
+        'tertiary-dim': 'var(--tertiary-dim)',
+        'tertiary-fixed': 'var(--tertiary-fixed)',
+        'tertiary-fixed-dim': 'var(--tertiary-fixed-dim)',
+        'on-tertiary': 'var(--on-tertiary)',
+        'on-tertiary-container': 'var(--on-tertiary-container)',
+        'on-tertiary-fixed': 'var(--on-tertiary-fixed)',
+        'on-tertiary-fixed-variant': 'var(--on-tertiary-fixed-variant)',
+
+        // Error (from tokens.css)
+        'error': 'var(--error)',
+        'error-container': 'var(--error-container)',
+        'error-dim': 'var(--error-dim)',
+        'on-error': 'var(--on-error)',
+        'on-error-container': 'var(--on-error-container)',
+
+        // Inverse (from tokens.css)
+        'inverse-surface': 'var(--inverse-surface)',
+        'inverse-on-surface': 'var(--inverse-on-surface)',
+        'inverse-primary': 'var(--inverse-primary)',
+
+        // Semantic Status (from tokens.css)
+        'success': 'var(--success)',
+        'success-container': 'var(--success-container)',
+        'on-success': 'var(--on-success)',
+        'on-success-container': 'var(--on-success-container)',
+        'warning': 'var(--warning)',
+        'warning-container': 'var(--warning-container)',
+        'on-warning': 'var(--on-warning)',
+        'on-warning-container': 'var(--on-warning-container)',
+        'info': 'var(--info)',
+        'info-container': 'var(--info-container)',
+        'on-info': 'var(--on-info)',
+        'on-info-container': 'var(--on-info-container)',
+
+        // Code Viewer (from tokens.css)
+        'surface-code': 'var(--surface-code)',
+        'on-surface-code': 'var(--on-surface-code)',
       },
       fontFamily: {
         headline: ['var(--font-inter)', 'Inter', 'sans-serif'],

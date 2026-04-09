@@ -39,7 +39,7 @@ export function TreeView({
       {/* Header */}
       <div className="px-4 py-3 border-b border-[#c7c4d7]/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FolderKanban className="h-4 w-4 text-[#4648d4]" />
+          <FolderKanban className="h-4 w-4 text-[#4f46e5]" />
           <h3 className="text-sm font-bold text-[#191c1e]">Explorer</h3>
         </div>
         <button

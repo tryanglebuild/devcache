@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
-import Script from 'next/script'
-import { Toaster } from 'react-hot-toast'
 import { FloatingChatButton } from '@/components/chat/FloatingChatButton'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { ThemedToaster } from '@/components/ui/ThemedToaster'
 import './globals.css'
 
 const inter = Inter({ 
@@ -18,8 +18,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'devCache | Your Engineering Wisdom, Centralized',
-  description: 'Stop rewriting the same Auth, API, and UI patterns. Store your team\'s technical DNA in a private, high-velocity repository designed for engineers.',
+  title: 'devCache — The Agentic AI Marketplace for Developers',
+  description: 'Turn your development expertise into specialized AI agents. Create, share, and orchestrate agents for design, engineering, QA, and beyond — with the community that builds with them.',
 }
 
 export default function RootLayout({
@@ -28,41 +28,26 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
+        {/* FOUC prevention — must run before any CSS to apply dark class immediately */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('devcache-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()`,
+          }}
+        />
         {/* Material Symbols Outlined font */}
         <link 
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" 
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.className} bg-white`}>
-        {children}
+      <body className={`${inter.className} bg-background`}>
+        <ThemeProvider>
+          {children}
+          <ThemedToaster />
+        </ThemeProvider>
         <FloatingChatButton />
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#191c1e',
-              color: '#fff',
-              borderRadius: '12px',
-              padding: '16px',
-            },
-            success: {
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ba1a1a',
-                secondary: '#fff',
-              },
-            },
-          }}
-        />
       </body>
     </html>
   )

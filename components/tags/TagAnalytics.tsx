@@ -32,34 +32,34 @@ export function TagAnalytics({ tags, tagStats }: TagAnalyticsProps) {
   }, [tags, tagStats])
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+    <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-lg bg-[#4648d4]/10 flex items-center justify-center">
-          <BarChart3 className="h-5 w-5 text-[#4648d4]" />
+        <div className="w-10 h-10 rounded-lg bg-[#4f46e5]/10 flex items-center justify-center">
+          <BarChart3 className="h-5 w-5 text-[#4f46e5] dark:text-[#7c7ff5]" />
         </div>
         <div>
-          <h3 className="font-bold text-[#191c1e]">Tag Analytics</h3>
-          <p className="text-xs text-[#464554]">Usage insights and statistics</p>
+          <h3 className="font-bold text-[#191c1e] dark:text-on-surface">Tag Analytics</h3>
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant">Usage insights and statistics</p>
         </div>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="p-3 bg-[#f8f9fa] rounded-lg">
-          <p className="text-xs text-[#464554] mb-1">Used Tags</p>
-          <p className="text-xl font-black text-[#191c1e]">{analytics.usedTags}</p>
+        <div className="p-3 bg-[#f8f9fa] dark:bg-surface-container-high rounded-lg">
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-1">Used Tags</p>
+          <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{analytics.usedTags}</p>
         </div>
-        <div className="p-3 bg-[#f8f9fa] rounded-lg">
-          <p className="text-xs text-[#464554] mb-1">Unused</p>
-          <p className="text-xl font-black text-[#464554]">{analytics.unusedTags}</p>
+        <div className="p-3 bg-[#f8f9fa] dark:bg-surface-container-high rounded-lg">
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-1">Unused</p>
+          <p className="text-xl font-black text-[#464554] dark:text-on-surface-variant">{analytics.unusedTags}</p>
         </div>
-        <div className="p-3 bg-[#f8f9fa] rounded-lg">
-          <p className="text-xs text-[#464554] mb-1">Total Files</p>
-          <p className="text-xl font-black text-[#191c1e]">{analytics.totalFiles}</p>
+        <div className="p-3 bg-[#f8f9fa] dark:bg-surface-container-high rounded-lg">
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-1">Total Files</p>
+          <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{analytics.totalFiles}</p>
         </div>
-        <div className="p-3 bg-[#f8f9fa] rounded-lg">
-          <p className="text-xs text-[#464554] mb-1">Avg/Tag</p>
-          <p className="text-xl font-black text-[#191c1e]">{analytics.avgFilesPerTag}</p>
+        <div className="p-3 bg-[#f8f9fa] dark:bg-surface-container-high rounded-lg">
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-1">Avg/Tag</p>
+          <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{analytics.avgFilesPerTag}</p>
         </div>
       </div>
 
@@ -67,8 +67,8 @@ export function TagAnalytics({ tags, tagStats }: TagAnalyticsProps) {
       {analytics.topTags.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-[#4648d4]" />
-            <h4 className="text-xs font-bold text-[#191c1e] uppercase tracking-wider">
+            <TrendingUp className="h-4 w-4 text-[#4f46e5] dark:text-[#7c7ff5]" />
+            <h4 className="text-xs font-bold text-[#191c1e] dark:text-on-surface uppercase tracking-wider">
               Most Used Tags
             </h4>
           </div>
@@ -81,7 +81,7 @@ export function TagAnalytics({ tags, tagStats }: TagAnalyticsProps) {
               return (
                 <div key={tag.id} className="flex items-center gap-3">
                   <div className="flex items-center gap-2 flex-1">
-                    <span className="text-xs font-bold text-[#464554] w-4">
+                    <span className="text-xs font-bold text-[#464554] dark:text-on-surface-variant w-4">
                       {index + 1}
                     </span>
                     <div
@@ -90,13 +90,13 @@ export function TagAnalytics({ tags, tagStats }: TagAnalyticsProps) {
                     >
                       {tag.name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-bold text-[#191c1e] uppercase">
+                    <span className="text-sm font-bold text-[#191c1e] dark:text-on-surface uppercase">
                       {tag.name}
                     </span>
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 bg-[#f2f4f6] rounded-full overflow-hidden">
+                    <div className="w-24 h-2 bg-[#f2f4f6] dark:bg-surface-container-high rounded-full overflow-hidden">
                       <div
                         className="h-full transition-all duration-500"
                         style={{ 
@@ -105,7 +105,7 @@ export function TagAnalytics({ tags, tagStats }: TagAnalyticsProps) {
                         }}
                       />
                     </div>
-                    <span className="text-xs font-bold text-[#464554] w-8 text-right">
+                    <span className="text-xs font-bold text-[#464554] dark:text-on-surface-variant w-8 text-right">
                       {tag.count}
                     </span>
                   </div>

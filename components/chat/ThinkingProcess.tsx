@@ -17,17 +17,17 @@ export function ThinkingProcess({ steps, isComplete = false }: ThinkingProcessPr
   const getIcon = (type: ThinkingStep['type']) => {
     switch (type) {
       case 'analysis':
-        return <Brain className="w-4 h-4 text-gray-500" />
+        return <Brain className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
       case 'search':
-        return <Search className="w-4 h-4 text-gray-500" />
+        return <Search className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
       case 'tool_call':
-        return <Zap className="w-4 h-4 text-gray-500" />
+        return <Zap className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
       case 'tool_result':
-        return <CheckCircle2 className="w-4 h-4 text-gray-500" />
+        return <CheckCircle2 className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
       case 'context':
-        return <Database className="w-4 h-4 text-gray-500" />
+        return <Database className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />
+        return <Clock className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
     }
   }
 
@@ -51,33 +51,33 @@ export function ThinkingProcess({ steps, isComplete = false }: ThinkingProcessPr
   const totalDuration = steps.reduce((sum, step) => sum + (step.duration || 0), 0)
 
   return (
-    <div className="mb-4 border border-gray-200 rounded-lg bg-gradient-to-br from-gray-50 to-white shadow-sm">
+    <div className="mb-4 border border-gray-200 dark:border-white/[0.09] rounded-lg bg-gradient-to-br from-gray-50 dark:from-surface-container-high to-white dark:to-surface-container shadow-sm dark:shadow-none">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50/50 transition-colors rounded-t-lg"
+        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-surface-container-high/50 transition-colors rounded-t-lg"
       >
         <div className="flex items-center gap-2">
           {isExpanded ? (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
           ) : (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+            <ChevronRight className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
           )}
-          <Brain className="w-4 h-4 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">
+          <Brain className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
+          <span className="text-sm font-medium text-gray-700 dark:text-on-surface">
             {isComplete ? 'Analysis Complete' : 'Analyzing...'}
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 dark:text-on-surface-variant">
             {steps.length} step{steps.length !== 1 ? 's' : ''}
           </span>
           {totalDuration > 0 && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-on-surface-variant">
               · {(totalDuration / 1000).toFixed(2)}s
             </span>
           )}
         </div>
         {isComplete && (
-          <CheckCircle2 className="w-4 h-4 text-gray-500" />
+          <CheckCircle2 className="w-4 h-4 text-gray-500 dark:text-on-surface-variant" />
         )}
       </button>
 
@@ -109,34 +109,34 @@ function ThinkingStepItem({ step, index }: ThinkingStepItemProps) {
   const getIcon = (type: ThinkingStep['type']) => {
     switch (type) {
       case 'analysis':
-        return <Brain className="w-3.5 h-3.5 text-gray-500" />
+        return <Brain className="w-3.5 h-3.5 text-gray-500 dark:text-on-surface-variant" />
       case 'search':
-        return <Search className="w-3.5 h-3.5 text-gray-500" />
+        return <Search className="w-3.5 h-3.5 text-gray-500 dark:text-on-surface-variant" />
       case 'tool_call':
-        return <Zap className="w-3.5 h-3.5 text-gray-500" />
+        return <Zap className="w-3.5 h-3.5 text-gray-500 dark:text-on-surface-variant" />
       case 'tool_result':
-        return <CheckCircle2 className="w-3.5 h-3.5 text-gray-500" />
+        return <CheckCircle2 className="w-3.5 h-3.5 text-gray-500 dark:text-on-surface-variant" />
       case 'context':
-        return <Database className="w-3.5 h-3.5 text-gray-500" />
+        return <Database className="w-3.5 h-3.5 text-gray-500 dark:text-on-surface-variant" />
       default:
-        return <Clock className="w-3.5 h-3.5 text-gray-500" />
+        return <Clock className="w-3.5 h-3.5 text-gray-500 dark:text-on-surface-variant" />
     }
   }
 
   const getBgColor = (type: ThinkingStep['type']) => {
     switch (type) {
       case 'analysis':
-        return 'bg-gray-50 border-gray-200'
+        return 'bg-gray-50 dark:bg-surface-container-high border-gray-200 dark:border-white/[0.09]'
       case 'search':
-        return 'bg-gray-50 border-gray-200'
+        return 'bg-gray-50 dark:bg-surface-container-high border-gray-200 dark:border-white/[0.09]'
       case 'tool_call':
-        return 'bg-gray-50 border-gray-200'
+        return 'bg-gray-50 dark:bg-surface-container-high border-gray-200 dark:border-white/[0.09]'
       case 'tool_result':
-        return 'bg-gray-50 border-gray-200'
+        return 'bg-gray-50 dark:bg-surface-container-high border-gray-200 dark:border-white/[0.09]'
       case 'context':
-        return 'bg-gray-50 border-gray-200'
+        return 'bg-gray-50 dark:bg-surface-container-high border-gray-200 dark:border-white/[0.09]'
       default:
-        return 'bg-gray-50 border-gray-200'
+        return 'bg-gray-50 dark:bg-surface-container-high border-gray-200 dark:border-white/[0.09]'
     }
   }
 
@@ -145,7 +145,7 @@ function ThinkingStepItem({ step, index }: ThinkingStepItemProps) {
       <button
         onClick={() => hasDetails && setIsExpanded(!isExpanded)}
         className={`w-full px-3 py-2 flex items-start gap-2 text-left ${
-          hasDetails ? 'hover:bg-white/50 cursor-pointer' : 'cursor-default'
+          hasDetails ? 'hover:bg-white/50 dark:hover:bg-surface-container/50 cursor-pointer' : 'cursor-default'
         } transition-colors`}
       >
         <div className="flex-shrink-0 mt-0.5">
@@ -153,17 +153,17 @@ function ThinkingStepItem({ step, index }: ThinkingStepItemProps) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-700">
+            <span className="text-xs font-medium text-gray-700 dark:text-on-surface">
               {step.title}
             </span>
             {step.duration && (
-              <span className="text-[10px] text-gray-400">
+              <span className="text-[10px] text-gray-400 dark:text-on-surface-variant">
                 {step.duration}ms
               </span>
             )}
           </div>
           {!isExpanded && step.description && (
-            <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">
+            <p className="text-xs text-gray-600 dark:text-on-surface-variant mt-0.5 line-clamp-1">
               {step.description}
             </p>
           )}
@@ -171,9 +171,9 @@ function ThinkingStepItem({ step, index }: ThinkingStepItemProps) {
         {hasDetails && (
           <div className="flex-shrink-0">
             {isExpanded ? (
-              <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-gray-400 dark:text-on-surface-variant" />
             ) : (
-              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+              <ChevronRight className="w-3.5 h-3.5 text-gray-400 dark:text-on-surface-variant" />
             )}
           </div>
         )}
@@ -182,13 +182,13 @@ function ThinkingStepItem({ step, index }: ThinkingStepItemProps) {
       {isExpanded && hasDetails && (
         <div className="px-3 pb-2 space-y-2">
           {step.description && (
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <p className="text-xs text-gray-600 dark:text-on-surface-variant leading-relaxed">
               {step.description}
             </p>
           )}
           {step.data && (
-            <div className="bg-white/70 rounded border border-gray-200 p-2">
-              <pre className="text-[10px] text-gray-700 overflow-x-auto">
+            <div className="bg-white/70 dark:bg-surface-container/70 rounded border border-gray-200 dark:border-white/[0.09] p-2">
+              <pre className="text-[10px] text-gray-700 dark:text-on-surface overflow-x-auto">
                 {typeof step.data === 'string'
                   ? step.data
                   : JSON.stringify(step.data, null, 2)}

@@ -93,8 +93,8 @@ export function PublishToMarketplaceModal({
         </div>
 
         {/* Info Banner */}
-        <div className="mx-6 mt-6 p-4 bg-[#4648d4]/5 border border-[#4648d4]/20 rounded-lg flex gap-3">
-          <AlertCircle className="w-5 h-5 text-[#4648d4] flex-shrink-0 mt-0.5" />
+        <div className="mx-6 mt-6 p-4 bg-[#4f46e5]/5 border border-[#4f46e5]/20 rounded-lg flex gap-3">
+          <AlertCircle className="w-5 h-5 text-[#4f46e5] flex-shrink-0 mt-0.5" />
           <div className="text-sm text-[#191c1e]">
             <p className="font-semibold mb-1">Publishing your template</p>
             <p className="text-[#464554]">
@@ -115,7 +115,7 @@ export function PublishToMarketplaceModal({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none"
+              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none"
               placeholder="Enter template name"
             />
           </div>
@@ -130,7 +130,7 @@ export function PublishToMarketplaceModal({
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               required
               rows={3}
-              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none resize-none"
+              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none resize-none"
               placeholder="Describe what your template does"
             />
           </div>
@@ -144,7 +144,7 @@ export function PublishToMarketplaceModal({
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               required
-              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none"
+              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none"
             >
               {Object.entries(AGENT_CATEGORIES).map(([key, cat]) => (
                 <option key={key} value={key}>
@@ -163,7 +163,7 @@ export function PublishToMarketplaceModal({
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none"
+              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none"
               placeholder="react, typescript, api (comma separated)"
             />
             <p className="text-xs text-[#464554] mt-1">
@@ -180,7 +180,7 @@ export function PublishToMarketplaceModal({
               type="text"
               value={formData.version}
               onChange={(e) => setFormData({ ...formData, version: e.target.value })}
-              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4648d4]/20 focus:border-[#4648d4] outline-none"
+              className="w-full px-4 py-2 bg-white border border-[#c7c4d7]/20 rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 focus:border-[#4f46e5] outline-none"
               placeholder="1.0.0"
             />
           </div>
@@ -198,7 +198,7 @@ export function PublishToMarketplaceModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-6 py-3 bg-[#4648d4] text-white rounded-lg font-bold hover:bg-[#6063ee] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-[#4f46e5] text-white rounded-lg font-bold hover:bg-[#4338ca] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 'Publishing...'

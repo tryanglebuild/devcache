@@ -136,7 +136,7 @@ export type AgentCategory =
 export const AGENT_CATEGORIES: Record<AgentCategory, { label: string; color: string; icon: string }> = {
   backend: {
     label: 'Backend',
-    color: '#4648d4',
+    color: '#4f46e5',
     icon: 'dns'
   },
   frontend: {

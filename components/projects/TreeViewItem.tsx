@@ -52,7 +52,7 @@ export function TreeViewItem({
         className={cn(
           'w-full flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors rounded-lg group',
           'hover:bg-[#f2f4f6]',
-          isSelected && 'bg-[#4648d4]/10 text-[#4648d4] border-l-3 border-[#4648d4]'
+          isSelected && 'bg-[#4f46e5]/10 text-[#4f46e5] border-l-3 border-[#4f46e5]'
         )}
         style={{ paddingLeft: `${12 + level * 20}px` }}
       >
@@ -78,19 +78,19 @@ export function TreeViewItem({
           {isFile ? (
             <FileText className={cn(
               'h-4 w-4',
-              isSelected ? 'text-[#4648d4]' : 'text-[#464554] group-hover:text-[#4648d4]'
+              isSelected ? 'text-[#4f46e5]' : 'text-[#464554] group-hover:text-[#4f46e5]'
             )} />
           ) : isExpanded ? (
-            <FolderOpen className="h-4 w-4 text-[#4648d4]" />
+            <FolderOpen className="h-4 w-4 text-[#4f46e5]" />
           ) : (
-            <Folder className="h-4 w-4 text-[#464554] group-hover:text-[#4648d4]" />
+            <Folder className="h-4 w-4 text-[#464554] group-hover:text-[#4f46e5]" />
           )}
         </div>
 
         {/* Name */}
         <span className={cn(
           'flex-1 text-left truncate',
-          isSelected ? 'text-[#4648d4]' : 'text-[#191c1e]'
+          isSelected ? 'text-[#4f46e5]' : 'text-[#191c1e]'
         )}>
           {item.name}
         </span>

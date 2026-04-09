@@ -1,3 +1,5 @@
+import { CheckCircle2, Monitor, GitMerge, Database } from 'lucide-react'
+
 export default function SolutionSection() {
   return (
     <section className="py-24 overflow-hidden">
@@ -10,52 +12,44 @@ export default function SolutionSection() {
               The devCache Solution
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-[1.15] mb-8">
-              Your Expertise as Executable Agents
+              What you know, packaged as an agent.
             </h2>
             <p className="text-indigo-100 text-lg mb-10 leading-relaxed">
-              Transform your development knowledge into specialized AI agents. Each agent embodies expertise in specific technologies, ready to guide your team through complex implementations.
+              Write down how you&apos;d solve a problem. DevCache turns that into a specialized AI agent — with your rules, your patterns, your standards. Any developer on your team can run it, anytime.
             </p>
             <ul className="space-y-5">
               <li className="flex items-center gap-4 text-white font-semibold">
-                <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  check_circle
-                </span>
-                Specialized agents for every tech stack
+                <CheckCircle2 size={20} strokeWidth={2} className="text-indigo-300 fill-indigo-300" />
+                Works for your stack — not against it
               </li>
               <li className="flex items-center gap-4 text-white font-semibold">
-                <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  check_circle
-                </span>
-                Multi-agent orchestration workflows
+                <CheckCircle2 size={20} strokeWidth={2} className="text-indigo-300 fill-indigo-300" />
+                Run one agent or ten, on the same problem
               </li>
               <li className="flex items-center gap-4 text-white font-semibold">
-                <span className="material-symbols-outlined text-indigo-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  check_circle
-                </span>
-                Community marketplace with ratings
+                <CheckCircle2 size={20} strokeWidth={2} className="text-indigo-300 fill-indigo-300" />
+                Everything the community builds is rated and ready to use
               </li>
             </ul>
           </div>
           
           <div className="w-full md:w-1/2 relative z-10">
-            <div className="bg-white/70 backdrop-blur-xl border border-indigo-100/50 p-12 rounded-3xl shadow-2xl flex items-center justify-center min-h-[350px]">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-12 rounded-3xl shadow-2xl flex items-center justify-center min-h-[350px]">
               <div className="grid grid-cols-3 gap-8">
-                <div className="w-24 h-28 bg-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/30 backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-indigo-600 text-4xl">smart_toy</span>
-                  <div className="w-12 h-1.5 bg-indigo-200 rounded-full" />
-                  <div className="text-[8px] font-bold text-indigo-600">Next.js</div>
+                <div className="w-24 h-28 bg-white/15 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/25 backdrop-blur-sm">
+                  <Monitor size={40} strokeWidth={1} className="text-white" />
+                  <div className="w-12 h-1.5 bg-white/30 rounded-full" />
+                  <div className="text-[8px] font-bold text-white/90">Next.js</div>
                 </div>
-                <div className="w-24 h-28 bg-white/40 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/50 scale-110 shadow-2xl">
-                  <span className="material-symbols-outlined text-indigo-600 text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    psychology
-                  </span>
-                  <div className="w-14 h-1.5 bg-indigo-300 rounded-full" />
-                  <div className="text-[8px] font-bold text-indigo-600">Orchestrator</div>
+                <div className="w-24 h-28 bg-white/25 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/40 scale-110 shadow-2xl">
+                  <GitMerge size={40} strokeWidth={1} className="text-white" />
+                  <div className="w-14 h-1.5 bg-white/40 rounded-full" />
+                  <div className="text-[8px] font-bold text-white/90">Orchestrator</div>
                 </div>
-                <div className="w-24 h-28 bg-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/30 backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-indigo-600 text-4xl">smart_toy</span>
-                  <div className="w-12 h-1.5 bg-indigo-200 rounded-full" />
-                  <div className="text-[8px] font-bold text-indigo-600">Supabase</div>
+                <div className="w-24 h-28 bg-white/15 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/25 backdrop-blur-sm">
+                  <Database size={40} strokeWidth={1} className="text-white" />
+                  <div className="w-12 h-1.5 bg-white/30 rounded-full" />
+                  <div className="text-[8px] font-bold text-white/90">Supabase</div>
                 </div>
               </div>
             </div>

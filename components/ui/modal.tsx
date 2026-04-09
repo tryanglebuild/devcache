@@ -97,7 +97,7 @@ export function ModalHeader({ children, className, icon, subtitle }: ModalHeader
     <div className={cn('px-8 py-6 border-b border-[#c7c4d7]/20', className)}>
       <div className="flex items-start gap-4">
         {icon && (
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center text-white shadow-lg shrink-0">
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white shadow-lg shrink-0">
             {icon}
           </div>
         )}

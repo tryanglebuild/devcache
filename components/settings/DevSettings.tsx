@@ -167,7 +167,7 @@ export function DevSettings() {
       {/* Embedding Sync Card */}
       <Card className="p-6 border-[#c7c4d7]/20 bg-gradient-to-br from-white to-[#f7f9fb]">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4648d4] to-[#6063ee] flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center shrink-0">
             <Database className="h-6 w-6 text-white" />
           </div>
           
@@ -247,7 +247,7 @@ export function DevSettings() {
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-[#4648d4] to-[#6063ee] transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-500"
                         style={{ 
                           width: `${Math.round(((stats.project_items_with_embeddings + stats.agents_with_embeddings) / (stats.total_project_items + stats.total_agents)) * 100)}%` 
                         }}
@@ -282,7 +282,7 @@ export function DevSettings() {
               <Button
                 onClick={syncEmbeddings}
                 disabled={!stats || totalPending === 0 || isAnalyzing || isSyncing}
-                className="flex-1 bg-gradient-to-r from-[#4648d4] to-[#6063ee] hover:from-[#3537c3] hover:to-[#4f52dd] text-white"
+                className="flex-1 bg-gradient-to-r from-[#4f46e5] to-[#4338ca] hover:from-[#3537c3] hover:to-[#4f52dd] text-white"
               >
                 {isSyncing ? (
                   <>

@@ -158,7 +158,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
   const totalCredits = Math.ceil(totalCost * 1000)
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white">
+    <div className="flex-1 flex flex-col h-full bg-white dark:bg-surface-container">
       {/* Context Gathering Progress Indicator */}
       {contextState.isGathering && !contextLoading && (
         <div className="px-6 pt-4">
@@ -182,7 +182,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
       />
 
       {/* Bottom Bar - Redesigned */}
-      <div className="border-t border-[#f3f4f6] bg-white">
+      <div className="border-t border-[#f3f4f6] dark:border-white/[0.06] bg-white dark:bg-surface-container">
         {/* Input Area */}
         <div className="px-6 py-4">
           <div className={`mx-auto ${isExpanded ? 'max-w-6xl' : 'max-w-4xl'}`}>
@@ -201,11 +201,11 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
         </div>
 
         {/* Compact Info Bar - Model Selector (left) + Token Stats (right) */}
-        <div className="px-6 pb-3 bg-[#fafbfc]">
+        <div className="px-6 pb-3 bg-[#fafbfc] dark:bg-surface-container-low">
           <div className={`mx-auto flex items-center justify-between text-xs ${isExpanded ? 'max-w-6xl' : 'max-w-4xl'}`}>
             {/* Left: Model Selector */}
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-[#9ca3af]">Model:</span>
+              <span className="text-[10px] text-[#9ca3af] dark:text-on-surface-variant">Model:</span>
               <ModelSelector
                 selectedModel={selectedModel}
                 onModelChange={handleModelChange}
@@ -215,9 +215,9 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
 
             {/* Right: Token Stats */}
             {messages.length > 0 && (
-              <div className="flex items-center gap-2 text-[10px] text-[#6b7280]">
+              <div className="flex items-center gap-2 text-[10px] text-[#6b7280] dark:text-on-surface-variant">
                 <span>{(totalTokensInput + totalTokensOutput).toLocaleString()} tokens</span>
-                <span className="text-[#d1d5db]">·</span>
+                <span className="text-[#d1d5db] dark:text-white/20">·</span>
                 <span className="text-[#059669] font-medium">${totalCost.toFixed(4)}</span>
                 <TokenUsagePopover sessionId={session.id} totalCredits={totalCredits} />
               </div>

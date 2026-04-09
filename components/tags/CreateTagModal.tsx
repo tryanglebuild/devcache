@@ -172,7 +172,7 @@ export function CreateTagModal({ isOpen, onClose, onTagCreated }: CreateTagModal
                 placeholder="Brief description of this tag..."
                 rows={3}
                 maxLength={200}
-                className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4648d4] text-sm resize-none transition-all placeholder:text-gray-400"
+                className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none transition-all placeholder:text-gray-400"
               />
               <div className="absolute bottom-2 right-2 text-xs text-[#464554]">
                 {description.length}/200
@@ -217,7 +217,7 @@ export function CreateTagModal({ isOpen, onClose, onTagCreated }: CreateTagModal
           <div className="space-y-3">
             <label className="block text-xs font-bold text-[#191c1e] uppercase tracking-wider flex items-center gap-2">
               Preview
-              <Sparkles className="h-3.5 w-3.5 text-[#4648d4]" />
+              <Sparkles className="h-3.5 w-3.5 text-[#4f46e5]" />
             </label>
             <div className="relative overflow-hidden">
               <div className="flex items-center gap-4 p-5 bg-gradient-to-br from-[#f2f4f6] to-[#e8eaed] rounded-xl border border-[#c7c4d7]/20 transition-all duration-300">
@@ -258,7 +258,7 @@ export function CreateTagModal({ isOpen, onClose, onTagCreated }: CreateTagModal
           <Button
             type="submit"
             disabled={isLoading || !name.trim() || !!nameError}
-            className="flex-1 h-12 bg-gradient-to-br from-[#4648d4] to-[#6063ee] hover:from-[#3a3cb8] hover:to-[#4f52d4] transition-all duration-200 disabled:opacity-50"
+            className="flex-1 h-12 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] hover:from-[#3a3cb8] hover:to-[#4f52d4] transition-all duration-200 disabled:opacity-50"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">

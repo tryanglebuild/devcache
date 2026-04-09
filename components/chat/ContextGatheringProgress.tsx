@@ -24,12 +24,12 @@ export function ContextGatheringProgress({
   const totalQuestions = questionsAsked.length
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative">
+    <div className="bg-gray-50 dark:bg-surface-container-high border border-gray-200 dark:border-white/[0.09] rounded-lg p-4 mb-4 relative">
       {onDismiss && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 h-6 w-6 text-gray-500 hover:text-gray-700 hover:bg-gray-200"
+          className="absolute top-2 right-2 h-6 w-6 text-gray-500 dark:text-on-surface-variant hover:text-gray-700 dark:hover:text-on-surface hover:bg-gray-200 dark:hover:bg-surface-container"
           onClick={onDismiss}
         >
           <X className="h-4 w-4" />
@@ -37,8 +37,8 @@ export function ContextGatheringProgress({
       )}
 
       <div className="flex items-center gap-2 mb-3">
-        <Brain className="h-5 w-5 text-gray-500 animate-pulse" />
-        <h3 className="text-sm font-semibold text-gray-700">
+        <Brain className="h-5 w-5 text-gray-500 dark:text-on-surface-variant animate-pulse" />
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-on-surface">
           Gathering context for better results
         </h3>
       </div>
@@ -48,26 +48,26 @@ export function ContextGatheringProgress({
       <div className="space-y-2 mb-3">
         {Object.entries(collectedInfo).map(([key, value]) => (
           <div key={key} className="flex items-center gap-2 text-xs">
-            <CheckCircle2 className="h-3 w-3 text-gray-500 flex-shrink-0" />
-            <span className="text-gray-700">
+            <CheckCircle2 className="h-3 w-3 text-gray-500 dark:text-on-surface-variant flex-shrink-0" />
+            <span className="text-gray-700 dark:text-on-surface">
               <span className="font-medium">{formatKey(key)}:</span>{' '}
-              <span className="text-gray-900">{formatValue(value)}</span>
+              <span className="text-gray-900 dark:text-on-surface">{formatValue(value)}</span>
             </span>
           </div>
         ))}
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <span className="text-gray-500">
+        <span className="text-gray-500 dark:text-on-surface-variant">
           {questionsAnswered} of {totalQuestions} questions answered
         </span>
-        <span className="text-gray-600 font-medium">
+        <span className="text-gray-600 dark:text-on-surface-variant font-medium">
           {Math.round(confidenceScore * 100)}% confidence
         </span>
       </div>
 
       {progress >= 80 && (
-        <div className="mt-3 text-xs text-gray-600 bg-gray-100 border border-gray-200 rounded px-2 py-1">
+        <div className="mt-3 text-xs text-gray-600 dark:text-on-surface-variant bg-gray-100 dark:bg-surface-container border border-gray-200 dark:border-white/[0.09] rounded px-2 py-1">
           ✓ Almost there! One more detail and I'll find the perfect resource.
         </div>
       )}

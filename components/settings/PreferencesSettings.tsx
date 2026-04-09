@@ -109,7 +109,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
     <Card className="bg-white border-[#e5e7eb] shadow-sm">
       <CardHeader className="pb-6 border-b border-[#e5e7eb]">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-[#4648d4] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-lg bg-[#4f46e5] flex items-center justify-center">
             <Sparkles className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -129,7 +129,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
               Default AI Model
             </Label>
             <Select value={defaultModel} onValueChange={setDefaultModel}>
-              <SelectTrigger className="border-[#e5e7eb] bg-white h-12 hover:border-[#4648d4] transition-colors">
+              <SelectTrigger className="border-[#e5e7eb] bg-white h-12 hover:border-[#4f46e5] transition-colors">
                 <SelectValue placeholder="Select a model" />
               </SelectTrigger>
               <SelectContent className="bg-white border border-[#e5e7eb] shadow-xl p-1 min-w-[500px]">
@@ -137,7 +137,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
                   <SelectItem 
                     key={model.id} 
                     value={model.id}
-                    className="cursor-pointer rounded-md my-0.5 pl-3 pr-10 py-3 hover:bg-[#f7f9fb] data-[state=checked]:bg-[#eef0ff] data-[state=checked]:border-l-2 data-[state=checked]:border-[#4648d4] transition-colors"
+                    className="cursor-pointer rounded-md my-0.5 pl-3 pr-10 py-3 hover:bg-[#f7f9fb] data-[state=checked]:bg-[#eef0ff] data-[state=checked]:border-l-2 data-[state=checked]:border-[#4f46e5] transition-colors"
                   >
                     <div className="flex items-center justify-between gap-6 w-full pr-2">
                       {/* Left: Model Info */}
@@ -158,7 +158,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
                       {/* Right: Metrics */}
                       <div className="flex items-center gap-4 shrink-0">
                         <div className="text-right">
-                          <div className="text-xs font-semibold text-[#4648d4]">
+                          <div className="text-xs font-semibold text-[#4f46e5]">
                             {model.costMultiplier}x
                           </div>
                           <div className="text-[10px] text-[#9ca3af]">cost</div>
@@ -188,9 +188,9 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
             return (
               <div className="space-y-4">
                 {/* Model Header - Clean & Professional */}
-                <div className="p-5 bg-white border-2 border-[#4648d4] rounded-lg shadow-md relative">
+                <div className="p-5 bg-white border-2 border-[#4f46e5] rounded-lg shadow-md relative">
                   {/* Selected Badge */}
-                  <div className="absolute -top-3 right-4 px-3 py-1 bg-[#4648d4] rounded-full shadow-sm">
+                  <div className="absolute -top-3 right-4 px-3 py-1 bg-[#4f46e5] rounded-full shadow-sm">
                     <span className="text-xs font-semibold text-white">Selected</span>
                   </div>
                   
@@ -225,7 +225,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
                         Cost Multiplier
                       </span>
                       <div className="w-6 h-6 rounded bg-[#f7f9fb] flex items-center justify-center">
-                        <span className="text-[#4648d4] text-xs">$</span>
+                        <span className="text-[#4f46e5] text-xs">$</span>
                       </div>
                     </div>
                     <div className="flex items-baseline gap-1.5 mb-2">
@@ -259,7 +259,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
                         Context Window
                       </span>
                       <div className="w-6 h-6 rounded bg-[#f7f9fb] flex items-center justify-center">
-                        <span className="text-[#4648d4] text-xs">⚡</span>
+                        <span className="text-[#4f46e5] text-xs">⚡</span>
                       </div>
                     </div>
                     <div className="flex items-baseline gap-1.5 mb-2">
@@ -302,7 +302,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
           <div className="p-5 bg-[#f7f9fb] border border-[#e5e7eb] rounded-lg">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded bg-white border border-[#e5e7eb] flex items-center justify-center shrink-0">
-                <Sparkles className="h-4 w-4 text-[#4648d4]" />
+                <Sparkles className="h-4 w-4 text-[#4f46e5]" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold text-[#191c1e] mb-1">
@@ -322,7 +322,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-[#4648d4] hover:bg-[#3739b8] text-white font-semibold shadow-sm hover:shadow-md transition-all px-8"
+              className="bg-[#4f46e5] hover:bg-[#3739b8] text-white font-semibold shadow-sm hover:shadow-md transition-all px-8"
             >
               {isLoading ? (
                 <>

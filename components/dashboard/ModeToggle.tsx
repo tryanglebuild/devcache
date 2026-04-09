@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { FolderOpen, Bot, LayoutGrid } from 'lucide-react'
 
 export type DashboardMode = 'projects' | 'agents' | 'unified'
 
@@ -9,7 +10,7 @@ interface ModeToggleProps {
 }
 
 export function ModeToggle({ onModeChange }: ModeToggleProps) {
-  const [mode, setMode] = useState<DashboardMode>('unified')
+  const [mode, setMode] = useState<DashboardMode>('agents')
   const [isInitialized, setIsInitialized] = useState(false)
 
   // Load mode from localStorage on mount
@@ -34,17 +35,17 @@ export function ModeToggle({ onModeChange }: ModeToggleProps) {
   }
 
   return (
-    <div className="inline-flex items-center bg-white rounded-lg p-1 shadow-sm border border-[#c7c4d7]/20">
+    <div className="inline-flex items-center bg-white dark:bg-surface-container rounded-lg p-1 shadow-sm border border-[#c7c4d7]/20 dark:border-white/[0.09]">
       <button
         onClick={() => handleModeChange('projects')}
         className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
           mode === 'projects'
-            ? 'bg-[#4648d4] text-white shadow-sm'
-            : 'text-[#464554] hover:bg-[#f2f4f6]'
+            ? 'bg-[#4f46e5] text-white shadow-sm'
+            : 'text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
         }`}
       >
         <span className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg">folder</span>
+          <FolderOpen size={18} strokeWidth={1.5} />
           Projects
         </span>
       </button>
@@ -53,12 +54,12 @@ export function ModeToggle({ onModeChange }: ModeToggleProps) {
         onClick={() => handleModeChange('agents')}
         className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
           mode === 'agents'
-            ? 'bg-[#4648d4] text-white shadow-sm'
-            : 'text-[#464554] hover:bg-[#f2f4f6]'
+            ? 'bg-[#4f46e5] text-white shadow-sm'
+            : 'text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
         }`}
       >
         <span className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg">smart_toy</span>
+          <Bot size={18} strokeWidth={1.5} />
           Agents
         </span>
       </button>
@@ -67,12 +68,12 @@ export function ModeToggle({ onModeChange }: ModeToggleProps) {
         onClick={() => handleModeChange('unified')}
         className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
           mode === 'unified'
-            ? 'bg-[#4648d4] text-white shadow-sm'
-            : 'text-[#464554] hover:bg-[#f2f4f6]'
+            ? 'bg-[#4f46e5] text-white shadow-sm'
+            : 'text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
         }`}
       >
         <span className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg">dashboard</span>
+          <LayoutGrid size={18} strokeWidth={1.5} />
           All
         </span>
       </button>
@@ -82,7 +83,7 @@ export function ModeToggle({ onModeChange }: ModeToggleProps) {
 
 // Hook to use dashboard mode
 export function useDashboardMode() {
-  const [mode, setMode] = useState<DashboardMode>('unified')
+  const [mode, setMode] = useState<DashboardMode>('agents')
 
   useEffect(() => {
     const savedMode = localStorage.getItem('dashboard-mode') as DashboardMode

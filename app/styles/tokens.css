@@ -138,4 +138,122 @@
   --blur-xl: 32px;
   --blur-2xl: 64px;
   --blur-3xl: 120px;
+
+  /* Semantic Status Colors */
+  --success: #16a34a;
+  --success-container: #dcfce7;
+  --on-success: #ffffff;
+  --on-success-container: #14532d;
+
+  --warning: #b45309;
+  --warning-container: #fef3c7;
+  --on-warning: #ffffff;
+  --on-warning-container: #78350f;
+
+  --info: #0055d7;
+  --info-container: #dbeafe;
+  --on-info: #ffffff;
+  --on-info-container: #1e3a8a;
+
+  /* Code Viewer */
+  --surface-code: #1a1e2e;
+  --on-surface-code: #c9d1d9;
+}
+
+html.dark {
+  /* Surface Hierarchy — Navy-Indigo Tinted (NOT pure black) */
+  --surface-dim: #080c18;
+  --surface: #0d1121;         /* oklch(0.13 0.02 264) — deep navy-indigo base */
+  --surface-bright: #1e2640;
+  --surface-container-lowest: #080c18;
+  --surface-container-low: #111728;
+  --surface-container: #161e30;   /* oklch(0.18 0.018 264) — card surface */
+  --surface-container-high: #1c2438;
+  --surface-container-highest: #232b42;
+  --surface-variant: #1c2438;
+  --surface-tint: #7c7ff5;        /* lighter indigo for dark bg */
+
+  /* Primary Colors — Lighter for Dark Background */
+  --primary: #7c7ff5;             /* brighter indigo, pops on dark */
+  --primary-container: #2a2d6e;
+  --primary-dim: #6366f1;
+  --primary-fixed: #e1e0ff;
+  --primary-fixed-dim: #c0c1ff;
+  --on-primary: #0d1121;
+  --on-primary-container: #c7c8ff;
+  --on-primary-fixed: #07006c;
+  --on-primary-fixed-variant: #4f46e5;
+
+  /* Secondary Colors */
+  --secondary: #8a8fa8;
+  --secondary-container: #2a3148;
+  --secondary-dim: #6b7190;
+  --secondary-fixed: #d5e3fc;
+  --secondary-fixed-dim: #c7d5ed;
+  --on-secondary: #0d1121;
+  --on-secondary-container: #b0b6cc;
+  --on-secondary-fixed: #324053;
+  --on-secondary-fixed-variant: #4e5c71;
+
+  /* Tertiary Colors */
+  --tertiary: #60a5fa;
+  --tertiary-container: #1e3a5f;
+  --tertiary-dim: #3b82f6;
+  --tertiary-fixed: #0266ff;
+  --tertiary-fixed-dim: #005be5;
+  --on-tertiary: #0d1121;
+  --on-tertiary-container: #93c5fd;
+  --on-tertiary-fixed: #ffffff;
+  --on-tertiary-fixed-variant: #dde3ff;
+
+  /* Error Colors — Lighter for Dark Background */
+  --error: #f87171;
+  --error-container: #5f1d1d;
+  --error-dim: #ef4444;
+  --on-error: #0d1121;
+  --on-error-container: #fca5a5;
+
+  /* Text Colors */
+  --on-surface: #e3e6f7;         /* oklch(0.92 0.01 264) — primary text */
+  --on-surface-variant: #8a8fa8; /* oklch(0.60 0.01 264) — secondary text */
+  --on-background: #e3e6f7;
+
+  /* Outline & Borders */
+  --outline: rgba(255, 255, 255, 0.15);
+  --outline-variant: rgba(255, 255, 255, 0.09);
+
+  /* Inverse Colors */
+  --inverse-surface: #e3e6f7;
+  --inverse-on-surface: #0d1121;
+  --inverse-primary: #4f46e5;
+
+  /* Background */
+  --background: #0d1121;
+
+  /* Shadows — Deeper for Dark Mode */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+  --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.7);
+
+  /* Semantic Status Colors — Brighter for Dark Background */
+  --success: #34d472;
+  --success-container: rgba(52, 212, 114, 0.15);
+  --on-success: #0d1121;
+  --on-success-container: #6ee7a0;
+
+  --warning: #fbbf24;
+  --warning-container: rgba(251, 191, 36, 0.15);
+  --on-warning: #0d1121;
+  --on-warning-container: #fcd34d;
+
+  --info: #60a5fa;
+  --info-container: rgba(96, 165, 250, 0.15);
+  --on-info: #0d1121;
+  --on-info-container: #93c5fd;
+
+  /* Code Viewer — Slightly lighter in dark mode */
+  --surface-code: #111728;
+  --on-surface-code: #c9d1d9;
 }

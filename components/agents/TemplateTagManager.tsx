@@ -154,7 +154,7 @@ export function TemplateTagManager({
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Tag className="h-5 w-5 text-[#4648d4]" />
+              <Tag className="h-5 w-5 text-[#4f46e5]" />
               Manage Tags
             </DialogTitle>
             <DialogDescription>
@@ -187,7 +187,7 @@ export function TemplateTagManager({
                     {selectedTags.map((tag) => (
                       <div
                         key={tag.id}
-                        className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-[#4648d4]/30 hover:border-[#4648d4]/50 transition-all group"
+                        className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-[#4f46e5]/30 hover:border-[#4f46e5]/50 transition-all group"
                       >
                         <div
                           className="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0"
@@ -229,7 +229,7 @@ export function TemplateTagManager({
                 <a
                   href="/dashboard/tags"
                   target="_blank"
-                  className="text-xs text-[#4648d4] hover:text-[#6063ee] font-semibold flex items-center gap-1"
+                  className="text-xs text-[#4f46e5] hover:text-[#4338ca] font-semibold flex items-center gap-1"
                 >
                   <Plus className="h-3 w-3" />
                   Create New Tag
@@ -250,7 +250,7 @@ export function TemplateTagManager({
                       key={tag.id}
                       onClick={() => handleToggleTag(tag.name)}
                       disabled={loading || selectedTagNames.length >= MAX_TAGS}
-                      className="flex items-center gap-3 p-3 bg-white rounded-lg border border-[#c7c4d7]/20 hover:border-[#4648d4]/50 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                      className="flex items-center gap-3 p-3 bg-white rounded-lg border border-[#c7c4d7]/20 hover:border-[#4f46e5]/50 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
                     >
                       <div
                         className="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-md flex-shrink-0"
@@ -283,7 +283,7 @@ export function TemplateTagManager({
                   <a
                     href="/dashboard/tags"
                     target="_blank"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#4648d4] text-white rounded-lg font-semibold hover:bg-[#6063ee] transition-all text-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#4f46e5] text-white rounded-lg font-semibold hover:bg-[#4338ca] transition-all text-sm"
                   >
                     <Plus className="h-4 w-4" />
                     Go to Tag Library

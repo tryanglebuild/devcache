@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { FolderOpen, Folder, FileText, Clock, SlidersHorizontal } from 'lucide-react'
 import { RecentProjectsClient } from '@/components/dashboard/RecentProjectsClient'
 import { FavoritedItemsClient } from '@/components/dashboard/FavoritedItemsClient'
 import { AgentStatsWidget } from '@/components/agents/AgentStatsWidget'
@@ -35,7 +36,7 @@ export function DashboardContent({
   recentActivity,
   isLoadingLazy = false
 }: DashboardContentProps) {
-  const [mode, setMode] = useState<DashboardMode>('unified')
+  const [mode, setMode] = useState<DashboardMode>('agents')
 
   const handleModeChange = useCallback((newMode: DashboardMode) => {
     setMode(newMode)
@@ -49,12 +50,9 @@ export function DashboardContent({
       {/* Header with Mode Toggle */}
       <div className="flex items-center justify-between mb-10">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-[#191c1e] mb-2">
-            Personal Overview
+          <h2 className="text-4xl font-black tracking-tight text-slate-900 dark:text-on-surface mb-2">
+            Your cache, {displayName}.
           </h2>
-          <p className="text-[#464554] font-medium">
-            Welcome back, {displayName}. Your workspace is synchronized.
-          </p>
         </div>
         <ModeToggle onModeChange={handleModeChange} />
       </div>
@@ -74,16 +72,19 @@ export function DashboardContent({
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold tracking-tight text-[#191c1e]">
-                Trending Agents
-              </h3>
-              <p className="text-sm text-[#464554] mt-1">
+              <div className="flex items-center gap-3">
+                <span className="w-1 h-5 bg-indigo-500 rounded-full" />
+                <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-on-surface">
+                  Trending Agents
+                </h3>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-on-surface-variant mt-1">
                 Popular agents from the community
               </p>
             </div>
             <a
               href="/marketplace"
-              className="text-sm font-semibold text-[#4648d4] hover:underline"
+              className="text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:underline"
             >
               View Marketplace →
             </a>
@@ -91,7 +92,7 @@ export function DashboardContent({
           {isLoadingLazy ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+                <div key={i} className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
                   <Skeleton className="h-32 w-full mb-4" />
                   <Skeleton className="h-6 w-full mb-2" />
                   <Skeleton className="h-4 w-3/4" />
@@ -113,14 +114,17 @@ export function DashboardContent({
             <section>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-xl font-bold tracking-tight">Agent Marketplace</h3>
-                  <p className="text-sm text-[#464554] mt-1">
+                  <div className="flex items-center gap-3">
+                    <span className="w-1 h-5 bg-indigo-500 rounded-full" />
+                    <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-on-surface">Agent Marketplace</h3>
+                  </div>
+                   <p className="text-sm text-slate-500 dark:text-on-surface-variant mt-1">
                     Discover AI agents for your workflow
                   </p>
                 </div>
                 <a
                   href="/marketplace"
-                  className="text-sm font-semibold text-[#4648d4] hover:underline"
+                  className="text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:underline"
                 >
                   Browse All
                 </a>
@@ -128,7 +132,7 @@ export function DashboardContent({
               {isLoadingLazy ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[1, 2].map((i) => (
-                    <div key={i} className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+                    <div key={i} className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
                       <Skeleton className="h-24 w-full mb-4" />
                       <Skeleton className="h-6 w-full mb-2" />
                       <Skeleton className="h-4 w-3/4" />
@@ -148,10 +152,13 @@ export function DashboardContent({
           {showProjects && (
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold tracking-tight">Recent Projects</h3>
+                <div className="flex items-center gap-3">
+                  <span className="w-1 h-5 bg-indigo-500 rounded-full" />
+                  <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-on-surface">Recent Projects</h3>
+                </div>
                 <a
                   href="/dashboard/projects"
-                  className="text-sm font-semibold text-[#4648d4] hover:underline"
+                  className="text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:underline"
                 >
                   View All Projects
                 </a>
@@ -160,16 +167,14 @@ export function DashboardContent({
               {projectItems && projectItems.length > 0 ? (
                 <RecentProjectsClient items={projectItems} />
               ) : (
-                <div className="text-center py-12 bg-white rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[#464554] text-3xl">
-                      folder_open
-                    </span>
+                <div className="text-center py-12 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-50 dark:bg-[#7c7ff5]/15 flex items-center justify-center">
+                    <FolderOpen size={32} strokeWidth={1.5} className="text-indigo-400" />
                   </div>
-                  <p className="text-[#464554] font-medium mb-4">No projects yet</p>
+                  <p className="text-slate-500 dark:text-on-surface-variant font-medium mb-4">No projects yet</p>
                   <a
                     href="/dashboard/projects"
-                    className="inline-block px-6 py-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4648d4]/20 hover:shadow-xl transition-all"
+                    className="inline-block px-6 py-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 dark:shadow-[#7c7ff5]/10 hover:shadow-xl transition-all"
                   >
                     Create Your First Project
                   </a>
@@ -182,10 +187,10 @@ export function DashboardContent({
           {showProjects && (
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold tracking-tight">Favorited Items</h3>
+                <h3 className="text-lg font-semibold text-slate-700 dark:text-on-surface">Favorited Items</h3>
                 <a
                   href="/dashboard/projects"
-                  className="text-sm font-semibold text-[#4648d4] hover:underline"
+                  className="text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:underline"
                 >
                   View All
                 </a>
@@ -202,10 +207,10 @@ export function DashboardContent({
             {showAgents && (
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold tracking-tight">My Agents</h3>
+                  <h3 className="text-lg font-semibold text-slate-700 dark:text-on-surface">My Agents</h3>
                   <a
                     href="/dashboard/agents"
-                    className="text-sm font-semibold text-[#4648d4] hover:underline"
+                    className="text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:underline"
                   >
                     View All
                   </a>
@@ -218,13 +223,13 @@ export function DashboardContent({
             {showProjects && (
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold tracking-tight">Recent Activity</h3>
-                  <button className="p-2 hover:bg-[#f2f4f6] rounded-lg transition-colors">
-                    <span className="material-symbols-outlined">filter_list</span>
+                  <h3 className="text-lg font-semibold text-slate-700 dark:text-on-surface">Recent Activity</h3>
+                  <button className="p-2 hover:bg-slate-100 dark:hover:bg-surface-container-high rounded-lg transition-colors">
+                    <SlidersHorizontal size={16} strokeWidth={1.5} />
                   </button>
                 </div>
                 
-                <div className="bg-white p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
+                <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
                   {isLoadingLazy ? (
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (
@@ -254,20 +259,21 @@ export function DashboardContent({
                           <a
                             key={activity.id}
                             href={item.type === 'folder' ? `/dashboard/projects/${item.id}` : `/dashboard/projects/file/${item.id}`}
-                            className="flex items-start gap-3 p-3 hover:bg-[#f7f9fb] rounded-lg transition-colors"
+                            className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-surface-container-high rounded-lg transition-colors"
                           >
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              item.type === 'folder' ? 'bg-[#4648d4]/10 text-[#4648d4]' : 'bg-[#575992]/10 text-[#575992]'
+                              item.type === 'folder' ? 'bg-indigo-600/10 text-indigo-600' : 'bg-indigo-500/10 text-indigo-500'
                             }`}>
-                              <span className="material-symbols-outlined text-sm">
-                                {item.type === 'folder' ? 'folder' : 'description'}
-                              </span>
+                              {item.type === 'folder'
+                                ? <Folder size={14} strokeWidth={1.5} />
+                                : <FileText size={14} strokeWidth={1.5} />
+                              }
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-[#191c1e] truncate">
+                              <p className="text-sm font-semibold text-slate-900 dark:text-on-surface truncate">
                                 {item.name}
                               </p>
-                              <p className="text-xs text-[#464554]">{timeAgo}</p>
+                              <p className="text-xs text-slate-500 dark:text-on-surface-variant">{timeAgo}</p>
                             </div>
                           </a>
                         )
@@ -275,12 +281,10 @@ export function DashboardContent({
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-                        <span className="material-symbols-outlined text-[#464554]">
-                          history
-                        </span>
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-50 dark:bg-amber-400/10 flex items-center justify-center">
+                        <Clock size={20} strokeWidth={1.5} className="text-amber-400" />
                       </div>
-                      <p className="text-sm text-[#464554]">No recent activity</p>
+                      <p className="text-sm text-slate-500 dark:text-on-surface-variant">No recent activity</p>
                     </div>
                   )}
                 </div>
@@ -288,14 +292,14 @@ export function DashboardContent({
             )}
 
             {/* System Status */}
-            <div className="p-6 bg-[#f2f4f6] rounded-xl flex items-center justify-between">
+            <div className="p-6 bg-slate-100 dark:bg-surface-container rounded-xl flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-[#10b981] rounded-full animate-pulse"></div>
-                <span className="text-xs font-bold text-[#464554] uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-500 dark:text-on-surface-variant uppercase tracking-wider">
                   System Operational
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-[#464554] opacity-60">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-on-surface-variant opacity-60">
                 v2.0.0
               </span>
             </div>

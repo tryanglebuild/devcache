@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { SearchX } from 'lucide-react'
 import { MarketplaceHero } from './MarketplaceHero'
 import { MarketplaceFilters } from './MarketplaceFilters'
 import { AgentCard } from '@/components/agents/AgentCard'
@@ -162,17 +163,17 @@ export function MarketplaceClient({
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-xl p-4 shadow-sm animate-pulse"
+              className="bg-white dark:bg-surface-container rounded-xl p-4 shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/[0.08] animate-pulse"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-[#f2f4f6]" />
+                <div className="w-10 h-10 rounded-lg bg-[#f2f4f6] dark:bg-surface-container-high" />
                 <div className="flex-1">
-                  <div className="h-4 bg-[#f2f4f6] rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-[#f2f4f6] rounded w-1/2" />
+                  <div className="h-4 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-1/2" />
                 </div>
               </div>
-              <div className="h-3 bg-[#f2f4f6] rounded w-full mb-2" />
-              <div className="h-3 bg-[#f2f4f6] rounded w-5/6" />
+              <div className="h-3 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-full mb-2" />
+              <div className="h-3 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-5/6" />
             </div>
           ))}
         </div>
@@ -196,7 +197,7 @@ export function MarketplaceClient({
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1 || loading}
-                className="px-4 py-2 bg-white text-[#464554] border border-[#e5e7eb] rounded-lg font-medium hover:bg-[#f2f4f6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant border border-[#e5e7eb] dark:border-white/[0.09] rounded-lg font-medium hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -211,8 +212,8 @@ export function MarketplaceClient({
                       disabled={loading}
                       className={`min-w-[40px] h-10 rounded-lg font-medium transition-all ${
                         currentPage === page
-                          ? 'bg-[#4648d4] text-white'
-                          : 'bg-white text-[#464554] border border-[#e5e7eb] hover:bg-[#f2f4f6]'
+                          ? 'bg-[#4f46e5] text-white'
+                          : 'bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant border border-[#e5e7eb] dark:border-white/[0.09] hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       {page}
@@ -220,7 +221,7 @@ export function MarketplaceClient({
                   ) : (
                     <span
                       key={`ellipsis-${index}`}
-                      className="px-2 text-[#464554]"
+                      className="px-2 text-[#464554] dark:text-on-surface-variant"
                     >
                       {page}
                     </span>
@@ -232,7 +233,7 @@ export function MarketplaceClient({
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages || loading}
-                className="px-4 py-2 bg-white text-[#464554] border border-[#e5e7eb] rounded-lg font-medium hover:bg-[#f2f4f6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant border border-[#e5e7eb] dark:border-white/[0.09] rounded-lg font-medium hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -240,19 +241,17 @@ export function MarketplaceClient({
           )}
         </>
       ) : (
-        <div className="bg-white rounded-xl p-12 text-center shadow-sm">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-            <span className="material-symbols-outlined text-[#464554] text-3xl">
-              search_off
-            </span>
+        <div className="bg-white dark:bg-surface-container rounded-xl p-12 text-center shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] dark:bg-surface-container-high flex items-center justify-center">
+            <SearchX size={28} strokeWidth={1.5} className="text-slate-500 dark:text-on-surface-variant" />
           </div>
-          <p className="text-[#464554] font-medium mb-2">No agents found</p>
-          <p className="text-sm text-[#464554] mb-4">
+          <p className="text-[#464554] dark:text-on-surface-variant font-medium mb-2">No agents found</p>
+          <p className="text-sm text-[#464554] dark:text-on-surface-variant mb-4">
             Try adjusting your filters or search terms
           </p>
           <button
             onClick={() => handleFilterChange({ query: '', category: undefined, minRating: 0 })}
-            className="text-[#4648d4] hover:text-[#6063ee] font-semibold text-sm"
+            className="text-[#4f46e5] dark:text-[#7c7ff5] hover:text-[#4338ca] dark:hover:text-[#a5b4fc] font-semibold text-sm"
           >
             Clear all filters
           </button>

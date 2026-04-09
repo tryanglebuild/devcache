@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import OAuthButton from '@/components/auth/OAuthButton'
+import { DevCacheLogo } from '@/components/ui/DevCacheLogo'
+import { useTheme } from '@/components/providers/ThemeProvider'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -14,6 +16,7 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
+  const { resolvedTheme } = useTheme()
 
   // Check for error messages from OAuth callback
   useEffect(() => {
@@ -69,13 +72,8 @@ function LoginForm() {
 
         <div className="relative z-10">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 mb-20 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-primary/20 backdrop-blur-md rounded-lg flex items-center justify-center border border-primary/30">
-              <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                terminal
-              </span>
-            </div>
-            <span className="text-2xl font-bold tracking-tighter">devCache</span>
+          <Link href="/" className="mb-20 hover:opacity-80 transition-opacity inline-flex">
+            <DevCacheLogo size="lg" theme="dark" />
           </Link>
 
           {/* Content */}
@@ -137,18 +135,13 @@ function LoginForm() {
       </aside>
 
       {/* Right Side - Form */}
-      <main className="w-full lg:w-1/2 flex flex-col bg-slate-50 relative">
+      <main className="w-full lg:w-1/2 flex flex-col bg-slate-50 dark:bg-surface-container-low relative">
         {/* Mobile Logo */}
-        <div className="lg:hidden p-8 flex justify-between items-center bg-white border-b border-slate-200">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-[#494bd6] rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
-                terminal
-              </span>
-            </div>
-            <span className="text-xl font-bold tracking-tighter text-slate-900">devCache</span>
+        <div className="lg:hidden p-8 flex justify-between items-center bg-white border-b border-slate-200 dark:bg-surface-container dark:border-white/[0.09]">
+          <Link href="/" className="hover:opacity-80 transition-opacity inline-flex">
+            <DevCacheLogo size="sm" theme={resolvedTheme === 'dark' ? 'dark' : 'light'} />
           </Link>
-          <Link href="/docs" className="text-sm font-semibold text-[#494bd6]">
+          <Link href="/docs" className="text-sm font-semibold text-[#494bd6] dark:text-[#7c7ff5]">
             Docs
           </Link>
         </div>
@@ -156,8 +149,8 @@ function LoginForm() {
         <div className="flex-grow flex items-center justify-center p-8 md:p-16 lg:p-24">
           <div className="w-full max-w-md">
             <div className="mb-10">
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Sign In</h2>
-              <p className="text-slate-500 font-medium">Welcome back to your agent workspace.</p>
+              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 dark:text-on-surface">Sign In</h2>
+              <p className="text-slate-500 font-medium dark:text-on-surface-variant">Welcome back to your agent workspace.</p>
             </div>
 
             {/* OAuth Buttons */}
@@ -168,17 +161,17 @@ function LoginForm() {
 
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
+                <div className="w-full border-t border-slate-200 dark:border-white/[0.09]" />
               </div>
               <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                <span className="px-4 bg-slate-50 text-slate-400 font-bold">Or use email</span>
+                <span className="px-4 bg-slate-50 text-slate-400 font-bold dark:bg-surface-container-low dark:text-on-surface-variant">Or use email</span>
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">
+                <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1 dark:text-on-surface-variant">
                   Email Address
                 </label>
                 <input
@@ -187,7 +180,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="dev@example.com"
-                  className="w-full bg-white border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all"
+                  className="w-full bg-white border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all dark:bg-surface-container dark:border-white/[0.09] dark:focus:border-[#7c7ff5] dark:focus:ring-[#7c7ff5]/10 dark:text-on-surface dark:placeholder-on-surface-variant/50"
                   required
                 />
               </div>
@@ -195,10 +188,10 @@ function LoginForm() {
               {/* Password */}
               <div>
                 <div className="flex justify-between items-center mb-2 ml-1">
-                  <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-on-surface-variant">
                     Password
                   </label>
-                  <Link href="/forgot-password" className="text-[11px] font-bold text-[#494bd6] hover:underline">
+                  <Link href="/forgot-password" className="text-[11px] font-bold text-[#494bd6] hover:underline dark:text-[#7c7ff5]">
                     Forgot Password?
                   </Link>
                 </div>
@@ -208,7 +201,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-white border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all"
+                  className="w-full bg-white border-slate-200 focus:border-[#494bd6] focus:ring-4 focus:ring-[#494bd6]/10 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-300 transition-all dark:bg-surface-container dark:border-white/[0.09] dark:focus:border-[#7c7ff5] dark:focus:ring-[#7c7ff5]/10 dark:text-on-surface dark:placeholder-on-surface-variant/50"
                   required
                 />
               </div>
@@ -217,7 +210,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-[#494bd6] hover:bg-[#2f2ebe] text-white font-bold py-4 px-4 rounded-xl shadow-xl shadow-[#494bd6]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#494bd6] hover:bg-[#2f2ebe] text-white font-bold py-4 px-4 rounded-xl shadow-xl shadow-[#494bd6]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-[#7c7ff5] dark:hover:bg-[#9b9df7] dark:text-[#0d1121] dark:shadow-[#7c7ff5]/10"
                 >
                   <span>{isLoading ? 'Signing in...' : 'Sign In'}</span>
                   <span className="material-symbols-outlined text-xl">arrow_right_alt</span>
@@ -226,9 +219,9 @@ function LoginForm() {
             </form>
 
             <div className="mt-10 text-center">
-              <p className="text-sm text-slate-500 font-medium">
+              <p className="text-sm text-slate-500 font-medium dark:text-on-surface-variant">
                 New to devCache?{' '}
-                <Link href="/signup" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold">
+                <Link href="/signup" className="text-[#494bd6] hover:underline transition-colors ml-1 font-bold dark:text-[#7c7ff5]">
                   Create an account
                 </Link>
               </p>
@@ -237,13 +230,13 @@ function LoginForm() {
         </div>
 
         {/* Footer */}
-        <footer className="p-8 border-t border-slate-200 bg-white">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+        <footer className="p-8 border-t border-slate-200 bg-white dark:border-white/[0.09] dark:bg-surface-container">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest dark:text-on-surface-variant">
             <div>© 2024 DEVHUB. ALL RIGHTS RESERVED.</div>
             <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-[#494bd6]">Privacy</Link>
-              <Link href="/terms" className="hover:text-[#494bd6]">Terms</Link>
-              <Link href="/support" className="hover:text-[#494bd6]">Support</Link>
+              <Link href="/privacy" className="hover:text-[#494bd6] dark:hover:text-[#7c7ff5]">Privacy</Link>
+              <Link href="/terms" className="hover:text-[#494bd6] dark:hover:text-[#7c7ff5]">Terms</Link>
+              <Link href="/support" className="hover:text-[#494bd6] dark:hover:text-[#7c7ff5]">Support</Link>
             </div>
           </div>
         </footer>
@@ -254,7 +247,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center dark:bg-surface-container-low dark:text-on-surface-variant">Loading...</div>}>
       <LoginForm />
     </Suspense>
   )

@@ -250,7 +250,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
       <div className="bg-white p-8 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)]">
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-start gap-4 flex-1">
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#575992] to-[#6063ee] flex items-center justify-center text-white shadow-lg">
+            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#575992] to-[#4338ca] flex items-center justify-center text-white shadow-lg">
               <FileText className="h-8 w-8" />
             </div>
             <div className="flex-1">
@@ -270,7 +270,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
             {(file.content || attachmentContent) && (
               <button
                 onClick={() => setIsPublishModalOpen(true)}
-                className="p-2.5 bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 px-4"
+                className="p-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 px-4"
                 title="Publish to Marketplace"
               >
                 <Upload className="h-4 w-4" />
@@ -311,7 +311,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
               <span
                 key={index}
                 className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider text-white shadow-md"
-                style={{ backgroundColor: tagColors[tag] || '#4648d4' }}
+                style={{ backgroundColor: tagColors[tag] || '#4f46e5' }}
               >
                 {tag}
               </span>
@@ -326,7 +326,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
           onClick={() => setViewMode('rendered')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
             viewMode === 'rendered'
-              ? 'bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white shadow-lg'
+              ? 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg'
               : 'text-[#464554] hover:bg-[#f2f4f6]'
           }`}
         >
@@ -337,7 +337,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
           onClick={() => setViewMode('source')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
             viewMode === 'source'
-              ? 'bg-gradient-to-br from-[#4648d4] to-[#6063ee] text-white shadow-lg'
+              ? 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg'
               : 'text-[#464554] hover:bg-[#f2f4f6]'
           }`}
         >
@@ -366,7 +366,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
         <div className="p-8">
           {isLoadingContent ? (
             <div className="text-center py-12">
-              <div className="inline-block w-8 h-8 border-4 border-[#4648d4] border-t-transparent rounded-full animate-spin mb-4"></div>
+              <div className="inline-block w-8 h-8 border-4 border-[#4f46e5] border-t-transparent rounded-full animate-spin mb-4"></div>
               <p className="text-[#464554]">Loading content...</p>
             </div>
           ) : viewMode === 'rendered' ? (
@@ -452,7 +452,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center">
-                    <FileText className="h-5 w-5 text-[#4648d4]" />
+                    <FileText className="h-5 w-5 text-[#4f46e5]" />
                   </div>
                   <div>
                     <p className="font-semibold text-[#191c1e]">{attachment.file_name}</p>
@@ -464,7 +464,7 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleDownloadAttachment(attachment)}
-                    className="p-2 hover:bg-white rounded-lg transition-colors text-[#4648d4]"
+                    className="p-2 hover:bg-white rounded-lg transition-colors text-[#4f46e5]"
                   >
                     <Download className="h-4 w-4" />
                   </button>

@@ -20,7 +20,7 @@ export function TokenUsagePopover({ sessionId, totalCredits }: TokenUsagePopover
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="text-xs text-[#9ca3af] hover:text-[#4f46e5] transition-colors underline decoration-dotted">
+        <button className="text-xs text-[#9ca3af] dark:text-on-surface-variant hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors underline decoration-dotted">
           details
         </button>
       </PopoverTrigger>
@@ -41,40 +41,40 @@ export function TokenUsagePopover({ sessionId, totalCredits }: TokenUsagePopover
           ) : usage ? (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-surface-container-high border border-gray-200 dark:border-white/[0.09]">
                   <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="h-3 w-3 text-gray-500" />
-                    <span className="text-xs font-medium text-gray-700">Input</span>
+                    <TrendingUp className="h-3 w-3 text-gray-500 dark:text-on-surface-variant" />
+                    <span className="text-xs font-medium text-gray-700 dark:text-on-surface">Input</span>
                   </div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-900 dark:text-on-surface">
                     {formatNumber(usage.totalTokensInput)}
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-surface-container-high border border-gray-200 dark:border-white/[0.09]">
                   <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="h-3 w-3 text-gray-500" />
-                    <span className="text-xs font-medium text-gray-700">Output</span>
+                    <TrendingUp className="h-3 w-3 text-gray-500 dark:text-on-surface-variant" />
+                    <span className="text-xs font-medium text-gray-700 dark:text-on-surface">Output</span>
                   </div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-900 dark:text-on-surface">
                     {formatNumber(usage.totalTokensOutput)}
                   </p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+              <div className="p-3 rounded-lg bg-gray-50 dark:bg-surface-container-high border border-gray-200 dark:border-white/[0.09]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Total Cost</span>
+                    <DollarSign className="h-4 w-4 text-gray-500 dark:text-on-surface-variant" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-on-surface">Total Cost</span>
                   </div>
-                  <p className="text-xl font-bold text-gray-900">
+                  <p className="text-xl font-bold text-gray-900 dark:text-on-surface">
                     ${usage.totalCost}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t dark:border-white/[0.09]">
                 <p className="text-xs text-muted-foreground mb-2">
                   Recent messages ({usage.messages.length})
                 </p>

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { CLIAuthForm } from '@/components/auth/CLIAuthForm';
 import { CLIAuthConfirmation } from '@/components/auth/CLIAuthConfirmation';
 import Link from 'next/link';
+import { DevCacheLogo } from '@/components/ui/DevCacheLogo';
 
 export default async function CLIAuthPage({
   searchParams,
@@ -30,13 +31,8 @@ export default async function CLIAuthPage({
 
           <div className="relative z-10">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 mb-20 hover:opacity-80 transition-opacity">
-              <div className="w-10 h-10 bg-primary/20 backdrop-blur-md rounded-lg flex items-center justify-center border border-primary/30">
-                <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  terminal
-                </span>
-              </div>
-              <span className="text-2xl font-bold tracking-tighter">devCache</span>
+            <Link href="/" className="mb-20 hover:opacity-80 transition-opacity inline-flex">
+              <DevCacheLogo size="lg" theme="dark" />
             </Link>
 
             {/* Content */}
@@ -124,13 +120,8 @@ export default async function CLIAuthPage({
 
         <div className="relative z-10">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 mb-20 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-primary/20 backdrop-blur-md rounded-lg flex items-center justify-center border border-primary/30">
-              <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                terminal
-              </span>
-            </div>
-            <span className="text-2xl font-bold tracking-tighter">devCache</span>
+          <Link href="/" className="mb-20 hover:opacity-80 transition-opacity inline-flex">
+            <DevCacheLogo size="lg" theme="dark" />
           </Link>
 
           {/* Content */}
@@ -195,13 +186,8 @@ export default async function CLIAuthPage({
       <main className="w-full lg:w-1/2 flex flex-col bg-slate-50 relative">
         {/* Mobile Logo */}
         <div className="lg:hidden p-8 flex justify-between items-center bg-white border-b border-slate-200">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-[#494bd6] rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
-                terminal
-              </span>
-            </div>
-            <span className="text-xl font-bold tracking-tighter text-slate-900">devCache</span>
+          <Link href="/" className="hover:opacity-80 transition-opacity inline-flex">
+            <DevCacheLogo size="sm" theme="light" />
           </Link>
         </div>
 
