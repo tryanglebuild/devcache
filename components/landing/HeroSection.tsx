@@ -25,7 +25,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
         </div>
         
         <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-8 max-w-4xl mx-auto">
-          Build with AI Agents <br /><span className="text-indigo-600">That Know Your Domain</span>
+          Build with AI Agents <br /><span className="text-gray-700">That Know Your Domain</span>
         </h1>
         
         <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 leading-relaxed mb-12">
@@ -47,15 +47,15 @@ export default function HeroSection({ stats }: HeroSectionProps) {
         {totalAgents > 0 && (
           <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-indigo-600 text-lg">check_circle</span>
+              <span className="material-symbols-outlined text-gray-500 text-lg">check_circle</span>
               <span>{formatCount(totalAgents)} Agents</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-indigo-600 text-lg">star</span>
+              <span className="material-symbols-outlined text-gray-500 text-lg">star</span>
               <span>{avgRating}★ Average</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-indigo-600 text-lg">download</span>
+              <span className="material-symbols-outlined text-gray-500 text-lg">download</span>
               <span>{formatCount(totalDownloads)} Downloads</span>
             </div>
           </div>

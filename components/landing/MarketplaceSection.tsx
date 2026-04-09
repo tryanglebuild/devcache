@@ -7,15 +7,15 @@ interface MarketplaceSectionProps {
 }
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  design:   { bg: 'bg-purple-100', text: 'text-purple-600', border: 'border-purple-100', icon: 'palette' },
-  product:  { bg: 'bg-emerald-100', text: 'text-emerald-600', border: 'border-emerald-100', icon: 'lightbulb' },
-  qa:       { bg: 'bg-rose-100', text: 'text-rose-600', border: 'border-rose-100', icon: 'bug_report' },
-  security: { bg: 'bg-red-100', text: 'text-red-600', border: 'border-red-100', icon: 'security' },
-  data:     { bg: 'bg-cyan-100', text: 'text-cyan-600', border: 'border-cyan-100', icon: 'database' },
-  devops:   { bg: 'bg-orange-100', text: 'text-orange-600', border: 'border-orange-100', icon: 'deployed_code' },
-  backend:  { bg: 'bg-indigo-100', text: 'text-indigo-600', border: 'border-indigo-100', icon: 'smart_toy' },
-  frontend: { bg: 'bg-blue-100', text: 'text-blue-600', border: 'border-blue-100', icon: 'smart_toy' },
-  default:  { bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-200', icon: 'smart_toy' },
+  design:   { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'palette' },
+  product:  { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'lightbulb' },
+  qa:       { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'bug_report' },
+  security: { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'security' },
+  data:     { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'database' },
+  devops:   { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'deployed_code' },
+  backend:  { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'smart_toy' },
+  frontend: { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'smart_toy' },
+  default:  { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', icon: 'smart_toy' },
 }
 
 function formatDownloads(n: number): string {
@@ -55,7 +55,7 @@ export default function MarketplaceSection({ agents = [], stats }: MarketplaceSe
                         <span className={`material-symbols-outlined ${cat.text} text-3xl`}>{cat.icon}</span>
                       </div>
                       <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-slate-200">
-                        <span className="material-symbols-outlined text-yellow-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                        <span className="material-symbols-outlined text-gray-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                         <span className="text-sm font-bold text-slate-900">{(agent.rating_average || 0).toFixed(1)}</span>
                       </div>
                     </div>
@@ -103,8 +103,8 @@ export default function MarketplaceSection({ agents = [], stats }: MarketplaceSe
           </>
         ) : (
           <div className="text-center py-16">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
-              <span className="material-symbols-outlined text-indigo-400 text-3xl">smart_toy</span>
+            <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-gray-400 text-3xl">smart_toy</span>
             </div>
             <p className="text-slate-500 mb-6">No agents available yet. Be the first to create one!</p>
             <Link

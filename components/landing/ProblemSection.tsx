@@ -21,7 +21,7 @@ export default function ProblemSection() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-600 mb-8">
               <span className="material-symbols-outlined text-2xl">refresh</span>
             </div>
             <h3 className="text-xl font-bold mb-4 text-slate-900">Repetitive Work</h3>
@@ -31,7 +31,7 @@ export default function ProblemSection() {
           </div>
           
           <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-600 mb-8">
               <span className="material-symbols-outlined text-2xl">psychology_alt</span>
             </div>
             <h3 className="text-xl font-bold mb-4 text-slate-900">Lost Expertise</h3>
@@ -41,7 +41,7 @@ export default function ProblemSection() {
           </div>
           
           <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-600 mb-8">
               <span className="material-symbols-outlined text-2xl">speed</span>
             </div>
             <h3 className="text-xl font-bold mb-4 text-slate-900">Inconsistent Standards</h3>

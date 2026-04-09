@@ -143,7 +143,7 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
       <button
         onClick={handleExecute}
         disabled={isExecuting}
-        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-br from-[#10b981] to-[#059669] text-white rounded-xl font-bold shadow-lg shadow-[#10b981]/20 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gray-900 text-white rounded-xl font-bold shadow-lg hover:bg-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isExecuting ? (
           <>
@@ -170,7 +170,7 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
       {result && (
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-[#10b981]" />
+            <CheckCircle className="w-5 h-5 text-gray-500" />
             <h3 className="text-lg font-bold text-[#191c1e]">
               Execution Result
             </h3>
@@ -185,10 +185,10 @@ export function AgentExecutor({ agent, onExecutionComplete }: AgentExecutorProps
 
       {/* Error Display */}
       {error && (
-        <div className="bg-white rounded-xl p-6 shadow-sm border-2 border-[#ba1a1a]/20">
+          <div className="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-200">
           <div className="flex items-center gap-2 mb-4">
-            <XCircle className="w-5 h-5 text-[#ba1a1a]" />
-            <h3 className="text-lg font-bold text-[#ba1a1a]">
+            <XCircle className="w-5 h-5 text-gray-500" />
+            <h3 className="text-lg font-bold text-gray-700">
               Execution Failed
             </h3>
           </div>

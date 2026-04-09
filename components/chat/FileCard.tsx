@@ -20,10 +20,10 @@ export function FileCard({ fileId, fileName, description, projectName }: FileCar
         onClick={() => setShowPreview(true)}
         className="block group w-full text-left"
       >
-        <div className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition-all bg-white">
+          <div className="border border-gray-200 rounded-lg p-4 hover:border-gray-400 hover:shadow-md transition-all bg-white">
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-              <FileText className="w-5 h-5 text-blue-600" />
+            <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+              <FileText className="w-5 h-5 text-gray-500" />
             </div>
             
             <div className="flex-1 min-w-0">

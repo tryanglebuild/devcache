@@ -29,7 +29,7 @@ export function SupportPageClient({ isAuthenticated }: SupportPageClientProps) {
             <h1 className="text-5xl font-extrabold mb-4 tracking-tight">
               How can we help you?
             </h1>
-            <p className="text-xl text-indigo-100">
+            <p className="text-xl text-gray-200">
               Find tutorials, guides, and answers to common questions about DevCache
             </p>
           </div>
@@ -105,7 +105,7 @@ export function SupportPageClient({ isAuthenticated }: SupportPageClientProps) {
 
         {/* Contact Support Section */}
         <div className="mt-20 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-12 text-center border border-slate-700">
-          <span className="material-symbols-outlined text-indigo-400 text-5xl mb-6 inline-block">
+          <span className="material-symbols-outlined text-gray-400 text-5xl mb-6 inline-block">
             support_agent
           </span>
           <h2 className="text-3xl font-extrabold text-white mb-4">
@@ -124,7 +124,7 @@ export function SupportPageClient({ isAuthenticated }: SupportPageClientProps) {
             </a>
             <a
               href="#"
-              className="inline-flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-500 transition-all shadow-lg"
+              className="inline-flex items-center gap-2 bg-gray-700 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-600 transition-all shadow-lg"
             >
               <span className="material-symbols-outlined">forum</span>
               Join Discord
@@ -149,7 +149,7 @@ function SidebarNavItem({ icon, label, isActive, onClick }: {
       className={cn(
         'w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all text-left',
         isActive
-          ? 'bg-indigo-50 text-indigo-600 font-semibold shadow-sm'
+          ? 'bg-gray-100 text-gray-900 font-semibold shadow-sm'
           : 'text-slate-600 hover:bg-slate-50'
       )}
     >
@@ -347,11 +347,11 @@ function QuickStartCard({ icon, title, description, href, time }: {
     <Link href={href}>
       <Card className="p-6 hover:shadow-lg transition-all border-slate-200 bg-white rounded-2xl group cursor-pointer h-full">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 group-hover:bg-gray-200 transition-colors flex-shrink-0">
             <span className="material-symbols-outlined text-xl">{icon}</span>
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
+            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-gray-700 transition-colors">
               {title}
             </h3>
             <p className="text-slate-600 mb-3 leading-relaxed text-sm">
@@ -378,7 +378,7 @@ function FeatureCard({ icon, name, description, topics }: {
   return (
     <Card className="p-6 border-slate-200 bg-white rounded-2xl hover:shadow-lg transition-all h-full">
       <div className="flex items-start gap-4 mb-4">
-        <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 flex-shrink-0">
           <span className="material-symbols-outlined text-xl">{icon}</span>
         </div>
         <div>
@@ -408,16 +408,16 @@ function TutorialCard({ level, icon, title, description, duration, steps, href }
   href: string
 }) {
   const levelColors = {
-    beginner: 'bg-green-50 text-green-700 border-green-200',
-    intermediate: 'bg-blue-50 text-blue-700 border-blue-200',
-    advanced: 'bg-purple-50 text-purple-700 border-purple-200'
+    beginner: 'bg-gray-100 text-gray-700 border-gray-200',
+    intermediate: 'bg-gray-100 text-gray-700 border-gray-200',
+    advanced: 'bg-gray-100 text-gray-700 border-gray-200'
   }
 
   return (
     <Link href={href}>
       <Card className="p-6 border-slate-200 bg-white rounded-2xl hover:shadow-lg transition-all cursor-pointer group">
         <div className="flex items-start gap-6">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors flex-shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-600 group-hover:bg-gray-200 transition-colors flex-shrink-0">
             <span className="material-symbols-outlined text-2xl">{icon}</span>
           </div>
           <div className="flex-1">
@@ -434,7 +434,7 @@ function TutorialCard({ level, icon, title, description, duration, steps, href }
                 {steps} steps
               </span>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
+            <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-gray-700 transition-colors">
               {title}
             </h3>
             <p className="text-slate-600 leading-relaxed text-sm">

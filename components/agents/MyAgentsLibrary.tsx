@@ -88,14 +88,8 @@ export function MyAgentsLibrary({
                   className="w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all text-left"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{
-                        backgroundColor: '#4648d415',
-                        color: '#4648d4'
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-sm">
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-sm text-gray-500">
                         smart_toy
                       </span>
                     </div>
@@ -108,7 +102,7 @@ export function MyAgentsLibrary({
                       </p>
                     </div>
                     {agent.is_favorite && (
-                      <Star className="w-4 h-4 fill-[#904900] text-[#904900] flex-shrink-0" />
+                      <Star className="w-4 h-4 fill-gray-400 text-gray-400 flex-shrink-0" />
                     )}
                   </div>
                 </button>

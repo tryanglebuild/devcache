@@ -12,7 +12,7 @@ export default function CapabilitiesSection() {
             </p>
             <div className="space-y-8">
               <div className="flex gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-indigo-600">
+                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-gray-600">
                   <span className="material-symbols-outlined text-xl">psychology</span>
                 </div>
                 <div>
@@ -23,7 +23,7 @@ export default function CapabilitiesSection() {
                 </div>
               </div>
               <div className="flex gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-indigo-600">
+                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-slate-200 text-gray-600">
                   <span className="material-symbols-outlined text-xl">store</span>
                 </div>
                 <div>
@@ -50,15 +50,15 @@ export default function CapabilitiesSection() {
                 </span>
               </div>
               <div className="w-full space-y-5">
-                <div className="flex items-center gap-5 p-5 rounded-2xl bg-indigo-50/50 border border-indigo-100">
-                  <span className="material-symbols-outlined text-indigo-600" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <div className="flex items-center gap-5 p-5 rounded-2xl bg-gray-50 border border-gray-100">
+                  <span className="material-symbols-outlined text-gray-600" style={{ fontVariationSettings: "'FILL' 1" }}>
                     smart_toy
                   </span>
                   <div className="flex-1">
                     <div className="text-slate-900 font-bold text-sm">Supabase Expert Agent</div>
                     <div className="text-slate-500 text-xs mt-1 flex items-center gap-2">
                       <span className="flex items-center gap-0.5">
-                        <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                        <span className="material-symbols-outlined text-[10px] text-gray-400">star</span>
                         4.9
                       </span>
                       • 5.2K downloads
@@ -71,7 +71,7 @@ export default function CapabilitiesSection() {
                     <div className="text-slate-900 font-bold text-sm">Next.js Performance</div>
                     <div className="text-slate-500 text-xs mt-1 flex items-center gap-2">
                       <span className="flex items-center gap-0.5">
-                        <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                        <span className="material-symbols-outlined text-[10px] text-gray-400">star</span>
                         4.8
                       </span>
                       • 3.8K downloads
@@ -84,7 +84,7 @@ export default function CapabilitiesSection() {
                     <div className="text-slate-900 font-bold text-sm">Full-Stack Orchestrator</div>
                     <div className="text-slate-500 text-xs mt-1 flex items-center gap-2">
                       <span className="flex items-center gap-0.5">
-                        <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                        <span className="material-symbols-outlined text-[10px] text-gray-400">star</span>
                         4.8
                       </span>
                       • 4.3K downloads

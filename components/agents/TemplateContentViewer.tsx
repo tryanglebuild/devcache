@@ -41,7 +41,7 @@ export function TemplateContentViewer({ content, viewMode }: TemplateContentView
           title="Copy content"
         >
           {copied ? (
-            <Check className="h-4 w-4 text-[#16a34a]" />
+            <Check className="h-4 w-4 text-gray-500" />
           ) : (
             <Copy className="h-4 w-4" />
           )}

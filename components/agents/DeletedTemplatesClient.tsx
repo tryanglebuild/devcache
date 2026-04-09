@@ -208,9 +208,7 @@ export function DeletedTemplatesClient() {
                           </p>
                         </div>
                       </div>
-                      <div className={`text-xs font-medium ${
-                        isExpiringSoon ? 'text-red-600' : 'text-amber-600'
-                      }`}>
+                      <div className="text-xs font-medium text-gray-500">
                         {template.days_remaining === 0 
                           ? 'Expires today' 
                           : `${template.days_remaining}d remaining`}
@@ -300,7 +298,7 @@ export function DeletedTemplatesClient() {
                 <Button
                   onClick={() => setActionType('permanent')}
                   variant="outline"
-                  className="border-red-300 text-red-600 hover:bg-red-50"
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50"
                 >
                   <span className="material-symbols-outlined text-lg mr-2">
                     delete_forever
@@ -364,7 +362,7 @@ export function DeletedTemplatesClient() {
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-red-600 text-xl">
+                  <span className="material-symbols-outlined text-gray-500 text-xl">
                     delete_forever
                   </span>
                   Permanently Delete
@@ -382,7 +380,7 @@ export function DeletedTemplatesClient() {
               ) : (
                 <>
                   Permanently delete <strong className="text-[#191c1e] font-semibold">{selectedTemplate?.name}</strong>?
-                  <span className="block mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 font-medium">
+                  <span className="block mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 font-medium">
                     This action cannot be undone. The template will be lost forever.
                   </span>
                 </>

@@ -94,8 +94,8 @@ export function RatingSection({
                 <Star
                   className={`w-8 h-8 ${
                     star <= selectedRating
-                      ? 'fill-[#fbbf24] text-[#fbbf24]'
-                      : 'text-[#c7c4d7]'
+                      ? 'fill-gray-700 text-gray-700'
+                      : 'text-gray-300'
                   }`}
                 />
               </button>
@@ -149,8 +149,8 @@ export function RatingSection({
                               key={star}
                               className={`w-4 h-4 ${
                                 star <= rating.rating
-                                  ? 'fill-[#fbbf24] text-[#fbbf24]'
-                                  : 'text-[#c7c4d7]'
+                                  ? 'fill-gray-700 text-gray-700'
+                                  : 'text-gray-300'
                               }`}
                             />
                           ))}

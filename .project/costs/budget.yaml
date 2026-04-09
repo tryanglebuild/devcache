@@ -1,0 +1,40 @@
+# AI Usage Budget — DevCache
+# GitHub Copilot Pro+ plan (premium request billing)
+
+plan:
+  name: "GitHub Copilot Pro+"
+  monthly_premium_requests: 1500
+  overage_rate_per_request: 0.04  # USD per request above limit
+
+models:
+  # Multipliers relative to 1x (Sonnet base)
+  claude-opus-4.6:
+    opencode_id: "github-copilot/claude-opus-4.6"
+    multiplier: 3
+    use_case: "Orchestration, planning, architecture decisions"
+  claude-sonnet-4.6:
+    opencode_id: "github-copilot/claude-sonnet-4.6"
+    multiplier: 1
+    use_case: "Implementation, coding, reviews"
+  claude-haiku-4.5:
+    opencode_id: "github-copilot/claude-haiku-4.5"
+    multiplier: 0.33
+    use_case: "Search, exploration, quick tasks"
+  gpt-4.1:
+    opencode_id: "github-copilot/gpt-4.1"
+    multiplier: 0
+    use_case: "Cost tracking, linting, zero-cost tasks"
+  gpt-4.1-mini:
+    opencode_id: "github-copilot/gpt-4.1-mini"
+    multiplier: 0
+    use_case: "Simple tasks, completely free"
+
+alerts:
+  warn_at_percent: 75   # Warn when 75% of budget used
+  stop_at_percent: 95   # Alert when 95% of budget used
+
+optimization_strategy:
+  orchestrator: "Use opus sparingly — only for planning and delegation"
+  implementation: "Use sonnet as the default for coding tasks"
+  exploration: "Use haiku for file reads, searches, discovery"
+  utility: "Use gpt-4.1 for cost tracking, formatting, linting"

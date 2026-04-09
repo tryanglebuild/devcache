@@ -134,8 +134,8 @@ export function ResourcePreviewModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-              <FileText className="w-5 h-5 text-blue-600" />
+            <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+              <FileText className="w-5 h-5 text-gray-500" />
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="text-lg font-semibold text-gray-900 truncate">
@@ -171,7 +171,7 @@ export function ResourcePreviewModal({
         <div className="flex-1 overflow-y-auto p-6">
           {loading && (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
             </div>
           )}
 
@@ -196,7 +196,7 @@ export function ResourcePreviewModal({
                   {data.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded"
+                      className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
                     >
                       {tag}
                     </span>
@@ -283,7 +283,7 @@ export function ResourcePreviewModal({
           </button>
           <button
             onClick={handleViewFull}
-            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-gray-900 text-white hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
           >
             Open Full View
             <ExternalLink className="w-4 h-4" />
@@ -321,7 +321,7 @@ function AttachmentPreview({ attachment }: { attachment: any }) {
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 transition-colors">
+    <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-gray-400 transition-colors">
       {/* Image Preview */}
       {isImage && (
         <div className="relative w-full bg-gray-100">
@@ -372,7 +372,7 @@ function AttachmentPreview({ attachment }: { attachment: any }) {
                       {String(children).replace(/\n$/, '')}
                     </SyntaxHighlighter>
                   ) : (
-                    <code className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
+                    <code className="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
                       {children}
                     </code>
                   )
@@ -384,8 +384,8 @@ function AttachmentPreview({ attachment }: { attachment: any }) {
                 ul: ({ children }: any) => <ul className="list-disc pl-5 mb-3 space-y-1">{children}</ul>,
                 ol: ({ children }: any) => <ol className="list-decimal pl-5 mb-3 space-y-1">{children}</ol>,
                 li: ({ children }: any) => <li className="text-gray-700">{children}</li>,
-                a: ({ href, children }: any) => <a href={href} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>,
-                blockquote: ({ children }: any) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 my-3">{children}</blockquote>,
+                a: ({ href, children }: any) => <a href={href} className="text-gray-700 hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                blockquote: ({ children }: any) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-3">{children}</blockquote>,
                 strong: ({ children }: any) => <strong className="font-semibold text-gray-900">{children}</strong>,
               }}
             >
@@ -400,7 +400,7 @@ function AttachmentPreview({ attachment }: { attachment: any }) {
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className="flex-shrink-0">
             {isImage ? (
-              <ImageIcon className="w-5 h-5 text-blue-600" />
+              <ImageIcon className="w-5 h-5 text-gray-500" />
             ) : (
               <File className="w-5 h-5 text-gray-600" />
             )}

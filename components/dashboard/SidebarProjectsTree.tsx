@@ -313,7 +313,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
           <span className="truncate flex-1 text-left text-[13px]">{node.item.name}</span>
           
           {node.item.is_favorite && (
-            <Star className="h-3 w-3 shrink-0 text-amber-500 fill-amber-500" />
+            <Star className="h-3 w-3 shrink-0 text-gray-400 fill-gray-400" />
           )}
         </button>
 

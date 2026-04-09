@@ -197,12 +197,12 @@ export function DevSettings() {
                       </div>
                     </div>
                     {stats.project_items_pending > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
                         <AlertCircle className="h-3 w-3" />
                         {stats.project_items_pending} pending
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-green-600">
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
                         <CheckCircle2 className="h-3 w-3" />
                         All synced
                       </div>
@@ -223,12 +223,12 @@ export function DevSettings() {
                       </div>
                     </div>
                     {stats.agents_pending > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
                         <AlertCircle className="h-3 w-3" />
                         {stats.agents_pending} pending
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-green-600">
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
                         <CheckCircle2 className="h-3 w-3" />
                         All synced
                       </div>
@@ -329,12 +329,12 @@ export function DevSettings() {
                   {/* Icon */}
                   <div className="shrink-0">
                     {item.type === 'agent' ? (
-                      <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                        <Database className="h-4 w-4 text-purple-600" />
+                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <Database className="h-4 w-4 text-gray-500" />
                       </div>
                     ) : (
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                        <FileText className="h-4 w-4 text-blue-600" />
+                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <FileText className="h-4 w-4 text-gray-500" />
                       </div>
                     )}
                   </div>
@@ -355,13 +355,13 @@ export function DevSettings() {
                       <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
                     )}
                     {item.status === 'processing' && (
-                      <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+                      <Loader2 className="h-5 w-5 text-gray-500 animate-spin" />
                     )}
                     {item.status === 'success' && (
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      <CheckCircle2 className="h-5 w-5 text-gray-500" />
                     )}
                     {item.status === 'error' && (
-                      <AlertCircle className="h-5 w-5 text-red-600" />
+                      <AlertCircle className="h-5 w-5 text-gray-500" />
                     )}
                   </div>
                 </div>
@@ -372,9 +372,9 @@ export function DevSettings() {
       )}
 
       {/* Info Card */}
-      <Card className="p-4 border-[#c7c4d7]/20 bg-blue-50/50">
+      <Card className="p-4 border-[#c7c4d7]/20 bg-gray-50">
         <div className="flex gap-3">
-          <div className="text-blue-600 shrink-0">
+          <div className="text-gray-500 shrink-0">
             <AlertCircle className="h-5 w-5" />
           </div>
           <div className="text-sm text-[#464554]">

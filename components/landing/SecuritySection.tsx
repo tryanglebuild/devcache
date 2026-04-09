@@ -3,7 +3,7 @@ export default function SecuritySection() {
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="bg-indigo-50 border border-indigo-100 rounded-[3rem] px-8 py-20 text-center">
-          <span className="material-symbols-outlined text-indigo-600 text-6xl mb-8" style={{ fontVariationSettings: "'FILL' 1" }}>
+          <span className="material-symbols-outlined text-gray-600 text-6xl mb-8" style={{ fontVariationSettings: "'FILL' 1" }}>
             verified_user
           </span>
           <h2 className="text-4xl font-extrabold text-slate-900 mb-8">Secure & Trustworthy</h2>

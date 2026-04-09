@@ -39,9 +39,9 @@ export function TemplateMetadata({ createdAt, deletedAt, expiresAt }: TemplateMe
         
         {expiresAt && (
           <div className="flex items-center gap-2 text-sm">
-            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertCircle className="h-4 w-4 text-gray-500" />
             <span className="text-[#464554]">Expires:</span>
-            <span className="font-semibold text-red-600">
+            <span className="font-semibold text-gray-700">
               {new Date(expiresAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',

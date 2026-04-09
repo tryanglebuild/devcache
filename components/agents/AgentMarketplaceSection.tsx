@@ -62,16 +62,11 @@ export function AgentMarketplaceSection({
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all border ${
                 selectedCategory === category.id
-                  ? 'text-white shadow-md'
-                  : 'bg-white text-[#464554] hover:bg-[#f2f4f6] shadow-sm'
+                  ? 'bg-gray-900 text-white border-gray-900 shadow-md'
+                  : 'bg-white text-[#464554] border-gray-200 hover:bg-gray-50 shadow-sm'
               }`}
-              style={
-                selectedCategory === category.id
-                  ? { backgroundColor: category.color }
-                  : undefined
-              }
             >
               <span className="material-symbols-outlined text-lg">{category.icon}</span>
               {category.label}

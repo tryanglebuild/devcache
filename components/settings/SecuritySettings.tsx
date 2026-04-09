@@ -211,12 +211,12 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <div className="flex items-start gap-3 p-5 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border border-indigo-200/50">
+          <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-xl border border-gray-200">
             <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
-              <span className="text-indigo-600 font-mono font-bold text-xs">#</span>
+              <span className="text-gray-600 font-mono font-bold text-xs">#</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-indigo-700 mb-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
                 Account ID
               </p>
               <p className="text-sm font-mono text-[#191c1e] break-all">
@@ -225,12 +225,12 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50">
+          <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-xl border border-gray-200">
             <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-blue-600 text-xl">calendar_today</span>
+              <span className="material-symbols-outlined text-gray-500 text-xl">calendar_today</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-blue-700 mb-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
                 Member Since
               </p>
               <p className="text-sm font-bold text-[#191c1e]">
@@ -243,12 +243,12 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-5 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-200/50">
+          <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-xl border border-gray-200">
             <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-emerald-600 text-xl">schedule</span>
+              <span className="material-symbols-outlined text-gray-500 text-xl">schedule</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
                 Last Sign In
               </p>
               <p className="text-sm font-bold text-[#191c1e]">

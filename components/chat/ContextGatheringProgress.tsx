@@ -24,12 +24,12 @@ export function ContextGatheringProgress({
   const totalQuestions = questionsAsked.length
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4 relative">
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative">
       {onDismiss && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 h-6 w-6 text-blue-600 hover:text-blue-800 hover:bg-blue-100"
+          className="absolute top-2 right-2 h-6 w-6 text-gray-500 hover:text-gray-700 hover:bg-gray-200"
           onClick={onDismiss}
         >
           <X className="h-4 w-4" />
@@ -37,8 +37,8 @@ export function ContextGatheringProgress({
       )}
 
       <div className="flex items-center gap-2 mb-3">
-        <Brain className="h-5 w-5 text-blue-600 animate-pulse" />
-        <h3 className="text-sm font-semibold text-blue-900">
+        <Brain className="h-5 w-5 text-gray-500 animate-pulse" />
+        <h3 className="text-sm font-semibold text-gray-700">
           Gathering context for better results
         </h3>
       </div>
@@ -48,7 +48,7 @@ export function ContextGatheringProgress({
       <div className="space-y-2 mb-3">
         {Object.entries(collectedInfo).map(([key, value]) => (
           <div key={key} className="flex items-center gap-2 text-xs">
-            <CheckCircle2 className="h-3 w-3 text-green-600 flex-shrink-0" />
+            <CheckCircle2 className="h-3 w-3 text-gray-500 flex-shrink-0" />
             <span className="text-gray-700">
               <span className="font-medium">{formatKey(key)}:</span>{' '}
               <span className="text-gray-900">{formatValue(value)}</span>
@@ -58,16 +58,16 @@ export function ContextGatheringProgress({
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <span className="text-blue-700">
+        <span className="text-gray-500">
           {questionsAnswered} of {totalQuestions} questions answered
         </span>
-        <span className="text-blue-600 font-medium">
+        <span className="text-gray-600 font-medium">
           {Math.round(confidenceScore * 100)}% confidence
         </span>
       </div>
 
       {progress >= 80 && (
-        <div className="mt-3 text-xs text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1">
+        <div className="mt-3 text-xs text-gray-600 bg-gray-100 border border-gray-200 rounded px-2 py-1">
           ✓ Almost there! One more detail and I'll find the perfect resource.
         </div>
       )}

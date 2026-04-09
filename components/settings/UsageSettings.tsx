@@ -81,57 +81,57 @@ export function UsageSettings() {
     <div className="space-y-6">
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-100">
+        <Card className="bg-white border-gray-200">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-blue-900">Total Tokens</CardTitle>
-              <Zap className="h-4 w-4 text-blue-600" />
+              <CardTitle className="text-sm font-medium text-gray-700">Total Tokens</CardTitle>
+              <Zap className="h-4 w-4 text-gray-500" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900">{formatNumber(stats.totalTokens)}</div>
-            <p className="text-xs text-blue-600 mt-1">
+            <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalTokens)}</div>
+            <p className="text-xs text-gray-500 mt-1">
               {formatNumber(stats.totalTokensInput)} in / {formatNumber(stats.totalTokensOutput)} out
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-white border-green-100">
+        <Card className="bg-white border-gray-200">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-green-900">Total Cost</CardTitle>
-              <DollarSign className="h-4 w-4 text-green-600" />
+              <CardTitle className="text-sm font-medium text-gray-700">Total Cost</CardTitle>
+              <DollarSign className="h-4 w-4 text-gray-500" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-900">${stats.totalCost}</div>
-            <p className="text-xs text-green-600 mt-1">USD</p>
+            <div className="text-2xl font-bold text-gray-900">${stats.totalCost}</div>
+            <p className="text-xs text-gray-500 mt-1">USD</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-white border-purple-100">
+        <Card className="bg-white border-gray-200">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-purple-900">Messages</CardTitle>
-              <MessageSquare className="h-4 w-4 text-purple-600" />
+              <CardTitle className="text-sm font-medium text-gray-700">Messages</CardTitle>
+              <MessageSquare className="h-4 w-4 text-gray-500" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-900">{formatNumber(stats.totalMessages)}</div>
-            <p className="text-xs text-purple-600 mt-1">AI responses</p>
+            <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalMessages)}</div>
+            <p className="text-xs text-gray-500 mt-1">AI responses</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-100">
+        <Card className="bg-white border-gray-200">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-orange-900">Sessions</CardTitle>
-              <Activity className="h-4 w-4 text-orange-600" />
+              <CardTitle className="text-sm font-medium text-gray-700">Sessions</CardTitle>
+              <Activity className="h-4 w-4 text-gray-500" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900">{formatNumber(stats.totalSessions)}</div>
-            <p className="text-xs text-orange-600 mt-1">Conversations</p>
+            <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalSessions)}</div>
+            <p className="text-xs text-gray-500 mt-1">Conversations</p>
           </CardContent>
         </Card>
       </div>

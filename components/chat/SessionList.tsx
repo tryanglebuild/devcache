@@ -236,10 +236,10 @@ export function SessionList({
                   {!isSelecting && (
                     <button
                       onClick={(e) => handleDeleteSingle(session.id, e)}
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 rounded transition-all flex-shrink-0"
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-100 rounded transition-all flex-shrink-0"
                       title="Delete conversation"
                     >
-                      <Trash2 className="w-3 h-3 text-red-500" />
+                      <Trash2 className="w-3 h-3 text-gray-400" />
                     </button>
                   )}
                 </div>

@@ -18,7 +18,7 @@ export function TemplateStatsGrid({
   return (
     <div className="grid grid-cols-4 gap-4">
       <div className="flex items-center gap-2">
-        <Star className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />
+        <Star className="w-5 h-5 fill-gray-400 text-gray-400" />
         <div>
           <p className="font-bold text-[#191c1e]">
             {ratingAverage?.toFixed(1) || '0.0'}
@@ -41,7 +41,7 @@ export function TemplateStatsGrid({
 
       <div className="flex items-center gap-2">
         {visibility === 'public' ? (
-          <Globe className="w-5 h-5 text-[#16a34a]" />
+          <Globe className="w-5 h-5 text-gray-500" />
         ) : (
           <Lock className="w-5 h-5 text-[#464554]" />
         )}

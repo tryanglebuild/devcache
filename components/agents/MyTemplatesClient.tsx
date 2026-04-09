@@ -233,11 +233,8 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
               >
                 {/* Header */}
                 <div className="flex items-start gap-3 mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-white shadow-md shrink-0"
-                    style={{ background: `linear-gradient(135deg, ${category.color} 0%, ${category.color}dd 100%)` }}
-                  >
-                    <span className="material-symbols-outlined text-2xl">
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-2xl text-gray-500">
                       {category.icon}
                     </span>
                   </div>
@@ -250,12 +247,12 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
                         {template.category}
                       </span>
                       {template.visibility === 'public' ? (
-                        <Globe className="h-3 w-3 text-[#16a34a]" />
+                        <Globe className="h-3 w-3 text-gray-400" />
                       ) : (
                         <Lock className="h-3 w-3 text-[#464554]" />
                       )}
                       {!template.is_owned && (
-                        <Bookmark className="h-3 w-3 text-[#4648d4]" />
+                        <Bookmark className="h-3 w-3 text-gray-400" />
                       )}
                     </div>
                   </div>
@@ -271,7 +268,7 @@ export function MyTemplatesClient({ initialTemplates, userId }: MyTemplatesClien
                 {/* Stats */}
                 <div className="flex items-center gap-4 text-sm mb-4">
                   <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-[#fbbf24] text-[#fbbf24]" />
+                    <Star className="h-4 w-4 fill-gray-400 text-gray-400" />
                     <span className="font-semibold text-[#191c1e]">
                       {template.rating_average?.toFixed(1) || '0.0'}
                     </span>

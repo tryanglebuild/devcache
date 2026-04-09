@@ -208,10 +208,10 @@ export function TemplateTagManager({
                         <button
                           onClick={() => setTagToRemove(tag.name)}
                           disabled={loading}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 opacity-0 group-hover:opacity-100"
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 opacity-0 group-hover:opacity-100"
                           aria-label={`Remove ${tag.name} tag`}
                         >
-                          <X className="h-4 w-4 text-red-500" />
+                          <X className="h-4 w-4 text-gray-500" />
                         </button>
                       </div>
                     ))}

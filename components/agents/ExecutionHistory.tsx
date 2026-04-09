@@ -59,11 +59,11 @@ export function ExecutionHistory({ agentId, limit = 10 }: ExecutionHistoryProps)
   const getStatusIcon = (status: Execution['status']) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-5 h-5 text-[#10b981]" />
+        return <CheckCircle className="w-5 h-5 text-gray-500" />
       case 'failed':
-        return <XCircle className="w-5 h-5 text-[#ba1a1a]" />
+        return <XCircle className="w-5 h-5 text-gray-500" />
       case 'running':
-        return <Loader2 className="w-5 h-5 text-[#4648d4] animate-spin" />
+        return <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
       default:
         return <Clock className="w-5 h-5 text-[#464554]" />
     }
@@ -72,11 +72,11 @@ export function ExecutionHistory({ agentId, limit = 10 }: ExecutionHistoryProps)
   const getStatusColor = (status: Execution['status']) => {
     switch (status) {
       case 'completed':
-        return 'bg-[#10b981]/10 text-[#10b981]'
+        return 'bg-gray-100 text-gray-600'
       case 'failed':
-        return 'bg-[#ba1a1a]/10 text-[#ba1a1a]'
+        return 'bg-gray-100 text-gray-600'
       case 'running':
-        return 'bg-[#4648d4]/10 text-[#4648d4]'
+        return 'bg-gray-100 text-gray-600'
       default:
         return 'bg-[#464554]/10 text-[#464554]'
     }

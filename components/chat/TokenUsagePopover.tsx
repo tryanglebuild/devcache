@@ -41,34 +41,34 @@ export function TokenUsagePopover({ sessionId, totalCredits }: TokenUsagePopover
           ) : usage ? (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
                   <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="h-3 w-3 text-blue-600" />
-                    <span className="text-xs font-medium text-blue-900">Input</span>
+                    <TrendingUp className="h-3 w-3 text-gray-500" />
+                    <span className="text-xs font-medium text-gray-700">Input</span>
                   </div>
-                  <p className="text-lg font-bold text-blue-900">
+                  <p className="text-lg font-bold text-gray-900">
                     {formatNumber(usage.totalTokensInput)}
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-purple-50 border border-purple-100">
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
                   <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="h-3 w-3 text-purple-600" />
-                    <span className="text-xs font-medium text-purple-900">Output</span>
+                    <TrendingUp className="h-3 w-3 text-gray-500" />
+                    <span className="text-xs font-medium text-gray-700">Output</span>
                   </div>
-                  <p className="text-lg font-bold text-purple-900">
+                  <p className="text-lg font-bold text-gray-900">
                     {formatNumber(usage.totalTokensOutput)}
                   </p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
+              <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium text-green-900">Total Cost</span>
+                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700">Total Cost</span>
                   </div>
-                  <p className="text-xl font-bold text-green-900">
+                  <p className="text-xl font-bold text-gray-900">
                     ${usage.totalCost}
                   </p>
                 </div>

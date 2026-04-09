@@ -27,7 +27,7 @@ export default function WorkflowSection({ agents = [] }: WorkflowSectionProps) {
                 Define your agent&apos;s expertise, behavioral rules, and capabilities. Use our intuitive editor or describe what you want in plain English.
               </p>
               <div className="inline-flex items-center gap-3 bg-white px-6 py-4 rounded-2xl border border-slate-200 text-sm font-bold shadow-sm">
-                <span className="material-symbols-outlined text-indigo-600">smart_toy</span>
+                <span className="material-symbols-outlined text-gray-600">smart_toy</span>
                 <span className="text-slate-800">New AI Agent</span>
               </div>
             </div>
@@ -86,13 +86,13 @@ export default function WorkflowSection({ agents = [] }: WorkflowSectionProps) {
             <div className="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
               {agents.map((agent) => (
                 <div key={agent.id} className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 flex items-center gap-4 hover:bg-slate-800 transition-colors">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                  <div className="w-12 h-12 rounded-xl bg-gray-700/50 flex items-center justify-center text-gray-400">
                     <span className="material-symbols-outlined text-2xl">smart_toy</span>
                   </div>
                   <div className="min-w-0">
                     <div className="text-white font-bold text-sm truncate">{agent.name}</div>
                     <div className="text-slate-500 text-xs flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[10px] text-yellow-400">star</span>
+                      <span className="material-symbols-outlined text-[10px] text-gray-400">star</span>
                       {(agent.rating_average || 0).toFixed(1)} • {agent.download_count || 0} downloads
                     </div>
                   </div>

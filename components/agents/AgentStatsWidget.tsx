@@ -32,29 +32,29 @@ export function AgentStatsWidget({ marketplaceStats, userStats, loading }: Agent
       icon: 'smart_toy',
       label: 'Total Agents',
       value: marketplaceStats?.total_agents || 0,
-      color: '#4648d4',
-      bgColor: '#4648d4'
+      color: '#6b7280',
+      bgColor: '#6b7280'
     },
     {
       icon: 'download',
       label: 'Downloads',
       value: userStats?.total_downloads || 0,
-      color: '#10b981',
-      bgColor: '#10b981'
+      color: '#6b7280',
+      bgColor: '#6b7280'
     },
     {
       icon: 'play_arrow',
       label: 'Executions',
       value: userStats?.total_executions || 0,
-      color: '#904900',
-      bgColor: '#904900'
+      color: '#6b7280',
+      bgColor: '#6b7280'
     },
     {
       icon: 'star',
       label: 'Avg Rating',
       value: userStats?.average_rating?.toFixed(1) || '0.0',
-      color: '#fbbf24',
-      bgColor: '#fbbf24',
+      color: '#6b7280',
+      bgColor: '#6b7280',
       isFilled: true
     }
   ]

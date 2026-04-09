@@ -242,8 +242,8 @@ export function SearchableFAQ() {
           {Object.entries(groupedFAQs).map(([category, faqs]) => (
             <Card key={category} className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-indigo-600 text-xl">help</span>
+                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-gray-500 text-xl">help</span>
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900">{category}</h3>
               </div>

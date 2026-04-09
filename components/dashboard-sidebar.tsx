@@ -19,6 +19,7 @@ import {
   Settings,
   Star,
   HelpCircle,
+  MessageSquare,
 } from 'lucide-react'
 import { useCreateItem } from '@/components/providers/CreateItemProvider'
 import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
@@ -29,15 +30,22 @@ const mainMenuItems = [
     title: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
   {
     title: 'Marketplace',
     href: '/marketplace',
     icon: Store,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
+  },
+  {
+    title: 'Chat',
+    href: '/chat',
+    icon: MessageSquare,
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
 ]
 
@@ -46,22 +54,22 @@ const workspaceItems = [
     title: 'My Templates',
     href: '/dashboard/my-templates',
     icon: FileCode,
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
   {
     title: 'Favorites',
     href: '/dashboard/favorites',
     icon: Star,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
   {
     title: 'Tags',
     href: '/dashboard/tags',
     icon: Tag,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
 ]
 
@@ -70,22 +78,22 @@ const bottomMenuItems = [
     title: 'Settings',
     href: '/dashboard/settings',
     icon: Settings,
-    color: 'text-gray-600',
+    color: 'text-gray-500',
     bgColor: 'bg-gray-50',
   },
   {
     title: 'Support',
     href: '/support',
     icon: HelpCircle,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
   {
     title: 'Deleted',
     href: '/dashboard/deleted-templates',
     icon: Trash2,
-    color: 'text-red-600',
-    bgColor: 'bg-red-50',
+    color: 'text-gray-500',
+    bgColor: 'bg-gray-50',
   },
 ]
 
@@ -304,9 +312,7 @@ export function DashboardSidebar() {
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
                 isCollapsed && 'justify-center',
                 isActive
-                  ? item.title === 'Deleted' 
-                    ? 'bg-red-50 text-red-600 font-semibold'
-                    : 'bg-gray-100 text-gray-900 font-semibold'
+                  ? 'bg-gray-100 text-gray-900 font-semibold'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               )}
               title={isCollapsed ? item.title : undefined}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://opencode.ai/config.schema.json",
+  "agent": {
+    "orchestrator": {
+      "name": "orchestrator",
+      "description": "Lead orchestrator — classifies tasks, plans execution, delegates to subproject agents, and reviews results.",
+      "model": "github-copilot/claude-opus-4.6",
+      "temperature": 0.2,
+      "color": "#5A2AFB",
+      "mode": "primary",
+      "prompt": "{file:./.claude/agents/orchestrator.md}"
+    },
+    "frontend-agent": {
+      "name": "frontend-agent",
+      "description": "Frontend specialist — Next.js App Router, React, Tailwind, Shadcn UI, HeroUI, and user-facing features.",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "temperature": 0.2,
+      "color": "#3B82F6",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/frontend-agent.md}"
+    },
+    "backend-agent": {
+      "name": "backend-agent",
+      "description": "Backend specialist — Supabase, PostgreSQL, API routes, RLS policies, Edge Functions, and data layer.",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "temperature": 0.2,
+      "color": "#22C55E",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/backend-agent.md}"
+    },
+    "cost-tracker": {
+      "name": "cost-tracker",
+      "description": "Utility agent — analyzes AI usage costs and generates budget reports for GitHub Copilot premium requests.",
+      "model": "github-copilot/gpt-4.1",
+      "temperature": 0.1,
+      "color": "#EF4444",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/cost-tracker.md}"
+    },
+    "design-agent": {
+      "name": "design-agent",
+      "description": "UI/UX design specialist — page architecture, component hierarchy, visual structure, and layout decisions for DevCache.",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "temperature": 0.3,
+      "color": "#F97316",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/design-agent.md}"
+    },
+    "icons-agent": {
+      "name": "icons-agent",
+      "description": "Icon specialist — selects contextually precise, non-AI-looking icons and enforces visual consistency across the entire DevCache application.",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "temperature": 0.2,
+      "color": "#EAB308",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/icons-agent.md}"
+    },
+    "copywriter-agent": {
+      "name": "copywriter-agent",
+      "description": "Copywriting and marketing specialist — crafts all text in DevCache to be purposeful, clear, and context-appropriate.",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "temperature": 0.4,
+      "color": "#EC4899",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/copywriter-agent.md}"
+    },
+    "colors-agent": {
+      "name": "colors-agent",
+      "description": "Color system specialist — maintains DevCache's color palette, ensures WCAG-compliant contrast, and aligns color choices with emotional intent.",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "temperature": 0.2,
+      "color": "#06B6D4",
+      "mode": "subagent",
+      "prompt": "{file:./.claude/agents/colors-agent.md}"
+    }
+  }
+}

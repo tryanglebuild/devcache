@@ -17,17 +17,17 @@ export function ThinkingProcess({ steps, isComplete = false }: ThinkingProcessPr
   const getIcon = (type: ThinkingStep['type']) => {
     switch (type) {
       case 'analysis':
-        return <Brain className="w-4 h-4 text-purple-600" />
+        return <Brain className="w-4 h-4 text-gray-500" />
       case 'search':
-        return <Search className="w-4 h-4 text-blue-600" />
+        return <Search className="w-4 h-4 text-gray-500" />
       case 'tool_call':
-        return <Zap className="w-4 h-4 text-amber-600" />
+        return <Zap className="w-4 h-4 text-gray-500" />
       case 'tool_result':
-        return <CheckCircle2 className="w-4 h-4 text-green-600" />
+        return <CheckCircle2 className="w-4 h-4 text-gray-500" />
       case 'context':
-        return <Database className="w-4 h-4 text-indigo-600" />
+        return <Database className="w-4 h-4 text-gray-500" />
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />
+        return <Clock className="w-4 h-4 text-gray-500" />
     }
   }
 
@@ -63,7 +63,7 @@ export function ThinkingProcess({ steps, isComplete = false }: ThinkingProcessPr
           ) : (
             <ChevronRight className="w-4 h-4 text-gray-500" />
           )}
-          <Brain className="w-4 h-4 text-purple-600" />
+          <Brain className="w-4 h-4 text-gray-500" />
           <span className="text-sm font-medium text-gray-700">
             {isComplete ? 'Analysis Complete' : 'Analyzing...'}
           </span>
@@ -77,7 +77,7 @@ export function ThinkingProcess({ steps, isComplete = false }: ThinkingProcessPr
           )}
         </div>
         {isComplete && (
-          <CheckCircle2 className="w-4 h-4 text-green-600" />
+          <CheckCircle2 className="w-4 h-4 text-gray-500" />
         )}
       </button>
 
@@ -109,32 +109,32 @@ function ThinkingStepItem({ step, index }: ThinkingStepItemProps) {
   const getIcon = (type: ThinkingStep['type']) => {
     switch (type) {
       case 'analysis':
-        return <Brain className="w-3.5 h-3.5 text-purple-600" />
+        return <Brain className="w-3.5 h-3.5 text-gray-500" />
       case 'search':
-        return <Search className="w-3.5 h-3.5 text-blue-600" />
+        return <Search className="w-3.5 h-3.5 text-gray-500" />
       case 'tool_call':
-        return <Zap className="w-3.5 h-3.5 text-amber-600" />
+        return <Zap className="w-3.5 h-3.5 text-gray-500" />
       case 'tool_result':
-        return <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+        return <CheckCircle2 className="w-3.5 h-3.5 text-gray-500" />
       case 'context':
-        return <Database className="w-3.5 h-3.5 text-indigo-600" />
+        return <Database className="w-3.5 h-3.5 text-gray-500" />
       default:
-        return <Clock className="w-3.5 h-3.5 text-gray-600" />
+        return <Clock className="w-3.5 h-3.5 text-gray-500" />
     }
   }
 
   const getBgColor = (type: ThinkingStep['type']) => {
     switch (type) {
       case 'analysis':
-        return 'bg-purple-50 border-purple-200'
+        return 'bg-gray-50 border-gray-200'
       case 'search':
-        return 'bg-blue-50 border-blue-200'
+        return 'bg-gray-50 border-gray-200'
       case 'tool_call':
-        return 'bg-amber-50 border-amber-200'
+        return 'bg-gray-50 border-gray-200'
       case 'tool_result':
-        return 'bg-green-50 border-green-200'
+        return 'bg-gray-50 border-gray-200'
       case 'context':
-        return 'bg-indigo-50 border-indigo-200'
+        return 'bg-gray-50 border-gray-200'
       default:
         return 'bg-gray-50 border-gray-200'
     }

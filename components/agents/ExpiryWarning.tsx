@@ -14,19 +14,11 @@ export function ExpiryWarning({
   const isUrgent = daysRemaining <= 7
 
   return (
-    <div className={`p-4 rounded-lg border-2 ${
-      isUrgent
-        ? 'bg-red-50 border-red-200' 
-        : 'bg-amber-50 border-amber-200'
-    }`}>
+    <div className="p-4 rounded-lg border-2 bg-gray-50 border-gray-200">
       <div className="flex items-start gap-3">
-        <AlertCircle className={`h-5 w-5 mt-0.5 ${
-          isUrgent ? 'text-red-600' : 'text-amber-600'
-        }`} />
+        <AlertCircle className="h-5 w-5 mt-0.5 text-gray-500" />
         <div className="flex-1">
-          <p className={`font-bold text-sm ${
-            isUrgent ? 'text-red-700' : 'text-amber-700'
-          }`}>
+          <p className="font-bold text-sm text-gray-700">
             {daysRemaining === 0 
               ? 'Expires today!' 
               : daysRemaining === 1

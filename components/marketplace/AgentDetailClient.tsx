@@ -288,7 +288,7 @@ export function AgentDetailClient({
                 </button>
                 <button
                   onClick={() => setIsDeleteDialogOpen(true)}
-                  className="p-2.5 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-all"
+                  className="p-2.5 bg-white border border-gray-200 text-gray-500 rounded-lg hover:bg-gray-100 transition-all"
                   title="Delete template"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -332,7 +332,7 @@ export function AgentDetailClient({
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />
+            <Star className="w-5 h-5 fill-gray-400 text-gray-400" />
             <div>
               <p className="font-bold text-[#191c1e]">
                 {agent.rating_average?.toFixed(1) || '0.0'}
@@ -372,7 +372,7 @@ export function AgentDetailClient({
           <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10">
             <button
               onClick={() => setIsRateModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-br from-[#fbbf24] to-[#f59e0b] text-white rounded-lg font-bold hover:shadow-lg transition-all"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg font-bold hover:bg-gray-700 transition-all"
             >
               <Star className="w-5 h-5" />
               {agent.user_rating ? 'Update Rating' : 'Rate Template'}
@@ -553,8 +553,8 @@ export function AgentDetailClient({
                               key={i}
                               className={`w-3 h-3 ${
                                 i < rating.rating
-                                  ? 'fill-[#fbbf24] text-[#fbbf24]'
-                                  : 'text-[#c7c4d7]'
+                                  ? 'fill-gray-600 text-gray-600'
+                                  : 'text-gray-300'
                               }`}
                             />
                           ))}
@@ -594,12 +594,12 @@ export function AgentDetailClient({
         <DialogContent className="bg-white sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-red-600" />
+              <Trash2 className="h-5 w-5 text-gray-500" />
               Delete Template
             </DialogTitle>
             <DialogDescription className="pt-3">
               Are you sure you want to delete <strong className="text-[#191c1e] font-semibold">{agent.name}</strong>?
-              <span className="block mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 font-medium">
+              <span className="block mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 font-medium">
                 The template will be moved to trash and automatically deleted after 30 days.
               </span>
             </DialogDescription>

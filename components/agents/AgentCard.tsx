@@ -32,27 +32,21 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div 
-            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: `${category.color}15`, color: category.color }}
-          >
-            <span className="material-symbols-outlined text-xl">{category.icon}</span>
+          <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <span className="material-symbols-outlined text-xl text-gray-500">{category.icon}</span>
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-[#191c1e] truncate group-hover:text-[#4648d4] transition-colors">
               {agent.name}
             </h3>
-            <span 
-              className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded"
-              style={{ backgroundColor: `${category.color}15`, color: category.color }}
-            >
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-100 text-gray-500">
               {category.label}
             </span>
           </div>
         </div>
         
         {agent.is_favorite && (
-          <Star className="w-4 h-4 fill-[#904900] text-[#904900] flex-shrink-0" />
+          <Star className="w-4 h-4 fill-gray-400 text-gray-400 flex-shrink-0" />
         )}
       </div>
 
@@ -83,7 +77,7 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-[#fbbf24] text-[#fbbf24]" />
+            <Star className="w-4 h-4 fill-gray-400 text-gray-400" />
             <span className="font-semibold text-[#191c1e]">
               {agent.rating_average?.toFixed(1) || '0.0'}
             </span>
@@ -129,7 +123,7 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
                 e.stopPropagation()
                 onDownload(agent)
               }}
-              className="text-[#10b981] hover:text-[#059669] font-semibold text-xs flex items-center gap-1 transition-colors"
+              className="text-gray-500 hover:text-gray-700 font-semibold text-xs flex items-center gap-1 transition-colors"
             >
               <Download className="w-4 h-4" />
               Get
