@@ -160,47 +160,6 @@ export function DashboardSidebar() {
         {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
       </button>
 
-      {/* Quick Create Actions - Top */}
-      <div className="px-3 pt-4 pb-3 border-b border-gray-100 dark:border-white/[0.06] shrink-0">
-        {!isCollapsed ? (
-          <div className="flex gap-2">
-            <button
-              onClick={() => openCreateModal('folder')}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-white dark:bg-surface-container border border-gray-200 dark:border-white/[0.09] text-gray-700 dark:text-gray-300 hover:border-[#4f46e5] dark:hover:border-[#7c7ff5] hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 transition-all shadow-sm"
-              title="New Folder"
-            >
-              <Folder className="h-4 w-4 shrink-0" />
-              <span className="text-xs font-semibold">Folder</span>
-            </button>
-            <button
-              onClick={() => openCreateModal('file')}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-white dark:bg-surface-container border border-gray-200 dark:border-white/[0.09] text-gray-700 dark:text-gray-300 hover:border-[#4f46e5] dark:hover:border-[#7c7ff5] hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 transition-all shadow-sm"
-              title="New File"
-            >
-              <FileText className="h-4 w-4 shrink-0" />
-              <span className="text-xs font-semibold">File</span>
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => openCreateModal('folder')}
-              className="w-full flex items-center justify-center p-2.5 rounded-lg bg-white dark:bg-surface-container border border-gray-200 dark:border-white/[0.09] text-gray-700 dark:text-gray-300 hover:border-[#4f46e5] dark:hover:border-[#7c7ff5] hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 transition-all shadow-sm"
-              title="New Folder"
-            >
-              <Folder className="h-4 w-4 shrink-0" />
-            </button>
-            <button
-              onClick={() => openCreateModal('file')}
-              className="w-full flex items-center justify-center p-2.5 rounded-lg bg-white dark:bg-surface-container border border-gray-200 dark:border-white/[0.09] text-gray-700 dark:text-gray-300 hover:border-[#4f46e5] dark:hover:border-[#7c7ff5] hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] hover:bg-blue-50 dark:hover:bg-[#7c7ff5]/10 transition-all shadow-sm"
-              title="New File"
-            >
-              <FileText className="h-4 w-4 shrink-0" />
-            </button>
-          </div>
-        )}
-      </div>
-
       {/* Navigation - Scrollable */}
       <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto min-h-0 flex flex-col">
         {/* Main Navigation */}
@@ -274,9 +233,33 @@ export function DashboardSidebar() {
         {/* Projects Tree - Takes remaining space */}
         <div className="flex-1 flex flex-col min-h-0">
           {!isCollapsed && (
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 shrink-0">
-              Projects
-            </p>
+            <div className="flex items-center mb-2 shrink-0 px-3">
+              <Link href="/dashboard/projects" className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors flex-1">
+                Projects
+              </Link>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => openCreateModal('folder')}
+                  title="New Folder"
+                  className="relative w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors"
+                >
+                  <Folder className="w-4 h-4" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-white dark:bg-surface rounded-full flex items-center justify-center">
+                    <Plus className="w-1.5 h-1.5" strokeWidth={3} />
+                  </span>
+                </button>
+                <button
+                  onClick={() => openCreateModal('file')}
+                  title="New File"
+                  className="relative w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-white dark:bg-surface rounded-full flex items-center justify-center">
+                    <Plus className="w-1.5 h-1.5" strokeWidth={3} />
+                  </span>
+                </button>
+              </div>
+            </div>
           )}
           {!isCollapsed ? (
             <div className="flex-1 min-h-0">
