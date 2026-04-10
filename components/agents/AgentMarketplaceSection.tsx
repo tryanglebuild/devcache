@@ -10,14 +10,12 @@ import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from '@/lib/agents/category-ico
 interface AgentMarketplaceSectionProps {
   agents: AgentTemplateWithStats[]
   onViewAgent?: (agent: AgentTemplateWithStats) => void
-  onDownloadAgent?: (agent: AgentTemplateWithStats) => void
   showFilters?: boolean
 }
 
 export function AgentMarketplaceSection({
   agents,
   onViewAgent,
-  onDownloadAgent,
   showFilters = true
 }: AgentMarketplaceSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -85,7 +83,6 @@ export function AgentMarketplaceSection({
               key={agent.id}
               agent={agent}
               onView={onViewAgent}
-              onDownload={onDownloadAgent}
             />
           ))}
         </div>

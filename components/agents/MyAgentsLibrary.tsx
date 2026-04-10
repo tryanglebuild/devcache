@@ -108,7 +108,6 @@ export function MyAgentsLibrary({
                 <AgentCard
                   agent={agent}
                   onView={onViewAgent}
-                  onDownload={onExecuteAgent}
                 />
               )}
             </div>

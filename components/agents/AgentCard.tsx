@@ -1,20 +1,38 @@
 'use client'
 
-import { Star, Download, Eye, Bookmark, BookmarkCheck } from 'lucide-react'
+import { Download, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { AgentTemplateWithStats } from '@/types/agents.types'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from '@/lib/agents/category-icons'
 
+function SignalBars({ value }: { value: number }) {
+  const heights = [5, 7, 9, 11, 13]
+  return (
+    <span className="inline-flex items-end gap-px">
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          style={{ height: h }}
+          className={`w-1 rounded-sm ${
+            i < Math.round(value)
+              ? 'bg-[#6366f1]/70 dark:bg-[#7c7ff5]/60'
+              : 'bg-slate-200 dark:bg-slate-700'
+          }`}
+        />
+      ))}
+    </span>
+  )
+}
+
 interface AgentCardProps {
   agent: AgentTemplateWithStats
   onView?: (agent: AgentTemplateWithStats) => void
-  onDownload?: (agent: AgentTemplateWithStats) => void
   compact?: boolean
 }
 
-export function AgentCard({ agent, onView, onDownload, compact = false }: AgentCardProps) {
+export function AgentCard({ agent, onView, compact = false }: AgentCardProps) {
   const category = AGENT_CATEGORIES[agent.category as keyof typeof AGENT_CATEGORIES] || AGENT_CATEGORIES.general
   const CategoryIcon = CATEGORY_ICONS[agent.category?.toLowerCase() || ''] || DEFAULT_CATEGORY_ICON
   const router = useRouter()
@@ -48,7 +66,7 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
         </div>
         
         {agent.is_favorite && (
-          <Star className="w-4 h-4 fill-amber-400 text-amber-400 flex-shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" title="Favorite" />
         )}
       </div>
 
@@ -79,7 +97,7 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+            <SignalBars value={agent.rating_average || 0} />
             <span className="font-semibold text-[#191c1e] dark:text-on-surface">
               {agent.rating_average?.toFixed(1) || '0.0'}
             </span>
@@ -119,32 +137,7 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
             </Link>
           )}
           
-          {onDownload && agent.visibility === 'public' && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onDownload(agent)
-              }}
-              className={`font-semibold text-xs flex items-center gap-1 transition-colors ${
-                agent.is_in_collection
-                  ? 'text-[#16a34a] dark:text-green-400 cursor-default'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5]'
-              }`}
-              title={agent.is_in_collection ? 'Already saved to My Templates' : 'Save to My Templates'}
-            >
-              {agent.is_in_collection ? (
-                <>
-                  <BookmarkCheck className="w-4 h-4" />
-                  Saved
-                </>
-              ) : (
-                <>
-                  <Bookmark className="w-4 h-4" />
-                  Save
-                </>
-              )}
-            </button>
-          )}
+
         </div>
       </div>
 

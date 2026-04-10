@@ -8,13 +8,11 @@ import type { AgentTemplateWithStats } from '@/types/agents.types'
 interface TrendingAgentsCarouselProps {
   agents: AgentTemplateWithStats[]
   onViewAgent?: (agent: AgentTemplateWithStats) => void
-  onDownloadAgent?: (agent: AgentTemplateWithStats) => void
 }
 
 export function TrendingAgentsCarousel({
   agents,
-  onViewAgent,
-  onDownloadAgent
+  onViewAgent
 }: TrendingAgentsCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -104,7 +102,6 @@ export function TrendingAgentsCarousel({
             <AgentCard
               agent={agent}
               onView={onViewAgent}
-              onDownload={onDownloadAgent}
             />
           </div>
         ))}

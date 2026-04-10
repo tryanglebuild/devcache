@@ -2,12 +2,33 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star, Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText, Trash2, Lock, Globe, Bookmark, BookmarkCheck } from 'lucide-react'
+import { Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText, Trash2, Lock, Globe, Bookmark, BookmarkCheck } from 'lucide-react'
 import type { AgentTemplateWithStats, AgentRating } from '@/types/agents.types'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from '@/lib/agents/category-icons'
 import { RateTemplateModal } from './RateTemplateModal'
 import toast from 'react-hot-toast'
+
+function SignalBars({ value, size = 'md' }: { value: number; size?: 'sm' | 'md' | 'lg' }) {
+  const heights = size === 'sm' ? [5, 7, 9, 11, 13] : size === 'lg' ? [10, 14, 18, 22, 26] : [6, 9, 12, 15, 18]
+  const gap = 'gap-px'
+  const width = size === 'lg' ? 'w-1.5' : 'w-1'
+  return (
+    <span className={`inline-flex items-end ${gap}`}>
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          style={{ height: h }}
+          className={`${width} rounded-sm ${
+            i < Math.round(value)
+              ? 'bg-[#6366f1]/70 dark:bg-[#7c7ff5]/60'
+              : 'bg-slate-200 dark:bg-slate-700'
+          }`}
+        />
+      ))}
+    </span>
+  )
+}
 import ReactMarkdown from 'react-markdown'
 import { MarkdownCodeBlock } from '@/components/projects/MarkdownCodeBlock'
 import {
@@ -359,7 +380,7 @@ export function AgentDetailClient({
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+            <SignalBars value={agent.rating_average || 0} />
             <div>
               <p className="font-bold text-[#191c1e] dark:text-on-surface">
                 {agent.rating_average?.toFixed(1) || '0.0'}
@@ -389,42 +410,16 @@ export function AgentDetailClient({
           </div>
         </div>
 
-        {/* Actions — Save to My Templates + Rate */}
-        {!isOwner && (
-          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06] flex flex-col sm:flex-row gap-3">
-            {/* Save to My Templates */}
+        {/* Actions — Rate */}
+        {!isOwner && isAuthenticated && (
+          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06] flex">
             <button
-              onClick={handleDownload}
-              disabled={isDownloading}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 ${
-                isInCollection
-                  ? 'bg-[#16a34a]/10 dark:bg-green-900/20 text-[#16a34a] dark:text-green-400 border border-[#16a34a]/30 dark:border-green-700/40 cursor-default'
-                  : 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white hover:from-[#4338ca] hover:to-[#3730a3] shadow-lg hover:shadow-xl'
-              }`}
+              onClick={() => setIsRateModalOpen(true)}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-surface-container-high text-[#191c1e] dark:text-on-surface rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-surface-container transition-all"
             >
-              {isInCollection ? (
-                <>
-                  <BookmarkCheck className="w-5 h-5" />
-                  Saved to My Templates
-                </>
-              ) : (
-                <>
-                  <Bookmark className="w-5 h-5" />
-                  {isDownloading ? 'Saving...' : 'Save to My Templates'}
-                </>
-              )}
+              <SignalBars value={agent.user_rating || 3} size="sm" />
+              {agent.user_rating ? 'Update Rating' : 'Rate'}
             </button>
-
-            {/* Rate */}
-            {isAuthenticated && (
-              <button
-                onClick={() => setIsRateModalOpen(true)}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-surface-container-high text-[#191c1e] dark:text-on-surface rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-surface-container transition-all"
-              >
-                <Star className="w-5 h-5" />
-                {agent.user_rating ? 'Update Rating' : 'Rate'}
-              </button>
-            )}
           </div>
         )}
 
@@ -603,18 +598,7 @@ export function AgentDetailClient({
                         <p className="font-semibold text-[#191c1e] dark:text-on-surface text-sm">
                           {ratingProfile?.full_name || 'Anonymous'}
                         </p>
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-3 h-3 ${
-                                i < rating.rating
-                                  ? 'fill-amber-400 text-amber-400'
-                                  : 'text-slate-200 dark:text-slate-600'
-                              }`}
-                            />
-                          ))}
-                        </div>
+                        <SignalBars value={rating.rating} size="sm" />
                       </div>
                     </div>
                     <span className="text-xs text-[#464554] dark:text-on-surface-variant">

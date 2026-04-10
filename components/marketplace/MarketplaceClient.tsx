@@ -197,7 +197,6 @@ export function MarketplaceClient({
                 key={agent.id}
                 agent={agent}
                 onView={handleViewAgent}
-                onDownload={handleDownloadAgent}
               />
             ))}
           </div>

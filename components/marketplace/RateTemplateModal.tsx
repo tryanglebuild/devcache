@@ -1,8 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Star } from 'lucide-react'
+import { X } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
+
+function SignalBars({ value, size = 'md' }: { value: number; size?: 'sm' | 'md' | 'lg' }) {
+  const heights = size === 'sm' ? [5, 7, 9, 11, 13] : size === 'lg' ? [10, 14, 18, 22, 26] : [6, 9, 12, 15, 18]
+  const gap = 'gap-px'
+  const width = size === 'lg' ? 'w-1.5' : 'w-1'
+  return (
+    <span className={`inline-flex items-end ${gap}`}>
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          style={{ height: h }}
+          className={`${width} rounded-sm transition-colors ${
+            i < value
+              ? 'bg-[#6366f1]/70 dark:bg-[#7c7ff5]/60'
+              : 'bg-slate-200 dark:bg-slate-700'
+          }`}
+        />
+      ))}
+    </span>
+  )
+}
 
 interface RateTemplateModalProps {
   isOpen: boolean
@@ -90,35 +113,40 @@ export function RateTemplateModal({
             </p>
           </div>
 
-          {/* Star Rating */}
-          <div className="flex items-center justify-center gap-2 py-4">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(0)}
-                className="transition-transform hover:scale-110"
-              >
-                <Star
-                  className={`w-10 h-10 transition-colors ${
-                    star <= (hoveredRating || rating)
-                      ? 'fill-amber-400 text-amber-400'
-                      : 'text-slate-300 dark:text-slate-600'
-                  }`}
-                />
-              </button>
-            ))}
+          {/* Signal Bar Rating */}
+          <div
+            className="flex items-end justify-center gap-3 py-6"
+            onMouseLeave={() => setHoveredRating(0)}
+          >
+            {[1, 2, 3, 4, 5].map((bar) => {
+              const active = bar <= (hoveredRating || rating)
+              const heights = [10, 14, 18, 22, 26]
+              return (
+                <button
+                  key={bar}
+                  type="button"
+                  onClick={() => setRating(bar)}
+                  onMouseEnter={() => setHoveredRating(bar)}
+                  className="flex flex-col items-end justify-end transition-transform hover:scale-110"
+                  style={{ height: 26 }}
+                  title={RATING_LABELS[bar]}
+                >
+                  <span
+                    style={{ height: heights[bar - 1] }}
+                    className={`w-4 rounded-sm transition-colors ${
+                      active
+                        ? 'bg-[#6366f1]/80 dark:bg-[#7c7ff5]/70'
+                        : 'bg-slate-200 dark:bg-slate-700'
+                    }`}
+                  />
+                </button>
+              )
+            })}
           </div>
 
           {rating > 0 && (
-            <p className="text-center text-sm font-semibold text-[#191c1e] dark:text-on-surface">
-              {rating === 1 && 'Poor'}
-              {rating === 2 && 'Fair'}
-              {rating === 3 && 'Good'}
-              {rating === 4 && 'Very Good'}
-              {rating === 5 && 'Excellent'}
+            <p className="text-center text-sm font-semibold text-[#191c1e] dark:text-on-surface -mt-2">
+              {RATING_LABELS[rating]}
             </p>
           )}
 
