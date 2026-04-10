@@ -13,7 +13,6 @@ import {
   FileText,
   Store,
   Trash2,
-  FileCode,
   Plus,
   Settings,
   Star,
@@ -51,13 +50,6 @@ const mainMenuItems = [
 ]
 
 const workspaceItems = [
-  {
-    title: 'My Templates',
-    href: '/dashboard/my-templates',
-    icon: FileCode,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
   {
     title: 'Favorites',
     href: '/dashboard/favorites',

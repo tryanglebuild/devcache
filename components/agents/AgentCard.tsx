@@ -1,6 +1,6 @@
 'use client'
 
-import { Star, Download, Eye } from 'lucide-react'
+import { Star, Download, Eye, Bookmark, BookmarkCheck } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { AgentTemplateWithStats } from '@/types/agents.types'
@@ -125,10 +125,24 @@ export function AgentCard({ agent, onView, onDownload, compact = false }: AgentC
                 e.stopPropagation()
                 onDownload(agent)
               }}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-semibold text-xs flex items-center gap-1 transition-colors"
+              className={`font-semibold text-xs flex items-center gap-1 transition-colors ${
+                agent.is_in_collection
+                  ? 'text-[#16a34a] dark:text-green-400 cursor-default'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5]'
+              }`}
+              title={agent.is_in_collection ? 'Already saved to My Templates' : 'Save to My Templates'}
             >
-              <Download className="w-4 h-4" />
-              Get
+              {agent.is_in_collection ? (
+                <>
+                  <BookmarkCheck className="w-4 h-4" />
+                  Saved
+                </>
+              ) : (
+                <>
+                  <Bookmark className="w-4 h-4" />
+                  Save
+                </>
+              )}
             </button>
           )}
         </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star, Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText, Trash2, Lock, Globe } from 'lucide-react'
+import { Star, Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText, Trash2, Lock, Globe, Bookmark, BookmarkCheck } from 'lucide-react'
 import type { AgentTemplateWithStats, AgentRating } from '@/types/agents.types'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from '@/lib/agents/category-icons'
@@ -49,6 +49,7 @@ export function AgentDetailClient({
   const router = useRouter()
   const [isDownloading, setIsDownloading] = useState(false)
   const [isFavorite, setIsFavorite] = useState(agent.is_favorite || false)
+  const [isInCollection, setIsInCollection] = useState(agent.is_in_collection || false)
   const [isRateModalOpen, setIsRateModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'rendered' | 'source'>('rendered')
   const [copied, setCopied] = useState(false)
@@ -63,25 +64,13 @@ export function AgentDetailClient({
 
   const handleDownload = async () => {
     if (!isAuthenticated) {
-      toast.error('Please login to download agents')
+      toast.error('Please login to save templates')
       router.push('/login')
       return
     }
 
-    setIsDownloading(true)
-    try {
-      // Track download and increment count
-      const response = await fetch(`/api/agents/${agent.id}/download`, {
-        method: 'POST'
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        toast.error(data.error || 'Failed to download agent')
-        return
-      }
-
-      // Download the .md file
+    if (isInCollection && !isOwner) {
+      // Already saved — just download the file
       const blob = new Blob([agent.content || ''], { type: 'text/markdown' })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -91,18 +80,56 @@ export function AgentDetailClient({
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
+      toast.success(`${agent.name} downloaded!`)
+      return
+    }
 
-      toast.success(`${agent.name} downloaded successfully!`)
-      router.refresh()
+    setIsDownloading(true)
+    try {
+      // Track download and add to collection
+      const response = await fetch(`/api/agents/${agent.id}/download`, {
+        method: 'POST'
+      })
 
-      // Open rating modal after successful download (only if not owner and hasn't rated yet)
-      if (!isOwner && !agent.user_rating) {
-        setTimeout(() => {
-          setIsRateModalOpen(true)
-        }, 500)
+      if (!response.ok) {
+        const data = await response.json()
+        toast.error(data.error || 'Failed to save template')
+        return
+      }
+
+      const data = await response.json()
+
+      if (!isOwner) {
+        setIsInCollection(true)
+        if (data.alreadyExists) {
+          toast.success(`${agent.name} is already in My Templates!`)
+        } else {
+          toast.success(`${agent.name} saved to My Templates!`)
+        }
+        router.refresh()
+
+        // Open rating modal after successful save (only if not owner and hasn't rated yet)
+        if (!agent.user_rating) {
+          setTimeout(() => {
+            setIsRateModalOpen(true)
+          }, 500)
+        }
+      } else {
+        // Owner downloading their own template
+        const blob = new Blob([agent.content || ''], { type: 'text/markdown' })
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${agent.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.md`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        toast.success(`${agent.name} downloaded!`)
+        router.refresh()
       }
     } catch (error) {
-      console.error('Error downloading agent:', error)
+      console.error('Error saving template:', error)
       toast.error('An error occurred')
     } finally {
       setIsDownloading(false)
@@ -110,7 +137,7 @@ export function AgentDetailClient({
   }
 
   const handleToggleFavorite = async () => {
-    if (!isAuthenticated || !agent.is_in_collection) {
+    if (!isAuthenticated || !isInCollection) {
       return
     }
 
@@ -295,7 +322,7 @@ export function AgentDetailClient({
                 </button>
               </>
             )}
-            {agent.is_in_collection && !isOwner && (
+            {isInCollection && !isOwner && (
               <button
                 onClick={handleToggleFavorite}
                 className="p-2.5 bg-white dark:bg-surface border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all"
@@ -343,20 +370,15 @@ export function AgentDetailClient({
             </div>
           </div>
 
-          <button
-            onClick={handleDownload}
-            disabled={isDownloading}
-            className="flex items-center gap-2 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high p-2 rounded-lg transition-all disabled:opacity-50"
-            title="Download template"
-          >
+          <div className="flex items-center gap-2">
             <Download className="w-5 h-5 text-[#464554] dark:text-on-surface-variant" />
-            <div className="text-left">
+            <div>
               <p className="font-bold text-[#191c1e] dark:text-on-surface">
                 {agent.download_count || 0}
               </p>
-              <p className="text-xs text-[#464554] dark:text-on-surface-variant">downloads</p>
+              <p className="text-xs text-[#464554] dark:text-on-surface-variant">saves</p>
             </div>
-          </button>
+          </div>
 
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-[#464554] dark:text-on-surface-variant" />
@@ -367,25 +389,59 @@ export function AgentDetailClient({
           </div>
         </div>
 
-        {/* Rate Button - Show for authenticated non-owners */}
-        {isAuthenticated && !isOwner && (
-          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
+        {/* Actions — Save to My Templates + Rate */}
+        {!isOwner && (
+          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06] flex flex-col sm:flex-row gap-3">
+            {/* Save to My Templates */}
             <button
-              onClick={() => setIsRateModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg font-bold hover:bg-gray-700 dark:hover:bg-gray-600 transition-all"
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 ${
+                isInCollection
+                  ? 'bg-[#16a34a]/10 dark:bg-green-900/20 text-[#16a34a] dark:text-green-400 border border-[#16a34a]/30 dark:border-green-700/40 cursor-default'
+                  : 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white hover:from-[#4338ca] hover:to-[#3730a3] shadow-lg hover:shadow-xl'
+              }`}
             >
-              <Star className="w-5 h-5" />
-              {agent.user_rating ? 'Update Rating' : 'Rate Template'}
+              {isInCollection ? (
+                <>
+                  <BookmarkCheck className="w-5 h-5" />
+                  Saved to My Templates
+                </>
+              ) : (
+                <>
+                  <Bookmark className="w-5 h-5" />
+                  {isDownloading ? 'Saving...' : 'Save to My Templates'}
+                </>
+              )}
             </button>
+
+            {/* Rate */}
+            {isAuthenticated && (
+              <button
+                onClick={() => setIsRateModalOpen(true)}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-surface-container-high text-[#191c1e] dark:text-on-surface rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-surface-container transition-all"
+              >
+                <Star className="w-5 h-5" />
+                {agent.user_rating ? 'Update Rating' : 'Rate'}
+              </button>
+            )}
           </div>
         )}
 
-        {/* Rate Button - Show for owners (view only) */}
+        {/* Owner actions */}
         {isOwner && (
-          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
-            <div className="text-center text-sm text-[#464554] dark:text-on-surface-variant">
+          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06] flex items-center justify-between">
+            <span className="text-sm text-[#464554] dark:text-on-surface-variant">
               You cannot rate your own template
-            </div>
+            </span>
+            <button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="flex items-center gap-2 px-4 py-2 bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant rounded-lg font-semibold text-sm hover:bg-gray-200 dark:hover:bg-surface-container transition-all disabled:opacity-50"
+            >
+              <Download className="w-4 h-4" />
+              {isDownloading ? 'Downloading...' : 'Download .md'}
+            </button>
           </div>
         )}
       </div>

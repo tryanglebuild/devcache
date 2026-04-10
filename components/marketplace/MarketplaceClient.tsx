@@ -120,8 +120,13 @@ export function MarketplaceClient({
 
   const handleDownloadAgent = async (agent: AgentTemplateWithStats) => {
     if (!isAuthenticated) {
-      toast.error('Please login to download agents')
+      toast.error('Please login to save agents')
       router.push('/login')
+      return
+    }
+
+    if (agent.is_in_collection) {
+      toast.success(`${agent.name} is already saved in My Templates`)
       return
     }
 
@@ -131,15 +136,22 @@ export function MarketplaceClient({
       })
 
       if (response.ok) {
-        toast.success(`${agent.name} added to your collection!`)
-        // Refresh agent data to update download count
-        fetchAgents(filters, currentPage)
+        const data = await response.json()
+        if (data.alreadyExists) {
+          toast.success(`${agent.name} is already in My Templates!`)
+        } else {
+          toast.success(`${agent.name} saved to My Templates!`)
+        }
+        // Mark as saved in local state
+        setAgents(prev => prev.map(a =>
+          a.id === agent.id ? { ...a, is_in_collection: true } : a
+        ))
       } else {
         const data = await response.json()
-        toast.error(data.error || 'Failed to download agent')
+        toast.error(data.error || 'Failed to save agent')
       }
     } catch (error) {
-      console.error('Error downloading agent:', error)
+      console.error('Error saving agent:', error)
       toast.error('An error occurred')
     }
   }
