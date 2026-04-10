@@ -17,7 +17,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
   }
 
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-background">
       <div className="grid-bg absolute inset-0 opacity-40 -z-10" />
       
       <div className="max-w-7xl mx-auto px-6 text-center">
