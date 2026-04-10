@@ -53,8 +53,7 @@ export default function SignupForm() {
       }
 
       if (data.user) {
-        // Success - redirect to confirmation page or dashboard
-        router.push('/auth/verify-email')
+        router.push('/dashboard')
       }
     } catch (error) {
       setServerError('An unexpected error occurred. Please try again.')
