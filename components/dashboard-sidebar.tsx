@@ -20,7 +20,6 @@ import {
   HelpCircle,
   MessageSquare,
 } from 'lucide-react'
-import { useCreateItem } from '@/components/providers/CreateItemProvider'
 import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
 import { cn } from '@/lib/utils'
 import { DevCacheLogo } from '@/components/ui/DevCacheLogo'
@@ -125,7 +124,7 @@ export function useSidebarContext() {
 export function DashboardSidebar() {
   const pathname = usePathname() || '/dashboard'
   const { isCollapsed, setIsCollapsed } = useSidebarContext()
-  const { openCreateModal } = useCreateItem()
+  const [quickCreateType, setQuickCreateType] = useState<'folder' | 'file' | null>(null)
   const { resolvedTheme } = useTheme()
 
   return (
@@ -239,7 +238,7 @@ export function DashboardSidebar() {
               </Link>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => openCreateModal('folder')}
+                  onClick={() => setQuickCreateType('folder')}
                   title="New Folder"
                   className="relative w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors"
                 >
@@ -249,7 +248,7 @@ export function DashboardSidebar() {
                   </span>
                 </button>
                 <button
-                  onClick={() => openCreateModal('file')}
+                  onClick={() => setQuickCreateType('file')}
                   title="New File"
                   className="relative w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors"
                 >
@@ -263,7 +262,11 @@ export function DashboardSidebar() {
           )}
           {!isCollapsed ? (
             <div className="flex-1 min-h-0">
-              <SidebarProjectsTree isCollapsed={isCollapsed} />
+              <SidebarProjectsTree
+                isCollapsed={isCollapsed}
+                quickCreateType={quickCreateType}
+                onQuickCreateDone={() => setQuickCreateType(null)}
+              />
             </div>
           ) : (
             <Link

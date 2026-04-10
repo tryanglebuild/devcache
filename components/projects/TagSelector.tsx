@@ -117,7 +117,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
       {selectedTags.length > 0 && (
         <div className="flex items-center gap-2 text-sm">
           <div className="w-2 h-2 rounded-full bg-[#4f46e5]"></div>
-          <span className="font-semibold text-[#191c1e]">
+          <span className="font-semibold text-[#191c1e] dark:text-on-surface">
             {selectedTags.length} tag{selectedTags.length > 1 ? 's' : ''} selected
           </span>
         </div>
@@ -137,7 +137,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
                   group relative px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all
                   ${isSelected
                     ? 'text-white shadow-lg scale-105'
-                    : 'bg-white border-2 border-[#c7c4d7]/30 text-[#464554] hover:border-[#4f46e5]/50 hover:shadow-md'
+                    : 'bg-white dark:bg-surface-container border-2 border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#464554] dark:text-on-surface-variant hover:border-[#4f46e5]/50 dark:hover:border-[#7c7ff5]/50 hover:shadow-md'
                   }
                 `}
                 style={isSelected ? { 
@@ -163,10 +163,10 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
 
       {/* Empty State */}
       {tags.length === 0 && !isCreating && (
-        <div className="text-center py-8 bg-gradient-to-br from-[#f2f4f6] to-[#e8eaed] rounded-xl border-2 border-dashed border-[#c7c4d7]/40">
-          <TagIcon className="h-10 w-10 mx-auto text-[#464554] mb-3 opacity-50" />
-          <p className="text-sm font-semibold text-[#191c1e] mb-1">No tags created yet</p>
-          <p className="text-xs text-[#464554]">Create your first tag below</p>
+        <div className="text-center py-8 bg-gradient-to-br from-[#f2f4f6] to-[#e8eaed] dark:from-surface-container dark:to-surface-container-high rounded-xl border-2 border-dashed border-[#c7c4d7]/40 dark:border-white/[0.09]">
+          <TagIcon className="h-10 w-10 mx-auto text-[#464554] dark:text-on-surface-variant mb-3 opacity-50" />
+          <p className="text-sm font-semibold text-[#191c1e] dark:text-on-surface mb-1">No tags created yet</p>
+          <p className="text-xs text-[#464554] dark:text-on-surface-variant">Create your first tag below</p>
         </div>
       )}
 
@@ -181,9 +181,9 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
           Create New Tag
         </button>
       ) : (
-        <div className="p-6 bg-white border-2 border-[#4f46e5]/20 rounded-xl space-y-4 shadow-lg">
+        <div className="p-6 bg-white dark:bg-surface-container border-2 border-[#4f46e5]/20 dark:border-[#7c7ff5]/20 rounded-xl space-y-4 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-bold text-[#191c1e]">Create New Tag</h4>
+            <h4 className="font-bold text-[#191c1e] dark:text-on-surface">Create New Tag</h4>
             <button
               type="button"
               onClick={() => {
@@ -191,14 +191,14 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
                 setNewTagName('')
                 setNewTagColor('#4f46e5')
               }}
-              className="p-1 hover:bg-[#f2f4f6] rounded transition-colors"
+              className="p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded transition-colors"
             >
-              <X className="h-4 w-4 text-[#464554]" />
+              <X className="h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
             </button>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2">
               Tag Name <span className="text-[#ba1a1a]">*</span>
             </label>
             <input
@@ -206,15 +206,15 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
               value={newTagName}
               onChange={(e) => setNewTagName(e.target.value.toLowerCase())}
               placeholder="e.g., javascript, python, react"
-              className="w-full h-10 px-3 bg-[#f7f9fb] border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm placeholder:text-gray-400"
+              className="w-full h-10 px-3 bg-[#f7f9fb] dark:bg-surface-container-high border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[#191c1e] dark:text-on-surface"
             />
-            <p className="text-xs text-[#464554] mt-1.5">
+            <p className="text-xs text-[#464554] dark:text-on-surface-variant mt-1.5">
               Lowercase letters, numbers, hyphens, and periods only
             </p>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2">
               Color
             </label>
             <div className="flex gap-3">
@@ -225,14 +225,14 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
               />
               <div className="flex flex-col gap-2">
                 <div 
-                  className="w-16 h-16 rounded-lg shadow-md border-2 border-white"
+                  className="w-16 h-16 rounded-lg shadow-md border-2 border-white dark:border-white/20"
                   style={{ backgroundColor: newTagColor }}
                 />
                 <input
                   type="text"
                   value={newTagColor}
                   onChange={(e) => setNewTagColor(e.target.value)}
-                  className="w-16 h-8 px-2 text-xs font-mono bg-[#f7f9fb] border border-[#c7c4d7]/30 rounded text-center"
+                  className="w-16 h-8 px-2 text-xs font-mono bg-[#f7f9fb] dark:bg-surface-container-high border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded text-center text-[#191c1e] dark:text-on-surface"
                 />
               </div>
             </div>
@@ -247,7 +247,7 @@ export function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
                 setNewTagColor('#4f46e5')
               }}
               disabled={isSaving}
-              className="flex-1 h-10 px-4 bg-white border border-[#c7c4d7]/40 text-[#464554] rounded-lg hover:bg-[#f2f4f6] font-semibold text-sm transition-all disabled:opacity-50"
+              className="flex-1 h-10 px-4 bg-white dark:bg-transparent border border-[#c7c4d7]/40 dark:border-white/[0.09] text-[#464554] dark:text-on-surface-variant rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high font-semibold text-sm transition-all disabled:opacity-50"
             >
               Cancel
             </button>

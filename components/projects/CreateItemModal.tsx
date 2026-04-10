@@ -147,7 +147,7 @@ export function CreateItemModal({
         <ModalBody className="space-y-6 max-h-[60vh] overflow-y-auto">
           {/* Name */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
               Name <span className="text-[#ba1a1a]">*</span>
             </label>
             <Input
@@ -161,7 +161,7 @@ export function CreateItemModal({
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
               Description
             </label>
             <textarea
@@ -169,13 +169,13 @@ export function CreateItemModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Brief description..."
               rows={3}
-              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none"
+              className="w-full px-4 py-3 border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none bg-white dark:bg-surface-container text-[#191c1e] dark:text-on-surface placeholder:text-gray-400 dark:placeholder:text-gray-600"
             />
           </div>
 
           {/* Language Tags */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
               Language Tags
             </label>
             <TagSelector
@@ -187,7 +187,7 @@ export function CreateItemModal({
           {/* Content (files only) */}
           {type === 'file' && (
             <div>
-              <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
                 Content (Markdown)
               </label>
               <textarea
@@ -195,14 +195,14 @@ export function CreateItemModal({
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="# My Document&#10;&#10;Start writing..."
                 rows={8}
-                className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm font-mono resize-none"
+                className="w-full px-4 py-3 border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm font-mono resize-none bg-white dark:bg-surface-container text-[#191c1e] dark:text-on-surface placeholder:text-gray-400 dark:placeholder:text-gray-600"
               />
             </div>
           )}
 
           {/* File Upload */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-3 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-3 uppercase tracking-wider">
               <Paperclip className="inline h-3.5 w-3.5 mr-1" />
               File Attachments
             </label>
@@ -213,10 +213,10 @@ export function CreateItemModal({
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <div className="px-6 py-4 border-2 border-dashed border-[#c7c4d7]/40 rounded-xl hover:border-[#4f46e5] hover:bg-[#4f46e5]/5 transition-all cursor-pointer group">
+              <div className="px-6 py-4 border-2 border-dashed border-[#c7c4d7]/40 dark:border-white/[0.09] rounded-xl hover:border-[#4f46e5] hover:bg-[#4f46e5]/5 dark:hover:border-[#7c7ff5] dark:hover:bg-[#7c7ff5]/10 transition-all cursor-pointer group">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <Upload className="h-8 w-8 text-[#464554] group-hover:text-[#4f46e5]" />
-                  <p className="font-bold text-sm">Choose Files</p>
+                  <Upload className="h-8 w-8 text-[#464554] dark:text-on-surface-variant group-hover:text-[#4f46e5] dark:group-hover:text-[#7c7ff5]" />
+                  <p className="font-bold text-sm text-[#191c1e] dark:text-on-surface">Choose Files</p>
                 </div>
               </div>
             </label>
@@ -224,10 +224,10 @@ export function CreateItemModal({
             {files.length > 0 && (
               <div className="mt-3 space-y-2">
                 {files.map((file, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-[#f2f4f6] rounded-lg">
-                    <FileText className="h-4 w-4 text-[#4f46e5]" />
-                    <span className="text-sm flex-1 truncate">{file.name}</span>
-                    <button type="button" onClick={() => removeFile(index)}>
+                  <div key={index} className="flex items-center gap-2 p-2 bg-[#f2f4f6] dark:bg-surface-container rounded-lg">
+                    <FileText className="h-4 w-4 text-[#4f46e5] dark:text-[#7c7ff5]" />
+                    <span className="text-sm flex-1 truncate text-[#191c1e] dark:text-on-surface">{file.name}</span>
+                    <button type="button" onClick={() => removeFile(index)} className="text-[#464554] dark:text-on-surface-variant hover:text-[#191c1e] dark:hover:text-on-surface">
                       <X className="h-4 w-4" />
                     </button>
                   </div>

@@ -594,7 +594,7 @@ export function AgentDetailClient({
         <DialogContent className="bg-white dark:bg-surface-container sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-gray-500" />
+              <Trash2 className="h-5 w-5 text-red-500 dark:text-red-400" />
               Delete Template
             </DialogTitle>
             <DialogDescription className="pt-3">

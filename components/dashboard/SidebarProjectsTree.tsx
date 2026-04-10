@@ -6,6 +6,7 @@ import { ChevronRight, Folder, FolderOpen, FileText, Copy, Trash2, Edit, Downloa
 import { cn } from '@/lib/utils'
 import { Tables } from '@/types/database.types'
 import { createClient } from '@/lib/supabase/client'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import toast from 'react-hot-toast'
 
 type ProjectItem = Tables<'project_items'>
@@ -16,11 +17,19 @@ interface TreeNode {
   level: number
 }
 
-interface SidebarProjectsTreeProps {
-  isCollapsed: boolean
+interface PendingItem {
+  type: 'folder' | 'file'
+  parentId: string | null
+  name: string
 }
 
-export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
+interface SidebarProjectsTreeProps {
+  isCollapsed: boolean
+  quickCreateType?: 'folder' | 'file' | null
+  onQuickCreateDone?: () => void
+}
+
+export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreateDone }: SidebarProjectsTreeProps) {
   const [items, setItems] = useState<ProjectItem[]>([])
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set())
   const [contextMenu, setContextMenu] = useState<{
@@ -28,11 +37,113 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     x: number
     y: number
   } | null>(null)
+  const [pendingItem, setPendingItem] = useState<PendingItem | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<ProjectItem | null>(null)
+  const pendingInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const clickCountRef = useRef<{ [key: string]: number }>({})
+
+  // Derive contextual parentId from current pathname
+  const getContextualParentId = (): string | null => {
+    if (!pathname) return null
+
+    // /dashboard/projects/:id → selected folder → create inside it
+    const folderMatch = pathname.match(/\/dashboard\/projects\/([^/]+)$/)
+    if (folderMatch) {
+      const folderId = folderMatch[1]
+      const folder = items.find(i => i.id === folderId && i.type === 'folder')
+      if (folder) return folderId
+    }
+
+    // /dashboard/projects/file/:id → selected file → create as sibling (use file's parent)
+    const fileMatch = pathname.match(/\/dashboard\/projects\/file\/([^/]+)$/)
+    if (fileMatch) {
+      const fileId = fileMatch[1]
+      const file = items.find(i => i.id === fileId && i.type === 'file')
+      if (file) return file.parent_id ?? null
+    }
+
+    return null
+  }
+
+  // Trigger inline creation when quickCreateType changes
+  useEffect(() => {
+    if (quickCreateType) {
+      const defaultName = quickCreateType === 'folder' ? 'New Folder' : 'New File'
+      const parentId = getContextualParentId()
+      setPendingItem({ type: quickCreateType, parentId, name: defaultName })
+      // Expand parent so the pending item is visible
+      if (parentId) setExpandedKeys(prev => new Set([...prev, parentId]))
+      onQuickCreateDone?.()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quickCreateType])
+
+  // Focus input when pendingItem appears
+  useEffect(() => {
+    if (pendingItem) {
+      setTimeout(() => {
+        pendingInputRef.current?.focus()
+        pendingInputRef.current?.select()
+      }, 50)
+    }
+  }, [pendingItem])
+
+  const resolveUniqueName = (baseName: string, parentId: string | null): string => {
+    const siblings = items.filter(i => i.parent_id === parentId && i.deleted_at === null)
+    const siblingNames = new Set(siblings.map(i => i.name.toLowerCase()))
+
+    if (!siblingNames.has(baseName.toLowerCase())) return baseName
+
+    let counter = 1
+    let candidate: string
+    do {
+      candidate = `${baseName} ${String(counter).padStart(2, '0')}`
+      counter++
+    } while (siblingNames.has(candidate.toLowerCase()))
+
+    return candidate
+  }
+
+  const commitPendingItem = async () => {
+    if (!pendingItem) return
+    const rawName = pendingItem.name.trim()
+    if (!rawName) {
+      setPendingItem(null)
+      return
+    }
+
+    const name = resolveUniqueName(rawName, pendingItem.parentId)
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setPendingItem(null); return }
+
+    const { data: item, error } = await supabase
+      .from('project_items')
+      .insert({
+        user_id: user.id,
+        parent_id: pendingItem.parentId,
+        name,
+        type: pendingItem.type,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      toast.error('Failed to create')
+    } else if (item) {
+      reloadItems()
+      if (item.type === 'file') {
+        router.push(`/dashboard/projects/file/${item.id}`)
+      }
+    }
+    setPendingItem(null)
+  }
+
+  const cancelPendingItem = () => setPendingItem(null)
 
   // Close context menu on click outside
   useEffect(() => {
@@ -190,17 +301,17 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     }
   }
 
-  const handleDelete = async (item: ProjectItem) => {
-    const confirmMessage = item.type === 'folder' 
-      ? `Delete folder "${item.name}" and all its contents?`
-      : `Delete file "${item.name}"?`
-    
-    if (!confirm(confirmMessage)) return
+  const handleDelete = (item: ProjectItem) => {
+    setDeleteTarget(item)
+    setContextMenu(null)
+  }
 
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
     const { error } = await supabase
       .from('project_items')
       .update({ deleted_at: new Date().toISOString() })
-      .eq('id', item.id)
+      .eq('id', deleteTarget.id)
 
     if (error) {
       toast.error('Failed to delete')
@@ -208,6 +319,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
       toast.success('Moved to trash')
       reloadItems()
     }
+    setDeleteTarget(null)
   }
 
   const handleDuplicate = async (item: ProjectItem) => {
@@ -266,12 +378,37 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
     }
   }
 
+  const renderPendingInput = (level: number) => (
+    <div
+      className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-blue-50 dark:bg-[#7c7ff5]/10"
+      style={{ paddingLeft: `${8 + level * 16}px` }}
+    >
+      <div className="w-3.5" />
+      {pendingItem!.type === 'folder'
+        ? <Folder className="h-4 w-4 shrink-0 text-[#4f46e5] dark:text-[#7c7ff5]" />
+        : <FileText className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
+      }
+      <input
+        ref={pendingInputRef}
+        value={pendingItem!.name}
+        onChange={e => setPendingItem({ ...pendingItem!, name: e.target.value })}
+        onKeyDown={e => {
+          if (e.key === 'Enter') { e.preventDefault(); commitPendingItem() }
+          if (e.key === 'Escape') { e.preventDefault(); cancelPendingItem() }
+        }}
+        onBlur={commitPendingItem}
+        className="flex-1 text-[13px] bg-transparent outline-none border-b border-[#4f46e5] dark:border-[#7c7ff5] text-gray-900 dark:text-on-surface min-w-0"
+      />
+    </div>
+  )
+
   const renderNode = (node: TreeNode) => {
     const isExpanded = expandedKeys.has(node.item.id)
     const isCurrentPath = pathname === `/dashboard/projects/${node.item.id}` || 
                           pathname === `/dashboard/projects/file/${node.item.id}`
     const hasChildren = node.children.length > 0
     const isFile = node.item.type === 'file'
+    const isPendingParent = pendingItem?.parentId === node.item.id
 
     return (
       <div key={node.item.id}>
@@ -304,7 +441,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
 
           {isFile ? (
             <FileText className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
-          ) : isExpanded ? (
+          ) : isExpanded || isPendingParent ? (
             <FolderOpen className="h-4 w-4 shrink-0 text-[#4f46e5] dark:text-[#7c7ff5]" />
           ) : (
             <Folder className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
@@ -317,8 +454,11 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
           )}
         </button>
 
-        {isExpanded && hasChildren && !isFile && (
-          <div>{node.children.map(renderNode)}</div>
+        {(isExpanded || isPendingParent) && !isFile && (
+          <div>
+            {isPendingParent && renderPendingInput(node.level + 1)}
+            {node.children.map(renderNode)}
+          </div>
         )}
       </div>
     )
@@ -331,6 +471,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
   return (
     <>
       <div className="space-y-0.5 h-full overflow-y-auto pr-1 custom-scrollbar">
+        {pendingItem && pendingItem.parentId === null && renderPendingInput(0)}
         {tree.map(renderNode)}
       </div>
 
@@ -402,10 +543,7 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
           <div className="h-px bg-gray-200 dark:bg-white/[0.06] my-1.5" />
 
           <button
-            onClick={() => {
-              handleDelete(contextMenu.item)
-              setContextMenu(null)
-            }}
+            onClick={() => handleDelete(contextMenu.item)}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 transition-colors font-medium"
           >
             <Trash2 className="h-4 w-4" />
@@ -413,6 +551,19 @@ export function SidebarProjectsTree({ isCollapsed }: SidebarProjectsTreeProps) {
           </button>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title={deleteTarget?.type === 'folder' ? `Delete "${deleteTarget?.name}"?` : `Delete "${deleteTarget?.name}"?`}
+        description={
+          deleteTarget?.type === 'folder'
+            ? 'This will delete the folder and all its contents. The items will be moved to trash.'
+            : 'This file will be moved to trash.'
+        }
+        confirmLabel="Move to Trash"
+      />
     </>
   )
 }

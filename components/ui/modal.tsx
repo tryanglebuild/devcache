@@ -65,7 +65,7 @@ export function Modal({
       {/* Modal Content */}
       <div
         className={cn(
-          'relative w-full bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 fade-in duration-200',
+          'relative w-full bg-white dark:bg-[#151929] rounded-2xl shadow-2xl animate-in zoom-in-95 fade-in duration-200',
           sizeClasses[size],
           className
         )}
@@ -74,7 +74,7 @@ export function Modal({
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-[#f2f4f6] transition-colors text-[#464554] hover:text-[#191c1e] z-10"
+            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-colors text-[#464554] dark:text-on-surface-variant hover:text-[#191c1e] dark:hover:text-on-surface z-10"
           >
             <X className="h-5 w-5" />
           </button>
@@ -94,7 +94,7 @@ interface ModalHeaderProps {
 
 export function ModalHeader({ children, className, icon, subtitle }: ModalHeaderProps) {
   return (
-    <div className={cn('px-8 py-6 border-b border-[#c7c4d7]/20', className)}>
+    <div className={cn('px-8 py-6 border-b border-[#c7c4d7]/20 dark:border-white/[0.06]', className)}>
       <div className="flex items-start gap-4">
         {icon && (
           <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white shadow-lg shrink-0">
@@ -102,11 +102,11 @@ export function ModalHeader({ children, className, icon, subtitle }: ModalHeader
           </div>
         )}
         <div className="flex-1">
-          <h2 className="text-2xl font-black text-[#191c1e] tracking-tight">
+          <h2 className="text-2xl font-black text-[#191c1e] dark:text-on-surface tracking-tight">
             {children}
           </h2>
           {subtitle && (
-            <p className="text-sm text-[#464554] mt-1 font-medium">
+            <p className="text-sm text-[#464554] dark:text-on-surface-variant mt-1 font-medium">
               {subtitle}
             </p>
           )}
@@ -136,7 +136,7 @@ interface ModalFooterProps {
 
 export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
-    <div className={cn('px-8 py-6 border-t border-[#c7c4d7]/20 flex gap-3', className)}>
+    <div className={cn('px-8 py-6 border-t border-[#c7c4d7]/20 dark:border-white/[0.06] flex gap-3', className)}>
       {children}
     </div>
   )

@@ -138,22 +138,18 @@ export function EditItemSheet({
               />
             </div>
 
-            {/* Personal Notes */}
+            {/* Notes */}
             <div>
-              <label className="block text-sm font-bold text-[#191c1e] mb-2">
-                Personal Notes
+              <label className="block text-sm font-bold text-[#191c1e] dark:text-on-surface mb-2">
+                Notes
               </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add your personal comments, observations, or reminders about this item..."
+                placeholder="Add comments, observations, or reminders..."
                 rows={6}
-                className="w-full px-4 py-3 bg-white border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm resize-none placeholder:text-gray-400"
+                className="w-full px-4 py-3 bg-white dark:bg-surface-container border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-[#4f46e5] text-sm resize-none placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[#191c1e] dark:text-on-surface"
               />
-              <p className="text-xs text-[#464554] mt-2 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#904900]"></span>
-                Private notes visible only to you
-              </p>
             </div>
           </form>
         </div>

@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RotateCcw, Trash2, CircleX } from 'lucide-react'
 import { TemplateHeader } from './TemplateHeader'
 import { TemplateTags } from './TemplateTags'
 import { TemplateStatsGrid } from './TemplateStatsGrid'
@@ -290,9 +290,7 @@ export function DeletedTemplatesClient() {
                   onClick={() => setActionType('restore')}
                   className="flex-1 bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-lg"
                 >
-                  <span className="material-symbols-outlined text-lg mr-2">
-                    restore
-                  </span>
+                  <RotateCcw className="h-4 w-4 mr-2" />
                   Restore Template
                 </Button>
                 <Button
@@ -300,9 +298,7 @@ export function DeletedTemplatesClient() {
                   variant="outline"
                   className="border-gray-200 text-gray-600 hover:bg-gray-50"
                 >
-                  <span className="material-symbols-outlined text-lg mr-2">
-                    delete_forever
-                  </span>
+                  <CircleX className="h-4 w-4 mr-2" />
                   Delete Forever
                 </Button>
               </div>
@@ -331,9 +327,7 @@ export function DeletedTemplatesClient() {
       ) : (
         <div className="bg-white rounded-xl p-12 text-center shadow-sm">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-            <span className="material-symbols-outlined text-[#464554] text-3xl">
-              delete_outline
-            </span>
+            <Trash2 className="h-8 w-8 text-[#464554]" strokeWidth={1} />
           </div>
           <p className="text-[#464554] font-medium mb-2">No deleted templates</p>
           <p className="text-sm text-[#464554] mb-4">
@@ -355,16 +349,12 @@ export function DeletedTemplatesClient() {
             <DialogTitle className="text-xl flex items-center gap-2">
               {actionType === 'restore' ? (
                 <>
-                  <span className="material-symbols-outlined text-[#4f46e5] text-xl">
-                    restore
-                  </span>
+                  <RotateCcw className="h-5 w-5 text-[#4f46e5]" />
                   Restore Template
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-gray-500 text-xl">
-                    delete_forever
-                  </span>
+                  <CircleX className="h-5 w-5 text-red-600 dark:text-red-400" strokeWidth={2} />
                   Permanently Delete
                 </>
               )}

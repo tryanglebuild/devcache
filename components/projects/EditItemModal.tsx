@@ -89,7 +89,7 @@ export function EditItemModal({
         <ModalBody className="space-y-6 max-h-[60vh] overflow-y-auto">
           {/* Name */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
               Name <span className="text-[#ba1a1a]">*</span>
             </label>
             <Input
@@ -103,7 +103,7 @@ export function EditItemModal({
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
               Description
             </label>
             <textarea
@@ -111,13 +111,13 @@ export function EditItemModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Brief description..."
               rows={3}
-              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none"
+              className="w-full px-4 py-3 border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none bg-white dark:bg-surface-container text-[#191c1e] dark:text-on-surface placeholder:text-gray-400 dark:placeholder:text-gray-600"
             />
           </div>
 
           {/* Language Tags */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
               Language Tags
             </label>
             <TagSelector
@@ -126,22 +126,18 @@ export function EditItemModal({
             />
           </div>
 
-          {/* Personal Notes */}
+          {/* Notes */}
           <div>
-            <label className="block text-xs font-bold text-[#191c1e] mb-2 uppercase tracking-wider">
-              Personal Notes
+            <label className="block text-xs font-bold text-[#191c1e] dark:text-on-surface mb-2 uppercase tracking-wider">
+              Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add your personal comments, observations, or reminders..."
+              placeholder="Add comments, observations, or reminders..."
               rows={6}
-              className="w-full px-4 py-3 border border-[#c7c4d7]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none"
+              className="w-full px-4 py-3 border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4f46e5] text-sm resize-none bg-white dark:bg-surface-container text-[#191c1e] dark:text-on-surface placeholder:text-gray-400 dark:placeholder:text-gray-600"
             />
-            <p className="text-xs text-[#464554] mt-2 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#904900]"></span>
-              Private notes visible only to you
-            </p>
           </div>
         </ModalBody>
 
@@ -158,7 +154,7 @@ export function EditItemModal({
           <Button
             type="submit"
             disabled={isLoading || !name.trim()}
-            className="flex-1 bg-gradient-to-br from-[#4f46e5] to-[#4338ca]"
+            className="flex-1 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white"
           >
             {isLoading ? 'Saving...' : 'Save Changes'}
           </Button>

@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
-import { AlertTriangle, Loader2, Trash2, ShieldAlert, Lock } from 'lucide-react'
+import { AlertTriangle, Loader2, Trash2, KeyRound, ArrowRight, ShieldAlert } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
@@ -133,11 +133,11 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
           <>
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-500/30">
-                  <ShieldAlert className="h-6 w-6 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
+                  <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-black text-red-600">
+                  <DialogTitle className="text-2xl font-black text-red-600 dark:text-red-400">
                     Delete Account
                   </DialogTitle>
                   <DialogDescription className="text-sm">
@@ -148,7 +148,7 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              <Alert variant="destructive" className="border-red-300 bg-red-50">
+              <Alert variant="destructive" className="border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10">
                 <AlertTriangle className="h-5 w-5" />
                 <AlertDescription className="ml-2">
                   <strong className="font-bold">Warning:</strong> Deleting your account will permanently remove all your data.
@@ -156,36 +156,36 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
               </Alert>
 
               <div className="space-y-3 text-sm">
-                <p className="font-semibold text-slate-900">The following data will be permanently deleted:</p>
+                <p className="font-semibold text-[#191c1e] dark:text-on-surface">The following data will be permanently deleted:</p>
                 <ul className="space-y-2 ml-4">
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-slate-700">All your AI agent templates and configurations</span>
+                    <span className="text-[#464554] dark:text-on-surface-variant">All your AI agent templates and configurations</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-slate-700">All your projects and project items</span>
+                    <span className="text-[#464554] dark:text-on-surface-variant">All your projects and project items</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-slate-700">All your chat sessions and message history</span>
+                    <span className="text-[#464554] dark:text-on-surface-variant">All your chat sessions and message history</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-slate-700">Your profile information and preferences</span>
+                    <span className="text-[#464554] dark:text-on-surface-variant">Your profile information and preferences</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-slate-700">All your collections and favorites</span>
+                    <span className="text-[#464554] dark:text-on-surface-variant">All your collections and favorites</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-slate-700">Your account and authentication data</span>
+                    <span className="text-[#464554] dark:text-on-surface-variant">Your account and authentication data</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-start gap-3 p-4 bg-[#f2f4f6] dark:bg-white/5 rounded-lg border border-[#e5e7eb] dark:border-white/[0.09]">
                 <Checkbox
                   id="understood"
                   checked={understood}
@@ -194,7 +194,7 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                 />
                 <label
                   htmlFor="understood"
-                  className="text-sm font-medium text-slate-900 cursor-pointer leading-relaxed"
+                  className="text-sm font-medium text-[#191c1e] dark:text-on-surface cursor-pointer leading-relaxed"
                 >
                   I understand that this action is permanent and cannot be undone. All my data will be permanently deleted.
                 </label>
@@ -216,7 +216,6 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                 className="font-bold"
               >
                 Continue
-                <AlertTriangle className="ml-2 h-4 w-4" />
               </Button>
             </DialogFooter>
           </>
@@ -227,11 +226,11 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
           <>
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30">
-                  <Lock className="h-6 w-6 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                  <KeyRound className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-black text-orange-600">
+                  <DialogTitle className="text-2xl font-black text-amber-600 dark:text-amber-400">
                     Verify Your Identity
                   </DialogTitle>
                   <DialogDescription className="text-sm">
@@ -242,15 +241,15 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              <Alert className="border-orange-300 bg-orange-50">
-                <AlertDescription className="text-orange-900">
+              <Alert className="border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10">
+                <AlertDescription className="text-amber-900 dark:text-amber-200">
                   Please enter your email and password to verify your identity before proceeding.
                 </AlertDescription>
               </Alert>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-slate-900">
+                  <Label htmlFor="email" className="text-sm font-semibold text-[#191c1e] dark:text-on-surface">
                     Email Address
                   </Label>
                   <Input
@@ -262,13 +261,13 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                     className="border-slate-300"
                     disabled={isDeleting}
                   />
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-[#464554] dark:text-on-surface-variant">
                     Must match your account email: {userEmail}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-semibold text-slate-900">
+                  <Label htmlFor="password" className="text-sm font-semibold text-[#191c1e] dark:text-on-surface">
                     Password
                   </Label>
                   <Input
@@ -307,7 +306,7 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                 ) : (
                   <>
                     Verify & Continue
-                    <Lock className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
@@ -320,11 +319,11 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
           <>
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-lg shadow-red-600/30 animate-pulse">
-                  <Trash2 className="h-6 w-6 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-500/15 flex items-center justify-center">
+                  <ShieldAlert className="h-6 w-6 text-red-600 dark:text-red-400" strokeWidth={2} />
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-black text-red-600">
+                  <DialogTitle className="text-2xl font-black text-red-600 dark:text-red-400">
                     Final Confirmation
                   </DialogTitle>
                   <DialogDescription className="text-sm">
@@ -335,15 +334,15 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              <Alert variant="destructive" className="border-red-400 bg-red-100">
+              <Alert variant="destructive" className="border-red-400 dark:border-red-500/30 bg-red-100 dark:bg-red-500/10">
                 <AlertTriangle className="h-5 w-5" />
                 <AlertDescription className="ml-2">
                   <strong className="font-bold">FINAL WARNING:</strong> This is your last chance to cancel. Once you proceed, your account and all associated data will be permanently deleted.
                 </AlertDescription>
               </Alert>
 
-              <div className="space-y-3 p-4 bg-slate-50 rounded-lg border-2 border-red-200">
-                <p className="text-sm font-semibold text-slate-900">
+              <div className="space-y-3 p-4 bg-[#f2f4f6] dark:bg-white/5 rounded-lg border-2 border-red-200 dark:border-red-500/30">
+                <p className="text-sm font-semibold text-[#191c1e] dark:text-on-surface">
                   Type <span className="font-mono font-bold text-red-600">DELETE MY ACCOUNT</span> to confirm:
                 </p>
                 <Input
@@ -355,7 +354,7 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                 />
               </div>
 
-              <div className="space-y-2 text-xs text-slate-600">
+              <div className="space-y-2 text-xs text-[#464554] dark:text-on-surface-variant">
                 <p className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                   Your account will be deleted immediately

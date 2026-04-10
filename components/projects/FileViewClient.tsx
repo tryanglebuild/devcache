@@ -422,12 +422,12 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
         </div>
       </div>
 
-      {/* Personal Notes */}
+      {/* Notes */}
       {file.notes && (
         <div className="bg-gradient-to-br from-[#904900]/5 to-[#904900]/10 p-8 rounded-xl border-2 border-[#904900]/20">
           <h2 className="text-xl font-black text-[#191c1e] mb-4 flex items-center gap-2">
             <Edit className="h-5 w-5 text-[#904900]" />
-            Personal Notes
+            Notes
           </h2>
           <div className="bg-white p-6 rounded-lg">
             <p className="text-[#191c1e] whitespace-pre-wrap leading-relaxed">
