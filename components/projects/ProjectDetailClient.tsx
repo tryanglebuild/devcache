@@ -10,6 +10,7 @@ import { PublishToMarketplaceModal } from './PublishToMarketplaceModal'
 import { ItemCard } from './ItemCard'
 import { Breadcrumb } from './Breadcrumb'
 import { FolderUploadButton } from './FolderUploadButton'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
@@ -26,6 +27,7 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [createType, setCreateType] = useState<'folder' | 'file'>('folder')
   const [breadcrumbPath, setBreadcrumbPath] = useState<ProjectItem[]>([])
   const [tagColors, setTagColors] = useState<Record<string, string>>({})
@@ -90,11 +92,12 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
     setItems([...items, ...newItems])
   }
 
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-      return
-    }
+  const handleDelete = () => {
+    setDeleteConfirmOpen(true)
+  }
 
+  const confirmDelete = async () => {
+    setDeleteConfirmOpen(false)
     try {
       const { error } = await supabase
         .from('project_items')
@@ -326,6 +329,15 @@ export function ProjectDetailClient({ project, allItems }: ProjectDetailClientPr
           }}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onCancel={() => setDeleteConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title={`Delete "${project.name}"?`}
+        description="This will permanently delete this folder and all its contents. This action cannot be undone."
+        confirmLabel="Delete"
+      />
     </div>
   )
 }

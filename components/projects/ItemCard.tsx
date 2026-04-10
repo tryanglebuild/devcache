@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { EditItemModal } from './EditItemModal'
 import { ViewFileDialog } from './ViewFileDialog'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { createClient } from '@/lib/supabase/client'
 import { trackActivity } from '@/lib/activity/track'
 import toast from 'react-hot-toast'
@@ -31,6 +32,7 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
   const router = useRouter()
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [attachmentCount, setAttachmentCount] = useState(0)
   const supabase = createClient()
 
@@ -64,10 +66,12 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
     toast.success(data.is_favorite ? 'Added to favorites' : 'Removed from favorites')
   }
 
-  const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete "${item.name}"?`)) {
-      return
-    }
+  const handleDelete = () => {
+    setDeleteConfirmOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    setDeleteConfirmOpen(false)
 
     const { error } = await supabase
       .from('project_items')
@@ -244,6 +248,17 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
           item={item}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onCancel={() => setDeleteConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title={`Delete "${item.name}"?`}
+        description={item.type === 'folder'
+          ? 'This will delete the folder and all its contents. This action cannot be undone.'
+          : 'This file will be permanently deleted. This action cannot be undone.'}
+        confirmLabel="Delete"
+      />
     </>
   )
 }

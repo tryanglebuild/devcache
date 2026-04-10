@@ -7,6 +7,7 @@ import { FileText, Code, Eye, Edit, Trash2, Download, Paperclip, Copy, Check, Up
 import { EditItemModal } from './EditItemModal'
 import { PublishToMarketplaceModal } from './PublishToMarketplaceModal'
 import { Breadcrumb } from './Breadcrumb'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import ReactMarkdown from 'react-markdown'
@@ -31,6 +32,8 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
   const [tagColors, setTagColors] = useState<Record<string, string>>({})
   const [breadcrumbPath, setBreadcrumbPath] = useState<ProjectItem[]>([])
   const [copied, setCopied] = useState(false)
+  const [deleteFileConfirmOpen, setDeleteFileConfirmOpen] = useState(false)
+  const [deleteAttachmentTarget, setDeleteAttachmentTarget] = useState<string | null>(null)
 
   const supabase = createClient()
 
@@ -160,11 +163,12 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
     loadAttachmentContent()
   }, [file.content, attachments, supabase.storage])
 
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this file? This action cannot be undone.')) {
-      return
-    }
+  const handleDelete = () => {
+    setDeleteFileConfirmOpen(true)
+  }
 
+  const confirmDeleteFile = async () => {
+    setDeleteFileConfirmOpen(false)
     try {
       const { error } = await supabase
         .from('project_items')
@@ -205,23 +209,25 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
     }
   }
 
-  const handleDeleteAttachment = async (attachmentId: string) => {
-    if (!confirm('Are you sure you want to delete this attachment?')) {
-      return
-    }
+  const handleDeleteAttachment = (attachmentId: string) => {
+    setDeleteAttachmentTarget(attachmentId)
+  }
+
+  const confirmDeleteAttachment = async () => {
+    if (!deleteAttachmentTarget) return
+    const attachmentId = deleteAttachmentTarget
+    setDeleteAttachmentTarget(null)
 
     try {
       const attachment = attachments.find(a => a.id === attachmentId)
       if (!attachment) return
 
-      // Delete from storage
       const { error: storageError } = await supabase.storage
         .from('project-files')
         .remove([attachment.file_path])
 
       if (storageError) throw storageError
 
-      // Delete from database
       const { error: dbError } = await supabase
         .from('project_file_attachments')
         .delete()
@@ -504,6 +510,24 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
           toast.success('Template published successfully!')
           router.push('/marketplace')
         }}
+      />
+
+      <ConfirmDialog
+        isOpen={deleteFileConfirmOpen}
+        onCancel={() => setDeleteFileConfirmOpen(false)}
+        onConfirm={confirmDeleteFile}
+        title={`Delete "${file.name}"?`}
+        description="This file will be permanently deleted. This action cannot be undone."
+        confirmLabel="Delete"
+      />
+
+      <ConfirmDialog
+        isOpen={!!deleteAttachmentTarget}
+        onCancel={() => setDeleteAttachmentTarget(null)}
+        onConfirm={confirmDeleteAttachment}
+        title="Delete attachment?"
+        description="This attachment will be permanently deleted. This action cannot be undone."
+        confirmLabel="Delete"
       />
     </div>
   )

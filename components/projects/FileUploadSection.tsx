@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { Tables } from '@/types/database.types'
 import { Upload, File, X, Download, Trash2 } from 'lucide-react'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
@@ -20,6 +21,7 @@ export function FileUploadSection({
   onAttachmentsChange,
 }: FileUploadSectionProps) {
   const [isUploading, setIsUploading] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<FileAttachment | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
@@ -112,18 +114,22 @@ export function FileUploadSection({
     }
   }
 
-  const handleDelete = async (attachment: FileAttachment) => {
-    if (!confirm(`Delete "${attachment.file_name}"?`)) return
+  const handleDelete = (attachment: FileAttachment) => {
+    setDeleteTarget(attachment)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
+    const attachment = deleteTarget
+    setDeleteTarget(null)
 
     try {
-      // Delete from storage
       const { error: storageError } = await supabase.storage
         .from('project-files')
         .remove([attachment.file_path])
 
       if (storageError) throw storageError
 
-      // Delete from database
       const { error: dbError } = await supabase
         .from('project_file_attachments')
         .delete()
@@ -216,6 +222,15 @@ export function FileUploadSection({
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title={`Delete "${deleteTarget?.file_name}"?`}
+        description="This attachment will be permanently deleted. This action cannot be undone."
+        confirmLabel="Delete"
+      />
     </div>
   )
 }

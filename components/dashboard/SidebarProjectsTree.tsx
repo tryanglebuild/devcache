@@ -43,8 +43,6 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const clickCountRef = useRef<{ [key: string]: number }>({})
 
   // Derive contextual parentId from current pathname
   const getContextualParentId = (): string | null => {
@@ -219,43 +217,20 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
 
   const tree = buildTree(null)
 
-  const handleItemClick = (item: ProjectItem, hasChildren: boolean) => {
-    const itemId = item.id
-    
-    // If item has no children (empty folder or file), navigate immediately on single click
-    if (!hasChildren) {
-      if (item.type === 'folder') {
-        router.push(`/dashboard/projects/${item.id}`)
-      } else {
-        router.push(`/dashboard/projects/file/${item.id}`)
-      }
+  const handleItemClick = (item: ProjectItem) => {
+    if (item.type === 'file') {
+      router.push(`/dashboard/projects/file/${item.id}`)
       return
     }
-    
-    // For items with children, use double-click logic
-    clickCountRef.current[itemId] = (clickCountRef.current[itemId] || 0) + 1
-    
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current)
+
+    // Folders: single click toggles expand/collapse
+    toggleExpanded(item.id)
+  }
+
+  const handleItemDoubleClick = (item: ProjectItem) => {
+    if (item.type === 'folder') {
+      router.push(`/dashboard/projects/${item.id}`)
     }
-    
-    clickTimeoutRef.current = setTimeout(() => {
-      const clickCount = clickCountRef.current[itemId] || 0
-      
-      if (clickCount === 1) {
-        if (item.type === 'folder') {
-          toggleExpanded(item.id)
-        }
-      } else if (clickCount >= 2) {
-        if (item.type === 'folder') {
-          router.push(`/dashboard/projects/${item.id}`)
-        } else {
-          router.push(`/dashboard/projects/file/${item.id}`)
-        }
-      }
-      
-      clickCountRef.current[itemId] = 0
-    }, 300)
   }
 
   const toggleExpanded = (id: string) => {
@@ -406,14 +381,15 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
     const isExpanded = expandedKeys.has(node.item.id)
     const isCurrentPath = pathname === `/dashboard/projects/${node.item.id}` || 
                           pathname === `/dashboard/projects/file/${node.item.id}`
-    const hasChildren = node.children.length > 0
     const isFile = node.item.type === 'file'
     const isPendingParent = pendingItem?.parentId === node.item.id
+    const hasChildren = node.children.length > 0
 
     return (
       <div key={node.item.id}>
         <button
-          onClick={() => handleItemClick(node.item, hasChildren)}
+          onClick={() => handleItemClick(node.item)}
+          onDoubleClick={() => handleItemDoubleClick(node.item)}
           onContextMenu={(e) => {
             e.preventDefault()
             e.stopPropagation()
@@ -431,7 +407,7 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
           )}
           style={{ paddingLeft: `${8 + node.level * 16}px` }}
         >
-          {hasChildren && !isFile ? (
+          {!isFile && hasChildren ? (
             <ChevronRight
               className={cn('h-3.5 w-3.5 transition-transform shrink-0', isExpanded && 'rotate-90')}
             />
