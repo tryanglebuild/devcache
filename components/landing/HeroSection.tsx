@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Layers, Star, ArrowDownToLine } from 'lucide-react'
+import { Layers, Star, ArrowDownToLine, ArrowRight } from 'lucide-react'
 import type { MarketplaceStats } from '@/types/agents.types'
 
 interface HeroSectionProps {
@@ -17,62 +17,64 @@ export default function HeroSection({ stats }: HeroSectionProps) {
   }
 
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-background">
-      <div className="grid-bg absolute inset-0 opacity-40 -z-10" />
+    <section className="relative pt-32 pb-20 md:pt-44 md:pb-28 overflow-hidden bg-background">
+      <div className="grid-bg absolute inset-0 opacity-30 -z-10" />
       
-      <div className="max-w-7xl mx-auto px-6 text-center">
-        <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-[#7c7ff5]/10 text-indigo-700 dark:text-[#7c7ff5] text-[10px] font-extrabold tracking-[0.2em] uppercase mb-8 border border-indigo-100 dark:border-[#7c7ff5]/20">
+      <div className="max-w-6xl mx-auto px-6 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-indigo-50 dark:bg-[#7c7ff5]/10 text-indigo-600 dark:text-[#7c7ff5] text-[11px] font-bold tracking-widest uppercase mb-8 border border-indigo-100/80 dark:border-[#7c7ff5]/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-[#7c7ff5]" />
           Agentic AI Marketplace
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-on-surface tracking-tight leading-[1.1] mb-8 max-w-4xl mx-auto text-balance">
+        <h1 className="text-5xl md:text-[4.5rem] font-black text-slate-900 dark:text-on-surface tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto text-balance">
           Your expertise shouldn&apos;t live in your head.
         </h1>
         
-        <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-on-surface-variant leading-relaxed mb-12">
+        <p className="max-w-xl mx-auto text-base md:text-lg text-slate-500 dark:text-on-surface-variant leading-relaxed mb-10">
           DevCache turns your best work into AI agents — specialized, shareable, and ready to use across every project your team touches.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link 
             href="/signup"
-            className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 dark:shadow-indigo-900/30 hover:translate-y-[-2px] transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3.5 rounded-xl font-semibold text-sm transition-colors"
           >
             Start building free
+            <ArrowRight size={15} strokeWidth={2.5} />
           </Link>
-          <Link href="/marketplace" className="w-full sm:w-auto bg-white dark:bg-surface-container border border-slate-200 dark:border-white/[0.09] text-slate-700 dark:text-on-surface px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 dark:hover:bg-surface-container-high transition-all">
+          <Link href="/marketplace" className="w-full sm:w-auto bg-white dark:bg-surface-container border border-slate-200 dark:border-white/[0.09] text-slate-700 dark:text-on-surface px-8 py-3.5 rounded-xl font-semibold text-sm hover:bg-slate-50 dark:hover:bg-surface-container-high transition-colors">
             Explore Marketplace
           </Link>
         </div>
         
-        {totalAgents > 0 ? (
-          <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500 dark:text-on-surface-variant">
-            <div className="flex items-center gap-2">
-              <Layers size={14} strokeWidth={2} className="text-gray-500 dark:text-gray-400" />
-              <span>{formatCount(totalAgents)} Agents</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star size={14} strokeWidth={2} className="text-gray-500 dark:text-gray-400 fill-gray-500 dark:fill-gray-400" />
-              <span>{avgRating}★ Average</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ArrowDownToLine size={14} strokeWidth={2} className="text-gray-500 dark:text-gray-400" />
-              <span>{formatCount(totalDownloads)} Downloads</span>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-16 flex items-center justify-center gap-8 text-sm text-slate-500 dark:text-on-surface-variant">
-            <div className="flex items-center gap-2">
+        <div className="mt-14 flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400 dark:text-on-surface-variant/70">
+          {totalAgents > 0 ? (
+            <>
+              <div className="flex items-center gap-1.5">
+                <Layers size={13} strokeWidth={2} />
+                <span>{formatCount(totalAgents)} agents</span>
+              </div>
+              <span className="text-slate-200 dark:text-white/10">·</span>
+              <div className="flex items-center gap-1.5">
+                <Star size={13} strokeWidth={2} className="fill-current" />
+                <span>{avgRating} avg rating</span>
+              </div>
+              <span className="text-slate-200 dark:text-white/10">·</span>
+              <div className="flex items-center gap-1.5">
+                <ArrowDownToLine size={13} strokeWidth={2} />
+                <span>{formatCount(totalDownloads)} downloads</span>
+              </div>
+            </>
+          ) : (
+            <>
               <span>Agents for every stack</span>
-            </div>
-            <div className="flex items-center gap-2">
+              <span className="text-slate-200 dark:text-white/10">·</span>
               <span>Public or private, you decide</span>
-            </div>
-            <div className="flex items-center gap-2">
+              <span className="text-slate-200 dark:text-white/10">·</span>
               <span>Works with any AI coding tool</span>
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </section>
   )

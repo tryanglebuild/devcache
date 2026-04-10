@@ -34,7 +34,10 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [attachmentCount, setAttachmentCount] = useState(0)
+  const [mounted, setMounted] = useState(false)
   const supabase = createClient()
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     loadAttachmentCount()
@@ -175,7 +178,9 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#c7c4d7]/20 dark:border-white/[0.06]">
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-[#464554] dark:text-on-surface-variant font-medium">
-              {formatDistanceToNow(new Date(item.updated_at!), { addSuffix: true })}
+              {mounted
+                ? formatDistanceToNow(new Date(item.updated_at!), { addSuffix: true })
+                : null}
             </span>
             {attachmentCount > 0 && (
               <>

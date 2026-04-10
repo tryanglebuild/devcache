@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react'
 import { FolderOpen, Folder, FileText, Clock, SlidersHorizontal } from 'lucide-react'
 import { RecentProjectsClient } from '@/components/dashboard/RecentProjectsClient'
 import { FavoritedItemsClient } from '@/components/dashboard/FavoritedItemsClient'
-import { AgentStatsWidget } from '@/components/agents/AgentStatsWidget'
 import { TrendingAgentsCarousel } from '@/components/agents/TrendingAgentsCarousel'
 import { AgentMarketplaceSection } from '@/components/agents/AgentMarketplaceSection'
 import { MyAgentsLibrary } from '@/components/agents/MyAgentsLibrary'
@@ -56,16 +55,6 @@ export function DashboardContent({
         </div>
         <ModeToggle onModeChange={handleModeChange} />
       </div>
-
-      {/* Combined Stats - Projects + Agents */}
-      {showAgents && (
-        <section className="mb-12">
-          <AgentStatsWidget
-            marketplaceStats={marketplaceStats}
-            userStats={userStats}
-          />
-        </section>
-      )}
 
       {/* Trending Agents Section */}
       {showAgents && (

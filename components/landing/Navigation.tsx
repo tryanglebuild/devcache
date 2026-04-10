@@ -19,16 +19,16 @@ export default function Navigation() {
         </Link>
         
         <div className="hidden md:flex space-x-8 items-center">
-          <Link href="#agents" className="text-indigo-600 dark:text-[#7c7ff5] font-semibold border-b-2 border-indigo-600 dark:border-[#7c7ff5] pb-1 text-sm tracking-tight">
+          <Link href="#agents" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium">
             Agents
           </Link>
-          <Link href="/marketplace" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium tracking-tight">
+          <Link href="/marketplace" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium">
             Marketplace
           </Link>
-          <Link href="/support" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium tracking-tight">
+          <Link href="/support" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium">
             Support
           </Link>
-          <Link href="#pricing" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium tracking-tight">
+          <Link href="#pricing" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors text-sm font-medium">
             Pricing
           </Link>
         </div>
@@ -41,7 +41,7 @@ export default function Navigation() {
             </Link>
             <Link 
               href="/signup"
-              className="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-100 dark:shadow-indigo-900/30 active:scale-95 transition-all"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
             >
               Get Started
             </Link>
@@ -64,7 +64,7 @@ export default function Navigation() {
           <Link
             href="#agents"
             onClick={() => setMobileOpen(false)}
-            className="block py-3 text-indigo-600 dark:text-[#7c7ff5] font-semibold text-sm border-b border-slate-100 dark:border-white/[0.06]"
+            className="block py-3 text-slate-600 dark:text-slate-400 font-medium text-sm border-b border-slate-100 dark:border-white/[0.06] hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
           >
             Agents
           </Link>
@@ -96,14 +96,14 @@ export default function Navigation() {
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="block text-center py-2.5 text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-slate-900 dark:hover:text-slate-200 transition-colors border border-slate-200 dark:border-white/[0.09] rounded-xl"
+              className="block text-center py-2.5 text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-slate-900 dark:hover:text-slate-200 transition-colors border border-slate-200 dark:border-white/[0.09] rounded-lg"
             >
               Sign In
             </Link>
             <Link
               href="/signup"
               onClick={() => setMobileOpen(false)}
-              className="block text-center bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-100 dark:shadow-indigo-900/30 active:scale-95 transition-all"
+              className="block text-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
             >
               Get Started
             </Link>
