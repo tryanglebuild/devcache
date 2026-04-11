@@ -502,30 +502,17 @@ function buildEnhancedSystemPrompt(options: {
 
     enhancedPrompt += `\n**CRITICAL INSTRUCTIONS FOR USING THESE RESOURCES**:\n\n`
     enhancedPrompt += `1. **These results already include BOTH personal projects AND public marketplace templates** — do NOT call any search tool again, the search is already done\n`
-    enhancedPrompt += `2. **ALWAYS analyze ALL resources listed above** — even lower-relevance ones may be exactly what the user needs\n`
-    enhancedPrompt += `3. **Distinguish the source clearly** for marketplace templates: say "Encontrei no marketplace público:" (or "Found in public marketplace:")\n`
-    enhancedPrompt += `4. **Start your response by listing the found resources**:\n`
-    enhancedPrompt += `   - Example PT: "Encontrei ${contextResults.length} recurso(s) sobre esse tema:"\n`
-    enhancedPrompt += `   - Example EN: "I found ${contextResults.length} resource(s) about this topic:"\n`
-    enhancedPrompt += `5. **Use special tags to create interactive cards** for each relevant resource:\n`
+    enhancedPrompt += `2. **Read the user's intent carefully** before deciding how to use these resources:\n`
+    enhancedPrompt += `   - If the user is **searching/asking what exists** → list the relevant resources using tags, then briefly explain each\n`
+    enhancedPrompt += `   - If the user is **asking to analyze/summarize/explain a specific resource** → use the resource content as context and answer directly; only show the resource tag if it adds value, do NOT list unrelated resources\n`
+    enhancedPrompt += `   - If the user is **asking a general question** → answer directly using any relevant context; do NOT list resources unless they directly answer the question\n`
+    enhancedPrompt += `3. **NEVER list resources that are not directly relevant to the user's specific request**\n`
+    enhancedPrompt += `4. **When the user asks to analyze/summarize a document**: provide the analysis immediately — do not preface the response with a list of other found resources\n`
+    enhancedPrompt += `5. **Use special tags to create interactive cards** ONLY for resources that are directly relevant:\n`
     enhancedPrompt += `   - For project files: [FILE:resource_id:file_name]\n`
     enhancedPrompt += `   - For project folders: [FOLDER:resource_id:folder_name]\n`
     enhancedPrompt += `   - For marketplace templates: [TEMPLATE:resource_id:template_name]\n`
-    enhancedPrompt += `6. **Format example**:\n`
-    enhancedPrompt += `   "Encontrei recursos relevantes:\n\n`
-    
-    // Show example with actual resources
-    const exampleResources = contextResults.slice(0, 2)
-    exampleResources.forEach((r: any) => {
-      const tagType = r.resource_type === 'project_folder' ? 'FOLDER' : 
-                      r.resource_type === 'marketplace_template' ? 'TEMPLATE' : 'FILE'
-      enhancedPrompt += `   [${tagType}:${r.resource_id}:${r.name}]\n`
-    })
-    
-    enhancedPrompt += `\n   Estes recursos contêm [explicar relevância]..."\n\n`
-    enhancedPrompt += `7. **IMPORTANT**: Place the tags on their own lines for better formatting\n`
-    enhancedPrompt += `8. **After listing resources**, provide your detailed answer based on their content\n`
-    enhancedPrompt += `9. **Offer to show details**: "Clique em qualquer card acima para ver o conteúdo completo"\n\n`
+    enhancedPrompt += `6. **IMPORTANT**: Place tags on their own lines for better formatting\n\n`
     
     // Add Few-Shot Examples
     enhancedPrompt += `\n${'='.repeat(80)}\n`
@@ -533,10 +520,10 @@ function buildEnhancedSystemPrompt(options: {
     enhancedPrompt += `${'='.repeat(80)}\n\n`
     
     if (userLanguage === 'pt-BR') {
-      enhancedPrompt += `### Exemplo 1: Recurso encontrado no marketplace público\n\n`
+      enhancedPrompt += `### Exemplo 1: Usuário busca por um recurso\n\n`
       enhancedPrompt += `**Usuário**: "Existe algum documento sobre Camaleon?"\n\n`
       enhancedPrompt += `**Resposta CORRETA** ✅:\n`
-      enhancedPrompt += `"Encontrei 1 recurso sobre Camaleon no marketplace público:\n\n`
+      enhancedPrompt += `"Sim, encontrei 1 recurso sobre Camaleon:\n\n`
       
       contextResults.slice(0, 1).forEach((r: any) => {
         const tagType = r.resource_type === 'project_folder' ? 'FOLDER' : 
@@ -544,15 +531,28 @@ function buildEnhancedSystemPrompt(options: {
         enhancedPrompt += `[${tagType}:${r.resource_id}:${r.name}]\n`
       })
       
-      enhancedPrompt += `\nEste template do marketplace contém as regras e instruções do Camaleon. Clique no card acima para ver o conteúdo completo."\n\n`
+      enhancedPrompt += `\nEste template contém as regras e instruções do Camaleon. Clique no card para ver o conteúdo completo."\n\n`
+      
+      enhancedPrompt += `### Exemplo 2: Usuário pede análise de um documento específico\n\n`
+      enhancedPrompt += `**Usuário**: "Existe algum documento sobre Camaleon? Consegue analisar e fazer um resumo?"\n\n`
+      enhancedPrompt += `**Resposta CORRETA** ✅:\n`
+      
+      contextResults.slice(0, 1).forEach((r: any) => {
+        const tagType = r.resource_type === 'project_folder' ? 'FOLDER' : 
+                        r.resource_type === 'marketplace_template' ? 'TEMPLATE' : 'FILE'
+        enhancedPrompt += `[${tagType}:${r.resource_id}:${r.name}]\n`
+      })
+      
+      enhancedPrompt += `\nResumo do documento "[nome]":\n`
+      enhancedPrompt += `[análise e resumo direto do conteúdo do documento]\n\n`
       enhancedPrompt += `**Resposta INCORRETA** ❌:\n`
-      enhancedPrompt += `"Não encontrei nada nos seus projetos. Vou pesquisar no marketplace..." (ERRADO — NÃO chame ferramentas de pesquisa, os resultados JÁ estão acima)\n\n`
+      enhancedPrompt += `"Encontrei 10 recursos relevantes na sua base de conhecimento:\n[lista todos os 10 recursos]\n\nResumo do documento Camaleon Rules: ..." (ERRADO — não liste recursos irrelevantes quando o usuário pediu análise de um documento específico)\n\n`
       enhancedPrompt += `---\n\n`
     } else {
-      enhancedPrompt += `### Example 1: Resource found in public marketplace\n\n`
+      enhancedPrompt += `### Example 1: User searches for a resource\n\n`
       enhancedPrompt += `**User**: "Is there any document about Camaleon?"\n\n`
       enhancedPrompt += `**CORRECT Response** ✅:\n`
-      enhancedPrompt += `"I found 1 resource about Camaleon in the public marketplace:\n\n`
+      enhancedPrompt += `"Yes, I found 1 resource about Camaleon:\n\n`
       
       contextResults.slice(0, 1).forEach((r: any) => {
         const tagType = r.resource_type === 'project_folder' ? 'FOLDER' : 
@@ -560,13 +560,26 @@ function buildEnhancedSystemPrompt(options: {
         enhancedPrompt += `[${tagType}:${r.resource_id}:${r.name}]\n`
       })
       
-      enhancedPrompt += `\nThis marketplace template contains Camaleon rules and instructions. Click the card above to view the full content."\n\n`
+      enhancedPrompt += `\nThis template contains Camaleon rules and instructions. Click the card to view the full content."\n\n`
+      
+      enhancedPrompt += `### Example 2: User asks to analyze a specific document\n\n`
+      enhancedPrompt += `**User**: "Is there any document about Camaleon? Can you analyze and summarize it?"\n\n`
+      enhancedPrompt += `**CORRECT Response** ✅:\n`
+      
+      contextResults.slice(0, 1).forEach((r: any) => {
+        const tagType = r.resource_type === 'project_folder' ? 'FOLDER' : 
+                        r.resource_type === 'marketplace_template' ? 'TEMPLATE' : 'FILE'
+        enhancedPrompt += `[${tagType}:${r.resource_id}:${r.name}]\n`
+      })
+      
+      enhancedPrompt += `\nSummary of "[name]":\n`
+      enhancedPrompt += `[direct analysis and summary of the document's content]\n\n`
       enhancedPrompt += `**INCORRECT Response** ❌:\n`
-      enhancedPrompt += `"I didn't find anything in your projects. Let me search the marketplace..." (WRONG — do NOT call search tools, the results are ALREADY provided above)\n\n`
+      enhancedPrompt += `"I found 10 relevant resources in your knowledge base:\n[lists all 10 resources]\n\nSummary of Camaleon Rules: ..." (WRONG — do NOT list irrelevant resources when the user asked to analyze a specific document)\n\n`
       enhancedPrompt += `---\n\n`
     }
     
-    enhancedPrompt += `\n🚨 **CRITICAL**: You MUST use the [TYPE:ID:NAME] format shown above. The UI depends on these tags!\n\n`
+    enhancedPrompt += `\n🚨 **CRITICAL**: Use the [TYPE:ID:NAME] tag format ONLY for directly relevant resources. The UI depends on these tags!\n\n`
   } else {
     enhancedPrompt += `\n\n## Available Resources\n\n`
     enhancedPrompt += `No resources found matching the current query. This could mean:\n`
