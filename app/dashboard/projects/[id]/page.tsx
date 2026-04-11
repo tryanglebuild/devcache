@@ -6,6 +6,8 @@ import { ProjectDetailClient } from '@/components/projects/ProjectDetailClient'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
+const ITEMS_PER_PAGE = 16
+
 export default async function ProjectDetailPage({ 
   params 
 }: { 
@@ -31,17 +33,22 @@ export default async function ProjectDetailPage({
     redirect('/dashboard/projects')
   }
 
-  // Get all items for this user to build the tree
-  const { data: allItems } = await supabase
+  // Get only direct children of this folder, paginated (first page)
+  const { data: childItems, count: childCount } = await supabase
     .from('project_items')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    .eq('parent_id', id)
+    .is('deleted_at', null)
+    .order('type', { ascending: false }) // folders first
+    .order('name', { ascending: true })
+    .range(0, ITEMS_PER_PAGE - 1)
 
   return (
     <ProjectDetailClient 
       project={project} 
-      allItems={allItems || []} 
+      initialItems={childItems || []}
+      initialTotal={childCount || 0}
     />
   )
 }

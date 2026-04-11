@@ -44,6 +44,21 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
     }
   }, [showHistoryDropdown])
 
+  // Escape key: collapse if expanded, close if compact
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && open) {
+        if (isExpanded) {
+          setIsExpanded(false)
+        } else {
+          onOpenChange(false)
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [open, isExpanded, onOpenChange])
+
   async function loadSessions() {
     try {
       // Don't block UI with loading state for initial load
@@ -165,10 +180,10 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
   return (
     <>
-      {/* Backdrop for expanded mode */}
+      {/* Backdrop for expanded mode — sits above the sidebar (z-50) */}
       {isExpanded && (
         <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity"
           onClick={() => setIsExpanded(false)}
         />
       )}
@@ -176,9 +191,13 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
       {/* Floating Chat Window */}
       <div
         className={`
-          fixed bottom-6 right-6 bg-white dark:bg-surface-container rounded-2xl shadow-2xl dark:shadow-none dark:ring-1 dark:ring-white/[0.08]
+          fixed bg-white dark:bg-surface-container rounded-2xl shadow-2xl dark:shadow-none dark:ring-1 dark:ring-white/[0.08]
           flex flex-col overflow-hidden transition-all duration-300 ease-out
-          ${isExpanded ? 'z-50 w-[90vw] h-[85vh] max-w-6xl' : 'z-50 w-[500px] h-[700px]'}
+          ${
+            isExpanded
+              ? 'z-[70] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[85vh] max-w-6xl'
+              : 'z-[70] bottom-6 right-6 w-[500px] h-[700px]'
+          }
         `}
         style={{
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'

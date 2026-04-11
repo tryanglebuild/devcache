@@ -17,26 +17,36 @@ export type Database = {
       activity_log: {
         Row: {
           action_type: string
+          agent_id: string | null
           created_at: string
           id: string
-          project_item_id: string
+          project_item_id: string | null
           user_id: string
         }
         Insert: {
           action_type: string
+          agent_id?: string | null
           created_at?: string
           id?: string
-          project_item_id: string
+          project_item_id?: string | null
           user_id: string
         }
         Update: {
           action_type?: string
+          agent_id?: string | null
           created_at?: string
           id?: string
-          project_item_id?: string
+          project_item_id?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "activity_log_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "activity_log_project_item_id_fkey"
             columns: ["project_item_id"]
@@ -525,6 +535,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          activity_cleared_at: string | null
           avatar_url: string | null
           bio: string | null
           company: string | null
@@ -540,6 +551,7 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          activity_cleared_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           company?: string | null
@@ -555,6 +567,7 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          activity_cleared_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           company?: string | null

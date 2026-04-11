@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { FolderOpen, Folder, FileText, Clock, SlidersHorizontal } from 'lucide-react'
+import { useState, useCallback, useEffect } from 'react'
+import { FolderOpen, Folder, FileText, Clock, Store, Eraser } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { RecentProjectsClient } from '@/components/dashboard/RecentProjectsClient'
 import { FavoritedItemsClient } from '@/components/dashboard/FavoritedItemsClient'
 import { TrendingAgentsCarousel } from '@/components/agents/TrendingAgentsCarousel'
 import { AgentMarketplaceSection } from '@/components/agents/AgentMarketplaceSection'
-import { MyAgentsLibrary } from '@/components/agents/MyAgentsLibrary'
 import { ModeToggle, DashboardMode } from '@/components/dashboard/ModeToggle'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -36,13 +36,37 @@ export function DashboardContent({
   isLoadingLazy = false
 }: DashboardContentProps) {
   const [mode, setMode] = useState<DashboardMode>('agents')
+  const [localActivity, setLocalActivity] = useState<any[]>(recentActivity || [])
+  const [isClearing, setIsClearing] = useState(false)
 
   const handleModeChange = useCallback((newMode: DashboardMode) => {
     setMode(newMode)
   }, [])
 
+  const handleClearActivity = async () => {
+    setIsClearing(true)
+    try {
+      const res = await fetch('/api/activity/clear', { method: 'DELETE' })
+      if (res.ok) {
+        setLocalActivity([])
+        toast.success('Activity history cleared')
+      } else {
+        toast.error('Failed to clear activity')
+      }
+    } catch {
+      toast.error('Failed to clear activity')
+    } finally {
+      setIsClearing(false)
+    }
+  }
+
   const showProjects = mode === 'projects' || mode === 'unified'
   const showAgents = mode === 'agents' || mode === 'unified'
+
+  // Keep localActivity in sync when lazy data loads
+  useEffect(() => {
+    if (recentActivity) setLocalActivity(recentActivity)
+  }, [recentActivity])
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8">
@@ -192,29 +216,17 @@ export function DashboardContent({
         {/* Right Column - My Agents & Activity */}
         <aside>
           <div className="sticky top-28 space-y-8">
-            {/* My Agents Library */}
-            {showAgents && (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-slate-700 dark:text-on-surface">My Agents</h3>
-                  <a
-                    href="/dashboard/agents"
-                    className="text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:underline"
-                  >
-                    View All
-                  </a>
-                </div>
-                <MyAgentsLibrary agents={userAgents} compact />
-              </div>
-            )}
-
             {/* Recent Activity */}
-            {showProjects && (
-              <div>
+            <div>
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-slate-700 dark:text-on-surface">Recent Activity</h3>
-                  <button className="p-2 hover:bg-slate-100 dark:hover:bg-surface-container-high rounded-lg transition-colors">
-                    <SlidersHorizontal size={16} strokeWidth={1.5} />
+                  <button
+                    onClick={handleClearActivity}
+                    disabled={isClearing || localActivity.length === 0}
+                    className="p-2 hover:bg-slate-100 dark:hover:bg-surface-container-high rounded-lg transition-colors text-slate-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Clear history"
+                  >
+                    <Eraser size={15} strokeWidth={1.5} />
                   </button>
                 </div>
                 
@@ -231,36 +243,51 @@ export function DashboardContent({
                         </div>
                       ))}
                     </div>
-                  ) : recentActivity && recentActivity.length > 0 ? (
+                  ) : localActivity && localActivity.length > 0 ? (
                     <div className="space-y-3">
-                      {recentActivity.map((activity: any) => {
+                      {localActivity.map((activity: any) => {
                         const item = activity.project_items
-                        if (!item) return null
-                        
+                        const agent = activity.agent_templates
+                        const entry = item || agent
+                        if (!entry) return null
+
+                        const isAgent = !!agent
+                        const href = isAgent
+                          ? `/marketplace/${entry.id}`
+                          : item.type === 'folder'
+                            ? `/dashboard/projects/${entry.id}`
+                            : `/dashboard/projects/file/${entry.id}`
+
                         const timeAgo = new Date(activity.created_at).toLocaleString('en-US', {
                           month: 'short',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit'
                         })
-                        
+
                         return (
                           <a
                             key={activity.id}
-                            href={item.type === 'folder' ? `/dashboard/projects/${item.id}` : `/dashboard/projects/file/${item.id}`}
+                            href={href}
                             className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-surface-container-high rounded-lg transition-colors"
                           >
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              item.type === 'folder' ? 'bg-indigo-600/10 text-indigo-600' : 'bg-indigo-500/10 text-indigo-500'
+                              isAgent
+                                ? 'bg-violet-500/10 text-violet-500'
+                                : item.type === 'folder'
+                                  ? 'bg-indigo-600/10 text-indigo-600'
+                                  : 'bg-indigo-500/10 text-indigo-500'
                             }`}>
-                              {item.type === 'folder'
-                                ? <Folder size={14} strokeWidth={1.5} />
-                                : <FileText size={14} strokeWidth={1.5} />
+                              {isAgent
+                                ? <Store size={14} strokeWidth={1.5} />
+                                : item.type === 'folder'
+                                  ? <Folder size={14} strokeWidth={1.5} />
+                                  : <FileText size={14} strokeWidth={1.5} />
                               }
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-semibold text-slate-900 dark:text-on-surface truncate">
-                                {item.name}
+                                {entry.name}
                               </p>
                               <p className="text-xs text-slate-500 dark:text-on-surface-variant">{timeAgo}</p>
                             </div>
@@ -278,7 +305,6 @@ export function DashboardContent({
                   )}
                 </div>
               </div>
-            )}
 
             {/* System Status */}
             <div className="p-6 bg-slate-100 dark:bg-surface-container rounded-xl flex items-center justify-between">

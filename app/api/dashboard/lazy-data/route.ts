@@ -20,7 +20,14 @@ export async function GET() {
     // Fetch recent activity with error handling
     let recentActivity = null
     try {
-      const { data } = await supabase
+      // Get activity_cleared_at from profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('activity_cleared_at')
+        .eq('id', user.id)
+        .single()
+
+      let query = supabase
         .from('activity_log')
         .select(`
           id,
@@ -31,12 +38,23 @@ export async function GET() {
             name,
             type,
             description
+          ),
+          agent_templates (
+            id,
+            name,
+            category,
+            description
           )
         `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10)
-      
+
+      if (profile?.activity_cleared_at) {
+        query = query.gt('created_at', profile.activity_cleared_at)
+      }
+
+      const { data } = await query
       recentActivity = data
     } catch (error) {
       console.error('Failed to fetch activity:', error)

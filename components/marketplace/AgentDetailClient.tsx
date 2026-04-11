@@ -1,13 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { trackAgentActivity } from '@/lib/activity/track'
 import { Download, ArrowLeft, Heart, Share2, Code, Eye, Copy, Check, FileText, Trash2, Lock, Globe, Bookmark, BookmarkCheck } from 'lucide-react'
 import type { AgentTemplateWithStats, AgentRating } from '@/types/agents.types'
 import { AGENT_CATEGORIES } from '@/types/agents.types'
 import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from '@/lib/agents/category-icons'
 import { RateTemplateModal } from './RateTemplateModal'
 import toast from 'react-hot-toast'
+import { Store } from 'lucide-react'
 
 function SignalBars({ value, size = 'md' }: { value: number; size?: 'sm' | 'md' | 'lg' }) {
   const heights = size === 'sm' ? [5, 7, 9, 11, 13] : size === 'lg' ? [10, 14, 18, 22, 26] : [6, 9, 12, 15, 18]
@@ -82,6 +84,13 @@ export function AgentDetailClient({
   const category = AGENT_CATEGORIES[agent.category as keyof typeof AGENT_CATEGORIES] || AGENT_CATEGORIES.general
   const CategoryIcon = CATEGORY_ICONS[agent.category?.toLowerCase() || ''] || DEFAULT_CATEGORY_ICON
   const isOwner = currentUserId === agent.user_id
+
+  // Track agent view in activity history
+  useEffect(() => {
+    if (isAuthenticated) {
+      trackAgentActivity(agent.id, 'view')
+    }
+  }, [agent.id, isAuthenticated])
 
   const handleDownload = async () => {
     if (!isAuthenticated) {

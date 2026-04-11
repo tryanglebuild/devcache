@@ -90,6 +90,7 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
         .select('*', { count: 'exact' })
         .eq('user_id', user.id)
         .is('parent_id', null)
+        .is('deleted_at', null)
         .order('type', { ascending: false })
         .order('name', { ascending: true })
         .range(start, end)
@@ -114,10 +115,8 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // Use root items only
-  const displayItems = items.filter(item => item.parent_id === null)
-  const folders = displayItems.filter(item => item.type === 'folder')
-  const files = displayItems.filter(item => item.type === 'file')
+  const folders = items.filter(item => item.type === 'folder')
+  const files = items.filter(item => item.type === 'file')
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {

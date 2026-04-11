@@ -17,6 +17,7 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const supabase = createClient()
   const { resolvedTheme } = useTheme()
+  const redirectTo = searchParams.get('redirectTo') || undefined
 
   // Check for error messages from OAuth callback
   useEffect(() => {
@@ -47,7 +48,8 @@ function LoginForm() {
 
       if (data.user) {
         toast.success('Welcome back!')
-        router.push('/dashboard')
+        const redirectTo = searchParams.get('redirectTo')
+        router.push(redirectTo || '/dashboard')
         router.refresh()
       }
     } catch (error) {
@@ -155,8 +157,8 @@ function LoginForm() {
 
             {/* OAuth Buttons */}
             <div className="space-y-3">
-              <OAuthButton provider="github" mode="login" />
-              <OAuthButton provider="google" mode="login" />
+              <OAuthButton provider="github" mode="login" redirectTo={redirectTo} />
+              <OAuthButton provider="google" mode="login" redirectTo={redirectTo} />
             </div>
 
             <div className="relative my-8">

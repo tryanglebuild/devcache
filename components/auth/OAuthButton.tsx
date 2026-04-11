@@ -7,9 +7,10 @@ import toast from 'react-hot-toast'
 interface OAuthButtonProps {
   provider: 'github' | 'google'
   mode?: 'signup' | 'login'
+  redirectTo?: string
 }
 
-export default function OAuthButton({ provider, mode = 'signup' }: OAuthButtonProps) {
+export default function OAuthButton({ provider, mode = 'signup', redirectTo }: OAuthButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleOAuthSignIn = async () => {
@@ -17,10 +18,13 @@ export default function OAuthButton({ provider, mode = 'signup' }: OAuthButtonPr
     const supabase = createClient()
     
     try {
+      const callbackUrl = new URL(`${window.location.origin}/auth/callback`)
+      if (redirectTo) callbackUrl.searchParams.set('next', redirectTo)
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl.toString(),
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

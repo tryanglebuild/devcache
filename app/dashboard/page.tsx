@@ -14,11 +14,12 @@ export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch only critical data for initial render
+  // Fetch critical data in parallel — profile is already fetched by layout.tsx,
+  // but we need it here for displayName too; use a single shared query scope.
   const [profile, projectItems, favoriteItems, userAgents, marketplaceStats, userStats] = await Promise.all([
     supabase
       .from('profiles')
-      .select('*')
+      .select('full_name')
       .eq('id', user!.id)
       .single()
       .then(({ data }) => data),
@@ -26,8 +27,9 @@ export default async function DashboardPage() {
       .from('project_items')
       .select('*')
       .eq('user_id', user!.id)
+      .is('deleted_at', null)
       .order('updated_at', { ascending: false })
-      .limit(20) // Reduced from 100 to 20 for faster initial load
+      .limit(20)
       .then(({ data }) => data),
     supabase
       .from('project_items')
@@ -36,6 +38,7 @@ export default async function DashboardPage() {
       .eq('is_favorite', true)
       .is('deleted_at', null)
       .order('updated_at', { ascending: false })
+      .limit(20)
       .then(({ data }) => data),
     getUserAgentCollection(user!.id),
     getMarketplaceStats(),

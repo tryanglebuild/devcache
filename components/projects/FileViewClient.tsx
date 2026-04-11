@@ -9,6 +9,7 @@ import { PublishToMarketplaceModal } from './PublishToMarketplaceModal'
 import { Breadcrumb } from './Breadcrumb'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { createClient } from '@/lib/supabase/client'
+import { trackActivity } from '@/lib/activity/track'
 import toast from 'react-hot-toast'
 import ReactMarkdown from 'react-markdown'
 import { MarkdownCodeBlock } from './MarkdownCodeBlock'
@@ -86,6 +87,11 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
       toast.error('Failed to copy content')
     }
   }
+
+  // Load breadcrumb path
+  useEffect(() => {
+    trackActivity(file.id, 'view')
+  }, [file.id])
 
   // Load breadcrumb path
   useEffect(() => {
