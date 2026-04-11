@@ -843,7 +843,7 @@ async function analyzeIntent(
   message: string,
   history: OAIMessage[],
   apiKey: string
-): Promise<{ searchQuery: string; topics: string[]; language: string }> {
+): Promise<{ searchQuery: string; topics: string[]; language: string; needsSearch: boolean }> {
   try {
     const response = await fetch(OPENROUTER_URL, {
       method: 'POST',
@@ -859,13 +859,17 @@ async function analyzeIntent(
         messages: [
           {
             role: 'system',
-            content: `You are a search intent analyzer. Given a user message, extract:
-1. The main search query (2-5 keywords suitable for document/file search)
-2. The main topics/technologies mentioned
-3. The language of the user message
+            content: `You are a search intent analyzer. Given a user message (and optional conversation history), extract:
+1. Whether the user is requesting to FIND, SEARCH or GET resources (files, documents, templates, folders, projects) → needsSearch: true
+   - Examples that need search: "existe algum documento sobre X", "find templates for Y", "what files do I have about Z", "show me my projects"
+   - Examples that do NOT need search: follow-up questions about already-shown content ("para que serve?", "what is this for?", "can you explain?", "summarize it"), general questions, conversations, or tasks where context was already provided
+2. The main search query (2-5 keywords suitable for document/file search) — only relevant when needsSearch is true
+3. The main topics/technologies mentioned
+4. The language of the user message
 
 Respond ONLY with valid JSON, no markdown, no explanation:
 {
+  "needsSearch": true,
   "searchQuery": "react components hooks",
   "topics": ["react", "components"],
   "language": "pt-BR"
@@ -892,7 +896,7 @@ CRITICAL RULES — STRICTLY FOLLOW THESE:
 
     if (!response.ok) {
       console.warn('⚠️ Intent analysis failed, falling back to extractKeywords')
-      return { searchQuery: extractKeywords(message), topics: [], language: 'unknown' }
+      return { searchQuery: extractKeywords(message), topics: [], language: 'unknown', needsSearch: true }
     }
 
     const data = await response.json()
@@ -906,11 +910,12 @@ CRITICAL RULES — STRICTLY FOLLOW THESE:
     return {
       searchQuery: parsed.searchQuery || extractKeywords(message),
       topics: parsed.topics || [],
-      language: parsed.language || 'unknown'
+      language: parsed.language || 'unknown',
+      needsSearch: parsed.needsSearch !== false // default true if missing
     }
   } catch (err) {
     console.warn('⚠️ Intent analysis error:', err)
-    return { searchQuery: extractKeywords(message), topics: [], language: 'unknown' }
+    return { searchQuery: extractKeywords(message), topics: [], language: 'unknown', needsSearch: true }
   }
 }
 
@@ -923,6 +928,25 @@ function sseDone(): Uint8Array {
 }
 
 // ── OpenRouter API Call ───────────────────────────────────────────────────────
+
+// Cost per 1M tokens in USD — update as needed
+const MODEL_COSTS: Record<string, { input: number; output: number }> = {
+  'anthropic/claude-3-haiku':           { input: 0.25,  output: 1.25  },
+  'anthropic/claude-3.5-haiku':         { input: 0.8,   output: 4.0   },
+  'anthropic/claude-3.5-sonnet':        { input: 3.0,   output: 15.0  },
+  'anthropic/claude-3-opus':            { input: 15.0,  output: 75.0  },
+  'openai/gpt-4o-mini':                 { input: 0.15,  output: 0.6   },
+  'openai/gpt-4o':                      { input: 5.0,   output: 15.0  },
+  'openai/gpt-4-turbo':                 { input: 10.0,  output: 30.0  },
+  'google/gemini-flash-1.5':            { input: 0.075, output: 0.3   },
+  'meta-llama/llama-3.1-8b-instruct':   { input: 0.06,  output: 0.06  },
+  'meta-llama/llama-3.1-70b-instruct':  { input: 0.52,  output: 0.75  },
+}
+
+function calculateCost(inputTokens: number, outputTokens: number, model: string): number {
+  const costs = MODEL_COSTS[model] ?? { input: 1.0, output: 2.0 }
+  return ((inputTokens * costs.input) + (outputTokens * costs.output)) / 1_000_000
+}
 
 async function callOpenRouter(
   apiKey: string,
@@ -1118,22 +1142,16 @@ Deno.serve(async (req) => {
         thinkingSteps.push(thinkStep_intentDone)
         await writer.write(sseEvent({ thinking: thinkStep_intentDone }))
 
-        // ── Step 2: Search knowledge base using the extracted intent ──
-        const thinkStep_searchStart = {
-          type: 'search_start',
-          title: userLanguage === 'pt-BR' ? 'Buscando na base de conhecimento' : 'Searching knowledge base',
-          description: userLanguage === 'pt-BR'
-            ? `Procurando recursos relevantes para: "${intent.searchQuery}"...`
-            : `Searching for resources about: "${intent.searchQuery}"...`,
-          timestamp: Date.now()
-        }
-        thinkingSteps.push(thinkStep_searchStart)
-        await writer.write(sseEvent({ thinking: thinkStep_searchStart }))
-
-        // ── RAG Search: Generate Embedding using the INTENT query (not raw message) ──
+        // ── Step 2: Search knowledge base ONLY when user is actually looking for resources ──
         const searchStartTime = Date.now()
-        // Use intent.searchQuery for embedding (cleaner keywords)
-        const queryEmbedding = await generateEmbedding(intent.searchQuery, apiKey)
+        let searchResults: any[] = []
+        let searchDuration = 0
+        let contextDuration = 0
+
+        if (!intent.needsSearch) {
+          console.log('ℹ️ No search needed — user is asking a follow-up or conversational question')
+          searchDuration = 0
+        } else {
 
         // For text-based LIKE matching, combine the intent query with the original
         // message keywords so that exact user terms (e.g. "camaleon") are never lost
@@ -1147,7 +1165,20 @@ Deno.serve(async (req) => {
           ? `${intentKeywords} ${extraWords.join(' ')}`
           : intentKeywords
 
-        let searchResults: any[] = []
+        // ── Thinking Step: Search Start ──
+        const thinkStep_searchStart = {
+          type: 'search_start',
+          title: userLanguage === 'pt-BR' ? 'Buscando na base de conhecimento' : 'Searching knowledge base',
+          description: userLanguage === 'pt-BR'
+            ? `Procurando recursos relevantes para: "${intent.searchQuery}"...`
+            : `Searching for resources about: "${intent.searchQuery}"...`,
+          timestamp: Date.now()
+        }
+        thinkingSteps.push(thinkStep_searchStart)
+        await writer.write(sseEvent({ thinking: thinkStep_searchStart }))
+
+        // ── RAG Search: Generate Embedding ──
+        const queryEmbedding = await generateEmbedding(intent.searchQuery, apiKey)
         
         console.log('🔍 RAG Search:')
         console.log('- Original message:', message)
@@ -1279,7 +1310,7 @@ Deno.serve(async (req) => {
           })))
         }
 
-        const searchDuration = Date.now() - searchStartTime
+        searchDuration = Date.now() - searchStartTime
 
         // ── Thinking Step: Search Complete ──
         const thinkStep_searchComplete = {
@@ -1298,6 +1329,7 @@ Deno.serve(async (req) => {
         }
         thinkingSteps.push(thinkStep_searchComplete)
         await writer.write(sseEvent({ thinking: thinkStep_searchComplete }))
+        } // end if (intent.needsSearch)
 
         // ── Load User Stats ──
         const contextStartTime = Date.now()
@@ -1312,7 +1344,7 @@ Deno.serve(async (req) => {
           console.error('Failed to load user stats:', error)
         }
 
-        const contextDuration = Date.now() - contextStartTime
+        contextDuration = Date.now() - contextStartTime
 
         // ── Thinking Step: Context Loaded ──
         const thinkStep_contextLoaded = {
@@ -1359,6 +1391,8 @@ Deno.serve(async (req) => {
         await writer.write(sseEvent({ thinking: thinkStep_generating }))
         let iteration = 0
         let fullResponse = ""
+        let totalTokensInput = 0
+        let totalTokensOutput = 0
 
         // ── Tool Call Loop ──
         while (iteration < MAX_ITER) {
@@ -1375,6 +1409,9 @@ Deno.serve(async (req) => {
           }
 
           const json = await orRes.json()
+          // Accumulate tokens from every non-streaming call
+          totalTokensInput  += json.usage?.prompt_tokens     ?? 0
+          totalTokensOutput += json.usage?.completion_tokens ?? 0
           const choice = json.choices?.[0]
           const message = choice?.message
           const finishReason: string = choice?.finish_reason ?? "stop"
@@ -1445,7 +1482,7 @@ Deno.serve(async (req) => {
               r.relevance_score !== undefined ? r.relevance_score >= 1.0 : true
             )
 
-            if (!hasResourceTags && !aiSaysNotFoundInline && inlineRelevant.length > 0) {
+            if (intent.needsSearch && !hasResourceTags && !aiSaysNotFoundInline && inlineRelevant.length > 0) {
               console.log('⚠️ AI did not use resource tags, injecting them in stream...')
               
               // Send resource tags via SSE
@@ -1463,14 +1500,20 @@ Deno.serve(async (req) => {
               }
             }
 
-            // Save assistant message with post-processing
-            const finalResponse = injectResourceTags(fullResponse, searchResults, userLanguage)
+            // Save assistant message — only post-process if search was requested
+            const finalResponse = intent.needsSearch
+              ? injectResourceTags(fullResponse, searchResults, userLanguage)
+              : fullResponse
+            const costUsd = calculateCost(totalTokensInput, totalTokensOutput, model)
             
             await supabase.from("chat_messages").insert({
               session_id: sessionId,
               role: "assistant",
               content: finalResponse,
               model_used: model,
+              tokens_input: totalTokensInput  || null,
+              tokens_output: totalTokensOutput || null,
+              cost_usd: costUsd || null,
               metadata: {
                 thinking: thinkingSteps,
                 rag_results: searchResults.map((r: any) => ({
@@ -1482,7 +1525,7 @@ Deno.serve(async (req) => {
                 })),
                 search_duration_ms: searchDuration,
                 context_duration_ms: contextDuration,
-                post_processed: finalResponse !== fullResponse // Track if we injected tags
+                post_processed: finalResponse !== fullResponse
               }
             })
 
@@ -1617,6 +1660,11 @@ Deno.serve(async (req) => {
                   fullResponse += token
                   await writer.write(sseEvent({ content: token }))
                 }
+                // Capture usage from last SSE chunk
+                if (parsed.usage) {
+                  totalTokensInput  += parsed.usage.prompt_tokens     ?? 0
+                  totalTokensOutput += parsed.usage.completion_tokens ?? 0
+                }
               } catch {
                 // Skip malformed
               }
@@ -1638,7 +1686,7 @@ Deno.serve(async (req) => {
           r.relevance_score !== undefined ? r.relevance_score >= 1.0 : true
         )
         
-        if (!hasResourceTags && !aiSaysNotFoundMaxIter && maxIterRelevant.length > 0) {
+        if (intent.needsSearch && !hasResourceTags && !aiSaysNotFoundMaxIter && maxIterRelevant.length > 0) {
           console.log('⚠️ AI did not use resource tags (MAX_ITER), injecting them in stream...')
           
           // Send resource tags via SSE
@@ -1656,14 +1704,20 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Save assistant message with post-processing
-        const finalResponse = injectResourceTags(fullResponse, searchResults, userLanguage)
+        // Save assistant message — only post-process if search was requested
+        const finalResponse = intent.needsSearch
+          ? injectResourceTags(fullResponse, searchResults, userLanguage)
+          : fullResponse
+        const costUsd = calculateCost(totalTokensInput, totalTokensOutput, model)
         
         await supabase.from("chat_messages").insert({
           session_id: sessionId,
           role: "assistant",
           content: finalResponse,
           model_used: model,
+          tokens_input: totalTokensInput  || null,
+          tokens_output: totalTokensOutput || null,
+          cost_usd: costUsd || null,
           metadata: {
             thinking: thinkingSteps,
             rag_results: searchResults.map((r: any) => ({
@@ -1675,7 +1729,7 @@ Deno.serve(async (req) => {
             })),
             search_duration_ms: searchDuration,
             context_duration_ms: contextDuration,
-            post_processed: finalResponse !== fullResponse // Track if we injected tags
+            post_processed: finalResponse !== fullResponse
           }
         })
 
