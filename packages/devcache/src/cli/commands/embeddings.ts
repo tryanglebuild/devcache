@@ -200,7 +200,7 @@ export async function triggerEmbeddingsCommand() {
       throw new Error(`Failed to trigger embeddings: ${errorText}`);
     }
 
-    const result = await response.json();
+    const result = await response.json() as { result?: { processed?: number; succeeded?: number; failed?: number; execution_time_ms?: number } };
 
     spinner.succeed(chalk.green('Embedding generation triggered!'));
 
@@ -208,13 +208,13 @@ export async function triggerEmbeddingsCommand() {
     console.log(chalk.gray('  Processed:'), chalk.white(result.result?.processed || 0));
     console.log(chalk.gray('  Succeeded:'), chalk.green(result.result?.succeeded || 0));
     
-    if (result.result?.failed > 0) {
-      console.log(chalk.gray('  Failed:'), chalk.red(result.result.failed));
+    if ((result.result?.failed ?? 0) > 0) {
+      console.log(chalk.gray('  Failed:'), chalk.red(result.result?.failed ?? 0));
     }
 
     console.log(chalk.gray('  Time:'), chalk.white(`${result.result?.execution_time_ms || 0}ms`));
 
-    if (result.result?.succeeded > 0) {
+    if ((result.result?.succeeded ?? 0) > 0) {
       console.log(chalk.green('\n✓ Your files are now searchable by AI!'));
     } else if (result.result?.processed === 0) {
       console.log(chalk.green('\n✓ No pending items found. All embeddings are up to date!'));
