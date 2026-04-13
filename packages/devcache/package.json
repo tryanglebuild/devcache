@@ -1,6 +1,6 @@
 {
   "name": "devcache-hub",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "Intelligent project documentation generator with cloud sync and RAG-powered search",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

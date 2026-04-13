@@ -24,7 +24,7 @@ const program = new Command();
 program
   .name('devcache')
   .description('Intelligent project documentation generator with cloud sync')
-  .version('0.16.0');
+  .version('0.16.1');
 
 program
   .command('init')
