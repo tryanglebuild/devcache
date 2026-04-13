@@ -1,15 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Sparkles, Plus } from 'lucide-react'
 import { ChatInterfaceWrapper } from './ChatInterfaceWrapper'
 import { SessionList } from './SessionList'
-import type { ChatSession } from '@/types/chat'
+import type { ChatSession, ChatMessage } from '@/types/chat'
 
 export function ChatPageClient() {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+
+  // In-memory message cache: sessionId → messages[]
+  // useRef so it persists across renders without triggering re-renders
+  const messageCache = useRef<Map<string, ChatMessage[]>>(new Map())
+
+  function handleCacheUpdate(sessionId: string, messages: ChatMessage[]) {
+    messageCache.current.set(sessionId, messages)
+  }
 
   useEffect(() => {
     loadSessions()
@@ -158,11 +166,13 @@ export function ChatPageClient() {
       {/* Chat Area - Flexible width */}
       <main className="flex-1 bg-[#fafbfc] dark:bg-surface-container-low overflow-hidden">
         {currentSessionId ? (
-          <ChatInterfaceWrapper 
+          <ChatInterfaceWrapper
             sessionId={currentSessionId}
             initialSession={sessions.find((s) => s.id === currentSessionId) ?? null}
             onSessionUpdate={refreshSessions}
             onNewChat={createNewSession}
+            cachedMessages={messageCache.current.get(currentSessionId)}
+            onCacheUpdate={handleCacheUpdate}
           />
         ) : (
           <div className="flex items-center justify-center h-full">

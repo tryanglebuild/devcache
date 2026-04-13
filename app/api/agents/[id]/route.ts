@@ -31,7 +31,12 @@ export async function GET(
       console.error('Get agent error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
-    
+
+    // Private agents are only accessible to their owner
+    if (agent.visibility === 'private' && agent.user_id !== user?.id) {
+      return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
+    }
+
     // Check if user has this agent in collection
     let isInCollection = false
     let isFavorite = false

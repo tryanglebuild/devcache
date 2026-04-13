@@ -26,10 +26,19 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate file type
+    // Validate file extension
     if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) {
       return NextResponse.json(
         { error: 'Only Markdown files (.md, .markdown) are allowed' },
+        { status: 400 }
+      )
+    }
+
+    // Validate MIME type reported by the browser as a second line of defence
+    const allowedMimeTypes = ['text/markdown', 'text/plain', 'text/x-markdown', 'application/octet-stream']
+    if (file.type && !allowedMimeTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'Invalid file type. Only Markdown files are allowed' },
         { status: 400 }
       )
     }

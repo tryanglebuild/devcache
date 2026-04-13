@@ -67,16 +67,15 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // If this is a CLI auth flow, redirect to success page with tokens
+    // CLI auth flow: only pass the two tokens required — user_id, email and
+    // expires_at are already encoded in the JWT itself, so omitting them here
+    // reduces the surface area of data exposed in server logs and browser history.
     if (redirectUri && data.session) {
       const successUrl = new URL(`${origin}/auth/cli/success`)
       successUrl.searchParams.set('access_token', data.session.access_token)
       successUrl.searchParams.set('refresh_token', data.session.refresh_token)
-      successUrl.searchParams.set('user_id', data.user.id)
-      successUrl.searchParams.set('email', data.user.email || '')
-      successUrl.searchParams.set('expires_at', data.session.expires_at?.toString() || '')
       successUrl.searchParams.set('redirect_uri', redirectUri)
-      
+
       return NextResponse.redirect(successUrl.toString())
     }
 

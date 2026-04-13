@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { ChatSession, ChatMessage, ThinkingStep } from '@/types/chat'
 import { getMessages, sendMessage } from '@/lib/chat-api'
 import { MessageList } from './MessageList'
@@ -12,28 +12,37 @@ import toast from 'react-hot-toast'
 import { useContextGathering } from '@/lib/hooks/useContextGathering'
 import { ContextGatheringProgress } from './ContextGatheringProgress'
 
+const PAGE_SIZE = 20
+
 interface ChatInterfaceProps {
   session: ChatSession
   onSessionUpdate: () => void
   onParentUpdate?: () => void
   onNewChat?: () => void
   isExpanded?: boolean
+  cachedMessages?: ChatMessage[]
+  onCacheUpdate?: (sessionId: string, messages: ChatMessage[]) => void
 }
 
-export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewChat, isExpanded }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [loading, setLoading] = useState(true)
+export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewChat, isExpanded, cachedMessages, onCacheUpdate }: ChatInterfaceProps) {
+  // Seed from cache for instant display; fresh load happens in the background
+  const [messages, setMessages] = useState<ChatMessage[]>(cachedMessages ?? [])
+  const [loading, setLoading] = useState(!cachedMessages || cachedMessages.length === 0)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
   const [streaming, setStreaming] = useState(false)
   const [streamingContent, setStreamingContent] = useState('')
   const [streamingThinking, setStreamingThinking] = useState<ThinkingStep[]>([])
   const [selectedModel, setSelectedModel] = useState(session.selected_model)
-  
+
+  // Ref forwarded to the scrollable container inside MessageList
+  const listRef = useRef<HTMLDivElement>(null)
+
   // Progressive context gathering
   const { contextState, loading: contextLoading, resetContext, refresh: refreshContext } = useContextGathering(session.id)
 
-  // Load messages immediately on mount and when session changes
+  // Load messages on mount and whenever the session changes
   useEffect(() => {
-    // Start loading messages in background without blocking UI
     loadMessages()
   }, [session.id])
 
@@ -41,16 +50,17 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
     setSelectedModel(session.selected_model)
   }, [session.selected_model])
 
+  // ------------------------------------------------------------------
+  // Initial load — fetches the latest PAGE_SIZE messages
+  // ------------------------------------------------------------------
   async function loadMessages() {
     try {
-      // Don't show loading spinner for initial load - show empty state instead
-      const isInitialLoad = messages.length === 0
-      if (!isInitialLoad) {
-        setLoading(true)
-      }
-      
-      const data = await getMessages(session.id)
-      setMessages(data)
+      if (!cachedMessages || cachedMessages.length === 0) setLoading(true)
+
+      const { messages: fresh, hasMore: more } = await getMessages(session.id, PAGE_SIZE)
+      setMessages(fresh)
+      setHasMore(more)
+      onCacheUpdate?.(session.id, fresh)
     } catch (error) {
       console.error('Failed to load messages:', error)
       toast.error('Failed to load messages')
@@ -59,6 +69,43 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
     }
   }
 
+  // ------------------------------------------------------------------
+  // Pagination — load the next (older) page using a beforeId cursor.
+  // Restores scroll position after prepending so the view doesn't jump.
+  // ------------------------------------------------------------------
+  async function loadOlderMessages() {
+    if (!hasMore || loadingMore || messages.length === 0) return
+
+    const firstId = messages[0].id
+    const container = listRef.current
+    const prevScrollHeight = container?.scrollHeight ?? 0
+
+    try {
+      setLoadingMore(true)
+      const { messages: older, hasMore: more } = await getMessages(session.id, PAGE_SIZE, firstId)
+
+      setMessages(prev => {
+        const updated = [...older, ...prev]
+        onCacheUpdate?.(session.id, updated)
+        return updated
+      })
+      setHasMore(more)
+
+      // Restore scroll so the user stays at the same visual position
+      if (container) {
+        container.scrollTop = container.scrollHeight - prevScrollHeight
+      }
+    } catch (error) {
+      console.error('Failed to load older messages:', error)
+      toast.error('Failed to load older messages')
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // Send a message — optimistic UI + targeted post-stream update
+  // ------------------------------------------------------------------
   async function handleSend(content: string) {
     if (!content.trim() || streaming) return
 
@@ -80,22 +127,17 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
       setStreamingContent('')
       setStreamingThinking([])
 
-      // Check if this is the first message in the session
       const isFirstMessage = messages.length === 0
 
-      // Add user message optimistically
+      // Optimistic: show user message immediately
       setMessages(prev => [...prev, userMessage])
 
-      // If this is the first message, auto-generate title from first 8 words
+      // Auto-generate session title from the first message
       if (isFirstMessage && session.title === 'New Conversation') {
         const words = content.trim().split(/\s+/)
-        const titleWords = words.slice(0, 8)
-        const autoTitle = titleWords.join(' ') + (words.length > 8 ? '...' : '')
-        
-        // Update title without triggering session reload
+        const autoTitle = words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '')
         try {
           await updateSession(session.id, { title: autoTitle })
-          // Only notify parent to update sidebar, don't reload current session
           onParentUpdate?.()
         } catch (error) {
           console.error('Failed to auto-update title:', error)
@@ -105,16 +147,14 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
       // Stream AI response
       let streamedContent = ''
       const thinkingSteps: ThinkingStep[] = []
-      
+
       for await (const chunk of sendMessage({
         sessionId: session.id,
         message: content,
         model: selectedModel,
       })) {
-        // Check if chunk is a thinking step or content
         if (chunk.startsWith('__THINKING__:')) {
-          const thinkingData = JSON.parse(chunk.substring(13))
-          thinkingSteps.push(thinkingData)
+          thinkingSteps.push(JSON.parse(chunk.substring(13)))
           setStreamingThinking([...thinkingSteps])
         } else {
           streamedContent += chunk
@@ -122,18 +162,49 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
         }
       }
 
-      // After streaming completes, reload messages to get the saved version with metadata
-      await loadMessages()
+      // Targeted update: immediately append an optimistic assistant message
+      // built from the stream content we already have. Then fetch only the
+      // last 2 messages from the DB to swap in real IDs, token counts and cost
+      // — avoiding a full reload of the entire message list.
+      const optimisticAssistant: ChatMessage = {
+        id: 'temp-assistant-' + Date.now(),
+        session_id: session.id,
+        role: 'assistant',
+        content: streamedContent,
+        model_used: selectedModel,
+        tokens_input: null,
+        tokens_output: null,
+        cost_usd: null,
+        metadata: { thinking: thinkingSteps },
+        thinking: thinkingSteps,
+        created_at: new Date().toISOString(),
+      }
+
+      setMessages(prev => {
+        const withoutTempUser = prev.filter(m => m.id !== userMessage.id)
+        return [...withoutTempUser, { ...userMessage }, optimisticAssistant]
+      })
       setStreamingContent('')
       setStreamingThinking([])
-      
-      // Refresh context state after message
+
+      // Background: fetch the last 2 messages to get real IDs + stored metadata
+      const { messages: lastTwo } = await getMessages(session.id, 2)
+      setMessages(prev => {
+        const stable = prev.filter(m => !m.id.startsWith('temp-'))
+        const stableIds = new Set(stable.map(m => m.id))
+        const newOnes = lastTwo.filter(m => !stableIds.has(m.id))
+        const updated = [...stable, ...newOnes]
+        onCacheUpdate?.(session.id, updated)
+        return updated
+      })
+
       refreshContext()
     } catch (error) {
       console.error('Failed to send message:', error)
       toast.error('Failed to send message')
-      // Remove optimistic user message on error
       setMessages(prev => prev.filter(m => m.id !== userMessage.id))
+      setStreamingContent('')
+      setStreamingThinking([])
     } finally {
       setStreaming(false)
     }
@@ -174,14 +245,18 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
       )}
 
       <MessageList
+        ref={listRef}
         messages={messages}
         loading={loading}
         streamingContent={streamingContent}
         streaming={streaming}
         streamingThinking={streamingThinking}
+        hasMore={hasMore}
+        loadingMore={loadingMore}
+        onLoadMore={loadOlderMessages}
       />
 
-      {/* Bottom Bar - Redesigned */}
+      {/* Bottom Bar */}
       <div className="border-t border-[#f3f4f6] dark:border-white/[0.06] bg-white dark:bg-surface-container">
         {/* Input Area */}
         <div className="px-6 py-4">

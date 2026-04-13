@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ChatInterface } from './ChatInterface'
-import type { ChatSession } from '@/types/chat'
+import type { ChatSession, ChatMessage } from '@/types/chat'
 
 interface ChatInterfaceWrapperProps {
   sessionId: string
@@ -10,9 +10,11 @@ interface ChatInterfaceWrapperProps {
   onSessionUpdate?: () => void
   onNewChat?: () => void
   isExpanded?: boolean
+  cachedMessages?: ChatMessage[]
+  onCacheUpdate?: (sessionId: string, messages: ChatMessage[]) => void
 }
 
-export function ChatInterfaceWrapper({ sessionId, initialSession, onSessionUpdate, onNewChat, isExpanded }: ChatInterfaceWrapperProps) {
+export function ChatInterfaceWrapper({ sessionId, initialSession, onSessionUpdate, onNewChat, isExpanded, cachedMessages, onCacheUpdate }: ChatInterfaceWrapperProps) {
   const [session, setSession] = useState<ChatSession | null>(initialSession ?? null)
   const [loading, setLoading] = useState(!initialSession)
 
@@ -67,6 +69,8 @@ export function ChatInterfaceWrapper({ sessionId, initialSession, onSessionUpdat
       onParentUpdate={onSessionUpdate}
       onNewChat={onNewChat}
       isExpanded={isExpanded}
+      cachedMessages={cachedMessages}
+      onCacheUpdate={onCacheUpdate}
     />
   )
 }

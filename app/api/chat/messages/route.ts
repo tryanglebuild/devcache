@@ -33,7 +33,18 @@ export async function GET(request: Request) {
       )
     }
 
-    // Skip session ownership check for faster response - RLS will handle it
+    // Verify the session belongs to the authenticated user
+    const { data: sessionCheck } = await supabase
+      .from('chat_sessions')
+      .select('id')
+      .eq('id', sessionId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (!sessionCheck) {
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    }
+
     // Get paginated messages using optimized function
     const { data: messages, error } = await supabase.rpc(
       'get_chat_messages_paginated',

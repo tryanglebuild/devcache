@@ -29,6 +29,14 @@ export async function POST(request: Request) {
       )
     }
 
+    // Reject messages that exceed the maximum allowed length
+    if (body.message.length > 10_000) {
+      return NextResponse.json(
+        { error: 'Message exceeds the maximum length of 10,000 characters' },
+        { status: 400 }
+      )
+    }
+
     // Verify session ownership
     const { data: session } = await supabase
       .from('chat_sessions')
@@ -41,6 +49,22 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Session not found' },
         { status: 404 }
+      )
+    }
+
+    // Rate limit: max 20 user messages per session per minute
+    const oneMinuteAgo = new Date(Date.now() - 60_000).toISOString()
+    const { count: recentCount } = await supabase
+      .from('chat_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('session_id', body.sessionId)
+      .eq('role', 'user')
+      .gte('created_at', oneMinuteAgo)
+
+    if ((recentCount ?? 0) >= 20) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please wait before sending more messages.' },
+        { status: 429 }
       )
     }
 

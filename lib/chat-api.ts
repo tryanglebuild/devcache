@@ -65,20 +65,26 @@ export async function deleteSession(id: string): Promise<void> {
 }
 
 // Messages
-export async function getMessages(sessionId: string, limit: number = 50): Promise<ChatMessage[]> {
-  const res = await fetch(`${API_BASE}/messages?sessionId=${sessionId}&limit=${limit}`, {
-    cache: 'no-store', // Ensure fresh data
+export async function getMessages(
+  sessionId: string,
+  limit: number = 50,
+  beforeId?: string
+): Promise<{ messages: ChatMessage[]; hasMore: boolean }> {
+  const params = new URLSearchParams({ sessionId, limit: String(limit) })
+  if (beforeId) params.set('beforeId', beforeId)
+
+  const res = await fetch(`${API_BASE}/messages?${params}`, {
+    cache: 'no-store',
   })
   const data: ApiResponse<ChatMessage[]> = await res.json()
   if (!res.ok) throw new Error(data.error || 'Failed to fetch messages')
-  
-  // Process messages to extract thinking from metadata
+
   const messages = (data.data || []).map(msg => ({
     ...msg,
-    thinking: msg.metadata?.thinking || []
+    thinking: msg.metadata?.thinking || [],
   }))
-  
-  return messages
+
+  return { messages, hasMore: messages.length === limit }
 }
 
 export async function* sendMessage(request: SendMessageRequest): AsyncGenerator<string> {
