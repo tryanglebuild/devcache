@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AlertTriangle, Loader2, Trash2, KeyRound, ArrowRight, ShieldAlert } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -131,70 +130,48 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
         {/* Step 1: Warning */}
         {step === 'warning' && (
           <>
-            <DialogHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
-                </div>
-                <div>
-                  <DialogTitle className="text-2xl font-black text-red-600 dark:text-red-400">
-                    Delete Account
-                  </DialogTitle>
-                  <DialogDescription className="text-sm">
-                    This action cannot be undone
-                  </DialogDescription>
-                </div>
+            <DialogHeader className="pb-0">
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
+                <DialogTitle className="text-sm font-semibold text-neutral-900">
+                  Delete Account
+                </DialogTitle>
               </div>
+              <DialogDescription className="text-xs text-neutral-500 mt-1">
+                This action is permanent and cannot be undone
+              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              <Alert variant="destructive" className="border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10">
-                <AlertTriangle className="h-5 w-5" />
-                <AlertDescription className="ml-2">
-                  <strong className="font-bold">Warning:</strong> Deleting your account will permanently remove all your data.
-                </AlertDescription>
-              </Alert>
-
-              <div className="space-y-3 text-sm">
-                <p className="font-semibold text-[#191c1e] dark:text-on-surface">The following data will be permanently deleted:</p>
-                <ul className="space-y-2 ml-4">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-[#464554] dark:text-on-surface-variant">All your AI agent templates and configurations</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-[#464554] dark:text-on-surface-variant">All your projects and project items</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-[#464554] dark:text-on-surface-variant">All your chat sessions and message history</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-[#464554] dark:text-on-surface-variant">Your profile information and preferences</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-[#464554] dark:text-on-surface-variant">All your collections and favorites</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-0.5">•</span>
-                    <span className="text-[#464554] dark:text-on-surface-variant">Your account and authentication data</span>
-                  </li>
+              <div className="p-3 bg-red-50 border border-red-100 rounded-md">
+                <p className="text-xs font-medium text-red-700">The following data will be permanently deleted:</p>
+                <ul className="mt-2 space-y-1">
+                  {[
+                    'All your AI agent templates and configurations',
+                    'All your projects and project items',
+                    'All your chat sessions and message history',
+                    'Your profile information and preferences',
+                    'All your collections and favorites',
+                    'Your account and authentication data',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-xs text-red-600">
+                      <span className="mt-1 shrink-0">–</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-[#f2f4f6] dark:bg-white/5 rounded-lg border border-[#e5e7eb] dark:border-white/[0.09]">
+              <div className="flex items-start gap-3 p-3 bg-neutral-50 border border-neutral-200 rounded-md">
                 <Checkbox
                   id="understood"
                   checked={understood}
                   onCheckedChange={(checked) => setUnderstood(checked as boolean)}
-                  className="mt-1"
+                  className="mt-0.5"
                 />
                 <label
                   htmlFor="understood"
-                  className="text-sm font-medium text-[#191c1e] dark:text-on-surface cursor-pointer leading-relaxed"
+                  className="text-xs text-neutral-700 cursor-pointer leading-relaxed"
                 >
                   I understand that this action is permanent and cannot be undone. All my data will be permanently deleted.
                 </label>
@@ -202,18 +179,14 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
             </div>
 
             <DialogFooter className="gap-2">
-              <Button
-                variant="outline"
-                onClick={handleClose}
-                className="font-semibold"
-              >
+              <Button variant="outline" size="sm" onClick={handleClose}>
                 Cancel
               </Button>
               <Button
-                variant="destructive"
+                size="sm"
                 onClick={handleWarningNext}
                 disabled={!understood}
-                className="font-bold"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 Continue
               </Button>
@@ -224,32 +197,26 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
         {/* Step 2: Credentials */}
         {step === 'credentials' && (
           <>
-            <DialogHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
-                  <KeyRound className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                  <DialogTitle className="text-2xl font-black text-amber-600 dark:text-amber-400">
-                    Verify Your Identity
-                  </DialogTitle>
-                  <DialogDescription className="text-sm">
-                    Step 2 of 3: Enter your credentials
-                  </DialogDescription>
-                </div>
+            <DialogHeader className="pb-0">
+              <div className="flex items-center gap-2.5">
+                <KeyRound className="h-4 w-4 text-neutral-400 shrink-0" />
+                <DialogTitle className="text-sm font-semibold text-neutral-900">
+                  Verify Your Identity
+                </DialogTitle>
               </div>
+              <DialogDescription className="text-xs text-neutral-500 mt-1">
+                Step 2 of 3 — Enter your credentials to continue
+              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              <Alert className="border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10">
-                <AlertDescription className="text-amber-900 dark:text-amber-200">
-                  Please enter your email and password to verify your identity before proceeding.
-                </AlertDescription>
-              </Alert>
+              <p className="text-xs text-neutral-500">
+                Enter your email and password to verify your identity before proceeding.
+              </p>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-[#191c1e] dark:text-on-surface">
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-xs font-medium text-neutral-700">
                     Email Address
                   </Label>
                   <Input
@@ -258,16 +225,16 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={userEmail}
-                    className="border-slate-300"
+                    className="border-neutral-200 text-sm"
                     disabled={isDeleting}
                   />
-                  <p className="text-xs text-[#464554] dark:text-on-surface-variant">
-                    Must match your account email: {userEmail}
+                  <p className="text-[11px] text-neutral-400">
+                    Must match: {userEmail}
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-semibold text-[#191c1e] dark:text-on-surface">
+                <div className="space-y-1.5">
+                  <Label htmlFor="password" className="text-xs font-medium text-neutral-700">
                     Password
                   </Label>
                   <Input
@@ -276,7 +243,7 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="border-slate-300"
+                    className="border-neutral-200 text-sm"
                     disabled={isDeleting}
                   />
                 </div>
@@ -284,30 +251,19 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
             </div>
 
             <DialogFooter className="gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setStep('warning')}
-                disabled={isDeleting}
-                className="font-semibold"
-              >
+              <Button variant="outline" size="sm" onClick={() => setStep('warning')} disabled={isDeleting}>
                 Back
               </Button>
               <Button
-                variant="destructive"
+                size="sm"
                 onClick={handleCredentialsNext}
                 disabled={isDeleting || !email || !password}
-                className="font-bold"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 {isDeleting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Verifying...
-                  </>
+                  <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />Verifying...</>
                 ) : (
-                  <>
-                    Verify & Continue
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
+                  <>Verify & Continue<ArrowRight className="ml-2 h-3.5 w-3.5" /></>
                 )}
               </Button>
             </DialogFooter>
@@ -317,84 +273,53 @@ export function DeleteAccountDialog({ userEmail, open, onOpenChange }: DeleteAcc
         {/* Step 3: Final Confirmation */}
         {step === 'final-confirmation' && (
           <>
-            <DialogHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-500/15 flex items-center justify-center">
-                  <ShieldAlert className="h-6 w-6 text-red-600 dark:text-red-400" strokeWidth={2} />
-                </div>
-                <div>
-                  <DialogTitle className="text-2xl font-black text-red-600 dark:text-red-400">
-                    Final Confirmation
-                  </DialogTitle>
-                  <DialogDescription className="text-sm">
-                    Step 3 of 3: Last chance to cancel
-                  </DialogDescription>
-                </div>
+            <DialogHeader className="pb-0">
+              <div className="flex items-center gap-2.5">
+                <ShieldAlert className="h-4 w-4 text-red-500 shrink-0" />
+                <DialogTitle className="text-sm font-semibold text-neutral-900">
+                  Final Confirmation
+                </DialogTitle>
               </div>
+              <DialogDescription className="text-xs text-neutral-500 mt-1">
+                Step 3 of 3 — Last chance to cancel
+              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              <Alert variant="destructive" className="border-red-400 dark:border-red-500/30 bg-red-100 dark:bg-red-500/10">
-                <AlertTriangle className="h-5 w-5" />
-                <AlertDescription className="ml-2">
-                  <strong className="font-bold">FINAL WARNING:</strong> This is your last chance to cancel. Once you proceed, your account and all associated data will be permanently deleted.
-                </AlertDescription>
-              </Alert>
-
-              <div className="space-y-3 p-4 bg-[#f2f4f6] dark:bg-white/5 rounded-lg border-2 border-red-200 dark:border-red-500/30">
-                <p className="text-sm font-semibold text-[#191c1e] dark:text-on-surface">
-                  Type <span className="font-mono font-bold text-red-600">DELETE MY ACCOUNT</span> to confirm:
+              <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-md space-y-1.5">
+                <p className="text-xs font-medium text-neutral-700">
+                  Type <span className="font-mono text-red-600">DELETE MY ACCOUNT</span> to confirm:
                 </p>
                 <Input
                   value={confirmationText}
                   onChange={(e) => setConfirmationText(e.target.value)}
                   placeholder="DELETE MY ACCOUNT"
-                  className="border-red-300 font-mono"
+                  className="border-neutral-200 font-mono text-sm"
                   disabled={isDeleting}
                 />
               </div>
 
-              <div className="space-y-2 text-xs text-[#464554] dark:text-on-surface-variant">
-                <p className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  Your account will be deleted immediately
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  All your data will be permanently removed
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  This action cannot be undone or reversed
-                </p>
+              <div className="space-y-1.5 text-xs text-neutral-400">
+                <p className="flex items-center gap-2">– Your account will be deleted immediately</p>
+                <p className="flex items-center gap-2">– All your data will be permanently removed</p>
+                <p className="flex items-center gap-2">– This action cannot be undone or reversed</p>
               </div>
             </div>
 
             <DialogFooter className="gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setStep('credentials')}
-                disabled={isDeleting}
-                className="font-semibold"
-              >
+              <Button variant="outline" size="sm" onClick={() => setStep('credentials')} disabled={isDeleting}>
                 Back
               </Button>
               <Button
-                variant="destructive"
+                size="sm"
                 onClick={handleFinalDelete}
                 disabled={isDeleting || confirmationText !== 'DELETE MY ACCOUNT'}
-                className="font-bold bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 {isDeleting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Deleting Account...
-                  </>
+                  <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />Deleting...</>
                 ) : (
-                  <>
-                    Delete My Account Forever
-                    <Trash2 className="ml-2 h-4 w-4" />
-                  </>
+                  <>Delete Account<Trash2 className="ml-2 h-3.5 w-3.5" /></>
                 )}
               </Button>
             </DialogFooter>

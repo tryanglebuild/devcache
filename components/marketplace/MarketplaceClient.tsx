@@ -171,27 +171,27 @@ export function MarketplaceClient({
 
       {/* Agent Grid */}
       {loading && agents.length === 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="bg-white dark:bg-surface-container rounded-xl p-4 shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/[0.08] animate-pulse"
+              className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4 animate-pulse"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-[#f2f4f6] dark:bg-surface-container-high" />
+                <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-surface-container-high" />
                 <div className="flex-1">
-                  <div className="h-4 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-1/2" />
+                  <div className="h-3.5 bg-neutral-100 dark:bg-surface-container-high rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-1/2" />
                 </div>
               </div>
-              <div className="h-3 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-full mb-2" />
-              <div className="h-3 bg-[#f2f4f6] dark:bg-surface-container-high rounded w-5/6" />
+              <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-full mb-2" />
+              <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-5/6" />
             </div>
           ))}
         </div>
       ) : agents.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {agents.map((agent) => (
               <AgentCard
                 key={agent.id}
@@ -203,12 +203,12 @@ export function MarketplaceClient({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-12 flex items-center justify-center gap-2">
+            <div className="mt-10 flex items-center justify-center gap-1.5">
               {/* Previous Button */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1 || loading}
-                className="px-4 py-2 bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant border border-[#e5e7eb] dark:border-white/[0.09] rounded-lg font-medium hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-xs bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-800 rounded-md font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -221,18 +221,18 @@ export function MarketplaceClient({
                       key={`page-${page}`}
                       onClick={() => handlePageChange(page)}
                       disabled={loading}
-                      className={`min-w-[40px] h-10 rounded-lg font-medium transition-all ${
+                      className={`min-w-[32px] h-8 text-xs rounded-md font-medium transition-all ${
                         currentPage === page
-                          ? 'bg-[#4f46e5] text-white'
-                          : 'bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant border border-[#e5e7eb] dark:border-white/[0.09] hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
-                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
+                          : 'bg-white dark:bg-surface-container text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-white/[0.09] hover:bg-neutral-50 dark:hover:bg-surface-container-high'
+                      } disabled:opacity-40 disabled:cursor-not-allowed`}
                     >
                       {page}
                     </button>
                   ) : (
                     <span
                       key={`ellipsis-${index}`}
-                      className="px-2 text-[#464554] dark:text-on-surface-variant"
+                      className="px-1 text-xs text-neutral-400 dark:text-neutral-600"
                     >
                       {page}
                     </span>
@@ -244,7 +244,7 @@ export function MarketplaceClient({
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages || loading}
-                className="px-4 py-2 bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant border border-[#e5e7eb] dark:border-white/[0.09] rounded-lg font-medium hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-xs bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-800 rounded-md font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -252,17 +252,15 @@ export function MarketplaceClient({
           )}
         </>
       ) : (
-        <div className="bg-white dark:bg-surface-container rounded-xl p-12 text-center shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] dark:bg-surface-container-high flex items-center justify-center">
-            <SearchX size={28} strokeWidth={1.5} className="text-slate-500 dark:text-on-surface-variant" />
-          </div>
-          <p className="text-[#464554] dark:text-on-surface-variant font-medium mb-2">No agents found</p>
-          <p className="text-sm text-[#464554] dark:text-on-surface-variant mb-4">
+        <div className="bg-neutral-50 dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-10 text-center">
+          <SearchX size={24} strokeWidth={1.5} className="mx-auto mb-3 text-neutral-300 dark:text-neutral-700" />
+          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">No agents found</p>
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-4">
             Try adjusting your filters or search terms
           </p>
           <button
             onClick={() => handleFilterChange({ query: '', category: undefined, minRating: 0 })}
-            className="text-[#4f46e5] dark:text-[#7c7ff5] hover:text-[#4338ca] dark:hover:text-[#a5b4fc] font-semibold text-sm"
+            className="text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 underline underline-offset-2 transition-colors"
           >
             Clear all filters
           </button>

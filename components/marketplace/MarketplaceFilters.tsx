@@ -48,38 +48,38 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
   ]
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Search Bar */}
       <form onSubmit={handleSearch} className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#464554] dark:text-on-surface-variant" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
         <input
           type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search agents by name, description, or tags..."
-          className="w-full pl-12 pr-24 py-3 bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09] rounded-xl focus:ring-2 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] outline-none text-sm"
+          className="w-full pl-9 pr-24 py-2.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400 outline-none text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
         />
         {searchInput && (
           <button
             type="button"
             onClick={handleClearSearch}
-            className="absolute right-16 top-1/2 -translate-y-1/2 p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded-full transition-colors"
+            className="absolute right-16 top-1/2 -translate-y-1/2 p-1 hover:bg-neutral-100 dark:hover:bg-surface-container-high rounded transition-colors"
           >
-            <X className="h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
+            <X className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />
           </button>
         )}
         <button
           type="submit"
-          className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-[#4f46e5] text-white rounded-lg font-semibold text-sm hover:bg-[#4338ca] transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-neutral-900 text-white rounded-md text-xs font-medium hover:bg-neutral-700 transition-colors"
         >
           Search
         </button>
       </form>
 
       {/* Filter Bar */}
-      <div className="flex items-center gap-4 flex-wrap">
+      <div className="flex items-center gap-3 flex-wrap">
         {/* Category Filter */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide flex-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide flex-1">
           {categories.map((category) => (
             <button
               key={category.id}
@@ -88,14 +88,14 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
                   category: category.id === 'all' ? undefined : category.id
                 })
               }
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all ${
                 (category.id === 'all' && !filters.category) ||
                 filters.category === category.id
-                  ? 'bg-[#4f46e5] text-white shadow-md'
-                  : 'bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high shadow-sm dark:shadow-none'
+                  ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
+                  : 'bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-surface-container-high'
               }`}
             >
-              <category.Icon size={18} strokeWidth={1.5} />
+              <category.Icon size={14} strokeWidth={1.5} />
               {category.label}
             </button>
           ))}
@@ -104,24 +104,24 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
         {/* Advanced Filters Toggle */}
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
             showAdvanced
-              ? 'bg-[#4f46e5] text-white'
-              : 'bg-white dark:bg-surface-container text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
-          } shadow-sm dark:shadow-none`}
+              ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
+              : 'bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-surface-container-high'
+          }`}
         >
-          <SlidersHorizontal className="w-4 h-4" />
+          <SlidersHorizontal className="w-3.5 h-3.5" />
           Filters
         </button>
       </div>
 
       {/* Advanced Filters */}
       {showAdvanced && (
-        <div className="bg-white dark:bg-surface-container rounded-xl p-6 shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/[0.08] space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Sort By */}
             <div>
-              <label className="block text-sm font-bold text-[#191c1e] dark:text-on-surface mb-2">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                 Sort By
               </label>
               <select
@@ -131,7 +131,7 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
                     sortBy: e.target.value as AgentSearchFilters['sortBy']
                   })
                 }
-                className="w-full px-4 py-2 bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09] rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] outline-none text-sm"
+                className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400 outline-none text-sm text-neutral-700 dark:text-neutral-300"
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -143,7 +143,7 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
 
             {/* Minimum Rating */}
             <div>
-              <label className="block text-sm font-bold text-[#191c1e] dark:text-on-surface mb-2">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                 Minimum Rating
               </label>
               <select
@@ -151,7 +151,7 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
                 onChange={(e) =>
                   onFilterChange({ minRating: parseFloat(e.target.value) })
                 }
-                className="w-full px-4 py-2 bg-white dark:bg-surface-container border border-[#c7c4d7]/20 dark:border-white/[0.09] rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] outline-none text-sm"
+                className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400 outline-none text-sm text-neutral-700 dark:text-neutral-300"
               >
                 {ratingOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -164,11 +164,9 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
 
           {/* Active Filters Summary */}
           {(filters.query || filters.category || (filters.minRating && filters.minRating > 0)) && (
-            <div className="pt-4 border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-[#464554] dark:text-on-surface-variant">
-                  Active Filters:
-                </p>
+              <div className="pt-3 border-t border-neutral-100 dark:border-white/[0.09]">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Active filters</p>
                 <button
                   onClick={() =>
                     onFilterChange({
@@ -177,25 +175,25 @@ export function MarketplaceFilters({ filters, onFilterChange }: MarketplaceFilte
                       minRating: 0
                     })
                   }
-                  className="text-sm font-semibold text-[#ba1a1a] dark:text-red-400 hover:text-[#ef4444] dark:hover:text-red-300 transition-colors"
+                  className="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
                 >
-                  Clear All
+                  Clear all
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="flex flex-wrap gap-1.5">
                 {filters.query && (
-                  <span className="px-3 py-1 bg-[#4f46e5]/10 dark:bg-[#7c7ff5]/15 text-[#4f46e5] dark:text-[#7c7ff5] rounded-full text-xs font-semibold">
+                  <span className="px-2 py-0.5 bg-neutral-100 dark:bg-surface-container-high text-neutral-600 dark:text-neutral-400 rounded text-[11px] font-medium">
                     Search: "{filters.query}"
                   </span>
                 )}
                 {filters.category && (
-                  <span className="px-3 py-1 bg-[#4f46e5]/10 dark:bg-[#7c7ff5]/15 text-[#4f46e5] dark:text-[#7c7ff5] rounded-full text-xs font-semibold">
-                    Category: {AGENT_CATEGORIES[filters.category as keyof typeof AGENT_CATEGORIES]?.label}
+                  <span className="px-2 py-0.5 bg-neutral-100 dark:bg-surface-container-high text-neutral-600 dark:text-neutral-400 rounded text-[11px] font-medium">
+                    {AGENT_CATEGORIES[filters.category as keyof typeof AGENT_CATEGORIES]?.label}
                   </span>
                 )}
                 {filters.minRating && filters.minRating > 0 && (
-                  <span className="px-3 py-1 bg-[#4f46e5]/10 dark:bg-[#7c7ff5]/15 text-[#4f46e5] dark:text-[#7c7ff5] rounded-full text-xs font-semibold">
-                    Rating: {filters.minRating}+ stars
+                  <span className="px-2 py-0.5 bg-neutral-100 dark:bg-surface-container-high text-neutral-600 dark:text-neutral-400 rounded text-[11px] font-medium">
+                    {filters.minRating}+ stars
                   </span>
                 )}
               </div>

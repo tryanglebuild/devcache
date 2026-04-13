@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Lock, AlertTriangle, User as UserIcon, Link2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -90,44 +89,36 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
   return (
     <div className="space-y-6">
       {/* Linked Accounts */}
-      <Card className="bg-gradient-to-br from-white to-blue-50/30 border-[#c7c4d7]/20 shadow-xl">
-        <CardHeader className="pb-6 border-b border-[#c7c4d7]/10">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Link2 className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-black text-[#191c1e]">Linked Accounts</CardTitle>
-              <CardDescription className="text-[#464554] text-sm">
-                Manage your login methods and connected accounts
-              </CardDescription>
-            </div>
+      <Card className="bg-white border-neutral-200 shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100">
+          <div className="flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-neutral-400" />
+            <CardTitle className="text-sm font-semibold text-neutral-900">Linked Accounts</CardTitle>
           </div>
+          <CardDescription className="text-sm text-neutral-500">
+            Manage your login methods and connected accounts
+          </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-5">
           <LinkedAccountsManager />
         </CardContent>
       </Card>
 
       {/* Change Password */}
-      <Card className="bg-gradient-to-br from-white to-emerald-50/30 border-[#c7c4d7]/20 shadow-xl">
-        <CardHeader className="pb-6 border-b border-[#c7c4d7]/10">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <Lock className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-black text-[#191c1e]">Change Password</CardTitle>
-              <CardDescription className="text-[#464554] text-sm">
-                Update your password to keep your account secure
-              </CardDescription>
-            </div>
+      <Card className="bg-white border-neutral-200 shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-neutral-400" />
+            <CardTitle className="text-sm font-semibold text-neutral-900">Change Password</CardTitle>
           </div>
+          <CardDescription className="text-sm text-neutral-500">
+            Update your password to keep your account secure
+          </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-5">
           <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="current_password" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="current_password" className="text-sm font-medium text-neutral-700">
                 Current Password
               </Label>
               <Input
@@ -136,12 +127,12 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 value={passwordData.currentPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                 required
-                className="border-[#c7c4d7]/20"
+                className="border-neutral-200 text-sm"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="new_password" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="new_password" className="text-sm font-medium text-neutral-700">
                 New Password
               </Label>
               <Input
@@ -151,15 +142,15 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                 required
                 minLength={8}
-                className="border-[#c7c4d7]/20"
+                className="border-neutral-200 text-sm"
               />
-              <p className="text-xs text-[#464554]">
+              <p className="text-xs text-neutral-400">
                 Must be at least 8 characters long
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirm_password" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="confirm_password" className="text-sm font-medium text-neutral-700">
                 Confirm New Password
               </Label>
               <Input
@@ -168,24 +159,25 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                 required
-                className="border-[#c7c4d7]/20"
+                className="border-neutral-200 text-sm"
               />
             </div>
 
             <div className="flex justify-end pt-2">
               <Button
                 type="submit"
+                size="sm"
                 disabled={isChangingPassword}
-                className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-105 transition-all px-8"
+                className="bg-neutral-900 hover:bg-neutral-700 text-white"
               >
                 {isChangingPassword ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
                     Changing...
                   </>
                 ) : (
                   <>
-                    <Lock className="mr-2 h-4 w-4" />
+                    <Lock className="mr-2 h-3.5 w-3.5" />
                     Change Password
                   </>
                 )}
@@ -196,108 +188,80 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
       </Card>
 
       {/* Account Information */}
-      <Card className="bg-gradient-to-br from-white to-indigo-50/30 border-[#c7c4d7]/20 shadow-xl">
-        <CardHeader className="pb-6 border-b border-[#c7c4d7]/10">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <UserIcon className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-black text-[#191c1e]">Account Information</CardTitle>
-              <CardDescription className="text-[#464554] text-sm">
-                View your account details
-              </CardDescription>
-            </div>
+      <Card className="bg-white border-neutral-200 shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100">
+          <div className="flex items-center gap-2">
+            <UserIcon className="h-4 w-4 text-neutral-400" />
+            <CardTitle className="text-sm font-semibold text-neutral-900">Account Information</CardTitle>
           </div>
+          <CardDescription className="text-sm text-neutral-500">
+            View your account details
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-xl border border-gray-200">
-            <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
-              <span className="text-gray-600 font-mono font-bold text-xs">#</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
-                Account ID
-              </p>
-              <p className="text-sm font-mono text-[#191c1e] break-all">
-                {user.id}
-              </p>
-            </div>
+        <CardContent className="pt-5 space-y-3">
+          <div className="flex items-center justify-between py-2.5 border-b border-neutral-100">
+            <span className="text-sm text-neutral-500">Account ID</span>
+            <span className="text-sm font-mono text-neutral-900 truncate max-w-xs">
+              {user.id}
+            </span>
           </div>
 
-          <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-xl border border-gray-200">
-            <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-gray-500 text-xl">calendar_today</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
-                Member Since
-              </p>
-              <p className="text-sm font-bold text-[#191c1e]">
-                {new Date(user.created_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-            </div>
+          <div className="flex items-center justify-between py-2.5 border-b border-neutral-100">
+            <span className="text-sm text-neutral-500">Member Since</span>
+            <span className="text-sm text-neutral-900">
+              {new Date(user.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </span>
           </div>
 
-          <div className="flex items-start gap-3 p-5 bg-gray-50 rounded-xl border border-gray-200">
-            <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-gray-500 text-xl">schedule</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
-                Last Sign In
-              </p>
-              <p className="text-sm font-bold text-[#191c1e]">
-                {user.last_sign_in_at
-                  ? new Date(user.last_sign_in_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : 'Never'}
-              </p>
-            </div>
+          <div className="flex items-center justify-between py-2.5">
+            <span className="text-sm text-neutral-500">Last Sign In</span>
+            <span className="text-sm text-neutral-900">
+              {user.last_sign_in_at
+                ? new Date(user.last_sign_in_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : 'Never'}
+            </span>
           </div>
         </CardContent>
       </Card>
 
       {/* Danger Zone */}
-      <Card className="bg-gradient-to-br from-white to-red-50/40 border-red-200 shadow-xl">
-        <CardHeader className="pb-6 border-b border-red-200">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-500/30">
-              <AlertTriangle className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-black text-red-600">
-                Danger Zone
-              </CardTitle>
-              <CardDescription className="text-[#464554] text-sm">
-                Irreversible actions that affect your account
-              </CardDescription>
-            </div>
+      <Card className="bg-white border-red-200 shadow-none">
+        <CardHeader className="pb-4 border-b border-red-100">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <CardTitle className="text-sm font-semibold text-red-600">Danger Zone</CardTitle>
           </div>
+          <CardDescription className="text-sm text-neutral-500">
+            Irreversible actions that permanently affect your account
+          </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
-          <Alert variant="destructive" className="mb-4">
-            <AlertDescription>
-              Deleting your account will permanently remove all your data, including templates, projects, and chat history. This action cannot be undone.
-            </AlertDescription>
-          </Alert>
-          <Button
-            variant="destructive"
-            className="font-bold"
-            onClick={() => setDeleteDialogOpen(true)}
-          >
-            <AlertTriangle className="mr-2 h-4 w-4" />
-            Delete Account
-          </Button>
+        <CardContent className="pt-5">
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <p className="text-sm font-medium text-neutral-900">Delete Account</p>
+              <p className="text-sm text-neutral-500 mt-0.5">
+                Permanently remove your account and all associated data including templates, projects, and chat history.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              Delete Account
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

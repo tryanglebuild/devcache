@@ -23,8 +23,8 @@ function SignalBars({ value, size = 'md' }: { value: number; size?: 'sm' | 'md' 
           style={{ height: h }}
           className={`${width} rounded-sm ${
             i < Math.round(value)
-              ? 'bg-[#6366f1]/70 dark:bg-[#7c7ff5]/60'
-              : 'bg-slate-200 dark:bg-slate-700'
+              ? 'bg-neutral-500 dark:bg-neutral-400'
+              : 'bg-neutral-200 dark:bg-neutral-700'
           }`}
         />
       ))}
@@ -294,91 +294,81 @@ export function AgentDetailClient({
       {/* Back Button */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-[#464554] dark:text-on-surface-variant hover:text-[#191c1e] dark:hover:text-on-surface font-semibold transition-colors"
+        className="flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
       >
-        <ArrowLeft className="w-5 h-5" />
+        <ArrowLeft className="w-4 h-4" />
         Back to Marketplace
       </button>
 
       {/* Header */}
-      <div className="bg-white dark:bg-surface-container p-8 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-start gap-4 flex-1">
-              <div 
-                className="w-16 h-16 rounded-xl flex items-center justify-center text-white shadow-lg"
-                style={{ background: `linear-gradient(135deg, ${category.color} 0%, ${category.color}dd 100%)` }}
-              >
-                <CategoryIcon size={32} strokeWidth={1.5} />
-              </div>
+      <div className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-start gap-3 flex-1">
+            <div className="w-10 h-10 rounded-md bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center shrink-0">
+              <CategoryIcon size={20} strokeWidth={1.5} className="text-neutral-500 dark:text-neutral-400" />
+            </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-black tracking-tight text-[#191c1e] dark:text-on-surface mb-2">
+              <h1 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
                 {agent.name}
               </h1>
               {agent.description && (
-                <p className="text-[#464554] dark:text-on-surface-variant font-medium">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   {agent.description}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 shrink-0">
             {isOwner && (
               <>
                 <button
                   onClick={handleToggleVisibility}
                   disabled={isUpdatingVisibility}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-surface border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 rounded-md text-xs font-medium hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-all disabled:opacity-50"
                   title={visibility === 'public' ? 'Make private' : 'Make public'}
                 >
                   {visibility === 'public' ? (
-                    <>
-                      <Globe className="h-4 w-4" />
-                      <span className="text-sm font-semibold">Public</span>
-                    </>
+                    <><Globe className="h-3.5 w-3.5" />Public</>
                   ) : (
-                    <>
-                      <Lock className="h-4 w-4" />
-                      <span className="text-sm font-semibold">Private</span>
-                    </>
+                    <><Lock className="h-3.5 w-3.5" />Private</>
                   )}
                 </button>
                 <button
                   onClick={() => setIsDeleteDialogOpen(true)}
-                  className="p-2.5 bg-white dark:bg-surface border border-gray-200 dark:border-white/[0.09] text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-container-high transition-all"
+                  className="p-1.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-400 dark:text-neutral-500 rounded-md hover:bg-neutral-50 dark:hover:bg-surface-container-high hover:text-red-500 transition-all"
                   title="Delete template"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </>
             )}
             {isInCollection && !isOwner && (
               <button
                 onClick={handleToggleFavorite}
-                className="p-2.5 bg-white dark:bg-surface border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all"
+                className="p-1.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-400 dark:text-neutral-500 rounded-md hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-all"
                 title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
               >
-                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-[#904900] text-[#904900]' : ''}`} />
+                <Heart className={`h-3.5 w-3.5 ${isFavorite ? 'fill-amber-400 text-amber-400' : ''}`} />
               </button>
             )}
             <button
               onClick={handleShare}
-              className="p-2.5 bg-white dark:bg-surface border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all"
+              className="p-1.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-400 dark:text-neutral-500 rounded-md hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-all"
               title="Share"
             >
-              <Share2 className="h-4 w-4" />
+              <Share2 className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
 
         {/* Tags */}
         {agent.tags && agent.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-1.5 mb-4">
             {agent.tags.map((tag: string, index: number) => (
               <span
                 key={index}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider text-white shadow-md"
-                style={{ backgroundColor: category.color }}
+                className="px-2 py-0.5 rounded bg-neutral-100 dark:bg-surface-container-high text-neutral-500 dark:text-neutral-400 text-[11px] font-medium"
               >
                 {tag}
               </span>
@@ -391,40 +381,40 @@ export function AgentDetailClient({
           <div className="flex items-center gap-2">
             <SignalBars value={agent.rating_average || 0} />
             <div>
-              <p className="font-bold text-[#191c1e] dark:text-on-surface">
+              <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">
                 {agent.rating_average?.toFixed(1) || '0.0'}
               </p>
-              <p className="text-xs text-[#464554] dark:text-on-surface-variant">
+              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
                 {agent.rating_count || 0} reviews
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <Download className="w-5 h-5 text-[#464554] dark:text-on-surface-variant" />
+            <Download className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
             <div>
-              <p className="font-bold text-[#191c1e] dark:text-on-surface">
+              <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">
                 {agent.download_count || 0}
               </p>
-              <p className="text-xs text-[#464554] dark:text-on-surface-variant">saves</p>
+              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">saves</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#464554] dark:text-on-surface-variant" />
+            <FileText className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
             <div>
-              <p className="font-bold text-[#191c1e] dark:text-on-surface">v{agent.version}</p>
-              <p className="text-xs text-[#464554] dark:text-on-surface-variant">version</p>
+              <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">v{agent.version}</p>
+              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">version</p>
             </div>
           </div>
         </div>
 
         {/* Actions — Rate */}
         {!isOwner && isAuthenticated && (
-          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06] flex">
+          <div className="mt-5 pt-4 border-t border-neutral-100 dark:border-white/[0.09] flex">
             <button
               onClick={() => setIsRateModalOpen(true)}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-surface-container-high text-[#191c1e] dark:text-on-surface rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-surface-container transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] text-neutral-700 dark:text-neutral-300 rounded-md text-xs font-medium hover:bg-neutral-100 dark:hover:bg-surface-container-high/80 transition-all"
             >
               <SignalBars value={agent.user_rating || 3} size="sm" />
               {agent.user_rating ? 'Update Rating' : 'Rate'}
@@ -434,16 +424,16 @@ export function AgentDetailClient({
 
         {/* Owner actions */}
         {isOwner && (
-          <div className="mt-6 pt-6 border-t border-[#c7c4d7]/10 dark:border-white/[0.06] flex items-center justify-between">
-            <span className="text-sm text-[#464554] dark:text-on-surface-variant">
+          <div className="mt-5 pt-4 border-t border-neutral-100 dark:border-white/[0.09] flex items-center justify-between">
+            <span className="text-xs text-neutral-400 dark:text-neutral-500">
               You cannot rate your own template
             </span>
             <button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant rounded-lg font-semibold text-sm hover:bg-gray-200 dark:hover:bg-surface-container transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 rounded-md text-xs font-medium hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-all disabled:opacity-50"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3.5 h-3.5" />
               {isDownloading ? 'Downloading...' : 'Download .md'}
             </button>
           </div>
@@ -451,51 +441,51 @@ export function AgentDetailClient({
       </div>
 
       {/* View Mode Toggle */}
-      <div className="flex gap-2 bg-white dark:bg-surface-container p-2 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08] w-fit">
+      <div className="flex gap-1 bg-neutral-100 dark:bg-surface-container-high p-1 rounded-md w-fit">
         <button
           onClick={() => setViewMode('rendered')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${
             viewMode === 'rendered'
-              ? 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg'
-              : 'text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
+              ? 'bg-white dark:bg-surface-container text-neutral-900 dark:text-neutral-100 shadow-sm'
+              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
           }`}
         >
-          <Eye className="h-4 w-4" />
+          <Eye className="h-3.5 w-3.5" />
           Rendered
         </button>
         <button
           onClick={() => setViewMode('source')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${
             viewMode === 'source'
-              ? 'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg'
-              : 'text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high'
+              ? 'bg-white dark:bg-surface-container text-neutral-900 dark:text-neutral-100 shadow-sm'
+              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
           }`}
         >
-          <Code className="h-4 w-4" />
+          <Code className="h-3.5 w-3.5" />
           Source
         </button>
       </div>
 
       {/* Content */}
-      <div className="bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08] overflow-hidden">
+      <div className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg overflow-hidden">
         {/* Copy Button */}
-        <div className="flex justify-end px-6 pt-6 pb-2 border-b border-[#c7c4d7]/20 dark:border-white/[0.09]">
+        <div className="flex justify-end px-5 pt-4 pb-2 border-b border-neutral-100 dark:border-white/[0.09]">
           <button
             onClick={handleCopyContent}
-            className="p-2.5 bg-white dark:bg-surface border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all"
+            className="p-1.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-500 dark:text-neutral-400 rounded-md hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-all"
             title={viewMode === 'rendered' ? 'Copy as plain text' : 'Copy markdown source'}
           >
             {copied ? (
-              <Check className="h-4 w-4 text-[#16a34a]" />
+              <Check className="h-3.5 w-3.5 text-emerald-500" />
             ) : (
-              <Copy className="h-4 w-4" />
+              <Copy className="h-3.5 w-3.5" />
             )}
           </button>
         </div>
 
-        <div className="p-8">
+        <div className="p-6">
           {viewMode === 'rendered' ? (
-            <div className="prose prose-slate dark:prose-invert max-w-none">
+            <div className="prose prose-slate max-w-none prose-sm">
               {agent.content ? (
                 <ReactMarkdown
                   components={{
@@ -522,15 +512,15 @@ export function AgentDetailClient({
                   {agent.content}
                 </ReactMarkdown>
               ) : (
-                <div className="text-center py-12 text-[#464554] dark:text-on-surface-variant">
-                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No content available</p>
+                <div className="text-center py-10 text-neutral-400 dark:text-neutral-600">
+                  <FileText className="h-8 w-8 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No content available</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="relative">
-              <pre className="bg-[#1e1e1e] text-[#d4d4d4] p-6 rounded-lg overflow-x-auto">
+              <pre className="bg-neutral-950 text-neutral-300 p-5 rounded-md overflow-x-auto text-xs leading-relaxed">
                 <code>{agent.content || '// No content'}</code>
               </pre>
             </div>
@@ -540,45 +530,39 @@ export function AgentDetailClient({
 
       {/* Author & Metadata */}
       {agent.profiles && (
-        <div className="bg-gradient-to-br from-[#4f46e5]/5 dark:from-[#7c7ff5]/5 to-[#4f46e5]/10 dark:to-[#7c7ff5]/10 p-8 rounded-xl border-2 border-[#4f46e5]/20 dark:border-[#7c7ff5]/20">
-          <h2 className="text-xl font-black text-[#191c1e] dark:text-on-surface mb-4">
-            About the Author
-          </h2>
-          <div className="bg-white dark:bg-surface p-6 rounded-lg">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white font-bold text-lg">
+        <div className="border border-neutral-200 dark:border-white/[0.09] rounded-lg bg-white dark:bg-surface-container">
+          <p className="px-5 py-3 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wide border-b border-neutral-100 dark:border-white/[0.09]">Author</p>
+          <div className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-full bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center text-neutral-500 dark:text-neutral-400 font-semibold text-sm shrink-0">
                 {agent.profiles.full_name?.charAt(0) || 'U'}
               </div>
               <div>
-                <p className="font-bold text-[#191c1e] dark:text-on-surface">
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                   {agent.profiles.full_name || 'Unknown'}
                 </p>
                 {agent.profiles.bio && (
-                  <p className="text-sm text-[#464554] dark:text-on-surface-variant">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {agent.profiles.bio}
                   </p>
                 )}
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
+            <div className="grid grid-cols-2 gap-4 pt-3 border-t border-neutral-100 dark:border-white/[0.09]">
               <div>
-                <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-1">Published</p>
-                <p className="font-semibold text-[#191c1e] dark:text-on-surface">
+                <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mb-0.5">Published</p>
+                <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
                   {new Date(agent.created_at!).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
+                    year: 'numeric', month: 'short', day: 'numeric' 
                   })}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-[#464554] dark:text-on-surface-variant mb-1">Last Updated</p>
-                <p className="font-semibold text-[#191c1e] dark:text-on-surface">
+                <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mb-0.5">Last Updated</p>
+                <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
                   {new Date(agent.updated_at!).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
+                    year: 'numeric', month: 'short', day: 'numeric' 
                   })}
                 </p>
               </div>
@@ -589,37 +573,35 @@ export function AgentDetailClient({
 
       {/* Ratings & Reviews */}
       {ratings.length > 0 && (
-        <div className="bg-white dark:bg-surface-container p-8 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-          <h2 className="text-xl font-black text-[#191c1e] dark:text-on-surface mb-6">
-            Ratings & Reviews ({ratings.length})
-          </h2>
-          <div className="space-y-4">
+        <div className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-5">
+          <p className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wide mb-4">
+            Reviews ({ratings.length})
+          </p>
+          <div className="space-y-3">
             {ratings.map((rating) => {
               const ratingProfile = Array.isArray(rating.profiles) ? rating.profiles[0] : rating.profiles
               return (
-                <div key={rating.id} className="p-4 bg-[#f2f4f6] dark:bg-surface-container-high rounded-lg">
-                  <div className="flex items-start justify-between mb-2">
+                <div key={rating.id} className="p-3 bg-neutral-50 dark:bg-surface-container-high/60 border border-neutral-100 dark:border-white/[0.09] rounded-md">
+                  <div className="flex items-start justify-between mb-1.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white font-bold text-sm">
+                      <div className="w-7 h-7 rounded-full bg-neutral-200 dark:bg-surface-container-high flex items-center justify-center text-neutral-600 dark:text-neutral-400 font-medium text-xs shrink-0">
                         {ratingProfile?.full_name?.charAt(0) || 'U'}
                       </div>
                       <div>
-                        <p className="font-semibold text-[#191c1e] dark:text-on-surface text-sm">
+                        <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100">
                           {ratingProfile?.full_name || 'Anonymous'}
                         </p>
                         <SignalBars value={rating.rating} size="sm" />
                       </div>
                     </div>
-                    <span className="text-xs text-[#464554] dark:text-on-surface-variant">
+                    <span className="text-[11px] text-neutral-400 dark:text-neutral-500">
                       {new Date(rating.created_at!).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
+                        year: 'numeric', month: 'short', day: 'numeric' 
                       })}
                     </span>
                   </div>
                   {rating.review && (
-                    <p className="text-sm text-[#191c1e] dark:text-on-surface mt-2">{rating.review}</p>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1.5 pl-9">{rating.review}</p>
                   )}
                 </div>
               )
@@ -642,30 +624,33 @@ export function AgentDetailClient({
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="bg-white dark:bg-surface-container sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-red-500 dark:text-red-400" />
-              Delete Template
-            </DialogTitle>
-            <DialogDescription className="pt-3">
-              Are you sure you want to delete <strong className="text-[#191c1e] dark:text-on-surface font-semibold">{agent.name}</strong>?
-              <span className="block mt-3 p-3 bg-gray-50 dark:bg-surface-container-high border border-gray-200 dark:border-white/[0.06] rounded-lg text-sm text-gray-700 dark:text-gray-300 font-medium">
+            <div className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4 text-red-500 shrink-0" />
+              <DialogTitle className="text-sm font-semibold text-neutral-900">
+                Delete Template
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-xs text-neutral-500">
+              Are you sure you want to delete <strong className="text-neutral-700 font-medium">{agent.name}</strong>?
+              <span className="block mt-2 p-2.5 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md">
                 The template will be moved to trash and automatically deleted after 30 days.
               </span>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-3">
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setIsDeleteDialogOpen(false)}
               disabled={isDeleting}
-              className="flex-1 sm:flex-none border-[#c7c4d7]/30 dark:border-white/[0.09] hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high"
             >
               Cancel
             </Button>
             <Button
+              size="sm"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               {isDeleting ? 'Deleting...' : 'Move to Trash'}
             </Button>

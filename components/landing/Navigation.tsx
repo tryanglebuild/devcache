@@ -5,7 +5,6 @@ import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { DevCacheLogo } from '@/components/ui/DevCacheLogo'
 import { useTheme } from '@/components/providers/ThemeProvider'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -35,7 +34,6 @@ export default function Navigation() {
         
         <div className="flex items-center space-x-3">
           <div className="hidden md:flex items-center space-x-3">
-            <ThemeToggle simple />
             <Link href="/login" className="text-slate-600 dark:text-slate-400 text-sm font-semibold hover:text-slate-900 dark:hover:text-slate-200 transition-all px-4 py-2">
               Sign In
             </Link>
@@ -90,9 +88,6 @@ export default function Navigation() {
             Pricing
           </Link>
           <div className="pt-4 flex flex-col gap-3">
-            <div className="flex justify-center pb-1">
-              <ThemeToggle simple />
-            </div>
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}

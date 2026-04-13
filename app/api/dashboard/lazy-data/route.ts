@@ -17,50 +17,6 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Fetch recent activity with error handling
-    let recentActivity = null
-    try {
-      // Get activity_cleared_at from profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('activity_cleared_at')
-        .eq('id', user.id)
-        .single()
-
-      let query = supabase
-        .from('activity_log')
-        .select(`
-          id,
-          action_type,
-          created_at,
-          project_items (
-            id,
-            name,
-            type,
-            description
-          ),
-          agent_templates (
-            id,
-            name,
-            category,
-            description
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      if (profile?.activity_cleared_at) {
-        query = query.gt('created_at', profile.activity_cleared_at)
-      }
-
-      const { data } = await query
-      recentActivity = data
-    } catch (error) {
-      console.error('Failed to fetch activity:', error)
-    }
-
-    // Fetch non-critical data in parallel
     const [trendingAgents, publicAgents] = await Promise.all([
       getTrendingAgents(10),
       getPublicAgents(6)
@@ -69,7 +25,6 @@ export async function GET() {
     return NextResponse.json({
       trendingAgents,
       publicAgents,
-      recentActivity
     })
   } catch (error) {
     console.error('Error fetching lazy data:', error)

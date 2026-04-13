@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Loader2, Sparkles, SlidersHorizontal } from 'lucide-react'
+import { Loader2, SlidersHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { Database } from '@/types/database.types'
 
@@ -111,68 +111,57 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
   }
 
   return (
-    <Card className="bg-white border-[#e5e7eb] shadow-sm">
-      <CardHeader className="pb-6 border-b border-[#e5e7eb]">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-[#4f46e5] flex items-center justify-center">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <CardTitle className="text-2xl font-bold text-[#191c1e]">
-              AI Model Preferences
-            </CardTitle>
-            <CardDescription className="text-[#6b7280] text-sm">
-              Choose your default AI model for chat sessions
-            </CardDescription>
-          </div>
-        </div>
+    <Card className="bg-white border-neutral-200 shadow-none">
+      <CardHeader className="pb-4 border-b border-neutral-100">
+        <CardTitle className="text-sm font-semibold text-neutral-900">AI Model Preferences</CardTitle>
+        <CardDescription className="text-sm text-neutral-500">
+          Choose your default AI model and search settings
+        </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="pt-5">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="default_model" className="text-sm font-semibold text-[#191c1e]">
+          {/* Model Select */}
+          <div className="space-y-1.5">
+            <Label htmlFor="default_model" className="text-sm font-medium text-neutral-700">
               Default AI Model
             </Label>
             <Select value={defaultModel} onValueChange={setDefaultModel}>
-              <SelectTrigger className="border-[#e5e7eb] bg-white h-12 hover:border-[#4f46e5] transition-colors">
+              <SelectTrigger className="border-neutral-200 bg-white h-10 text-sm">
                 <SelectValue placeholder="Select a model" />
               </SelectTrigger>
-              <SelectContent className="bg-white border border-[#e5e7eb] shadow-xl p-1 min-w-[500px]">
+              <SelectContent className="bg-white border border-neutral-200 shadow-md p-1 min-w-[480px]">
                 {AI_MODELS.map((model) => (
-                  <SelectItem 
-                    key={model.id} 
+                  <SelectItem
+                    key={model.id}
                     value={model.id}
-                    className="cursor-pointer rounded-md my-0.5 pl-3 pr-10 py-3 hover:bg-[#f7f9fb] data-[state=checked]:bg-[#eef0ff] data-[state=checked]:border-l-2 data-[state=checked]:border-[#4f46e5] transition-colors"
+                    className="cursor-pointer rounded-md my-0.5 pl-3 pr-10 py-2.5 hover:bg-neutral-50 data-[state=checked]:bg-neutral-100 transition-colors"
                   >
                     <div className="flex items-center justify-between gap-6 w-full pr-2">
-                      {/* Left: Model Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-sm text-[#191c1e]">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="font-medium text-sm text-neutral-900">
                             {model.name}
                           </span>
-                          <span className="px-2 py-0.5 bg-white rounded text-[10px] font-medium text-[#6b7280] border border-[#e5e7eb]">
+                          <span className="px-1.5 py-0.5 bg-neutral-100 rounded text-[10px] font-medium text-neutral-500 border border-neutral-200">
                             {model.provider}
                           </span>
                         </div>
-                        <p className="text-xs text-[#6b7280] truncate">
+                        <p className="text-xs text-neutral-400 truncate">
                           {model.description}
                         </p>
                       </div>
-                      
-                      {/* Right: Metrics */}
                       <div className="flex items-center gap-4 shrink-0">
                         <div className="text-right">
-                          <div className="text-xs font-semibold text-[#4f46e5]">
+                          <div className="text-xs font-semibold text-neutral-700">
                             {model.costMultiplier}x
                           </div>
-                          <div className="text-[10px] text-[#9ca3af]">cost</div>
+                          <div className="text-[10px] text-neutral-400">cost</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xs font-semibold text-[#191c1e]">
+                          <div className="text-xs font-semibold text-neutral-700">
                             {model.contextWindow.split(' ')[0]}
                           </div>
-                          <div className="text-[10px] text-[#9ca3af]">tokens</div>
+                          <div className="text-[10px] text-neutral-400">tokens</div>
                         </div>
                       </div>
                     </div>
@@ -180,7 +169,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-[#464554]">
+            <p className="text-xs text-neutral-400">
               This model will be used by default in new chat sessions
             </p>
           </div>
@@ -189,110 +178,63 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
           {defaultModel && (() => {
             const selectedModel = AI_MODELS.find(m => m.id === defaultModel)
             if (!selectedModel) return null
-            
+
             return (
-              <div className="space-y-4">
-                {/* Model Header - Clean & Professional */}
-                <div className="p-5 bg-white border-2 border-[#4f46e5] rounded-lg shadow-md relative">
-                  {/* Selected Badge */}
-                  <div className="absolute -top-3 right-4 px-3 py-1 bg-[#4f46e5] rounded-full shadow-sm">
-                    <span className="text-xs font-semibold text-white">Selected</span>
-                  </div>
-                  
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
+              <div className="space-y-3">
+                <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-lg">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-lg font-bold text-[#191c1e]">
+                        <span className="text-sm font-semibold text-neutral-900">
                           {selectedModel.name}
-                        </h4>
-                        <span className="px-2.5 py-0.5 bg-[#f7f9fb] rounded text-xs font-medium text-[#464554] border border-[#e5e7eb]">
+                        </span>
+                        <span className="px-1.5 py-0.5 bg-white rounded text-[10px] font-medium text-neutral-500 border border-neutral-200">
                           {selectedModel.provider}
                         </span>
                       </div>
-                      <p className="text-sm text-[#464554]">
-                        {selectedModel.description}
-                      </p>
+                      <p className="text-xs text-neutral-500">{selectedModel.description}</p>
                     </div>
+                    <span className="text-[10px] font-medium text-neutral-400 bg-white border border-neutral-200 rounded px-2 py-1">
+                      Selected
+                    </span>
                   </div>
-                  <div className="pt-3 border-t border-[#e5e7eb]">
-                    <p className="text-xs text-[#6b7280] leading-relaxed">
-                      <span className="font-semibold text-[#191c1e]">Best for:</span> {selectedModel.bestFor}
+                  <p className="text-xs text-neutral-500 border-t border-neutral-200 pt-3">
+                    <span className="font-medium text-neutral-700">Best for:</span> {selectedModel.bestFor}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-white border border-neutral-200 rounded-lg">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-1.5">
+                      Cost Multiplier
+                    </p>
+                    <p className="text-xl font-semibold text-neutral-900">
+                      {selectedModel.costMultiplier}x
+                    </p>
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                      {selectedModel.costMultiplier <= 1 ? 'Most economical' : selectedModel.costMultiplier <= 5 ? 'Moderate pricing' : 'Premium tier'}
                     </p>
                   </div>
-                </div>
-
-                {/* Cost & Technical Details Grid - Professional Style */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Cost Multiplier */}
-                  <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
-                        Cost Multiplier
-                      </span>
-                      <div className="w-6 h-6 rounded bg-[#f7f9fb] flex items-center justify-center">
-                        <span className="text-[#4f46e5] text-xs">$</span>
-                      </div>
-                    </div>
-                    <div className="flex items-baseline gap-1.5 mb-2">
-                      <span className="text-3xl font-bold text-[#191c1e]">
-                        {selectedModel.costMultiplier}x
-                      </span>
-                      <span className="text-sm text-[#6b7280]">base rate</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <div className={`w-2 h-2 rounded-full ${
-                        selectedModel.costMultiplier <= 1 
-                          ? 'bg-green-500' 
-                          : selectedModel.costMultiplier <= 5 
-                          ? 'bg-blue-500' 
-                          : 'bg-orange-500'
-                      }`} />
-                      <span className="text-xs text-[#6b7280]">
-                        {selectedModel.costMultiplier <= 1 
-                          ? 'Most economical' 
-                          : selectedModel.costMultiplier <= 5 
-                          ? 'Moderate pricing' 
-                          : 'Premium tier'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Context Window */}
-                  <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
-                        Context Window
-                      </span>
-                      <div className="w-6 h-6 rounded bg-[#f7f9fb] flex items-center justify-center">
-                        <span className="text-[#4f46e5] text-xs">⚡</span>
-                      </div>
-                    </div>
-                    <div className="flex items-baseline gap-1.5 mb-2">
-                      <span className="text-3xl font-bold text-[#191c1e]">
-                        {selectedModel.contextWindow.split(' ')[0]}
-                      </span>
-                      <span className="text-sm text-[#6b7280]">
-                        {selectedModel.contextWindow.split(' ')[1]}
-                      </span>
-                    </div>
-                    <span className="text-xs text-[#6b7280]">
-                      Maximum conversation length
-                    </span>
+                  <div className="p-3 bg-white border border-neutral-200 rounded-lg">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-1.5">
+                      Context Window
+                    </p>
+                    <p className="text-xl font-semibold text-neutral-900">
+                      {selectedModel.contextWindow.split(' ')[0]}
+                    </p>
+                    <p className="text-xs text-neutral-400 mt-0.5">tokens max</p>
                   </div>
                 </div>
 
-                {/* Strengths - Clean List */}
-                <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#6b7280]">
-                      Key Capabilities
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                <div className="p-3 bg-white border border-neutral-200 rounded-lg">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-2">
+                    Key Capabilities
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
                     {selectedModel.strengths.map((strength, idx) => (
-                      <span 
+                      <span
                         key={idx}
-                        className="px-3 py-1.5 bg-[#f7f9fb] rounded-md text-xs font-medium text-[#191c1e] border border-[#e5e7eb]"
+                        className="px-2 py-1 bg-neutral-50 rounded text-xs text-neutral-600 border border-neutral-200"
                       >
                         {strength}
                       </span>
@@ -304,30 +246,24 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
           })()}
 
           {/* Search Relevance Threshold */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#f0f0ff] flex items-center justify-center shrink-0">
-                <SlidersHorizontal className="h-4 w-4 text-[#4f46e5]" />
-              </div>
-              <div>
-                <Label className="text-sm font-semibold text-[#191c1e]">
-                  Search Relevance Threshold
-                </Label>
-                <p className="text-xs text-[#6b7280]">
-                  Controls how closely results must match your query before being shown in chat
-                </p>
-              </div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="h-3.5 w-3.5 text-neutral-400" />
+              <Label className="text-sm font-medium text-neutral-700">
+                Search Relevance Threshold
+              </Label>
             </div>
+            <p className="text-xs text-neutral-400 -mt-2">
+              Controls how closely results must match your query before being shown in chat
+            </p>
 
-            <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm space-y-4">
-              {/* Labels row */}
-              <div className="flex justify-between text-[10px] font-semibold uppercase tracking-wider text-[#9ca3af]">
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-lg space-y-4">
+              <div className="flex justify-between text-[10px] font-medium uppercase tracking-wide text-neutral-400">
                 <span>Broad</span>
                 <span>Balanced</span>
                 <span>Strict</span>
               </div>
 
-              {/* Slider */}
               <input
                 type="range"
                 min={0}
@@ -335,86 +271,44 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
                 step={0.05}
                 value={threshold}
                 onChange={(e) => setThreshold(parseFloat(e.target.value))}
-                className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-neutral-200"
                 style={{
-                  background: `linear-gradient(to right, #4f46e5 ${threshold * 100}%, #e5e7eb ${threshold * 100}%)`,
+                  background: `linear-gradient(to right, #404040 ${threshold * 100}%, #e5e7eb ${threshold * 100}%)`,
                 }}
               />
 
-              {/* Current value + description */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-[#191c1e]">
-                    {Math.round(threshold * 100)}%
-                  </span>
-                  <span className="text-xs text-[#6b7280]">
-                    minimum match
-                  </span>
-                </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${
-                  threshold <= 0.2
-                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                    : threshold <= 0.5
-                    ? 'bg-purple-50 text-purple-700 border-purple-200'
-                    : threshold <= 0.75
-                    ? 'bg-amber-50 text-amber-700 border-amber-200'
-                    : 'bg-red-50 text-red-700 border-red-200'
-                }`}>
-                  {threshold <= 0.2
-                    ? 'Broad — shows many results'
-                    : threshold <= 0.5
-                    ? 'Balanced — recommended'
-                    : threshold <= 0.75
-                    ? 'Focused — high precision'
-                    : 'Strict — only exact matches'}
+                <span className="text-lg font-semibold text-neutral-900">
+                  {Math.round(threshold * 100)}%
+                  <span className="text-xs font-normal text-neutral-400 ml-1.5">minimum match</span>
+                </span>
+                <span className="text-xs text-neutral-500 bg-white border border-neutral-200 rounded px-2 py-1">
+                  {threshold <= 0.2 ? 'Broad' : threshold <= 0.5 ? 'Balanced' : threshold <= 0.75 ? 'Focused' : 'Strict'}
                 </span>
               </div>
 
-              <p className="text-xs text-[#6b7280] leading-relaxed border-t border-[#e5e7eb] pt-3">
-                <span className="font-semibold text-[#191c1e]">How it works: </span>
-                The AI chat searches your projects and marketplace agents. Lower values return more
-                results (including loosely related ones); higher values only surface strong matches.
-                The default <strong>30%</strong> is a good balance for most users.
+              <p className="text-xs text-neutral-400 leading-relaxed border-t border-neutral-200 pt-3">
+                Lower values return more results (including loosely related ones); higher values only surface strong matches.
+                The default <strong className="text-neutral-600">30%</strong> is a good balance for most users.
               </p>
             </div>
           </div>
 
-          {/* Model Info Card */}
-          <div className="p-5 bg-[#f7f9fb] border border-[#e5e7eb] rounded-lg">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded bg-white border border-[#e5e7eb] flex items-center justify-center shrink-0">
-                <Sparkles className="h-4 w-4 text-[#4f46e5]" />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-[#191c1e] mb-1">
-                  About AI Models
-                </h4>
-                <p className="text-xs text-[#6b7280] leading-relaxed">
-                  Different models have different capabilities and costs. Haiku is fastest and most affordable, 
-                  while Opus provides the most advanced reasoning. You can change the model for individual 
-                  chat sessions at any time.
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Save Button */}
-          <div className="flex justify-end pt-6 border-t border-[#e5e7eb]">
+          <div className="flex justify-end pt-4 border-t border-neutral-100">
             <Button
               type="submit"
+              size="sm"
               disabled={isLoading}
-              className="bg-[#4f46e5] hover:bg-[#3739b8] text-white font-semibold shadow-sm hover:shadow-md transition-all px-8"
+              className="bg-neutral-900 hover:bg-neutral-700 text-white"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
                   Saving...
                 </>
               ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Save Preferences
-                </>
+                'Save Preferences'
               )}
             </Button>
           </div>

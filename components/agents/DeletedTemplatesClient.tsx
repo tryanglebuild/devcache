@@ -140,15 +140,15 @@ export function DeletedTemplatesClient() {
     return (
       <div className="max-w-[1200px] mx-auto p-6">
         <div className="mb-8">
-          <div className="h-8 bg-[#f2f4f6] rounded w-64 mb-2 animate-pulse" />
-          <div className="h-4 bg-[#f2f4f6] rounded w-96 animate-pulse" />
+          <div className="h-5 bg-neutral-100 dark:bg-surface-container-high rounded w-48 mb-2 animate-pulse" />
+          <div className="h-3.5 bg-neutral-100 dark:bg-surface-container-high rounded w-80 animate-pulse" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
-              <div className="h-6 bg-[#f2f4f6] rounded w-3/4 mb-3" />
-              <div className="h-4 bg-[#f2f4f6] rounded w-full mb-2" />
-              <div className="h-4 bg-[#f2f4f6] rounded w-5/6" />
+            <div key={i} className="bg-white dark:bg-surface-container rounded-lg p-5 border border-neutral-200 dark:border-white/[0.09] animate-pulse">
+              <div className="h-4 bg-neutral-100 dark:bg-surface-container-high rounded w-3/4 mb-3" />
+              <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-full mb-2" />
+              <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-5/6" />
             </div>
           ))}
         </div>
@@ -159,9 +159,9 @@ export function DeletedTemplatesClient() {
   return (
     <div className="max-w-[1400px] mx-auto p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#464554] mb-2">Deleted Templates</h1>
-        <p className="text-[#464554]">
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-1">Deleted Templates</h1>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
           Templates are kept for 30 days before permanent deletion
         </p>
       </div>
@@ -170,48 +170,33 @@ export function DeletedTemplatesClient() {
         <div className="grid grid-cols-12 gap-6">
           {/* Left Sidebar - Template List */}
           <div className="col-span-12 lg:col-span-4 xl:col-span-3">
-            <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] p-4 sticky top-6">
-              <h2 className="text-sm font-bold text-[#464554] uppercase tracking-wider mb-4">
-                Deleted Templates ({templates.length})
-              </h2>
+            <div className="bg-white dark:bg-surface-container rounded-lg border border-neutral-200 dark:border-white/[0.09] p-3 sticky top-6">
+              <p className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wide mb-3">
+                {templates.length} template{templates.length !== 1 ? 's' : ''}
+              </p>
               <div className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
                 {templates.map((template, index) => {
-                  const category = AGENT_CATEGORIES[template.category as keyof typeof AGENT_CATEGORIES] || AGENT_CATEGORIES.general
                   const isSelected = index === selectedIndex
-                  const isExpiringSoon = template.days_remaining <= 7
                   
                   return (
                     <button
                       key={template.id}
                       onClick={() => setSelectedIndex(index)}
-                      className={`w-full text-left p-3 rounded-lg transition-all ${
+                      className={`w-full text-left p-2.5 rounded-md transition-all border ${
                         isSelected
-                          ? 'bg-[#4f46e5]/10 border-2 border-[#4f46e5]'
-                          : 'bg-[#f2f4f6] hover:bg-[#e5e7eb] border-2 border-transparent'
+                          ? 'bg-neutral-100 dark:bg-surface-container-high border-neutral-300 dark:border-white/[0.09]'
+                          : 'bg-white dark:bg-surface-container hover:bg-neutral-50 dark:hover:bg-surface-container-high border-transparent'
                       }`}
                     >
-                      <div className="flex items-start gap-2 mb-2">
-                        <div 
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm shrink-0"
-                          style={{ backgroundColor: category.color }}
-                        >
-                          <span className="material-symbols-outlined text-sm">
-                            {category.icon}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm text-[#191c1e] truncate">
-                            {template.name}
-                          </p>
-                          <p className="text-xs text-[#464554] truncate">
-                            {template.category}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-xs font-medium text-gray-500">
-                        {template.days_remaining === 0 
-                          ? 'Expires today' 
-                          : `${template.days_remaining}d remaining`}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate">
+                          {template.name}
+                        </p>
+                        <p className="text-[11px] text-neutral-400 dark:text-neutral-500 truncate mt-0.5">
+                          {template.category} · {template.days_remaining === 0
+                            ? 'Expires today'
+                            : `${template.days_remaining}d left`}
+                        </p>
                       </div>
                     </button>
                   )
@@ -227,26 +212,26 @@ export function DeletedTemplatesClient() {
               <button
                 onClick={goToPrevious}
                 disabled={selectedIndex === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-[#c7c4d7]/30 rounded-lg hover:bg-[#f2f4f6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed text-neutral-600 dark:text-neutral-400"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5" />
                 Previous
               </button>
-              <span className="text-sm text-[#464554] font-medium">
-                {selectedIndex + 1} of {templates.length}
+              <span className="text-xs text-neutral-400 dark:text-neutral-500">
+                {selectedIndex + 1} / {templates.length}
               </span>
               <button
                 onClick={goToNext}
                 disabled={selectedIndex === templates.length - 1}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-[#c7c4d7]/30 rounded-lg hover:bg-[#f2f4f6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed text-neutral-600 dark:text-neutral-400"
               >
                 Next
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5" />
               </button>
             </div>
 
             {/* Template Header */}
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-[#e5e7eb]">
+            <div className="bg-white dark:bg-surface-container p-6 rounded-lg border border-neutral-200 dark:border-white/[0.09]">
               <div className="mb-6">
                 <TemplateHeader
                   name={selectedTemplate.name}
@@ -285,20 +270,22 @@ export function DeletedTemplatesClient() {
               />
 
               {/* Action Buttons */}
-              <div className="flex gap-3 mt-6 pt-6 border-t border-[#e5e7eb]">
+              <div className="flex gap-2 mt-5 pt-5 border-t border-neutral-100 dark:border-white/[0.09]">
                 <Button
+                  size="sm"
                   onClick={() => setActionType('restore')}
-                  className="flex-1 bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-lg"
+                  className="bg-neutral-900 hover:bg-neutral-700 text-white"
                 >
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Restore Template
+                  <RotateCcw className="h-3.5 w-3.5 mr-2" />
+                  Restore
                 </Button>
                 <Button
+                  size="sm"
                   onClick={() => setActionType('permanent')}
                   variant="outline"
-                  className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="border-neutral-200 dark:border-white/[0.09] text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-surface-container-high"
                 >
-                  <CircleX className="h-4 w-4 mr-2" />
+                  <CircleX className="h-3.5 w-3.5 mr-2" />
                   Delete Forever
                 </Button>
               </div>
@@ -325,17 +312,16 @@ export function DeletedTemplatesClient() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl p-12 text-center shadow-sm">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] flex items-center justify-center">
-            <Trash2 className="h-8 w-8 text-[#464554]" strokeWidth={1} />
-          </div>
-          <p className="text-[#464554] font-medium mb-2">No deleted templates</p>
-          <p className="text-sm text-[#464554] mb-4">
+        <div className="bg-neutral-50 dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-10 text-center">
+          <Trash2 className="h-6 w-6 mx-auto mb-3 text-neutral-300 dark:text-neutral-700" strokeWidth={1.5} />
+          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">No deleted templates</p>
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-4">
             Deleted templates will appear here for 30 days
           </p>
           <Button
+            size="sm"
             onClick={() => router.push('/dashboard/projects')}
-            className="bg-[#4f46e5] hover:bg-[#4338ca] text-white"
+            className="bg-neutral-900 hover:bg-neutral-700 text-white"
           >
             Go to Projects
           </Button>
@@ -344,49 +330,45 @@ export function DeletedTemplatesClient() {
 
       {/* Confirmation Dialog */}
       <Dialog open={!!actionType} onOpenChange={() => setActionType(null)}>
-        <DialogContent className="bg-white sm:max-w-md">
+        <DialogContent className="bg-white dark:bg-surface-container sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              {actionType === 'restore'
+                ? <RotateCcw className="h-4 w-4 text-neutral-400 dark:text-neutral-500 shrink-0" />
+                : <CircleX className="h-4 w-4 text-red-500 shrink-0" />}
+              <DialogTitle className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                {actionType === 'restore' ? 'Restore Template' : 'Delete Permanently'}
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-xs text-neutral-500 dark:text-neutral-400">
               {actionType === 'restore' ? (
                 <>
-                  <RotateCcw className="h-5 w-5 text-[#4f46e5]" />
-                  Restore Template
-                </>
-              ) : (
-                <>
-                  <CircleX className="h-5 w-5 text-red-600 dark:text-red-400" strokeWidth={2} />
-                  Permanently Delete
-                </>
-              )}
-            </DialogTitle>
-            <DialogDescription className="pt-3">
-              {actionType === 'restore' ? (
-                <>
-                  Restore <strong className="text-[#191c1e] font-semibold">{selectedTemplate?.name}</strong> back to your templates?
-                  <span className="block mt-3 p-3 bg-[#4f46e5]/5 border border-[#4f46e5]/20 rounded-lg text-sm text-[#4f46e5] font-medium">
+                  Restore <strong className="text-neutral-700 dark:text-neutral-300 font-medium">{selectedTemplate?.name}</strong> back to your templates?
+                  <span className="block mt-2 p-2.5 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md">
                     It will be available immediately after restoration.
                   </span>
                 </>
               ) : (
                 <>
-                  Permanently delete <strong className="text-[#191c1e] font-semibold">{selectedTemplate?.name}</strong>?
-                  <span className="block mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 font-medium">
+                  Permanently delete <strong className="text-neutral-700 dark:text-neutral-300 font-medium">{selectedTemplate?.name}</strong>?
+                  <span className="block mt-2 p-2.5 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md">
                     This action cannot be undone. The template will be lost forever.
                   </span>
                 </>
               )}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-3">
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setActionType(null)}
               disabled={actionLoading}
-              className="flex-1 sm:flex-none border-[#c7c4d7]/30 hover:bg-[#f2f4f6]"
             >
               Cancel
             </Button>
             <Button
+              size="sm"
               onClick={() => {
                 if (selectedTemplate) {
                   if (actionType === 'restore') {
@@ -397,13 +379,12 @@ export function DeletedTemplatesClient() {
                 }
               }}
               disabled={actionLoading}
-              className={`flex-1 sm:flex-none shadow-lg hover:shadow-xl transition-all ${
-                actionType === 'restore'
-                  ? 'bg-[#4f46e5] hover:bg-[#4338ca] text-white'
-                  : 'bg-red-600 hover:bg-red-700 text-white'
-              }`}
+              className={actionType === 'restore'
+                ? 'bg-neutral-900 hover:bg-neutral-700 text-white'
+                : 'bg-red-600 hover:bg-red-700 text-white'
+              }
             >
-              {actionLoading ? 'Processing...' : actionType === 'restore' ? 'Restore Template' : 'Delete Forever'}
+              {actionLoading ? 'Processing...' : actionType === 'restore' ? 'Restore' : 'Delete Forever'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -3,10 +3,15 @@
 import { useState, useEffect } from 'react'
 import { DashboardContent } from '@/components/dashboard/DashboardContent'
 
+/**
+ * DashboardContentWrapper — Client boundary between the Server Component page
+ * and the interactive dashboard. Responsible for loading non-critical
+ * (lazy) data — trending agents, public agents — after the initial paint,
+ * so the page feels fast even before the heavier data arrives.
+ */
+
 interface DashboardContentWrapperProps {
   displayName: string
-  projectItems: any[]
-  favoriteItems: any[]
   userAgents: any[]
   marketplaceStats?: any
   userStats?: any
@@ -14,12 +19,11 @@ interface DashboardContentWrapperProps {
 
 export function DashboardContentWrapper({
   displayName,
-  projectItems,
-  favoriteItems,
   userAgents,
   marketplaceStats,
   userStats
 }: DashboardContentWrapperProps) {
+  // Holds trending agents and public agents fetched lazily after mount
   const [lazyData, setLazyData] = useState<{
     trendingAgents: any[]
     publicAgents: any[]
@@ -28,7 +32,7 @@ export function DashboardContentWrapper({
   const [isLoadingLazy, setIsLoadingLazy] = useState(true)
 
   useEffect(() => {
-    // Fetch non-critical data after initial render
+    // Fetch non-critical data after initial render to avoid blocking paint
     const fetchLazyData = async () => {
       try {
         const response = await fetch('/api/dashboard/lazy-data')
@@ -38,7 +42,7 @@ export function DashboardContentWrapper({
         }
       } catch (error) {
         console.error('Failed to fetch lazy data:', error)
-        // Set empty data to prevent infinite loading
+        // Provide empty arrays so skeleton loaders don't get stuck
         setLazyData({
           trendingAgents: [],
           publicAgents: [],
@@ -55,14 +59,11 @@ export function DashboardContentWrapper({
   return (
     <DashboardContent
       displayName={displayName}
-      projectItems={projectItems}
-      favoriteItems={favoriteItems}
       userAgents={userAgents}
       marketplaceStats={marketplaceStats}
       userStats={userStats}
       trendingAgents={lazyData?.trendingAgents || []}
       publicAgents={lazyData?.publicAgents || []}
-      recentActivity={lazyData?.recentActivity}
       isLoadingLazy={isLoadingLazy}
     />
   )

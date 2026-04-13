@@ -79,61 +79,52 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Profile Header Card */}
-      <Card className="bg-white border-[#e8eff3] shadow-sm overflow-hidden">
-        <div className="h-24 bg-gradient-to-br from-[#4f46e5] to-[#6366f1]" />
-        <CardContent className="pt-0 pb-6">
-          <div className="flex items-end justify-between -mt-12 mb-6">
-            <div className="flex items-end gap-4">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#4f46e5] to-[#6366f1] flex items-center justify-center shadow-xl border-4 border-white">
-                <span className="text-3xl font-black text-white">
-                  {formData.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
-                </span>
-              </div>
-              <div className="pb-2">
-                <h2 className="text-2xl font-black text-[#191c1e] tracking-tight">
-                  {formData.full_name || 'Your Name'}
-                </h2>
-                <p className="text-sm text-[#464554] font-medium">
-                  {formData.job_title || 'Add your job title'}
-                  {formData.company && ` at ${formData.company}`}
-                </p>
-              </div>
-            </div>
-            
-            {!isEditing && (
-              <Button
-                onClick={handleEdit}
-                className="gap-2 bg-gradient-to-br from-[#4f46e5] to-[#6366f1] text-white font-semibold shadow-md shadow-[#4f46e5]/20 hover:shadow-lg hover:scale-105 transition-all border-0"
-              >
-                <Edit2 className="h-4 w-4" />
-                Edit Profile
-              </Button>
-            )}
+      {/* Profile Header */}
+      <div className="flex items-center justify-between pb-6 border-b border-neutral-200">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
+            <span className="text-xl font-semibold text-neutral-600">
+              {formData.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
+            </span>
           </div>
-          
-          {formData.bio && (
-            <p className="text-sm text-[#464554] leading-relaxed max-w-2xl">
-              {formData.bio}
+          <div>
+            <h2 className="text-base font-semibold text-neutral-900">
+              {formData.full_name || 'Your Name'}
+            </h2>
+            <p className="text-sm text-neutral-500">
+              {formData.job_title || 'Add your job title'}
+              {formData.company && ` · ${formData.company}`}
             </p>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+
+        {!isEditing && (
+          <Button
+            onClick={handleEdit}
+            variant="outline"
+            size="sm"
+            className="gap-2 text-sm"
+          >
+            <Edit2 className="h-3.5 w-3.5" />
+            Edit
+          </Button>
+        )}
+      </div>
 
       {/* Profile Form */}
-      <Card className="bg-white border-[#e8eff3] shadow-sm">
-        <CardHeader className="border-b border-[#e8eff3]">
-          <CardTitle className="text-lg font-bold text-[#191c1e]">Personal Information</CardTitle>
-          <CardDescription className="text-sm text-[#464554]">
+      <Card className="bg-white border-neutral-200 shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100">
+          <CardTitle className="text-sm font-semibold text-neutral-900">Personal Information</CardTitle>
+          <CardDescription className="text-sm text-neutral-500">
             {isEditing ? 'Update your personal details' : 'Your personal details and contact information'}
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="pt-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email (Read-only) */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-semibold text-[#191c1e] flex items-center gap-2">
-                <Mail className="h-4 w-4 text-[#4f46e5]" />
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5 text-neutral-400" />
                 Email Address
               </Label>
               <Input
@@ -141,18 +132,17 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 type="email"
                 value={user.email}
                 disabled
-                className="bg-[#f7f9fb] border-[#e8eff3] font-medium text-[#464554]"
+                className="bg-neutral-50 border-neutral-200 text-neutral-500 text-sm"
               />
-              <p className="text-xs text-[#6b7280] flex items-center gap-1.5">
-                <span className="w-1 h-1 rounded-full bg-[#4f46e5]" />
-                Email cannot be changed here. Use Security tab to request email change.
+              <p className="text-xs text-neutral-400">
+                Email cannot be changed here. Use the Security tab to request an email change.
               </p>
             </div>
 
             {/* Full Name */}
-            <div className="space-y-2">
-              <Label htmlFor="full_name" className="text-sm font-semibold text-[#191c1e] flex items-center gap-2">
-                <UserIcon className="h-4 w-4 text-[#4f46e5]" />
+            <div className="space-y-1.5">
+              <Label htmlFor="full_name" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                <UserIcon className="h-3.5 w-3.5 text-neutral-400" />
                 Full Name
               </Label>
               <Input
@@ -160,16 +150,16 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                 placeholder="John Doe"
-                className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                className="border-neutral-200 text-sm"
                 disabled={!isEditing}
               />
             </div>
 
             {/* Job Title & Company */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="job_title" className="text-sm font-semibold text-[#191c1e] flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-[#4f46e5]" />
+              <div className="space-y-1.5">
+                <Label htmlFor="job_title" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                  <Briefcase className="h-3.5 w-3.5 text-neutral-400" />
                   Job Title
                 </Label>
                 <Input
@@ -177,13 +167,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.job_title}
                   onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
                   placeholder="Software Engineer"
-                  className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                  className="border-neutral-200 text-sm"
                   disabled={!isEditing}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="company" className="text-sm font-semibold text-[#191c1e] flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-[#4f46e5]" />
+              <div className="space-y-1.5">
+                <Label htmlFor="company" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-neutral-400" />
                   Company
                 </Label>
                 <Input
@@ -191,7 +181,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                   placeholder="Acme Inc"
-                  className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                  className="border-neutral-200 text-sm"
                   disabled={!isEditing}
                 />
               </div>
@@ -199,9 +189,9 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
 
             {/* Location & Website */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="location" className="text-sm font-semibold text-[#191c1e] flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-[#4f46e5]" />
+              <div className="space-y-1.5">
+                <Label htmlFor="location" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-neutral-400" />
                   Location
                 </Label>
                 <Input
@@ -209,13 +199,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="San Francisco, CA"
-                  className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                  className="border-neutral-200 text-sm"
                   disabled={!isEditing}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="website" className="text-sm font-semibold text-[#191c1e] flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-[#4f46e5]" />
+              <div className="space-y-1.5">
+                <Label htmlFor="website" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                  <Globe className="h-3.5 w-3.5 text-neutral-400" />
                   Website
                 </Label>
                 <Input
@@ -224,54 +214,56 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.website}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                   placeholder="https://example.com"
-                  className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                  className="border-neutral-200 text-sm"
                   disabled={!isEditing}
                 />
               </div>
             </div>
 
             {/* Bio */}
-            <div className="space-y-2">
-              <Label htmlFor="bio" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="bio" className="text-sm font-medium text-neutral-700">
                 Bio
               </Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                placeholder="Tell us about yourself..."
-                rows={4}
-                className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5] resize-none"
+                placeholder="A short description about yourself"
+                rows={3}
+                className="border-neutral-200 text-sm resize-none"
                 disabled={!isEditing}
               />
             </div>
 
-            {/* Action Buttons - Only show when editing */}
+            {/* Action Buttons */}
             {isEditing && (
-              <div className="flex justify-end gap-3 pt-4 border-t border-[#e8eff3]">
+              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-100">
                 <Button
                   type="button"
                   onClick={handleCancel}
                   variant="outline"
+                  size="sm"
                   disabled={isLoading}
-                  className="gap-2 border-[#e8eff3] text-[#464554] hover:bg-[#f7f9fb]"
+                  className="gap-1.5"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                   Cancel
                 </Button>
                 <Button
                   type="submit"
+                  size="sm"
                   disabled={isLoading}
-                  className="bg-gradient-to-br from-[#4f46e5] to-[#6366f1] text-white font-semibold shadow-md shadow-[#4f46e5]/20 hover:shadow-lg hover:scale-105 transition-all px-6 gap-2"
+                  className="gap-1.5 bg-neutral-900 hover:bg-neutral-700 text-white"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       Saving...
                     </>
                   ) : (
                     <>
-                      <Check className="h-4 w-4" />
+                      <Check className="h-3.5 w-3.5" />
                       Save Changes
                     </>
                   )}
@@ -283,17 +275,17 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
       </Card>
 
       {/* Social Links Card */}
-      <Card className="bg-white border-[#e8eff3] shadow-sm">
-        <CardHeader className="border-b border-[#e8eff3]">
-          <CardTitle className="text-lg font-bold text-[#191c1e]">Social Links</CardTitle>
-          <CardDescription className="text-sm text-[#464554]">
+      <Card className="bg-white border-neutral-200 shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100">
+          <CardTitle className="text-sm font-semibold text-neutral-900">Social Links</CardTitle>
+          <CardDescription className="text-sm text-neutral-500">
             Connect your social media profiles
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-5">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="github_username" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="github_username" className="text-sm font-medium text-neutral-700">
                 GitHub Username
               </Label>
               <Input
@@ -301,13 +293,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.github_username}
                 onChange={(e) => setFormData({ ...formData, github_username: e.target.value })}
                 placeholder="octocat"
-                className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                className="border-neutral-200 text-sm"
                 disabled={!isEditing}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="twitter_username" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="twitter_username" className="text-sm font-medium text-neutral-700">
                 Twitter Username
               </Label>
               <Input
@@ -315,13 +307,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.twitter_username}
                 onChange={(e) => setFormData({ ...formData, twitter_username: e.target.value })}
                 placeholder="username"
-                className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                className="border-neutral-200 text-sm"
                 disabled={!isEditing}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="linkedin_url" className="text-sm font-semibold text-[#191c1e]">
+            <div className="space-y-1.5">
+              <Label htmlFor="linkedin_url" className="text-sm font-medium text-neutral-700">
                 LinkedIn URL
               </Label>
               <Input
@@ -330,7 +322,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.linkedin_url}
                 onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
                 placeholder="https://linkedin.com/in/username"
-                className="border-[#e8eff3] focus:border-[#4f46e5] focus:ring-[#4f46e5]"
+                className="border-neutral-200 text-sm"
                 disabled={!isEditing}
               />
             </div>

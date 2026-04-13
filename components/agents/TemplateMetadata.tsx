@@ -8,44 +8,40 @@ interface TemplateMetadataProps {
 
 export function TemplateMetadata({ createdAt, deletedAt, expiresAt }: TemplateMetadataProps) {
   return (
-    <div className="bg-gradient-to-br from-[#4f46e5]/5 to-[#4f46e5]/10 p-6 rounded-xl border-2 border-[#4f46e5]/20">
-      <h2 className="text-lg font-bold text-[#191c1e] mb-4">Template Metadata</h2>
-      <div className="bg-white p-4 rounded-lg space-y-3">
-        <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-[#464554]" />
-          <span className="text-[#464554]">Created:</span>
-          <span className="font-semibold text-[#191c1e]">
+    <div className="border border-neutral-200 dark:border-white/[0.09] rounded-md bg-white dark:bg-surface-container">
+      <p className="px-4 py-2.5 text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wide border-b border-neutral-100 dark:border-white/[0.09]">
+        Metadata
+      </p>
+      <div className="px-4 py-3 space-y-2.5">
+        <div className="flex items-center gap-2 text-xs">
+          <Calendar className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500 shrink-0" />
+          <span className="text-neutral-400 dark:text-neutral-500 w-14">Created</span>
+          <span className="font-medium text-neutral-700 dark:text-neutral-300">
             {new Date(createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
+              year: 'numeric', month: 'long', day: 'numeric'
             })}
           </span>
         </div>
-        
+
         {deletedAt && (
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4 text-[#464554]" />
-            <span className="text-[#464554]">Deleted:</span>
-            <span className="font-semibold text-[#191c1e]">
+          <div className="flex items-center gap-2 text-xs">
+            <Clock className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500 shrink-0" />
+            <span className="text-neutral-400 dark:text-neutral-500 w-14">Deleted</span>
+            <span className="font-medium text-neutral-700 dark:text-neutral-300">
               {new Date(deletedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+                year: 'numeric', month: 'long', day: 'numeric'
               })}
             </span>
           </div>
         )}
-        
+
         {expiresAt && (
-          <div className="flex items-center gap-2 text-sm">
-            <AlertCircle className="h-4 w-4 text-gray-500" />
-            <span className="text-[#464554]">Expires:</span>
-            <span className="font-semibold text-gray-700">
+          <div className="flex items-center gap-2 text-xs">
+            <AlertCircle className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500 shrink-0" />
+            <span className="text-neutral-400 dark:text-neutral-500 w-14">Expires</span>
+            <span className="font-medium text-neutral-700 dark:text-neutral-300">
               {new Date(expiresAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+                year: 'numeric', month: 'long', day: 'numeric'
               })}
             </span>
           </div>

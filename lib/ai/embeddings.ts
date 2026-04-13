@@ -14,7 +14,7 @@ export async function generateEmbedding(text: string): Promise<EmbeddingResult> 
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://devcache.dev',
       },
       body: JSON.stringify({
         model: 'openai/text-embedding-ada-002',

@@ -1,72 +1,55 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { FolderOpen, Folder, FileText, Clock, Store, Eraser } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { useState, useCallback } from 'react'
+import { FolderOpen } from 'lucide-react'
 import { RecentProjectsClient } from '@/components/dashboard/RecentProjectsClient'
 import { FavoritedItemsClient } from '@/components/dashboard/FavoritedItemsClient'
+import { RecentActivityClient } from '@/components/dashboard/RecentActivityClient'
 import { TrendingAgentsCarousel } from '@/components/agents/TrendingAgentsCarousel'
 import { AgentMarketplaceSection } from '@/components/agents/AgentMarketplaceSection'
 import { ModeToggle, DashboardMode } from '@/components/dashboard/ModeToggle'
 import { Skeleton } from '@/components/ui/skeleton'
 
+/**
+ * DashboardContent — the main layout of the dashboard.
+ * Renders different sections depending on the selected mode:
+ *   - 'agents'   → Trending Agents + Agent Marketplace
+ *   - 'projects' → Recent Projects + Favorited Items
+ *   - 'unified'  → all sections visible at once
+ *
+ * Lazy data (trending/public agents) is received as props and shows
+ * skeleton placeholders while isLoadingLazy is true.
+ */
+
 interface DashboardContentProps {
   displayName: string
-  projectItems: any[]
-  favoriteItems: any[]
   trendingAgents: any[]
   userAgents: any[]
   marketplaceStats?: any
   userStats?: any
   publicAgents: any[]
-  recentActivity: any
   isLoadingLazy?: boolean
 }
 
 export function DashboardContent({
   displayName,
-  projectItems,
-  favoriteItems,
   trendingAgents,
   userAgents,
   marketplaceStats,
   userStats,
   publicAgents,
-  recentActivity,
   isLoadingLazy = false
 }: DashboardContentProps) {
+  // Controls which sections are visible (agents / projects / unified)
   const [mode, setMode] = useState<DashboardMode>('agents')
-  const [localActivity, setLocalActivity] = useState<any[]>(recentActivity || [])
-  const [isClearing, setIsClearing] = useState(false)
 
   const handleModeChange = useCallback((newMode: DashboardMode) => {
     setMode(newMode)
   }, [])
 
-  const handleClearActivity = async () => {
-    setIsClearing(true)
-    try {
-      const res = await fetch('/api/activity/clear', { method: 'DELETE' })
-      if (res.ok) {
-        setLocalActivity([])
-        toast.success('Activity history cleared')
-      } else {
-        toast.error('Failed to clear activity')
-      }
-    } catch {
-      toast.error('Failed to clear activity')
-    } finally {
-      setIsClearing(false)
-    }
-  }
-
+  // Derived flags used to conditionally render the correct sections
   const showProjects = mode === 'projects' || mode === 'unified'
   const showAgents = mode === 'agents' || mode === 'unified'
-
-  // Keep localActivity in sync when lazy data loads
-  useEffect(() => {
-    if (recentActivity) setLocalActivity(recentActivity)
-  }, [recentActivity])
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8">
@@ -177,22 +160,7 @@ export function DashboardContent({
                 </a>
               </div>
               
-              {projectItems && projectItems.length > 0 ? (
-                <RecentProjectsClient items={projectItems} />
-              ) : (
-                <div className="text-center py-12 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-50 dark:bg-[#7c7ff5]/15 flex items-center justify-center">
-                    <FolderOpen size={32} strokeWidth={1.5} className="text-indigo-400" />
-                  </div>
-                  <p className="text-slate-500 dark:text-on-surface-variant font-medium mb-4">No projects yet</p>
-                  <a
-                    href="/dashboard/projects"
-                    className="inline-block px-6 py-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 dark:shadow-[#7c7ff5]/10 hover:shadow-xl transition-all"
-                  >
-                    Create Your First Project
-                  </a>
-                </div>
-              )}
+              <RecentProjectsClient />
             </section>
           )}
 
@@ -208,7 +176,7 @@ export function DashboardContent({
                   View All
                 </a>
               </div>
-              <FavoritedItemsClient items={favoriteItems} />
+              <FavoritedItemsClient />
             </section>
           )}
         </div>
@@ -217,94 +185,7 @@ export function DashboardContent({
         <aside>
           <div className="sticky top-28 space-y-8">
             {/* Recent Activity */}
-            <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-slate-700 dark:text-on-surface">Recent Activity</h3>
-                  <button
-                    onClick={handleClearActivity}
-                    disabled={isClearing || localActivity.length === 0}
-                    className="p-2 hover:bg-slate-100 dark:hover:bg-surface-container-high rounded-lg transition-colors text-slate-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
-                    title="Clear history"
-                  >
-                    <Eraser size={15} strokeWidth={1.5} />
-                  </button>
-                </div>
-                
-                <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-                  {isLoadingLazy ? (
-                    <div className="space-y-3">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex items-start gap-3 p-3">
-                          <Skeleton className="w-8 h-8 rounded-lg flex-shrink-0" />
-                          <div className="flex-1">
-                            <Skeleton className="h-4 w-full mb-2" />
-                            <Skeleton className="h-3 w-24" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : localActivity && localActivity.length > 0 ? (
-                    <div className="space-y-3">
-                      {localActivity.map((activity: any) => {
-                        const item = activity.project_items
-                        const agent = activity.agent_templates
-                        const entry = item || agent
-                        if (!entry) return null
-
-                        const isAgent = !!agent
-                        const href = isAgent
-                          ? `/marketplace/${entry.id}`
-                          : item.type === 'folder'
-                            ? `/dashboard/projects/${entry.id}`
-                            : `/dashboard/projects/file/${entry.id}`
-
-                        const timeAgo = new Date(activity.created_at).toLocaleString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })
-
-                        return (
-                          <a
-                            key={activity.id}
-                            href={href}
-                            className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-surface-container-high rounded-lg transition-colors"
-                          >
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              isAgent
-                                ? 'bg-violet-500/10 text-violet-500'
-                                : item.type === 'folder'
-                                  ? 'bg-indigo-600/10 text-indigo-600'
-                                  : 'bg-indigo-500/10 text-indigo-500'
-                            }`}>
-                              {isAgent
-                                ? <Store size={14} strokeWidth={1.5} />
-                                : item.type === 'folder'
-                                  ? <Folder size={14} strokeWidth={1.5} />
-                                  : <FileText size={14} strokeWidth={1.5} />
-                              }
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-slate-900 dark:text-on-surface truncate">
-                                {entry.name}
-                              </p>
-                              <p className="text-xs text-slate-500 dark:text-on-surface-variant">{timeAgo}</p>
-                            </div>
-                          </a>
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-50 dark:bg-amber-400/10 flex items-center justify-center">
-                        <Clock size={20} strokeWidth={1.5} className="text-amber-400" />
-                      </div>
-                      <p className="text-sm text-slate-500 dark:text-on-surface-variant">No recent activity</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+            <RecentActivityClient />
 
             {/* System Status */}
             <div className="p-6 bg-slate-100 dark:bg-surface-container rounded-xl flex items-center justify-between">

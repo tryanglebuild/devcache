@@ -1,25 +1,11 @@
-import { createClient } from '@/lib/supabase/server'
 import { FavoritedItemsClient } from '@/components/dashboard/FavoritedItemsClient'
 import { Star } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
+// FavoritesPage — renders the full favorites view.
+// Data is fetched client-side inside FavoritedItemsClient via /api/dashboard/favorites.
 export default async function FavoritesPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return null
-  }
-
-  // Fetch favorite items
-  const { data: favoriteItems } = await supabase
-    .from('project_items')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('is_favorite', true)
-    .is('deleted_at', null)
-    .order('updated_at', { ascending: false })
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -38,8 +24,8 @@ export default async function FavoritesPage() {
         </p>
       </div>
 
-      {/* Favorites Grid */}
-      <FavoritedItemsClient items={favoriteItems || []} />
+      {/* Favorites Grid — FavoritedItemsClient handles its own data fetching */}
+      <FavoritedItemsClient />
     </div>
   )
 }

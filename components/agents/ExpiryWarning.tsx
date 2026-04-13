@@ -14,18 +14,24 @@ export function ExpiryWarning({
   const isUrgent = daysRemaining <= 7
 
   return (
-    <div className="p-4 rounded-lg border-2 bg-gray-50 border-gray-200">
-      <div className="flex items-start gap-3">
-        <AlertCircle className="h-5 w-5 mt-0.5 text-gray-500" />
-        <div className="flex-1">
-          <p className="font-bold text-sm text-gray-700">
-            {daysRemaining === 0 
-              ? 'Expires today!' 
+    <div className={`p-3 rounded-md border ${
+      isUrgent ? 'bg-red-50 dark:bg-red-950/30 border-red-100 dark:border-red-900/50' : 'bg-neutral-50 dark:bg-surface-container-high/60 border-neutral-200 dark:border-white/[0.09]'
+    }`}>
+      <div className="flex items-start gap-2">
+        <AlertCircle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${
+          isUrgent ? 'text-red-400' : 'text-neutral-400 dark:text-neutral-500'
+        }`} />
+        <div>
+          <p className={`text-xs font-medium ${
+            isUrgent ? 'text-red-700 dark:text-red-400' : 'text-neutral-700 dark:text-neutral-300'
+          }`}>
+            {daysRemaining === 0
+              ? 'Expires today'
               : daysRemaining === 1
               ? '1 day remaining'
               : `${daysRemaining} days remaining`}
           </p>
-          <p className="text-xs text-[#464554] mt-1">
+          <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-0.5">
             Permanent deletion on {new Date(expiresAt).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',

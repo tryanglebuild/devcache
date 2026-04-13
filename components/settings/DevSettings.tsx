@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { RefreshCw, Database, CheckCircle2, AlertCircle, Loader2, FileText, FolderOpen } from 'lucide-react'
+import { RefreshCw, Database, CheckCircle2, AlertCircle, Loader2, FolderOpen } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface EmbeddingStats {
@@ -155,80 +155,62 @@ export function DevSettings() {
     : 0
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-[#191c1e] mb-2">Developer Tools</h2>
-        <p className="text-[#464554]">
-          Manage embeddings and system maintenance tasks
-        </p>
-      </div>
-
+    <div className="space-y-5">
       {/* Embedding Sync Card */}
-      <Card className="p-6 border-[#c7c4d7]/20 bg-gradient-to-br from-white to-[#f7f9fb]">
+      <Card className="p-5 border-neutral-200 bg-white shadow-none">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center shrink-0">
-            <Database className="h-6 w-6 text-white" />
+          <div className="w-9 h-9 rounded-md bg-neutral-100 flex items-center justify-center shrink-0">
+            <Database className="h-4 w-4 text-neutral-500" />
           </div>
-          
+
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-[#191c1e] mb-1">
+            <h3 className="text-sm font-semibold text-neutral-900 mb-0.5">
               Embedding Sync
             </h3>
-            <p className="text-sm text-[#464554] mb-4">
+            <p className="text-xs text-neutral-500 mb-4">
               Analyze and sync embeddings for your documentation files and agent templates
             </p>
 
             {/* Stats Display */}
             {stats && (
-              <div className="mb-4 p-4 bg-white rounded-lg border border-[#c7c4d7]/20">
+              <div className="mb-4 p-4 bg-neutral-50 rounded-md border border-neutral-200">
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Project Files */}
                   <div>
-                    <div className="text-xs font-medium text-[#464554] mb-2">
-                      Project Files
-                    </div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="text-2xl font-bold text-[#191c1e]">
+                    <p className="text-xs font-medium text-neutral-500 mb-1.5">Project Files</p>
+                    <div className="flex items-baseline gap-1.5 mb-1">
+                      <span className="text-lg font-semibold text-neutral-900">
                         {stats.project_items_with_embeddings}/{stats.total_project_items}
-                      </div>
-                      <div className="text-sm text-[#464554]">
-                        ({projectPercentage}%)
-                      </div>
+                      </span>
+                      <span className="text-xs text-neutral-400">({projectPercentage}%)</span>
                     </div>
                     {stats.project_items_pending > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400">
                         <AlertCircle className="h-3 w-3" />
                         {stats.project_items_pending} pending
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400">
                         <CheckCircle2 className="h-3 w-3" />
                         All synced
                       </div>
                     )}
                   </div>
 
-                  {/* Agent Templates */}
                   <div>
-                    <div className="text-xs font-medium text-[#464554] mb-2">
-                      Agent Templates
-                    </div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="text-2xl font-bold text-[#191c1e]">
+                    <p className="text-xs font-medium text-neutral-500 mb-1.5">Agent Templates</p>
+                    <div className="flex items-baseline gap-1.5 mb-1">
+                      <span className="text-lg font-semibold text-neutral-900">
                         {stats.agents_with_embeddings}/{stats.total_agents}
-                      </div>
-                      <div className="text-sm text-[#464554]">
-                        ({agentPercentage}%)
-                      </div>
+                      </span>
+                      <span className="text-xs text-neutral-400">({agentPercentage}%)</span>
                     </div>
                     {stats.agents_pending > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400">
                         <AlertCircle className="h-3 w-3" />
                         {stats.agents_pending} pending
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400">
                         <CheckCircle2 className="h-3 w-3" />
                         All synced
                       </div>
@@ -236,20 +218,17 @@ export function DevSettings() {
                   </div>
                 </div>
 
-                {/* Progress Bar */}
                 {totalPending > 0 && (
-                  <div className="mt-4 pt-4 border-t border-[#c7c4d7]/20">
-                    <div className="flex items-center justify-between text-xs text-[#464554] mb-2">
+                  <div className="mt-4 pt-3 border-t border-neutral-200">
+                    <div className="flex items-center justify-between text-xs text-neutral-500 mb-1.5">
                       <span>Overall Progress</span>
-                      <span className="font-medium">
-                        {totalPending} item(s) pending
-                      </span>
+                      <span>{totalPending} pending</span>
                     </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-500"
-                        style={{ 
-                          width: `${Math.round(((stats.project_items_with_embeddings + stats.agents_with_embeddings) / (stats.total_project_items + stats.total_agents)) * 100)}%` 
+                    <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-neutral-500 transition-all duration-500"
+                        style={{
+                          width: `${Math.round(((stats.project_items_with_embeddings + stats.agents_with_embeddings) / (stats.total_project_items + stats.total_agents)) * 100)}%`
                         }}
                       />
                     </div>
@@ -258,50 +237,38 @@ export function DevSettings() {
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <Button
                 onClick={analyzeEmbeddings}
                 disabled={isAnalyzing || isSyncing}
                 variant="outline"
-                className="flex-1"
+                size="sm"
               >
                 {isAnalyzing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Analyzing...
-                  </>
+                  <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Analyzing...</>
                 ) : (
-                  <>
-                    <Database className="h-4 w-4 mr-2" />
-                    Analyze
-                  </>
+                  <><Database className="h-3.5 w-3.5 mr-2" />Analyze</>
                 )}
               </Button>
 
               <Button
                 onClick={syncEmbeddings}
                 disabled={!stats || totalPending === 0 || isAnalyzing || isSyncing}
-                className="flex-1 bg-gradient-to-r from-[#4f46e5] to-[#4338ca] hover:from-[#3537c3] hover:to-[#4f52dd] text-white"
+                size="sm"
+                className="bg-neutral-900 hover:bg-neutral-700 text-white"
               >
                 {isSyncing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Syncing...
-                  </>
+                  <><Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />Syncing...</>
                 ) : (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Sync Embeddings
-                  </>
+                  <><RefreshCw className="h-3.5 w-3.5 mr-2" />Sync Embeddings</>
                 )}
               </Button>
             </div>
 
             {lastSync && (
-              <div className="mt-3 text-xs text-[#464554]">
+              <p className="mt-2.5 text-xs text-neutral-400">
                 Last synced: {lastSync.toLocaleString()}
-              </div>
+              </p>
             )}
           </div>
         </div>
@@ -309,60 +276,37 @@ export function DevSettings() {
 
       {/* Progress Display */}
       {showProgress && processingItems.length > 0 && (
-        <Card className="p-6 border-[#c7c4d7]/20 bg-white">
-          <div className="space-y-4">
+        <Card className="p-5 border-neutral-200 bg-white shadow-none">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-[#191c1e]">
-                Processing Items
-              </h3>
-              <div className="text-sm text-[#464554]">
+              <p className="text-sm font-semibold text-neutral-900">Processing Items</p>
+              <span className="text-xs text-neutral-400">
                 {processingItems.filter(i => i.status === 'success').length}/{processingItems.length}
-              </div>
+              </span>
             </div>
 
-            <div className="max-h-96 overflow-y-auto space-y-2">
+            <div className="max-h-72 overflow-y-auto space-y-1">
               {processingItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100"
+                  className="flex items-center gap-3 px-3 py-2 rounded-md bg-neutral-50 border border-neutral-100"
                 >
-                  {/* Icon */}
                   <div className="shrink-0">
                     {item.type === 'agent' ? (
-                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <Database className="h-4 w-4 text-gray-500" />
-                      </div>
+                      <Database className="h-3.5 w-3.5 text-neutral-400" />
                     ) : (
-                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <FileText className="h-4 w-4 text-gray-500" />
-                      </div>
+                      <FolderOpen className="h-3.5 w-3.5 text-neutral-400" />
                     )}
                   </div>
-
-                  {/* Name */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-[#191c1e] truncate">
-                      {item.name}
-                    </div>
-                    <div className="text-xs text-[#464554]">
-                      {item.type === 'agent' ? 'Agent Template' : 'Project File'}
-                    </div>
+                    <p className="text-xs font-medium text-neutral-700 truncate">{item.name}</p>
+                    <p className="text-[10px] text-neutral-400">{item.type === 'agent' ? 'Agent' : 'Project File'}</p>
                   </div>
-
-                  {/* Status */}
                   <div className="shrink-0">
-                    {item.status === 'pending' && (
-                      <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
-                    )}
-                    {item.status === 'processing' && (
-                      <Loader2 className="h-5 w-5 text-gray-500 animate-spin" />
-                    )}
-                    {item.status === 'success' && (
-                      <CheckCircle2 className="h-5 w-5 text-gray-500" />
-                    )}
-                    {item.status === 'error' && (
-                      <AlertCircle className="h-5 w-5 text-gray-500" />
-                    )}
+                    {item.status === 'pending' && <div className="w-3.5 h-3.5 rounded-full border border-neutral-300" />}
+                    {item.status === 'processing' && <Loader2 className="h-3.5 w-3.5 text-neutral-400 animate-spin" />}
+                    {item.status === 'success' && <CheckCircle2 className="h-3.5 w-3.5 text-neutral-500" />}
+                    {item.status === 'error' && <AlertCircle className="h-3.5 w-3.5 text-red-400" />}
                   </div>
                 </div>
               ))}
@@ -371,25 +315,14 @@ export function DevSettings() {
         </Card>
       )}
 
-      {/* Info Card */}
-      <Card className="p-4 border-[#c7c4d7]/20 bg-gray-50">
-        <div className="flex gap-3">
-          <div className="text-gray-500 shrink-0">
-            <AlertCircle className="h-5 w-5" />
-          </div>
-          <div className="text-sm text-[#464554]">
-            <p className="font-medium text-[#191c1e] mb-1">About Embeddings</p>
-            <p>
-              Embeddings enable AI-powered search across your documentation. 
-              They are generated automatically when you push files via CLI, 
-              but you can manually sync them here if needed.
-            </p>
-            <p className="mt-2">
-              A weekly cron job runs every Sunday at 2 AM UTC to catch any missed items.
-            </p>
-          </div>
-        </div>
-      </Card>
+      {/* Info */}
+      <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-md">
+        <p className="text-xs text-neutral-500 leading-relaxed">
+          <span className="font-medium text-neutral-700">About Embeddings — </span>
+          Embeddings enable AI-powered search across your documentation. They are generated automatically when you push files via CLI,
+          but you can manually sync them here if needed. A weekly cron job runs every Sunday at 2 AM UTC to catch any missed items.
+        </p>
+      </div>
     </div>
   )
 }

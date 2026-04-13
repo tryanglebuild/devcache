@@ -12,11 +12,11 @@ import {
   Shield,
   BarChart3,
   Code2,
-  Sparkles,
   Settings,
   FileText,
   ChevronDown,
   ChevronRight,
+  Bot,
 } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import type { Database } from '@/types/database.types'
@@ -47,58 +47,48 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
     }
   }
 
-  const triggerBase =
-    'w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-[#464554] hover:bg-white hover:shadow-sm font-medium cursor-pointer'
-  const triggerActive =
-    'bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white shadow-lg shadow-[#4f46e5]/30'
-  const triggerInactive = ''
-
-  const iconBase = 'w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0'
+  const navItem =
+    'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer text-left'
+  const navActive = 'bg-neutral-100 text-neutral-900'
+  const navInactive = 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
 
   return (
-    <div className="p-8">
+    <div className="px-8 py-10">
       {/* Header */}
-      <div className="mb-10 relative">
-        <div className="absolute -left-4 top-0 w-1 h-16 bg-gradient-to-b from-[#4f46e5] to-[#4338ca] rounded-full" />
-        <h1 className="text-4xl font-black text-[#191c1e] mb-3 tracking-tight">
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold text-neutral-900 tracking-tight">
           Account Settings
         </h1>
-        <p className="text-base text-[#464554]">
+        <p className="mt-1 text-sm text-neutral-500">
           Manage your profile, security, and preferences
         </p>
       </div>
 
       {/* Two Column Layout */}
-      <div className="flex gap-8 w-full">
+      <div className="flex gap-10 w-full">
         {/* Left Sidebar */}
-        <div className="w-56 shrink-0">
-          <nav className="flex flex-col bg-gradient-to-br from-white to-[#f7f9fb] border border-[#c7c4d7]/20 p-3 rounded-2xl shadow-lg gap-2">
-
+        <div className="w-52 shrink-0">
+          <nav className="flex flex-col gap-0.5">
             {/* Profile */}
             <button
               onClick={() => selectTab('profile')}
-              className={`${triggerBase} ${activeTab === 'profile' ? triggerActive : triggerInactive}`}
+              className={`${navItem} ${activeTab === 'profile' ? navActive : navInactive}`}
             >
-              <div className={`${iconBase} ${activeTab === 'profile' ? 'bg-white/20' : 'bg-blue-50'}`}>
-                <UserIcon className="h-4 w-4" />
-              </div>
-              <span className="font-semibold text-sm">Profile</span>
+              <UserIcon className="h-4 w-4 shrink-0" />
+              Profile
             </button>
 
             {/* Security */}
             <button
               onClick={() => selectTab('security')}
-              className={`${triggerBase} ${activeTab === 'security' ? triggerActive : triggerInactive}`}
+              className={`${navItem} ${activeTab === 'security' ? navActive : navInactive}`}
             >
-              <div className={`${iconBase} ${activeTab === 'security' ? 'bg-white/20' : 'bg-emerald-50'}`}>
-                <Shield className="h-4 w-4" />
-              </div>
-              <span className="font-semibold text-sm">Security</span>
+              <Shield className="h-4 w-4 shrink-0" />
+              Security
             </button>
 
             {/* AI Group */}
             <div>
-              {/* AI Parent Toggle */}
               <button
                 onClick={() => {
                   const willExpand = !aiExpanded
@@ -107,66 +97,42 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
                     setActiveTab('ai-model')
                   }
                 }}
-                className={`${triggerBase} justify-between ${isAiActive ? triggerActive : triggerInactive}`}
+                className={`${navItem} justify-between ${isAiActive ? navActive : navInactive}`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`${iconBase} ${isAiActive ? 'bg-white/20' : 'bg-violet-50'}`}>
-                    <Sparkles className="h-4 w-4" />
-                  </div>
-                  <span className="font-semibold text-sm">AI</span>
-                </div>
+                <span className="flex items-center gap-2.5">
+                  <Bot className="h-4 w-4 shrink-0" />
+                  AI
+                </span>
                 {aiExpanded
-                  ? <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-70" />
-                  : <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                  ? <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                  : <ChevronRight className="h-3.5 w-3.5 opacity-50" />
                 }
               </button>
 
-              {/* AI Sub-items */}
               {aiExpanded && (
-                <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-[#e8eff3] pl-2">
+                <div className="ml-6 mt-0.5 flex flex-col gap-0.5 border-l border-neutral-200 pl-3">
                   <button
                     onClick={() => selectTab('ai-model')}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all cursor-pointer text-sm font-medium
-                      ${activeTab === 'ai-model'
-                        ? 'bg-[#eef0ff] text-[#4f46e5] font-semibold'
-                        : 'text-[#464554] hover:bg-white hover:shadow-sm'
-                      }`}
+                    className={`${navItem} ${activeTab === 'ai-model' ? navActive : navInactive}`}
                   >
-                    <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors
-                      ${activeTab === 'ai-model' ? 'bg-[#4f46e5]/10' : 'bg-[#f7f9fb]'}`}>
-                      <Settings className="h-3.5 w-3.5" />
-                    </div>
-                    <span>Model</span>
+                    <Settings className="h-3.5 w-3.5 shrink-0" />
+                    Model
                   </button>
 
                   <button
                     onClick={() => selectTab('ai-instructions')}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all cursor-pointer text-sm font-medium
-                      ${activeTab === 'ai-instructions'
-                        ? 'bg-[#eef0ff] text-[#4f46e5] font-semibold'
-                        : 'text-[#464554] hover:bg-white hover:shadow-sm'
-                      }`}
+                    className={`${navItem} ${activeTab === 'ai-instructions' ? navActive : navInactive}`}
                   >
-                    <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors
-                      ${activeTab === 'ai-instructions' ? 'bg-[#4f46e5]/10' : 'bg-[#f7f9fb]'}`}>
-                      <FileText className="h-3.5 w-3.5" />
-                    </div>
-                    <span>Instructions</span>
+                    <FileText className="h-3.5 w-3.5 shrink-0" />
+                    Instructions
                   </button>
 
                   <button
                     onClick={() => selectTab('ai-usage')}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all cursor-pointer text-sm font-medium
-                      ${activeTab === 'ai-usage'
-                        ? 'bg-[#eef0ff] text-[#4f46e5] font-semibold'
-                        : 'text-[#464554] hover:bg-white hover:shadow-sm'
-                      }`}
+                    className={`${navItem} ${activeTab === 'ai-usage' ? navActive : navInactive}`}
                   >
-                    <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors
-                      ${activeTab === 'ai-usage' ? 'bg-[#4f46e5]/10' : 'bg-[#f7f9fb]'}`}>
-                      <BarChart3 className="h-3.5 w-3.5" />
-                    </div>
-                    <span>Usage</span>
+                    <BarChart3 className="h-3.5 w-3.5 shrink-0" />
+                    Usage
                   </button>
                 </div>
               )}
@@ -175,12 +141,10 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
             {/* Developer */}
             <button
               onClick={() => selectTab('developer')}
-              className={`${triggerBase} ${activeTab === 'developer' ? triggerActive : triggerInactive}`}
+              className={`${navItem} ${activeTab === 'developer' ? navActive : navInactive}`}
             >
-              <div className={`${iconBase} ${activeTab === 'developer' ? 'bg-white/20' : 'bg-slate-50'}`}>
-                <Code2 className="h-4 w-4" />
-              </div>
-              <span className="font-semibold text-sm">Developer</span>
+              <Code2 className="h-4 w-4 shrink-0" />
+              Developer
             </button>
           </nav>
         </div>

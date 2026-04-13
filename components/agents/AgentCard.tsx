@@ -17,8 +17,8 @@ function SignalBars({ value }: { value: number }) {
           style={{ height: h }}
           className={`w-1 rounded-sm ${
             i < Math.round(value)
-              ? 'bg-[#6366f1]/70 dark:bg-[#7c7ff5]/60'
-              : 'bg-slate-200 dark:bg-slate-700'
+              ? 'bg-neutral-500 dark:bg-neutral-400'
+              : 'bg-neutral-200 dark:bg-surface-container-high'
           }`}
         />
       ))}
@@ -48,30 +48,30 @@ export function AgentCard({ agent, onView, compact = false }: AgentCardProps) {
   return (
     <div 
       onClick={handleCardClick}
-      className="bg-white dark:bg-surface-container rounded-xl p-4 shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08] hover:shadow-lg dark:hover:ring-white/[0.12] transition-all cursor-pointer group"
+      className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4 hover:border-neutral-400 dark:hover:border-white/20 hover:shadow-sm transition-all cursor-pointer group"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-surface-container-high flex items-center justify-center flex-shrink-0">
-            <CategoryIcon size={20} strokeWidth={1.5} className="text-gray-500 dark:text-gray-400" />
+          <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center flex-shrink-0">
+            <CategoryIcon size={16} strokeWidth={1.5} className="text-neutral-500 dark:text-neutral-400" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-[#191c1e] dark:text-on-surface truncate group-hover:text-[#4f46e5] dark:group-hover:text-[#7c7ff5] transition-colors">
+            <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
               {agent.name}
             </h3>
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-100 dark:bg-surface-container-high text-gray-500 dark:text-gray-400">
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-surface-container-high text-neutral-400 dark:text-neutral-500">
               {category.label}
             </span>
           </div>
         </div>
         
         {agent.is_favorite && (
-          <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" title="Favorite" />
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" title="Favorite" />
         )}
       </div>
 
       {!compact && agent.description && (
-        <p className="text-sm text-[#464554] dark:text-on-surface-variant mb-3 line-clamp-2">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-3 line-clamp-2">
           {agent.description}
         </p>
       )}
@@ -81,34 +81,34 @@ export function AgentCard({ agent, onView, compact = false }: AgentCardProps) {
           {agent.tags.slice(0, compact ? 2 : 3).map((tag: string, index: number) => (
             <span
               key={index}
-              className="text-[10px] bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant px-2 py-0.5 rounded font-medium"
+              className="text-[10px] bg-neutral-100 dark:bg-surface-container-high text-neutral-400 dark:text-neutral-500 px-1.5 py-0.5 rounded font-medium"
             >
               {tag}
             </span>
           ))}
           {agent.tags.length > (compact ? 2 : 3) && (
-            <span className="text-[10px] bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant px-2 py-0.5 rounded font-medium">
+            <span className="text-[10px] bg-neutral-100 dark:bg-surface-container-high text-neutral-400 dark:text-neutral-500 px-1.5 py-0.5 rounded font-medium">
               +{agent.tags.length - (compact ? 2 : 3)}
             </span>
           )}
         </div>
       )}
 
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
             <SignalBars value={agent.rating_average || 0} />
-            <span className="font-semibold text-[#191c1e] dark:text-on-surface">
+            <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
               {agent.rating_average?.toFixed(1) || '0.0'}
             </span>
-            <span className="text-[#464554] dark:text-on-surface-variant text-xs">
+            <span className="text-neutral-400 dark:text-neutral-500 text-[11px]">
               ({agent.rating_count || 0})
             </span>
           </div>
           
-          <div className="flex items-center gap-1 text-[#464554] dark:text-on-surface-variant">
-            <Download className="w-4 h-4" />
-            <span className="text-xs font-medium">
+          <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-500">
+            <Download className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-medium">
               {agent.download_count || 0}
             </span>
           </div>
@@ -121,29 +121,27 @@ export function AgentCard({ agent, onView, compact = false }: AgentCardProps) {
                 e.stopPropagation()
                 onView(agent)
               }}
-              className="text-[#4f46e5] dark:text-[#7c7ff5] hover:text-[#4338ca] dark:hover:text-[#a5b4fc] font-semibold text-xs flex items-center gap-1 transition-colors"
+              className="text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-300 text-xs flex items-center gap-1 transition-colors"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-3.5 h-3.5" />
               View
             </button>
           ) : (
             <Link
               href={`/marketplace/${agent.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-[#4f46e5] dark:text-[#7c7ff5] hover:text-[#4338ca] dark:hover:text-[#a5b4fc] font-semibold text-xs flex items-center gap-1 transition-colors"
+              className="text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-300 text-xs flex items-center gap-1 transition-colors"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-3.5 h-3.5" />
               View
             </Link>
           )}
-          
-
         </div>
       </div>
 
       {agent.author_name && (
-        <div className="mt-3 pt-3 border-t border-[#c7c4d7]/10 dark:border-white/[0.06]">
-          <p className="text-[10px] text-[#464554] dark:text-on-surface-variant font-medium">
+        <div className="mt-3 pt-2.5 border-t border-neutral-100 dark:border-white/[0.09]">
+          <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
             by {agent.author_name}
           </p>
         </div>

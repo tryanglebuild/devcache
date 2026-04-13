@@ -18,8 +18,8 @@ function SignalBars({ value, size = 'md' }: { value: number; size?: 'sm' | 'md' 
           style={{ height: h }}
           className={`${width} rounded-sm transition-colors ${
             i < value
-              ? 'bg-[#6366f1]/70 dark:bg-[#7c7ff5]/60'
-              : 'bg-slate-200 dark:bg-slate-700'
+              ? 'bg-neutral-600 dark:bg-neutral-400'
+              : 'bg-neutral-200 dark:bg-surface-container-high'
           }`}
         />
       ))}
@@ -87,35 +87,35 @@ export function RateTemplateModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-surface-container rounded-2xl max-w-lg w-full">
+    <div className="fixed inset-0 bg-black/40 dark:bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-surface-container rounded-xl border border-neutral-200 dark:border-white/[0.09] max-w-md w-full shadow-lg">
         {/* Header */}
-        <div className="border-b border-[#c7c4d7]/10 dark:border-white/[0.06] px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-[#191c1e] dark:text-on-surface">
+        <div className="border-b border-neutral-100 dark:border-white/[0.09] px-5 py-3.5 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
             Rate Template
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded-lg transition-colors"
+            className="p-1.5 hover:bg-neutral-100 dark:hover:bg-surface-container-high rounded transition-colors"
           >
-            <X className="w-5 h-5 text-[#464554] dark:text-on-surface-variant" />
+            <X className="w-4 h-4 text-neutral-400 dark:text-neutral-500" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-5 space-y-5">
           <div>
-            <p className="text-sm font-semibold text-[#191c1e] dark:text-on-surface mb-2">
+            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
               {agentName}
             </p>
-            <p className="text-xs text-[#464554] dark:text-on-surface-variant">
+            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
               How would you rate this template?
             </p>
           </div>
 
           {/* Signal Bar Rating */}
           <div
-            className="flex items-end justify-center gap-3 py-6"
+            className="flex items-end justify-center gap-4 py-5"
             onMouseLeave={() => setHoveredRating(0)}
           >
             {[1, 2, 3, 4, 5].map((bar) => {
@@ -135,8 +135,8 @@ export function RateTemplateModal({
                     style={{ height: heights[bar - 1] }}
                     className={`w-4 rounded-sm transition-colors ${
                       active
-                        ? 'bg-[#6366f1]/80 dark:bg-[#7c7ff5]/70'
-                        : 'bg-slate-200 dark:bg-slate-700'
+                        ? 'bg-neutral-700'
+                        : 'bg-neutral-200'
                     }`}
                   />
                 </button>
@@ -145,39 +145,39 @@ export function RateTemplateModal({
           </div>
 
           {rating > 0 && (
-            <p className="text-center text-sm font-semibold text-[#191c1e] dark:text-on-surface -mt-2">
+            <p className="text-center text-xs font-medium text-neutral-600 dark:text-neutral-300 -mt-2">
               {RATING_LABELS[rating]}
             </p>
           )}
 
           {/* Review */}
           <div>
-            <label className="block text-sm font-bold text-[#191c1e] dark:text-on-surface mb-2">
+            <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
               Review (Optional)
             </label>
             <textarea
               value={review}
               onChange={(e) => setReview(e.target.value)}
               rows={4}
-              className="w-full px-4 py-2 bg-white dark:bg-surface border border-[#c7c4d7]/20 dark:border-white/[0.09] rounded-lg focus:ring-2 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] outline-none resize-none"
+              className="w-full px-3 py-2 bg-white dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400 outline-none resize-none text-sm text-neutral-700 dark:text-neutral-300 placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
               placeholder="Share your experience with this template..."
             />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="flex-1 px-6 py-3 bg-white dark:bg-surface border-2 border-[#c7c4d7]/20 dark:border-white/[0.09] text-[#464554] dark:text-on-surface-variant rounded-lg font-bold hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 rounded-md text-sm font-medium hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || rating === 0}
-              className="flex-1 px-6 py-3 bg-[#4f46e5] text-white rounded-lg font-bold hover:bg-[#4338ca] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-neutral-900 text-white rounded-md text-sm font-medium hover:bg-neutral-700 transition-colors disabled:opacity-50"
             >
               {loading ? 'Submitting...' : 'Submit Rating'}
             </button>
