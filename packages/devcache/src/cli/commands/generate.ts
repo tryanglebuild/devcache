@@ -1,3 +1,7 @@
+// 'devcache generate' command — entry point for the documentation generation pipeline.
+// Creates an Orchestrator, registers all analyzers (project overview, impact,
+// architecture, stack, features), runs the analysis, and prints the result summary.
+
 import chalk from 'chalk';
 import ora from 'ora';
 import { Orchestrator } from '../../orchestrator';

@@ -1,3 +1,10 @@
+// Implements the PKCE-style CLI OAuth flow for 'devcache login --browser':
+//   1. Starts a temporary local HTTP server on port 54321
+//   2. Opens the DevCache /auth/cli page in the user's browser
+//   3. The web app redirects to localhost:54321/auth/callback with tokens in query params
+//   4. The server parses the tokens, resolves the promise, and shuts itself down
+// Times out after 5 minutes if the browser flow is not completed.
+
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { Logger } from '../utils';
 import open from 'open';
@@ -54,7 +61,9 @@ export class OAuthFlow {
   }
 
   /**
-   * Handle callback request
+   * Handles the single HTTP callback request from the browser after OAuth completes.
+   * Extracts tokens from query params, sends an HTML success/error page, resolves or
+   * rejects the flow promise, then schedules server cleanup.
    */
   private handleRequest(req: IncomingMessage, res: ServerResponse): void {
     if (!req.url?.startsWith(CALLBACK_PATH)) {

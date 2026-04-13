@@ -1,3 +1,7 @@
+// 'devcache connection' command — runs a 5-step health check:
+//   1. Initialise Supabase client  2. Verify auth session  3. Test DB query
+//   4. Confirm saved credentials   5. Verify user write access on their own rows
+
 import chalk from 'chalk';
 import ora from 'ora';
 import { getSupabaseClient } from '../../supabase/client';

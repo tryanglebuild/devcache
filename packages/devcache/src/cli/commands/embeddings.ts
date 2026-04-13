@@ -1,3 +1,8 @@
+// 'devcache embeddings' command — displays embedding coverage statistics for the user's
+// project files and public agent templates, and shows the recent cron job history.
+// 'devcache embeddings --trigger' manually fires the embedding generation API endpoint
+// instead of waiting for the scheduled cron job.
+
 import chalk from 'chalk';
 import ora from 'ora';
 import { getSupabaseClient } from '../../supabase/client';
@@ -154,6 +159,8 @@ export async function embeddingsCommand() {
   }
 }
 
+// Manually triggers the embedding generation endpoint (normally run by cron).
+// Useful after a large push when the user doesn't want to wait for the next scheduled run.
 export async function triggerEmbeddingsCommand() {
   console.log(chalk.blue.bold('\n🚀 Triggering Embedding Generation\n'));
 

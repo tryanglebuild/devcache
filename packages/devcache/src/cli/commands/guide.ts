@@ -1,3 +1,7 @@
+// 'devcache guide' command — interactive in-terminal help guide.
+// Presents a menu-driven navigation through topics (getting started, auth,
+// generation, best practices, workflow, commands, troubleshooting, tips).
+
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
@@ -249,6 +253,8 @@ const sections: Record<string, GuideSection> = {
   },
 };
 
+// Renders the interactive guide loop: shows the topic menu, displays the selected
+// section's content, then loops back to the menu until the user chooses to exit.
 export async function guideCommand() {
   console.log(chalk.blue.bold('\n📚 DevCache Guide\n'));
   console.log(chalk.gray('Learn how to use DevCache effectively\n'));

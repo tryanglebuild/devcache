@@ -1,7 +1,13 @@
+// CLI Supabase client wrapper — manages the user's auth session for all CLI commands.
+// Persists the session (access token, refresh token, user ID, DevCache project credentials)
+// to ~/.devcache/session.json so it survives across terminal sessions.
+// Credential priority: saved session → env vars → hardcoded DevCache project defaults.
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
+import { DEVCACHE_SUPABASE_URL, DEVCACHE_SUPABASE_ANON_KEY } from '../config';
 
 const SESSION_FILE = path.join(os.homedir(), '.devcache', 'session.json');
 
@@ -41,8 +47,8 @@ export class DevCacheSupabaseClient {
     }
     // Priority 3: Use hardcoded DevCache credentials (last resort)
     else {
-      this.supabaseUrl = 'https://qeplvargpuusbrzwfluw.supabase.co';
-      this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlcGx2YXJncHV1c2JyendmbHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTY5NTksImV4cCI6MjA5MDA5Mjk1OX0.75E00sD0-D_3LzPPEpP9xnEasqxOoiQ8ouUBkjBWfxk';
+      this.supabaseUrl = DEVCACHE_SUPABASE_URL;
+      this.supabaseKey = DEVCACHE_SUPABASE_ANON_KEY;
     }
 
     this.client = createClient(this.supabaseUrl, this.supabaseKey);
@@ -110,7 +116,10 @@ export class DevCacheSupabaseClient {
   }
 
   /**
-   * Refresh session token
+   * Silently refreshes the access token using the stored refresh token.
+   * Called automatically by getSession() when the access token has expired.
+   * If the refresh fails (e.g. token revoked), the session is cleared and the user
+   * must run 'devcache login' again.
    */
   private async refreshSession(): Promise<void> {
     if (!this.client || !this.session) {
@@ -149,8 +158,8 @@ export class DevCacheSupabaseClient {
     // Ensure session includes DevCache credentials
     this.session = {
       ...session,
-      supabase_url: session.supabase_url || this.supabaseUrl || 'https://qeplvargpuusbrzwfluw.supabase.co',
-      supabase_anon_key: session.supabase_anon_key || this.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlcGx2YXJncHV1c2JyendmbHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTY5NTksImV4cCI6MjA5MDA5Mjk1OX0.75E00sD0-D_3LzPPEpP9xnEasqxOoiQ8ouUBkjBWfxk',
+      supabase_url: session.supabase_url || this.supabaseUrl || DEVCACHE_SUPABASE_URL,
+      supabase_anon_key: session.supabase_anon_key || this.supabaseKey || DEVCACHE_SUPABASE_ANON_KEY,
     };
 
     // Set session in Supabase client

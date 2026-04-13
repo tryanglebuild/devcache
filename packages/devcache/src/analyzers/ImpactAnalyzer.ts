@@ -1,3 +1,7 @@
+// Generates the business-impact section of the project report.
+// Extracts or infers the problem statement, root cause, solution approach,
+// expected impact, success metrics, and target audience from the project context.
+
 import { BaseAnalyzer } from './base/BaseAnalyzer';
 import { ProjectContext, AnalysisOutput } from '../types';
 
@@ -23,6 +27,8 @@ export class ImpactAnalyzer extends BaseAnalyzer {
     };
   }
 
+  // Attempts to pull the problem statement from a README "Problem" or "Why" section;
+  // falls back to the package.json description, then a generic placeholder.
   private extractProblemStatement(context: ProjectContext): string {
     // Try to extract from README
     if (context.readme) {
@@ -170,6 +176,8 @@ export class ImpactAnalyzer extends BaseAnalyzer {
     return 'Various stakeholders including developers, end users, and business users depending on the specific use case.';
   }
 
+  // Categorises the project as CLI, Library, Full-Stack, API, or Frontend Web App
+  // based on the presence of bin, main, and api/components directories.
   private determineProjectType(context: ProjectContext): string {
     const packageJson = context.packageJson;
 

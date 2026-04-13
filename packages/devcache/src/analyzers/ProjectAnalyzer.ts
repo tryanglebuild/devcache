@@ -1,3 +1,7 @@
+// Generates the high-level project overview document.
+// Extracts name, purpose, central idea, objectives, target audience, and project type
+// from package.json, the README, and the file structure.
+
 import { BaseAnalyzer } from './base/BaseAnalyzer';
 import { ProjectContext, AnalysisOutput } from '../types';
 
@@ -38,6 +42,8 @@ export class ProjectAnalyzer extends BaseAnalyzer {
     };
   }
 
+  // Returns the project's description: prefers package.json description,
+  // then the first non-heading paragraph of the README.
   private extractPurpose(context: ProjectContext): string {
     if (context.packageJson?.description) {
       return context.packageJson.description;
@@ -115,6 +121,8 @@ export class ProjectAnalyzer extends BaseAnalyzer {
     return 'Software Application';
   }
 
+  // Extracts bullet-point features from the README "Features" section as objectives;
+  // falls back to a generic list when the section is missing.
   private extractObjectives(context: ProjectContext): string {
     const objectives: string[] = [];
 

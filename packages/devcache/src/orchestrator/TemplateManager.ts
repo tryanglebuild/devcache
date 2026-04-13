@@ -1,3 +1,7 @@
+// Loads YAML template definitions from the package's templates/ directory and
+// renders them into Markdown documents by merging analyzer output with the template structure.
+// Each template defines the section headings; the analyzer provides the content for each heading.
+
 import fs from 'fs/promises';
 import path from 'path';
 import yaml from 'yaml';
@@ -108,7 +112,8 @@ export class TemplateManager {
   }
 
   /**
-   * Render a section recursively
+   * Recursively renders a template section and its subsections into Markdown.
+   * Matches each section heading to the analyzer output data to inject the content.
    */
   private renderSection(section: any, data: any, level: number): string {
     let markdown = '';

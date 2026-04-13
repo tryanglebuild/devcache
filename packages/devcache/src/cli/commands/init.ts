@@ -1,3 +1,7 @@
+// 'devcache init' command — sets up the documentation scaffold in the current project.
+// Prompts for project name and description, creates the devcache_docs/ directory tree,
+// copies Markdown template files from the package, and writes the .devcache.json config.
+
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -93,7 +97,8 @@ export async function initCommand() {
     // Copy template files from package to project
     const packageTemplatesPath = path.join(__dirname, '../../../templates');
     
-    // Helper function to copy directory recursively
+    // Recursively copies a directory tree from the package's bundled templates
+    // into the project's devcache_docs/templates/ folder.
     async function copyDir(src: string, dest: string) {
       await fs.mkdir(dest, { recursive: true });
       const entries = await fs.readdir(src, { withFileTypes: true });

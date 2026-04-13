@@ -1,3 +1,7 @@
+// Generates the architecture documentation section of the project report.
+// Examines file/directory structure and dependencies to identify the framework,
+// architecture pattern, data flow, routing style, and state management approach.
+
 import { BaseAnalyzer } from './base/BaseAnalyzer';
 import { ProjectContext, AnalysisOutput } from '../types';
 
@@ -25,6 +29,7 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     };
   }
 
+  // Returns a markdown description of the detected framework and its version.
   private identifyFramework(context: ProjectContext): string {
     if (context.framework) {
       const version = context.packageJson?.dependencies?.[context.framework.toLowerCase()] ||
@@ -37,6 +42,8 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return 'Framework not detected. This may be a vanilla JavaScript/TypeScript project or use a framework not in the detection list.';
   }
 
+  // Detects the architectural pattern (MVC, Component+Services, Hooks, etc.)
+  // by checking which directories and dependency types are present in the project.
   private identifyArchitecturePattern(context: ProjectContext): string {
     const hasComponents = this.getFilesMatching(context, /components/).length > 0;
     const hasControllers = this.getFilesMatching(context, /controllers/).length > 0;
@@ -76,6 +83,7 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return pattern;
   }
 
+  // Lists the top-level directories and their file counts to give a structural overview.
   private analyzeProjectStructure(context: ProjectContext): string {
     const directories = new Set<string>();
     
@@ -102,6 +110,7 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return structure;
   }
 
+  // Groups component files by their subdirectory to reveal the component hierarchy.
   private analyzeComponentHierarchy(context: ProjectContext): string {
     const componentFiles = this.getFilesMatching(context, /components/);
     
@@ -129,6 +138,8 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return hierarchy;
   }
 
+  // Describes the data flow path (client → API → DB → state) based on
+  // which layers (API files, database files, state management) exist.
   private analyzeDataFlow(context: ProjectContext): string {
     const hasApi = this.getFilesMatching(context, /api|routes/).length > 0;
     const hasDatabase = this.getFilesMatching(context, /models|schema|database|prisma|supabase/).length > 0;
@@ -162,6 +173,7 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return flow;
   }
 
+  // Detects whether the project uses Next.js App Router, Pages Router, or custom routing.
   private analyzeRouting(context: ProjectContext): string {
     const framework = context.framework;
 
@@ -185,6 +197,8 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return 'Routing structure not clearly identified. May use default framework routing or custom implementation.';
   }
 
+  // Identifies the state management library (Redux, Zustand, Context API, etc.)
+  // by checking production dependencies in package.json.
   private identifyStateManagement(context: ProjectContext): string {
     const deps = {
       ...context.packageJson?.dependencies,
@@ -216,6 +230,8 @@ export class ArchitectureAnalyzer extends BaseAnalyzer {
     return 'State management appears to use local component state or is not clearly identified.';
   }
 
+  // Infers key design decisions (TypeScript adoption, monorepo, API-first, testing)
+  // from the file mix and package.json structure.
   private identifyDesignDecisions(context: ProjectContext): string {
     const decisions: string[] = [];
 

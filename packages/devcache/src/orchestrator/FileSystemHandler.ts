@@ -1,3 +1,7 @@
+// Handles all file-system I/O for the documentation generation pipeline.
+// Creates the output directory structure and writes the generated Markdown files
+// (category docs + index.md) to the correct project subfolder.
+
 import fs from 'fs/promises';
 import path from 'path';
 import { Logger } from '../utils';

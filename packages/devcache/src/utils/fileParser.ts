@@ -1,3 +1,7 @@
+// File-system utilities for the documentation generation pipeline.
+// Scans the project using glob patterns, parses package.json and README,
+// and detects the frontend/backend framework from dependencies.
+
 import fs from 'fs/promises';
 import path from 'path';
 import { glob } from 'glob';

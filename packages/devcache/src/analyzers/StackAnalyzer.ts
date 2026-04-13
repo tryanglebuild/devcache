@@ -1,3 +1,7 @@
+// Generates the technology stack documentation section.
+// Categorises all dependencies, identifies the database/build/test tools,
+// detects the deployment configuration, and describes the environment setup.
+
 import { BaseAnalyzer } from './base/BaseAnalyzer';
 import { ProjectContext, AnalysisOutput } from '../types';
 
@@ -107,6 +111,8 @@ export class StackAnalyzer extends BaseAnalyzer {
     return output;
   }
 
+  // Classifies each dependency into a named bucket (UI, State, DB, Auth, etc.)
+  // using name-pattern matching.  Unrecognised packages go into "Other".
   private categorizeDependencies(deps: Record<string, string>): Record<string, Array<{name: string, version: string}>> {
     const categories: Record<string, Array<{name: string, version: string}>> = {
       'UI & Styling': [],
@@ -181,6 +187,8 @@ export class StackAnalyzer extends BaseAnalyzer {
     return ['lodash', 'date-fns', 'dayjs', 'moment', 'uuid', 'nanoid', 'zod', 'yup'].includes(name);
   }
 
+  // Returns a human-readable one-liner for well-known packages; unknown packages
+  // fall back to the generic string "Package dependency".
   private getPackageDescription(name: string): string {
     const descriptions: Record<string, string> = {
       'react': 'UI library for building user interfaces',

@@ -1,3 +1,6 @@
+// 'devcache profile' command — displays the currently authenticated user's
+// email, user ID, session status, and approximate time until session expiry.
+
 import chalk from 'chalk';
 import ora from 'ora';
 import { getSupabaseClient } from '../../supabase/client';

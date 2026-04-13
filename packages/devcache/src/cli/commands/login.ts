@@ -7,6 +7,7 @@ import ora from 'ora';
 import { getSupabaseClient, SessionData } from '../../supabase/client';
 import { OAuthFlow } from '../../supabase/oauth';
 import { Logger } from '../../utils';
+import { DEVCACHE_SUPABASE_URL, DEVCACHE_SUPABASE_ANON_KEY } from '../../config';
 
 const DEFAULT_APP_URL = 'https://devcache.dev'; // Production URL
 
@@ -68,8 +69,8 @@ export async function loginCommand() {
         // Convert OAuthResult to SessionData with DevCache credentials
         const session: SessionData = {
           ...oauthResult,
-          supabase_url: 'https://qeplvargpuusbrzwfluw.supabase.co',
-          supabase_anon_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlcGx2YXJncHV1c2JyendmbHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTY5NTksImV4cCI6MjA5MDA5Mjk1OX0.75E00sD0-D_3LzPPEpP9xnEasqxOoiQ8ouUBkjBWfxk',
+          supabase_url: DEVCACHE_SUPABASE_URL,
+          supabase_anon_key: DEVCACHE_SUPABASE_ANON_KEY,
         };
         
         // Save session

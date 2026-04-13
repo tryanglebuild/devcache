@@ -1,3 +1,7 @@
+// Abstract base class for all project analyzers.
+// Defines the analysis contract (analyze()) and provides shared utilities
+// (file filtering, markdown formatting) used by every concrete analyzer.
+
 import { ProjectContext, AnalysisOutput, Section, FileInfo } from '../../types';
 
 export abstract class BaseAnalyzer {

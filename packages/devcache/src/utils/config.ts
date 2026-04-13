@@ -1,3 +1,6 @@
+// Reads and writes the .devcache.json project configuration file.
+// Used by every CLI command that needs the project name, output directory, or analysis patterns.
+
 import fs from 'fs/promises';
 import path from 'path';
 import { DevCacheConfig } from '../types';

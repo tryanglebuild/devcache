@@ -1,3 +1,6 @@
+// 'devcache logout' command — confirms and clears the local session file,
+// then calls supabase.auth.signOut() to invalidate the token server-side.
+
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import ora from 'ora';

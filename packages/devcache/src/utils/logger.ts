@@ -1,3 +1,6 @@
+// Thin wrapper around console.log that adds coloured prefix icons for each log level.
+// debug() is suppressed unless the DEBUG environment variable is set.
+
 import chalk from 'chalk';
 
 export class Logger {

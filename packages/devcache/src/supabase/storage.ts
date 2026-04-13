@@ -1,3 +1,7 @@
+// Manages reading/writing project documentation to the Supabase database (project_items table).
+// Handles folder hierarchy creation (createProjectStructure → createFolderByPath) and
+// file upserts (uploadFile), then triggers embedding generation for each uploaded chunk.
+
 import { DevCacheSupabaseClient } from './client';
 import { Logger } from '../utils';
 
@@ -273,8 +277,10 @@ export class StorageManager {
   }
 
   /**
-   * Upload complete documentation structure with project folder
-   * Processes files in chunks and triggers embedding generation
+   * Uploads a full documentation set to the cloud in one operation.
+   * Files are batched into chunks of `chunkSize` (default 5) to avoid overwhelming
+   * the API; after each chunk is uploaded, embedding generation is fired in the
+   * background (fire-and-forget) so search indexes are updated without blocking.
    */
   async uploadDocumentation(
     projectName: string,
@@ -346,8 +352,9 @@ export class StorageManager {
   }
 
   /**
-   * Trigger embedding generation for a chunk of files
-   * Fire-and-forget approach to avoid blocking the upload process
+   * POSTs embedding-generation requests for each uploaded file ID in parallel.
+   * Uses Promise.allSettled so a single failure doesn't abort the rest.
+   * Failures are logged as debug warnings — embeddings will be picked up by the cron job.
    */
   private async triggerChunkEmbeddings(fileIds: string[]): Promise<void> {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';

@@ -1,3 +1,7 @@
+// Identifies and classifies all project features, scoring each by business/technical impact.
+// Generates a ranked table of features, per-tier detailed descriptions, an API endpoint
+// summary, and an external integration list.
+
 import { BaseAnalyzer } from './base/BaseAnalyzer';
 import { ProjectContext, AnalysisOutput, FileInfo } from '../types';
 
@@ -46,6 +50,8 @@ export class FeaturesAnalyzer extends BaseAnalyzer {
     };
   }
 
+  // Scans the project for known feature signals (auth pages, chat files, etc.)
+  // and returns a Feature object for each detected capability.
   private identifyAndClassifyFeatures(context: ProjectContext): Feature[] {
     const features: Feature[] = [];
 
@@ -278,7 +284,9 @@ export class FeaturesAnalyzer extends BaseAnalyzer {
     };
   }
 
-  // Helper methods
+  // ── Feature detection helpers ─────────────────────────────────────────────
+  // Each method returns true if the project contains files matching the feature's
+  // characteristic patterns (directory names, dependency names, etc.).
   private hasAuthentication(context: ProjectContext): boolean {
     return this.getFilesMatching(context, /auth|login|signup/).length > 0;
   }
@@ -329,6 +337,7 @@ export class FeaturesAnalyzer extends BaseAnalyzer {
     return stack.length > 0 ? stack : ['WebSocket'];
   }
 
+  // Renders a Markdown table listing all features with their impact score and description.
   private generateFeatureTable(features: Feature[]): string {
     let table = '| Feature | Impact | Category | Description |\n';
     table += '|---------|--------|----------|-------------|\n';
@@ -411,6 +420,7 @@ export class FeaturesAnalyzer extends BaseAnalyzer {
     return description;
   }
 
+  // Converts a feature name to kebab-case for use in file paths (e.g. "User Auth" → "user-auth").
   private toKebabCase(str: string): string {
     return str
       .toLowerCase()
@@ -440,6 +450,8 @@ export class FeaturesAnalyzer extends BaseAnalyzer {
     return documentation;
   }
 
+  // Derives HTTP method + path pairs from Next.js API route filenames.
+  // Dynamic segments ([id]) are expanded into GET/PUT/DELETE; static ones into GET/POST.
   private extractEndpoints(files: FileInfo[]): Array<{method: string, path: string, description: string}> {
     const endpoints: Array<{method: string, path: string, description: string}> = [];
 

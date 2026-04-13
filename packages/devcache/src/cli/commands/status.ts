@@ -1,3 +1,8 @@
+// 'devcache status' command — compares the current documentation files against a local
+// MD5 hash cache (.devcache/status-cache.json) to report which files are new, modified,
+// or unchanged since the last 'devcache push'.
+// updateStatusCache() is called by the push command to snapshot hashes after a successful push.
+
 import chalk from 'chalk';
 import ora from 'ora';
 import path from 'path';
@@ -49,7 +54,8 @@ async function saveCache(cache: StatusCache): Promise<void> {
 }
 
 /**
- * Scan documentation files and compare with cache
+ * Recursively walks the project's documentation directory, hashes each .md file,
+ * and compares the hash against the cache to determine its status (new/modified/unchanged).
  */
 async function scanFiles(projectPath: string, cache: StatusCache): Promise<FileStatus[]> {
   const files: FileStatus[] = [];

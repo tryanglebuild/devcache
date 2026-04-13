@@ -1,3 +1,9 @@
+// 'devcache refresh' command — provides three sub-operations:
+//   cache   → deletes .devcache/status-cache.json so 'devcache status' treats all files as new
+//   profile → calls supabase.auth.refreshSession() to renew the access token
+//   all     → runs both cache and profile refreshes in sequence
+// Accepts --cache, --profile, --all flags; shows an interactive menu if none are given.
+
 import chalk from 'chalk';
 import ora from 'ora';
 import fs from 'fs/promises';
