@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// CLI entry point for the 'devcache' command.
+// Registers all subcommands (init, generate, push, login, etc.) using the commander library.
+// Session credentials are stored in ~/.devcache/session.json after login.
 
 import { Command } from 'commander';
 import { initCommand } from './commands/init';

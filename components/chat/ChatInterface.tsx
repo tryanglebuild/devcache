@@ -9,8 +9,6 @@ import { ModelSelector } from './ModelSelector'
 import { TokenUsagePopover } from './TokenUsagePopover'
 import { updateSession } from '@/lib/chat-api'
 import toast from 'react-hot-toast'
-import { useContextGathering } from '@/lib/hooks/useContextGathering'
-import { ContextGatheringProgress } from './ContextGatheringProgress'
 
 const PAGE_SIZE = 20
 
@@ -37,9 +35,6 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
 
   // Ref forwarded to the scrollable container inside MessageList
   const listRef = useRef<HTMLDivElement>(null)
-
-  // Progressive context gathering
-  const { contextState, loading: contextLoading, resetContext, refresh: refreshContext } = useContextGathering(session.id)
 
   // Load messages on mount and whenever the session changes
   useEffect(() => {
@@ -197,8 +192,6 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
         onCacheUpdate?.(session.id, updated)
         return updated
       })
-
-      refreshContext()
     } catch (error) {
       console.error('Failed to send message:', error)
       toast.error('Failed to send message')
@@ -230,20 +223,6 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
 
   return (
     <div className="flex-1 flex flex-col h-full bg-white dark:bg-surface-container">
-      {/* Context Gathering Progress Indicator */}
-      {contextState.isGathering && !contextLoading && (
-        <div className="px-6 pt-4">
-          <ContextGatheringProgress
-            progress={contextState.progress}
-            collectedInfo={contextState.collectedInfo}
-            questionsAsked={contextState.questionsAsked}
-            questionsAnswered={contextState.questionsAnswered}
-            confidenceScore={contextState.confidenceScore}
-            onDismiss={resetContext}
-          />
-        </div>
-      )}
-
       <MessageList
         ref={listRef}
         messages={messages}
@@ -264,13 +243,7 @@ export function ChatInterface({ session, onSessionUpdate, onParentUpdate, onNewC
             <MessageInput
               onSend={handleSend}
               disabled={streaming}
-              placeholder={
-                contextState.isGathering
-                  ? 'Answer to help find the perfect resource...'
-                  : streaming
-                  ? 'AI is responding...'
-                  : 'Type your message...'
-              }
+              placeholder={streaming ? 'AI is responding...' : 'Type your message...'}
             />
           </div>
         </div>

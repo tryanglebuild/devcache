@@ -1,3 +1,6 @@
+// Server-side Supabase client factory.
+// Creates a cookie-based client for use in Server Components, API routes, and middleware.
+// Auth session is read from and written to HTTP cookies automatically.
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 

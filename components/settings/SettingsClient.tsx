@@ -1,4 +1,7 @@
 'use client'
+// Settings page client component: manages active tab state and renders the correct settings panel.
+// Tabs: profile, security, ai-model, ai-instructions, ai-usage, developer.
+// The "AI" group is collapsible and contains three sub-tabs.
 
 import { useState } from 'react'
 import { ProfileSettings } from './ProfileSettings'

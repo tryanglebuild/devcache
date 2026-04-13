@@ -1,3 +1,6 @@
+// 'devcache login' command: authenticates the user via OAuth (browser) or email/password.
+// Stores the session in ~/.devcache/session.json for use by all other CLI commands.
+
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import ora from 'ora';

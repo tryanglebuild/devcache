@@ -1,5 +1,7 @@
-// AI Chat Edge Function v2 - Clean Architecture with AI Tools
-// Based on Context Engine pattern with OpenAI-compatible tool calling
+// AI Chat Edge Function v2 — Active production function (called by /api/chat/send).
+// Implements a 3-step pipeline: intent analysis (gpt-4o-mini) → RAG hybrid search → AI response with tool calling.
+// Supports up to MAX_ITER=5 rounds of tool calls, injects resource tags as a post-processing safety net,
+// and escapes all user-controlled strings before injecting them into the system prompt.
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
@@ -15,9 +17,16 @@ const CORS = {
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 const DEFAULT_MODEL = "anthropic/claude-3.5-sonnet"
+// MAX_ITER: cap on how many rounds of tool calling the AI can do in a single message.
+// The AI calls a tool → gets the result → may call another tool → repeat.
+// Without this cap, a buggy or adversarial prompt could loop indefinitely.
 const MAX_ITER = 5 // Maximum tool call iterations to prevent infinite loops
 
 // ── System Prompt ─────────────────────────────────────────────────────────────
+// Base persona and behavioral rules for the AI. This is a static constant — dynamic
+// context (RAG results, user stats, skills, language) is appended at call time by
+// buildEnhancedSystemPrompt(). Keeping the static base separate makes it easy to
+// read and update without touching runtime logic.
 
 const SYSTEM_PROMPT = `You are an intelligent AI assistant for a Personal Knowledge Management (PKM) platform. Your role is to help users manage their projects, code snippets, templates, and knowledge base effectively.
 
@@ -100,6 +109,10 @@ If a search returns no results:
 Remember: You are a knowledgeable assistant that helps users manage their knowledge effectively. Be proactive with tools, accurate with information, always match the user's language, and always highlight relevant marketplace agents.`
 
 // ── Tool Definitions (OpenAI Format) ──────────────────────────────────────────
+// The TOOLS array declares the functions the AI can call (OpenAI tool-use spec).
+// Each tool has a name, description (used by the model to decide when to call it),
+// and a JSON Schema for its parameters.  The `tool()` helper is just a convenience
+// wrapper to avoid repeating the { type: "function", function: { ... } } boilerplate.
 
 interface Tool {
   type: string
@@ -254,6 +267,10 @@ const TOOLS: Tool[] = [
 
 // ── Helper Functions ──────────────────────────────────────────────────────────
 
+// Creates a Supabase client using the SERVICE ROLE key (bypasses Row Level Security).
+// Used for all data operations after auth is confirmed, because ai-chat2 enforces
+// user isolation manually via .eq('user_id', userId) on every query — this gives
+// more flexibility than the user-scoped anon client and avoids RLS policy mismatches.
 function makeSupabase() {
   return createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -291,12 +308,17 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;')
 }
 
-// Load active skills for user
+// Loads all active Skills the user has configured and returns them as a formatted
+// string that will be appended to the system prompt.
+// Skills are stored as plain-text .md files in the 'user-skills' storage bucket;
+// their metadata (name, priority, category) lives in the user_skills table.
+// Higher-priority skills are ordered first so the model sees them earliest in context.
 async function loadActiveSkills(
   supabase: ReturnType<typeof makeSupabase>,
   userId: string
 ): Promise<string> {
   try {
+    // Fetch skill metadata ordered by priority (highest first)
     const { data: skills, error } = await supabase
       .from('user_skills')
       .select('id, name, description, file_path, priority, category')
@@ -309,6 +331,7 @@ async function loadActiveSkills(
       return ''
     }
 
+    // Download each skill's .md file from storage in parallel
     const skillContents = await Promise.all(
       skills.map(async (skill: any) => {
         try {
@@ -319,8 +342,8 @@ async function loadActiveSkills(
           if (!fileData) return null
 
           const content = await fileData.text()
-          
-          // Mark skill as used
+
+          // Mark skill as used so usage stats can be tracked in the UI
           await supabase.rpc('mark_skill_as_used', { p_skill_id: skill.id })
 
           return {
@@ -370,7 +393,10 @@ ${skillsSection}
   }
 }
 
-// Generate embedding for RAG search
+// Converts a text query into a 1536-dimensional vector using OpenAI's
+// text-embedding-ada-002 model (via OpenRouter).  The vector is later used as the
+// query side of the pgvector cosine-distance search in search_resources_hybrid.
+// Returns null on failure — callers fall back to textOnlySearch() in that case.
 async function generateEmbedding(text: string, apiKey: string): Promise<number[] | null> {
   try {
     const response = await fetch('https://openrouter.ai/api/v1/embeddings', {
@@ -399,7 +425,11 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
   }
 }
 
-// Post-process AI response to inject resource tags if missing
+// Safety-net post-processor: if the AI returned a response but forgot to include
+// [FILE/FOLDER/TEMPLATE:id:name] resource tags even though relevant results exist,
+// this prepends them to the response before saving it to chat_messages.
+// Note: this does NOT write to the SSE stream (the response has already been streamed).
+// A separate maybeInjectTagsIntoStream() handles real-time injection into the stream.
 function injectResourceTags(
   aiResponse: string,
   ragResults: any[],
@@ -459,7 +489,13 @@ function injectResourceTags(
   return `${intro}${resourceTags}${separator}${aiResponse}`
 }
 
-// Build enhanced system prompt with context
+// Assembles the final system prompt by layering dynamic context on top of SYSTEM_PROMPT:
+//   1. Language instruction (so the model always matches the user's language)
+//   2. User stats (project/template counts for personalisation)
+//   3. RAG results as structured <resource> XML tags (split into high/low relevance)
+//   4. Dynamically-generated few-shot examples using the actual result IDs — this
+//      teaches the model exactly how to format [TAG:id:name] cards for THIS request
+//   5. Active Skills / custom instructions appended last (highest specificity wins)
 function buildEnhancedSystemPrompt(options: {
   userLanguage: string
   userStats?: any
@@ -632,6 +668,10 @@ function buildEnhancedSystemPrompt(options: {
 }
 
 // ── Tool Execution Engine ─────────────────────────────────────────────────────
+// Dispatches an AI-requested tool call to the correct database operation.
+// Uses the service-role Supabase client, so EVERY query must include
+// .eq('user_id', userId) or equivalent to enforce user isolation manually
+// (service role bypasses RLS, so we replicate the row-level checks here).
 
 async function executeTool(
   name: string,
@@ -681,6 +721,8 @@ async function executeTool(
       const { query, tags, limit = 5 } = input
       const cap = Math.min(Number(limit), 20)
 
+      // No user_id filter here — the marketplace is intentionally public.
+      // published_at IS NOT NULL ensures only published templates are visible.
       let queryBuilder = supabase
         .from("agent_templates")
         .select("id, name, description, tags, category, download_count, rating_average")
@@ -1079,6 +1121,11 @@ function calculateCost(inputTokens: number, outputTokens: number, model: string)
   return ((inputTokens * costs.input) + (outputTokens * costs.output)) / 1_000_000
 }
 
+// Thin wrapper around the OpenRouter completions endpoint.
+// Called TWICE per message cycle when tool calls are needed:
+//   1st call: stream=false → full JSON response so we can inspect tool_calls
+//   2nd call: stream=true  → SSE token stream for the final human-readable reply
+// Called ONCE (stream=true) for conversational messages that need no tools.
 async function callOpenRouter(
   apiKey: string,
   messages: OAIMessage[],
@@ -1145,7 +1192,12 @@ Deno.serve(async (req) => {
 
     console.log("Auth header received:", authHeader ? "Present" : "Missing")
 
-    // Create Supabase client with user's auth header (same as old ai-chat)
+    // DUAL CLIENT PATTERN:
+    // authSupabase → anon key + user's JWT header → used ONLY to validate the token
+    //   and extract the user's ID. This is the only safe way to call getUser() in
+    //   an edge function (the JWT comes from the Authorization header, not a cookie).
+    // supabase     → service role key → used for all actual data operations below,
+    //   with manual .eq('user_id', userId) filters to enforce isolation.
     const authSupabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
@@ -1160,8 +1212,8 @@ Deno.serve(async (req) => {
         },
       }
     )
-    
-    // Verify user authentication (same method as old ai-chat)
+
+    // Validate the JWT and extract the authenticated user's ID
     const { data: { user }, error: authError } = await authSupabase.auth.getUser()
 
     if (authError) {
@@ -1310,11 +1362,14 @@ Deno.serve(async (req) => {
           searchDuration = 0
         } else {
 
-        // For text-based LIKE matching, combine the intent query with the original
-        // message keywords so that exact user terms (e.g. "camaleon") are never lost
+        // SEARCH QUERY MERGING:
+        // analyzeIntent() normalises the query (e.g. translates Portuguese verbs to English)
+        // but it must NEVER alter proper nouns like project names.  As an extra safety net,
+        // we diff the LLM-generated intentKeywords against the raw message keywords and
+        // append any original terms the LLM may have dropped or transformed, so that an
+        // exact user term like "camaleon" always appears in the LIKE search string.
         const originalKeywords = extractKeywords(message)
         const intentKeywords = intent.searchQuery
-        // Merge: keep intent keywords + any original words not already included
         const originalWords = originalKeywords.toLowerCase().split(/\s+/).filter(Boolean)
         const intentWords = intentKeywords.toLowerCase().split(/\s+/).filter(Boolean)
         const extraWords = originalWords.filter(w => !intentWords.some(iw => iw.includes(w) || w.includes(iw)))
@@ -1471,10 +1526,17 @@ Deno.serve(async (req) => {
         let totalTokensOutput = 0
 
         // ── Tool Call Loop ──
+        // Each iteration: call the model (non-streaming) → if it requests tools, execute
+        // them and append results to conversationMessages → repeat.  When the model stops
+        // requesting tools (finish_reason !== "tool_calls"), break out and make one final
+        // streaming call so the user sees a real-time response.  If MAX_ITER is reached
+        // without the model stopping, we force a streaming call with tool_calls stripped
+        // so the model has to produce a text reply from whatever context it has so far.
         while (iteration < MAX_ITER) {
           console.log(`Iteration ${iteration + 1}/${MAX_ITER}`)
 
-          // Call OpenRouter API (non-streaming to check for tool calls)
+          // Non-streaming call — needed so we can inspect finish_reason and tool_calls
+          // before deciding whether to execute tools or stream the final answer
           const orRes = await callOpenRouter(apiKey, conversationMessages, model, false)
 
           if (!orRes.ok) {
@@ -1492,9 +1554,9 @@ Deno.serve(async (req) => {
           const aiMessage = choice?.message
           const finishReason: string = choice?.finish_reason ?? "stop"
 
-          // Check if AI wants to call tools
+          // If no tool calls requested, move straight to the streaming response
           if (finishReason !== "tool_calls" || !aiMessage?.tool_calls?.length) {
-            // No tool calls - stream final response
+            // No tool calls — make a second, streaming call for the final response
             console.log("No tool calls, generating final response")
 
             // Make streaming call for final response
@@ -1549,12 +1611,14 @@ Deno.serve(async (req) => {
             // Inject resource tags into stream if the AI omitted them
             await maybeInjectTagsIntoStream(writer, fullResponse, searchResults, searchRelevanceThreshold, intent.needsSearch, userLanguage)
 
-            // Save assistant message — only post-process if search was requested
+            // Persist the assistant message to chat_messages.
+            // finalResponse may differ from fullResponse if injectResourceTags added
+            // tags that the AI omitted — post_processed=true records this for debugging.
             const finalResponse = intent.needsSearch
               ? injectResourceTags(fullResponse, searchResults, userLanguage, searchRelevanceThreshold)
               : fullResponse
             const costUsd = calculateCost(totalTokensInput, totalTokensOutput, model)
-            
+
             await supabase.from("chat_messages").insert({
               session_id: sessionId,
               role: "assistant",
@@ -1583,6 +1647,11 @@ Deno.serve(async (req) => {
           }
 
           // ── Execute Tool Calls ──
+          // The model can request multiple tools in a single iteration.
+          // We execute them all, then append the assistant message (with tool_calls)
+          // + each tool result message to conversationMessages before the next loop.
+          // The UI receives tool_call / tool_result SSE events so it can show live
+          // feedback (e.g. "Searching your projects…") while the AI is thinking.
           console.log(`AI requested ${aiMessage.tool_calls.length} tool call(s)`)
 
           const toolMessages: OAIMessage[] = []
@@ -1590,21 +1659,21 @@ Deno.serve(async (req) => {
           for (const toolCall of aiMessage.tool_calls) {
             const name: string = toolCall.function?.name ?? ""
             let input: Record<string, any> = {}
-            
+
             try {
               input = JSON.parse(toolCall.function?.arguments ?? "{}")
             } catch {
               console.error("Failed to parse tool arguments")
             }
 
-            // Emit tool call event
+            // Notify the frontend that a tool call has started
             await writer.write(
-              sseEvent({ 
-                tool_call: { 
-                  id: toolCall.id, 
-                  name, 
-                  params: input 
-                } 
+              sseEvent({
+                tool_call: {
+                  id: toolCall.id,
+                  name,
+                  params: input
+                }
               })
             )
 
@@ -1612,32 +1681,32 @@ Deno.serve(async (req) => {
 
             let result: unknown
             let status: "done" | "error" = "done"
-            
+
             try {
               result = await executeTool(name, input, supabase, userId)
             } catch (err) {
               status = "error"
-              result = { 
-                success: false, 
-                error: err instanceof Error ? err.message : String(err) 
+              result = {
+                success: false,
+                error: err instanceof Error ? err.message : String(err)
               }
               console.error(`Tool execution error (${name}):`, err)
             }
 
             const resultStr = JSON.stringify(result)
 
-            // Emit tool result event
+            // Notify the frontend that the tool call has completed
             await writer.write(
               sseEvent({
-                tool_result: { 
-                  id: toolCall.id, 
-                  status, 
-                  result: resultStr 
+                tool_result: {
+                  id: toolCall.id,
+                  status,
+                  result: resultStr
                 },
               })
             )
 
-            // Add tool result to conversation
+            // Append the tool result to the conversation so the model can read it
             toolMessages.push({
               role: "tool",
               tool_call_id: toolCall.id,
@@ -1646,7 +1715,8 @@ Deno.serve(async (req) => {
             })
           }
 
-          // Append assistant message with tool calls + tool results
+          // Append the assistant's turn (with tool_calls) + all tool results so the
+          // model has the full tool call/response history for the next iteration
           conversationMessages.push({
             role: "assistant",
             content: aiMessage.content ?? null,
@@ -1660,13 +1730,16 @@ Deno.serve(async (req) => {
           iteration++
         }
 
-        // ── MAX_ITER Reached - Final Call Without Tools ──
+        // ── MAX_ITER Reached — Force Final Streaming Response ──
+        // We exhausted all allowed tool-call rounds. Strip tool_calls from the message
+        // history (some models reject messages that have tool_calls without a following
+        // tool result), then make one last streaming call to get a human-readable reply.
         console.log("MAX_ITER reached, making final call")
 
         const finalRes = await callOpenRouter(
           apiKey,
           conversationMessages.map((m) => {
-            // Strip tool_calls for final response
+            // Remove tool_calls field so the final prompt is clean for the streaming call
             if (m.role === "assistant") {
               return { role: "assistant", content: m.content ?? "" }
             }

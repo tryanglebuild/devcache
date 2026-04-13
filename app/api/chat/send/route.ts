@@ -1,9 +1,12 @@
 // Send Message API - Proxy to Edge Function with streaming
+// Acts as a secure gateway: validates auth, checks session ownership, enforces rate limits,
+// then forwards the request to the ai-chat2 Supabase Edge Function which handles RAG + AI.
 
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { SendMessageRequest } from '@/types/chat'
 
+// Run on the Edge Runtime for lower latency and streaming support
 export const runtime = 'edge'
 
 // POST /api/chat/send - Send message and stream response

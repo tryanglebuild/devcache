@@ -1,4 +1,6 @@
-// API endpoint to generate embeddings for templates
+// API endpoint to generate (or refresh) the embedding vector for a single agent template.
+// Called after template creation/update so the template becomes searchable via RAG.
+// Upserts into agent_template_embeddings using onConflict to avoid duplicates.
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateEmbedding, prepareTemplateContent } from '@/lib/ai/embeddings'

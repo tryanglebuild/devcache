@@ -1,5 +1,6 @@
-// Cron job to generate embeddings for pending items
-// Runs weekly to catch any items that were missed during automatic generation
+// Cron job to generate embeddings for pending items.
+// Acts as a safety net: processes any project files or agent templates that have no embedding
+// yet (embedding_vector IS NULL). Logs results to embedding_cron_runs table after each run.
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'

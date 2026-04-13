@@ -1,3 +1,6 @@
+// Next.js middleware: runs on every request before page rendering.
+// Refreshes the Supabase auth session cookie and redirects unauthenticated users
+// away from protected routes (dashboard, chat, marketplace) to /login.
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 

@@ -1,4 +1,7 @@
 'use client'
+// Confirmation modal for individual file uploads.
+// Shows a preview list of files and total size before upload, then displays a live progress bar
+// with per-file status and error list during upload.
 
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal'
 import { Button } from '@/components/ui/button'

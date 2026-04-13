@@ -1,4 +1,6 @@
 // User Model Preferences API
+// Manages which AI model the user prefers by default and their list of favorite models.
+// Auto-creates default preferences on first GET if the user has no record yet.
 
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'

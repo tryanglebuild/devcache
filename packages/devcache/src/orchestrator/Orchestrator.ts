@@ -1,3 +1,7 @@
+// Orchestrator: coordinates the full documentation generation pipeline.
+// Registers analyzers, scans the project, runs each analyzer, renders Markdown templates,
+// and writes output files to disk. Called by the 'devcache generate' CLI command.
+
 import path from 'path';
 import { BaseAnalyzer } from '../analyzers/base/BaseAnalyzer';
 import { TemplateManager } from './TemplateManager';

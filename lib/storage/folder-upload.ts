@@ -1,3 +1,7 @@
+// Folder upload utilities for the DevCache project file system.
+// Handles building a tree from the browser FileList, validating limits,
+// and recursively uploading folders and files to Supabase Storage + DB.
+
 import { createClient } from '@/lib/supabase/client'
 import { Tables } from '@/types/database.types'
 
@@ -20,7 +24,8 @@ export interface UploadProgress {
 }
 
 /**
- * Parse FileList from folder input into tree structure
+ * Parse a flat FileList (from webkitdirectory input) into a nested FolderNode tree.
+ * The browser returns all files flat — this rebuilds the original folder hierarchy.
  */
 export function parseFolderStructure(files: FileList): FolderNode {
   const root: FolderNode = {
@@ -74,7 +79,8 @@ export function parseFolderStructure(files: FileList): FolderNode {
 }
 
 /**
- * Count total files in folder structure
+ * Recursively count all file-type nodes in a FolderNode tree.
+ * Used to initialize the total count for upload progress reporting.
  */
 export function countFiles(node: FolderNode): number {
   let count = node.type === 'file' ? 1 : 0
@@ -85,7 +91,9 @@ export function countFiles(node: FolderNode): number {
 }
 
 /**
- * Upload folder structure recursively
+ * Recursively upload a FolderNode tree to Supabase.
+ * For folders: creates project_items rows. For files: creates project_items + uploads to storage + creates project_file_attachments.
+ * Cleans up orphaned records if any individual upload fails.
  */
 export async function uploadFolderStructure(
   folderNode: FolderNode,
@@ -227,7 +235,8 @@ export async function uploadFolderStructure(
 }
 
 /**
- * Validate folder structure before upload
+ * Pre-validate a FolderNode tree before starting the upload.
+ * Enforces limits: max 100 files, max 50MB per file, max 10 folder depth levels.
  */
 export function validateFolderStructure(node: FolderNode): {
   valid: boolean

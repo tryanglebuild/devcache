@@ -1,3 +1,6 @@
+// 'devcache push' command: reads generated Markdown docs from disk and uploads them to Supabase.
+// Creates/updates project_items records and triggers background embedding generation for all files.
+
 import chalk from 'chalk';
 import ora from 'ora';
 import path from 'path';

@@ -1,11 +1,15 @@
 // Embeddings Integration using OpenRouter
+// Central module for generating vector embeddings used by the RAG search system.
+// All items (templates, project files) must be embedded before they can be found via semantic search.
+
 export interface EmbeddingResult {
-  embedding: number[]
-  tokens: number
+  embedding: number[]  // 1536-dimensional float vector (text-embedding-ada-002 output)
+  tokens: number       // Number of tokens consumed (for cost tracking)
 }
 
 /**
- * Generate embedding for text using OpenRouter
+ * Generate embedding for text using OpenRouter (text-embedding-ada-002 model).
+ * The resulting vector is stored in the database for later semantic search.
  */
 export async function generateEmbedding(text: string): Promise<EmbeddingResult> {
   try {
@@ -39,7 +43,9 @@ export async function generateEmbedding(text: string): Promise<EmbeddingResult> 
 }
 
 /**
- * Prepare template content for embedding
+ * Prepare template content for embedding by combining metadata and content.
+ * Concatenating title + description + tags + content produces richer embeddings
+ * than embedding raw content alone, improving search relevance.
  */
 export function prepareTemplateContent(template: {
   name: string

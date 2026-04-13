@@ -1,3 +1,6 @@
+// Scheduled cron edge function: permanently deletes soft-deleted agent templates.
+// Templates are first soft-deleted (is_deleted=true) giving users a grace period to restore.
+// This function runs periodically and hard-deletes rows that have expired the grace period.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
