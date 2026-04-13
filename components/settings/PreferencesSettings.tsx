@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Loader2, Sparkles } from 'lucide-react'
+import { Loader2, Sparkles, SlidersHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { Database } from '@/types/database.types'
 
@@ -80,6 +80,11 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
   const [defaultModel, setDefaultModel] = useState(
     preferences?.default_model || 'anthropic/claude-3-haiku'
   )
+  const [threshold, setThreshold] = useState<number>(
+    preferences && 'search_relevance_threshold' in preferences
+      ? Number((preferences as any).search_relevance_threshold ?? 0.3)
+      : 0.3
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,7 +94,7 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
       const response = await fetch('/api/user/preferences', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ default_model: defaultModel }),
+        body: JSON.stringify({ default_model: defaultModel, search_relevance_threshold: threshold }),
       })
 
       if (!response.ok) {
@@ -297,6 +302,82 @@ export function PreferencesSettings({ preferences, userId }: PreferencesSettings
               </div>
             )
           })()}
+
+          {/* Search Relevance Threshold */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-[#f0f0ff] flex items-center justify-center shrink-0">
+                <SlidersHorizontal className="h-4 w-4 text-[#4f46e5]" />
+              </div>
+              <div>
+                <Label className="text-sm font-semibold text-[#191c1e]">
+                  Search Relevance Threshold
+                </Label>
+                <p className="text-xs text-[#6b7280]">
+                  Controls how closely results must match your query before being shown in chat
+                </p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm space-y-4">
+              {/* Labels row */}
+              <div className="flex justify-between text-[10px] font-semibold uppercase tracking-wider text-[#9ca3af]">
+                <span>Broad</span>
+                <span>Balanced</span>
+                <span>Strict</span>
+              </div>
+
+              {/* Slider */}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={threshold}
+                onChange={(e) => setThreshold(parseFloat(e.target.value))}
+                className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                style={{
+                  background: `linear-gradient(to right, #4f46e5 ${threshold * 100}%, #e5e7eb ${threshold * 100}%)`,
+                }}
+              />
+
+              {/* Current value + description */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-[#191c1e]">
+                    {Math.round(threshold * 100)}%
+                  </span>
+                  <span className="text-xs text-[#6b7280]">
+                    minimum match
+                  </span>
+                </div>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                  threshold <= 0.2
+                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                    : threshold <= 0.5
+                    ? 'bg-purple-50 text-purple-700 border-purple-200'
+                    : threshold <= 0.75
+                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                    : 'bg-red-50 text-red-700 border-red-200'
+                }`}>
+                  {threshold <= 0.2
+                    ? 'Broad — shows many results'
+                    : threshold <= 0.5
+                    ? 'Balanced — recommended'
+                    : threshold <= 0.75
+                    ? 'Focused — high precision'
+                    : 'Strict — only exact matches'}
+                </span>
+              </div>
+
+              <p className="text-xs text-[#6b7280] leading-relaxed border-t border-[#e5e7eb] pt-3">
+                <span className="font-semibold text-[#191c1e]">How it works: </span>
+                The AI chat searches your projects and marketplace agents. Lower values return more
+                results (including loosely related ones); higher values only surface strong matches.
+                The default <strong>30%</strong> is a good balance for most users.
+              </p>
+            </div>
+          </div>
 
           {/* Model Info Card */}
           <div className="p-5 bg-[#f7f9fb] border border-[#e5e7eb] rounded-lg">

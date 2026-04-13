@@ -67,6 +67,22 @@ You have access to powerful tools that allow you to:
 - **Friendly**: Be warm and supportive, but professional
 - **Accurate**: Only present information from tool results, never make up data
 
+## Marketplace Agent Recommendations
+
+DevCache has an **Agent Marketplace** with specialized AI agents (templates). When search results include marketplace templates (resource_type = "marketplace_template"), ALWAYS present them to the user — they are highly valuable and often exactly what the user is looking for.
+
+**CRITICAL**: When you find a marketplace template/agent relevant to the user's query:
+- ALWAYS present it using the [TEMPLATE:id:name] tag format
+- Explain briefly what the agent does and how it can help
+- Distinguish clearly between the user's personal project files and marketplace agents
+- If the user asked about a topic (e.g. "Mobile App") and there is a marketplace agent for it, recommend that agent even if their personal documents also appear
+
+Example: If the user asks "Do you have any documents about Mobile App?" and you find both:
+1. User files about mobile app development → show as [FILE:id:name]  
+2. A marketplace agent "Mobile App Developer" → show as [TEMPLATE:id:name]
+
+Present BOTH, highlighting the marketplace agent as a specialized AI assistant they can use.
+
 ## When Tools Return Empty Results
 
 If a search returns no results:
@@ -78,10 +94,10 @@ If a search returns no results:
 
 1. Understand user intent
 2. Use appropriate tools to gather information
-3. Present results in a clear, organized manner
+3. Present results in a clear, organized manner — always including marketplace agents when found
 4. Offer next steps or related actions
 
-Remember: You are a knowledgeable assistant that helps users manage their knowledge effectively. Be proactive with tools, accurate with information, and always match the user's language.`
+Remember: You are a knowledgeable assistant that helps users manage their knowledge effectively. Be proactive with tools, accurate with information, always match the user's language, and always highlight relevant marketplace agents.`
 
 // ── Tool Definitions (OpenAI Format) ──────────────────────────────────────────
 
@@ -362,7 +378,7 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': Deno.env.get("APP_URL") || "https://kiro-agent.com",
+        'HTTP-Referer': Deno.env.get("APP_URL") || "https://devcache.dev",
       },
       body: JSON.stringify({
         model: 'openai/text-embedding-ada-002',
@@ -387,7 +403,8 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
 function injectResourceTags(
   aiResponse: string,
   ragResults: any[],
-  userLanguage: string
+  userLanguage: string,
+  minScore = 1.0
 ): string {
   // Check if AI already used resource tags
   const hasResourceTags = /\[(FILE|FOLDER|TEMPLATE):[a-f0-9-]+:.+\]/i.test(aiResponse)
@@ -413,9 +430,8 @@ function injectResourceTags(
   }
 
   // Only inject results that have a meaningful relevance score
-  const MIN_INJECT_SCORE = 1.0
   const relevantResults = ragResults.filter((r: any) =>
-    r.relevance_score !== undefined ? r.relevance_score >= MIN_INJECT_SCORE : true
+    r.relevance_score !== undefined ? r.relevance_score >= minScore : true
   )
 
   if (relevantResults.length === 0) {
@@ -867,7 +883,7 @@ async function analyzeIntent(
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': Deno.env.get('APP_URL') || 'https://kiro-agent.com',
+        'HTTP-Referer': Deno.env.get('APP_URL') || 'https://devcache.dev',
       },
       body: JSON.stringify({
         model: 'openai/gpt-4o-mini', // fast & cheap for intent analysis
@@ -944,6 +960,104 @@ function sseDone(): Uint8Array {
   return encoder.encode("data: [DONE]\n\n")
 }
 
+// ── Shared Search & Stream Helpers ───────────────────────────────────────────
+
+// Fallback text-only search — used when embedding generation fails or hybrid search errors.
+// Avoids duplicating the same query logic in two different call sites.
+async function textOnlySearch(
+  searchTerm: string,
+  supabase: ReturnType<typeof makeSupabase>,
+  userId: string
+): Promise<any[]> {
+  const [projectResults, marketplaceResults] = await Promise.all([
+    supabase
+      .from('project_items')
+      .select('id, name, description, type, language_tags, content')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
+      .limit(3),
+    supabase
+      .from('agent_templates')
+      .select('id, name, description, tags, content')
+      .eq('visibility', 'public')
+      .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
+      .limit(3)
+  ])
+
+  const projectItems = (projectResults.data || []).map((item: any) => ({
+    resource_type: item.type === 'folder' ? 'project_folder' : 'project_item',
+    resource_id: item.id,
+    name: item.name,
+    description: item.description,
+    tags: item.language_tags || [],
+    content_preview: item.content ? item.content.substring(0, 200) : '',
+    relevance_score: 0.6,
+    similarity_score: 0
+  }))
+
+  const marketplaceItems = (marketplaceResults.data || []).map((item: any) => ({
+    resource_type: 'marketplace_template',
+    resource_id: item.id,
+    name: item.name,
+    description: item.description,
+    tags: item.tags || [],
+    content_preview: item.content ? item.content.substring(0, 200) : '',
+    relevance_score: 0.5,
+    similarity_score: 0
+  }))
+
+  return [...projectItems, ...marketplaceItems]
+}
+
+// Regex patterns that indicate the AI explicitly said nothing was found.
+// Defined once here so they are not duplicated in both SSE injection call sites.
+// Must stay in sync with the similar patterns inside injectResourceTags().
+const NOT_FOUND_PATTERNS = [
+  /não encontrei nenhum/i,
+  /nenhum (arquivo|ficheiro|documento|recurso|resultado|template) (foi|encontrado|disponível)/i,
+  /no (files?|documents?|resources?|templates?|results?) (were )?found/i,
+  /nothing (was )?found/i,
+  /sem (arquivos|ficheiros|documentos|recursos|resultados)/i,
+]
+
+// Inject resource tags into the SSE stream when the AI omitted them.
+// Called from two separate streaming paths (normal and MAX_ITER) to avoid duplication.
+async function maybeInjectTagsIntoStream(
+  writer: WritableStreamDefaultWriter<Uint8Array>,
+  fullResponse: string,
+  searchResults: any[],
+  searchRelevanceThreshold: number,
+  needsSearch: boolean,
+  userLanguage: string
+): Promise<void> {
+  if (!needsSearch) return
+
+  const hasResourceTags = /\[(FILE|FOLDER|TEMPLATE):[a-f0-9-]+:.+\]/i.test(fullResponse)
+  if (hasResourceTags) return
+
+  if (NOT_FOUND_PATTERNS.some(p => p.test(fullResponse))) return
+
+  const relevantResults = searchResults.filter((r: any) =>
+    r.relevance_score !== undefined ? r.relevance_score >= searchRelevanceThreshold : true
+  )
+  if (relevantResults.length === 0) return
+
+  console.log(`⚠️ AI did not use resource tags, injecting ${relevantResults.length} relevant resource(s)...`)
+
+  const intro = userLanguage === 'pt-BR'
+    ? `\n\n---\n\nEncontrei ${relevantResults.length} recurso(s) relevante(s):\n\n`
+    : `\n\n---\n\nI found ${relevantResults.length} relevant resource(s):\n\n`
+
+  await writer.write(sseEvent({ content: intro }))
+
+  for (const r of relevantResults) {
+    const tagType = r.resource_type === 'project_folder' ? 'FOLDER' :
+                    r.resource_type === 'marketplace_template' ? 'TEMPLATE' : 'FILE'
+    await writer.write(sseEvent({ content: `[${tagType}:${r.resource_id}:${r.name}]\n` }))
+  }
+}
+
 // ── OpenRouter API Call ───────────────────────────────────────────────────────
 
 // Cost per 1M tokens in USD — update as needed
@@ -976,8 +1090,8 @@ async function callOpenRouter(
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": Deno.env.get("APP_URL") || "https://kiro-agent.com",
-      "X-Title": "Kiro Agent Platform",
+      "HTTP-Referer": Deno.env.get("APP_URL") || "https://devcache.dev",
+      "X-Title": "DevCache",
     },
     body: JSON.stringify({
       model,
@@ -1107,8 +1221,27 @@ Deno.serve(async (req) => {
       })
 
     // ── Load User Context ──
-    const userLanguage = detectLanguage(message)
+    // Initial language detection via keyword heuristic; will be refined by LLM-based
+    // intent analysis below, which is more accurate for edge cases.
+    let userLanguage = detectLanguage(message)
     const skillsInstructions = await loadActiveSkills(supabase, userId)
+
+    // ── Load User Search Threshold ──
+    // Default to 0.3 if not set; user can tune this in Settings → Preferences
+    let searchRelevanceThreshold = 0.3
+    try {
+      const { data: prefRow } = await supabase
+        .from('user_model_preferences')
+        .select('search_relevance_threshold')
+        .eq('user_id', userId)
+        .single()
+      if (prefRow && prefRow.search_relevance_threshold != null) {
+        searchRelevanceThreshold = Number(prefRow.search_relevance_threshold)
+      }
+    } catch (_) {
+      // silently fall back to default
+    }
+    console.log('🎚️ Search relevance threshold:', searchRelevanceThreshold)
 
     // ── Get OpenRouter API Key ──
     const apiKey = Deno.env.get("OPENROUTER_API_KEY")
@@ -1159,6 +1292,12 @@ Deno.serve(async (req) => {
         }
         thinkingSteps.push(thinkStep_intentDone)
         await writer.write(sseEvent({ thinking: thinkStep_intentDone }))
+
+        // Refine language using the LLM-detected value (more accurate than keyword heuristic).
+        // Falls back to the initial heuristic if the LLM returns 'unknown'.
+        if (intent.language && intent.language !== 'unknown') {
+          userLanguage = intent.language === 'pt-BR' ? 'pt-BR' : 'en'
+        }
 
         // ── Step 2: Search knowledge base ONLY when user is actually looking for resources ──
         const searchStartTime = Date.now()
@@ -1215,54 +1354,14 @@ Deno.serve(async (req) => {
             p_query_embedding: `[${queryEmbedding.join(',')}]`,
             p_include_marketplace: true,
             p_limit: 10,
+            p_min_relevance: searchRelevanceThreshold,
           })
 
           if (searchError) {
             console.error('❌ Search error:', searchError)
             console.error('❌ Error details:', JSON.stringify(searchError, null, 2))
             console.log('🔄 Falling back to text-only search...')
-            
-            // Fallback: busca textual em projetos E marketplace
-            const searchTerm = queryKeywords || message
-            const [projectResults, marketplaceResults] = await Promise.all([
-              supabase
-                .from('project_items')
-                .select('id, name, description, type, language_tags, content')
-                .eq('user_id', userId)
-                .is('deleted_at', null)
-                .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-                .limit(3),
-              supabase
-                .from('agent_templates')
-                .select('id, name, description, tags, content')
-                .eq('visibility', 'public')
-                .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-                .limit(3)
-            ])
-            
-            const projectItems = (projectResults.data || []).map((item: any) => ({
-              resource_type: item.type === 'folder' ? 'project_folder' : 'project_item',
-              resource_id: item.id,
-              name: item.name,
-              description: item.description,
-              tags: item.language_tags || [],
-              content_preview: item.content ? item.content.substring(0, 200) : '',
-              relevance_score: 0.6,
-              similarity_score: 0
-            }))
-            
-            const marketplaceItems = (marketplaceResults.data || []).map((item: any) => ({
-              resource_type: 'marketplace_template',
-              resource_id: item.id,
-              name: item.name,
-              description: item.description,
-              tags: item.tags || [],
-              content_preview: item.content ? item.content.substring(0, 200) : '',
-              relevance_score: 0.5,
-              similarity_score: 0
-            }))
-            
-            searchResults = [...projectItems, ...marketplaceItems]
+            searchResults = await textOnlySearch(queryKeywords || message, supabase, userId)
           } else {
             searchResults = data || []
             console.log('✅ Hybrid search successful:', searchResults.length, 'results')
@@ -1275,48 +1374,7 @@ Deno.serve(async (req) => {
           }
         } else {
           console.warn('⚠️ Failed to generate embedding, using text-only search')
-          
-          // Fallback: busca textual em projetos E marketplace
-          const searchTerm = queryKeywords || message
-          const [projectResults, marketplaceResults] = await Promise.all([
-            supabase
-              .from('project_items')
-              .select('id, name, description, type, language_tags, content')
-              .eq('user_id', userId)
-              .is('deleted_at', null)
-              .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-              .limit(3),
-            supabase
-              .from('agent_templates')
-              .select('id, name, description, tags, content')
-              .eq('visibility', 'public')
-              .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-              .limit(3)
-          ])
-          
-          const projectItems = (projectResults.data || []).map((item: any) => ({
-            resource_type: item.type === 'folder' ? 'project_folder' : 'project_item',
-            resource_id: item.id,
-            name: item.name,
-            description: item.description,
-            tags: item.language_tags || [],
-            content_preview: item.content ? item.content.substring(0, 200) : '',
-            relevance_score: 0.6,
-            similarity_score: 0
-          }))
-          
-          const marketplaceItems = (marketplaceResults.data || []).map((item: any) => ({
-            resource_type: 'marketplace_template',
-            resource_id: item.id,
-            name: item.name,
-            description: item.description,
-            tags: item.tags || [],
-            content_preview: item.content ? item.content.substring(0, 200) : '',
-            relevance_score: 0.5,
-            similarity_score: 0
-          }))
-          
-          searchResults = [...projectItems, ...marketplaceItems]
+          searchResults = await textOnlySearch(queryKeywords || message, supabase, userId)
         }
         
         console.log('📊 Search Results:', searchResults.length, 'resources found')
@@ -1431,11 +1489,11 @@ Deno.serve(async (req) => {
           totalTokensInput  += json.usage?.prompt_tokens     ?? 0
           totalTokensOutput += json.usage?.completion_tokens ?? 0
           const choice = json.choices?.[0]
-          const message = choice?.message
+          const aiMessage = choice?.message
           const finishReason: string = choice?.finish_reason ?? "stop"
 
           // Check if AI wants to call tools
-          if (finishReason !== "tool_calls" || !message?.tool_calls?.length) {
+          if (finishReason !== "tool_calls" || !aiMessage?.tool_calls?.length) {
             // No tool calls - stream final response
             console.log("No tool calls, generating final response")
 
@@ -1488,39 +1546,12 @@ Deno.serve(async (req) => {
               reader.releaseLock()
             }
 
-            // Check if we need to inject resource tags inline (only if AI didn't use them)
-            const hasResourceTags = /\[(FILE|FOLDER|TEMPLATE):[a-f0-9-]+:.+\]/i.test(fullResponse)
-            const aiSaysNotFoundInline = [
-              /não encontrei nenhum/i,
-              /nenhum (arquivo|ficheiro|documento|recurso|resultado|template) (foi|encontrado)/i,
-              /no (files?|documents?|resources?|templates?|results?) (were )?found/i,
-              /nothing (was )?found/i,
-            ].some(p => p.test(fullResponse))
-            const inlineRelevant = searchResults.filter((r: any) =>
-              r.relevance_score !== undefined ? r.relevance_score >= 1.0 : true
-            )
-
-            if (intent.needsSearch && !hasResourceTags && !aiSaysNotFoundInline && inlineRelevant.length > 0) {
-              console.log('⚠️ AI did not use resource tags, injecting them in stream...')
-              
-              // Send resource tags via SSE
-              const intro = userLanguage === 'pt-BR'
-                ? `\n\n---\n\nEncontrei ${inlineRelevant.length} recurso(s) relevante(s):\n\n`
-                : `\n\n---\n\nI found ${inlineRelevant.length} relevant resource(s):\n\n`
-              
-              await writer.write(sseEvent({ content: intro }))
-              
-              for (const r of inlineRelevant) {
-                const tagType = r.resource_type === 'project_folder' ? 'FOLDER' :
-                              r.resource_type === 'marketplace_template' ? 'TEMPLATE' : 'FILE'
-                const tag = `[${tagType}:${r.resource_id}:${r.name}]\n`
-                await writer.write(sseEvent({ content: tag }))
-              }
-            }
+            // Inject resource tags into stream if the AI omitted them
+            await maybeInjectTagsIntoStream(writer, fullResponse, searchResults, searchRelevanceThreshold, intent.needsSearch, userLanguage)
 
             // Save assistant message — only post-process if search was requested
             const finalResponse = intent.needsSearch
-              ? injectResourceTags(fullResponse, searchResults, userLanguage)
+              ? injectResourceTags(fullResponse, searchResults, userLanguage, searchRelevanceThreshold)
               : fullResponse
             const costUsd = calculateCost(totalTokensInput, totalTokensOutput, model)
             
@@ -1552,11 +1583,11 @@ Deno.serve(async (req) => {
           }
 
           // ── Execute Tool Calls ──
-          console.log(`AI requested ${message.tool_calls.length} tool call(s)`)
+          console.log(`AI requested ${aiMessage.tool_calls.length} tool call(s)`)
 
           const toolMessages: OAIMessage[] = []
 
-          for (const toolCall of message.tool_calls) {
+          for (const toolCall of aiMessage.tool_calls) {
             const name: string = toolCall.function?.name ?? ""
             let input: Record<string, any> = {}
             
@@ -1618,8 +1649,8 @@ Deno.serve(async (req) => {
           // Append assistant message with tool calls + tool results
           conversationMessages.push({
             role: "assistant",
-            content: message.content ?? null,
-            tool_calls: message.tool_calls,
+            content: aiMessage.content ?? null,
+            tool_calls: aiMessage.tool_calls,
           })
 
           for (const tm of toolMessages) {
@@ -1666,10 +1697,7 @@ Deno.serve(async (req) => {
             
             for (const line of lines) {
               const data = line.slice(6).trim()
-              if (data === "[DONE]") {
-                await writer.write(sseDone())
-                return
-              }
+              if (data === "[DONE]") continue // let reader.read() return done:true naturally
               
               try {
                 const parsed = JSON.parse(data)
@@ -1692,39 +1720,12 @@ Deno.serve(async (req) => {
           reader.releaseLock()
         }
 
-        // Check if we need to inject resource tags (MAX_ITER path)
-        const hasResourceTags = /\[(FILE|FOLDER|TEMPLATE):[a-f0-9-]+:.+\]/i.test(fullResponse)
-        const aiSaysNotFoundMaxIter = [
-          /não encontrei nenhum/i,
-          /nenhum (arquivo|ficheiro|documento|recurso|resultado|template) (foi|encontrado)/i,
-          /no (files?|documents?|resources?|templates?|results?) (were )?found/i,
-          /nothing (was )?found/i,
-        ].some(p => p.test(fullResponse))
-        const maxIterRelevant = searchResults.filter((r: any) =>
-          r.relevance_score !== undefined ? r.relevance_score >= 1.0 : true
-        )
-        
-        if (intent.needsSearch && !hasResourceTags && !aiSaysNotFoundMaxIter && maxIterRelevant.length > 0) {
-          console.log('⚠️ AI did not use resource tags (MAX_ITER), injecting them in stream...')
-          
-          // Send resource tags via SSE
-          const intro = userLanguage === 'pt-BR'
-            ? `\n\n---\n\nEncontrei ${maxIterRelevant.length} recurso(s) relevante(s):\n\n`
-            : `\n\n---\n\nI found ${maxIterRelevant.length} relevant resource(s):\n\n`
-          
-          await writer.write(sseEvent({ content: intro }))
-          
-          for (const r of maxIterRelevant) {
-            const tagType = r.resource_type === 'project_folder' ? 'FOLDER' :
-                          r.resource_type === 'marketplace_template' ? 'TEMPLATE' : 'FILE'
-            const tag = `[${tagType}:${r.resource_id}:${r.name}]\n`
-            await writer.write(sseEvent({ content: tag }))
-          }
-        }
+        // Inject resource tags into stream if the AI omitted them (MAX_ITER path)
+        await maybeInjectTagsIntoStream(writer, fullResponse, searchResults, searchRelevanceThreshold, intent.needsSearch, userLanguage)
 
         // Save assistant message — only post-process if search was requested
         const finalResponse = intent.needsSearch
-          ? injectResourceTags(fullResponse, searchResults, userLanguage)
+          ? injectResourceTags(fullResponse, searchResults, userLanguage, searchRelevanceThreshold)
           : fullResponse
         const costUsd = calculateCost(totalTokensInput, totalTokensOutput, model)
         

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -21,21 +21,13 @@ export async function GET(
 
     const { id } = await params
 
-    // Get template data
+    // Get template data — allow public templates or the user's own templates
     const { data: template, error: templateError } = await supabase
       .from('agent_templates')
-      .select(
-        `
-        id,
-        name,
-        description,
-        content,
-        language,
-        tags
-      `
-      )
+      .select('id, name, description, content, tags')
       .eq('id', id)
-      .eq('is_published', true)
+      .is('deleted_at', null)
+      .or(`visibility.eq.public,user_id.eq.${user.id}`)
       .single()
 
     if (templateError || !template) {
@@ -49,7 +41,6 @@ export async function GET(
       name: template.name,
       description: template.description,
       content: template.content || 'No content available',
-      language: template.language,
       tags: template.tags || [],
     })
   } catch (error) {

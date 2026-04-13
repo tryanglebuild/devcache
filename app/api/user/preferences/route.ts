@@ -11,13 +11,24 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { default_model } = body
+    const { default_model, search_relevance_threshold } = body
 
     if (!default_model) {
       return NextResponse.json(
         { error: 'Default model is required' },
         { status: 400 }
       )
+    }
+
+    // Validate threshold if provided
+    if (search_relevance_threshold !== undefined) {
+      const t = Number(search_relevance_threshold)
+      if (isNaN(t) || t < 0 || t > 1) {
+        return NextResponse.json(
+          { error: 'search_relevance_threshold must be a number between 0 and 1' },
+          { status: 400 }
+        )
+      }
     }
 
     // Check if preferences exist
@@ -27,16 +38,21 @@ export async function PUT(request: Request) {
       .eq('user_id', user.id)
       .single()
 
+    const updatePayload: Record<string, unknown> = {
+      default_model,
+      updated_at: new Date().toISOString(),
+    }
+    if (search_relevance_threshold !== undefined) {
+      updatePayload.search_relevance_threshold = Number(search_relevance_threshold)
+    }
+
     let data, error
 
     if (existing) {
       // Update existing preferences
       const result = await supabase
         .from('user_model_preferences')
-        .update({
-          default_model,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updatePayload)
         .eq('user_id', user.id)
         .select()
         .single()
@@ -49,7 +65,7 @@ export async function PUT(request: Request) {
         .from('user_model_preferences')
         .insert({
           user_id: user.id,
-          default_model,
+          ...updatePayload,
         })
         .select()
         .single()

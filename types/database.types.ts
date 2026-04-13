@@ -724,6 +724,7 @@ export type Database = {
           favorite_models: string[] | null
           id: string
           model_usage_stats: Json | null
+          search_relevance_threshold: number
           updated_at: string | null
           user_id: string
         }
@@ -733,6 +734,7 @@ export type Database = {
           favorite_models?: string[] | null
           id?: string
           model_usage_stats?: Json | null
+          search_relevance_threshold?: number
           updated_at?: string | null
           user_id: string
         }
@@ -742,6 +744,7 @@ export type Database = {
           favorite_models?: string[] | null
           id?: string
           model_usage_stats?: Json | null
+          search_relevance_threshold?: number
           updated_at?: string | null
           user_id?: string
         }
