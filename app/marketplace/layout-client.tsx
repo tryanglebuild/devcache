@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { SidebarProvider, DashboardSidebar, useSidebarContext } from '@/components/dashboard-sidebar'
 import { CreateItemProvider } from '@/components/providers/CreateItemProvider'
 import { ProfileModal } from '@/components/dashboard/ProfileModal'
-import { SearchBar } from '@/components/dashboard/SearchBar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,12 +35,7 @@ function MarketplaceContent({
 }) {
   const { isCollapsed } = useSidebarContext()
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   const handleLogout = async () => {
     try {
@@ -85,12 +79,6 @@ function MarketplaceContent({
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[72px]' : 'ml-64'}`}>
         <header className="sticky top-0 z-40 bg-[#f7f9fb] dark:bg-surface border-b border-[#c7c4d7]/10 dark:border-white/[0.06]">
           <div className="flex items-center justify-between gap-4 px-6 py-4">
-            <div className="w-[200px]" />
-
-            <div className="flex-1 flex justify-center max-w-2xl mx-auto">
-              <SearchBar />
-            </div>
-
             <div className="ml-auto flex items-center gap-4">
               <Link href="/support" className="p-2 text-[#464554] dark:text-on-surface-variant hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded-full transition-colors" title="Help & Support">
                 <HelpCircle size={22} strokeWidth={1.5} />

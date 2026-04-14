@@ -1,14 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Tables } from '@/types/database.types'
 import { Search, Folder, FileText, Tag, X, Loader2 } from 'lucide-react'
 import { trackActivity } from '@/lib/activity/track'
-
-type ProjectItem = Tables<'project_items'>
-type UserTag = Tables<'user_tags'>
 
 interface SearchResult {
   type: 'file' | 'folder' | 'tag'
@@ -35,7 +31,8 @@ export function SearchBar() {
   const [tagsPage, setTagsPage] = useState(0)
   const searchRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
+  const loadingMoreRef = useRef(false)
+  const supabase = useMemo(() => createClient(), [])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -49,31 +46,11 @@ export function SearchBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Infinite scroll handler
-  const handleScroll = useCallback(() => {
-    if (!dropdownRef.current || isLoadingMore || (!hasMoreItems && !hasMoreTags)) return
-
-    const { scrollTop, scrollHeight, clientHeight } = dropdownRef.current
-    
-    // Load more when user scrolls to bottom (with 50px threshold)
-    if (scrollHeight - scrollTop - clientHeight < 50) {
-      loadMoreResults()
-    }
-  }, [isLoadingMore, hasMoreItems, hasMoreTags])
-
-  // Attach scroll listener
-  useEffect(() => {
-    const dropdown = dropdownRef.current
-    if (dropdown) {
-      dropdown.addEventListener('scroll', handleScroll)
-      return () => dropdown.removeEventListener('scroll', handleScroll)
-    }
-  }, [handleScroll])
-
   // Load more results
-  const loadMoreResults = async () => {
-    if (isLoadingMore || (!hasMoreItems && !hasMoreTags)) return
+  const loadMoreResults = useCallback(async () => {
+    if (loadingMoreRef.current || (!hasMoreItems && !hasMoreTags)) return
 
+    loadingMoreRef.current = true
     setIsLoadingMore(true)
 
     try {
@@ -137,13 +114,37 @@ export function SearchBar() {
         }
       }
 
-      setResults(prev => [...prev, ...newResults])
+      setResults(prev => {
+        const existingIds = new Set(prev.map(r => `${r.type}-${r.id}`))
+        return [...prev, ...newResults.filter(r => !existingIds.has(`${r.type}-${r.id}`))]
+      })
     } catch (error) {
       console.error('Load more error:', error)
     } finally {
+      loadingMoreRef.current = false
       setIsLoadingMore(false)
     }
-  }
+  }, [hasMoreItems, hasMoreTags, query, itemsPage, tagsPage, supabase])
+
+  // Infinite scroll handler
+  const handleScroll = useCallback(() => {
+    if (!dropdownRef.current || loadingMoreRef.current || (!hasMoreItems && !hasMoreTags)) return
+
+    const { scrollTop, scrollHeight, clientHeight } = dropdownRef.current
+
+    if (scrollHeight - scrollTop - clientHeight < 50) {
+      loadMoreResults()
+    }
+  }, [hasMoreItems, hasMoreTags, loadMoreResults])
+
+  // Attach scroll listener
+  useEffect(() => {
+    const dropdown = dropdownRef.current
+    if (dropdown) {
+      dropdown.addEventListener('scroll', handleScroll)
+      return () => dropdown.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
 
   // Initial search function
   useEffect(() => {

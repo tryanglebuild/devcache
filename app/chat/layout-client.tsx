@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { SidebarProvider, DashboardSidebar, useSidebarContext } from '@/components/dashboard-sidebar'
 import { CreateItemProvider } from '@/components/providers/CreateItemProvider'
 import { ProfileModal } from '@/components/dashboard/ProfileModal'
-import { SearchBar } from '@/components/dashboard/SearchBar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -85,14 +84,6 @@ function ChatContent({
         {/* Top Navbar */}
         <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#0d1121]/90 backdrop-blur-md border-b border-[#e8eff3] dark:border-white/[0.06]">
           <div className="flex items-center justify-between gap-4 px-6 py-2.5">
-            {/* Left spacer for balance */}
-            <div className="w-[200px]" />
-            
-            {/* Search - Centered */}
-            <div className="flex-1 flex justify-center max-w-2xl mx-auto">
-              <SearchBar />
-            </div>
-
             {/* Right Side */}
             <div className="ml-auto flex items-center gap-3">
               <Link 

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Tables } from '@/types/database.types'
-import { Plus, Folder, FileText, Star } from 'lucide-react'
+import { Plus, Folder, Search, X } from 'lucide-react'
 import { CreateItemModal } from './CreateItemModal'
 import { ItemCard } from './ItemCard'
 import { FolderUploadButton } from './FolderUploadButton'
@@ -36,7 +36,9 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
   const [currentPage, setCurrentPage] = useState(1)
   const [totalItems, setTotalItems] = useState(initialTotal)
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClient()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+  const supabase = useMemo(() => createClient(), [])
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
@@ -50,6 +52,60 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
       router.replace('/dashboard/projects', { scroll: false })
     }
   }, [searchParams, router])
+
+  // Search by name with debounce
+  const searchByName = useCallback(async (query: string) => {
+    setIsSearching(true)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      if (query.trim().length < 1) {
+        // Reset to paginated view
+        const { data: resetItems, count } = await supabase
+          .from('project_items')
+          .select('*', { count: 'exact' })
+          .eq('user_id', user.id)
+          .is('parent_id', null)
+          .is('deleted_at', null)
+          .order('type', { ascending: false })
+          .order('name', { ascending: true })
+          .range(0, ITEMS_PER_PAGE - 1)
+
+        setItems(resetItems || [])
+        setTotalItems(count || 0)
+        setCurrentPage(1)
+        return
+      }
+
+      const searchTerm = `%${query.trim()}%`
+      const { data: found, count } = await supabase
+        .from('project_items')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user.id)
+        .is('parent_id', null)
+        .is('deleted_at', null)
+        .ilike('name', searchTerm)
+        .order('type', { ascending: false })
+        .order('name', { ascending: true })
+
+      setItems(found || [])
+      setTotalItems(count || 0)
+      setCurrentPage(1)
+    } catch (error) {
+      console.error('Search error:', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }, [supabase])
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      searchByName(searchQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery, searchByName])
 
   const handleOpenFolder = (folder: ProjectItem) => {
     router.push(`/dashboard/projects/${folder.id}`)
@@ -74,8 +130,9 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
     setTotalItems(prev => prev + newItems.length)
   }
 
-  // Load page data
+  // Load page data (only when not searching)
   const loadPage = async (page: number) => {
+    if (searchQuery.trim().length > 0) return
     setIsLoading(true)
 
     try {
@@ -190,43 +247,41 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[#4f46e5]/10 flex items-center justify-center text-[#4f46e5] dark:text-[#7c7ff5]">
-            <Folder className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">Folders</p>
-            <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{folders.length}</p>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[#575992]/10 flex items-center justify-center text-[#575992] dark:text-[#7c7ff5]">
-            <FileText className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">Files</p>
-            <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{files.length}</p>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[#904900]/10 flex items-center justify-center text-[#904900]">
-            <Star className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">Favorites</p>
-            <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">
-              {items.filter(item => item.is_favorite).length}
-            </p>
-          </div>
-        </div>
+      {/* Search Bar */}
+      <div className="relative group max-w-md">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#464554] dark:text-on-surface-variant group-focus-within:text-[#4f46e5] dark:group-focus-within:text-[#7c7ff5] transition-colors" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search projects by name..."
+          className="w-full pl-10 pr-9 py-2 bg-white dark:bg-surface-container border border-[#c7c4d7]/30 dark:border-white/[0.09] rounded-xl focus:ring-2 focus:ring-[#4f46e5]/20 dark:focus:ring-[#7c7ff5]/20 focus:border-[#4f46e5] dark:focus:border-[#7c7ff5] outline-none text-sm transition-all placeholder:text-[#9ca3af] dark:placeholder:text-on-surface-variant/50"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded-full transition-colors"
+          >
+            <X className="h-3.5 w-3.5 text-[#464554] dark:text-on-surface-variant" />
+          </button>
+        )}
       </div>
 
       {/* Content */}
-      {totalItems === 0 ? (
+      {isSearching ? (
+        <div className="text-center py-16 text-[#464554] dark:text-on-surface-variant text-sm font-medium">
+          Searching...
+        </div>
+      ) : totalItems === 0 && searchQuery.trim().length > 0 ? (
+        <div className="text-center py-16 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] dark:bg-surface-container-high flex items-center justify-center">
+            <Search className="h-8 w-8 text-[#464554] dark:text-on-surface-variant" />
+          </div>
+          <p className="text-[#464554] dark:text-on-surface-variant font-medium">
+            No projects found for &quot;{searchQuery}&quot;
+          </p>
+        </div>
+      ) : totalItems === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] dark:bg-surface-container-high flex items-center justify-center">
             <Folder className="h-8 w-8 text-[#464554] dark:text-on-surface-variant" />
@@ -284,8 +339,8 @@ export function ProjectsClient({ initialItems, initialTotal }: ProjectsClientPro
             ))}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
+          {/* Pagination — hidden while searching */}
+          {totalPages > 1 && !searchQuery.trim() && (
             <div className="mt-8 flex justify-center">
               <Pagination>
                 <PaginationContent>
