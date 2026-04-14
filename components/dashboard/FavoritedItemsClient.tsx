@@ -2,20 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Star, Loader2 } from 'lucide-react'
+import { Star, Loader2, Folder, FileText } from 'lucide-react'
 import { Tables } from '@/types/database.types'
 import { trackActivity } from '@/lib/activity/track'
-import { Skeleton } from '@/components/ui/skeleton'
 
 /**
  * FavoritedItemsClient — grid of project items the user has starred,
- * fetched from GET /api/dashboard/favorites. Clicking an item also
- * records a "view" activity event via trackActivity.
+ * fetched from GET /api/dashboard/favorites.
  */
 
 type ProjectItem = Tables<'project_items'>
 
-const PAGE_LIMIT = 6
+const PAGE_LIMIT = 12
 
 export function FavoritedItemsClient() {
   const [items, setItems] = useState<ProjectItem[]>([])
@@ -24,7 +22,6 @@ export function FavoritedItemsClient() {
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
 
-  // Fetches a single page of favorited items
   const fetchPage = useCallback(async (pageNum: number) => {
     const res = await fetch(`/api/dashboard/favorites?page=${pageNum}&limit=${PAGE_LIMIT}`)
     if (!res.ok) throw new Error('Failed to fetch favorites')
@@ -32,7 +29,6 @@ export function FavoritedItemsClient() {
   }, [])
 
   useEffect(() => {
-    // cancelled flag prevents state updates after the component unmounts
     let cancelled = false
     setIsLoading(true)
     fetchPage(1)
@@ -47,7 +43,6 @@ export function FavoritedItemsClient() {
     return () => { cancelled = true }
   }, [fetchPage])
 
-  // Appends the next page without replacing the current list
   const loadMore = async () => {
     setIsLoadingMore(true)
     try {
@@ -65,16 +60,21 @@ export function FavoritedItemsClient() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: PAGE_LIMIT }).map((_, i) => (
-          <div key={i} className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-            <div className="flex items-start gap-3">
-              <Skeleton className="w-12 h-12 rounded-lg flex-shrink-0" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
+          <div
+            key={i}
+            className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4 animate-pulse"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-surface-container-high" />
+              <div className="flex-1">
+                <div className="h-3.5 bg-neutral-100 dark:bg-surface-container-high rounded w-3/4 mb-2" />
+                <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-1/2" />
               </div>
             </div>
+            <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-full mb-2" />
+            <div className="h-3 bg-neutral-100 dark:bg-surface-container-high rounded w-5/6" />
           </div>
         ))}
       </div>
@@ -83,82 +83,92 @@ export function FavoritedItemsClient() {
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-12 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08]">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-yellow-50 dark:bg-yellow-400/10 flex items-center justify-center">
-          <Star size={28} strokeWidth={1.5} className="text-yellow-400 fill-yellow-400" />
-        </div>
-        <p className="text-[#464554] dark:text-on-surface-variant font-medium">No favorite items yet</p>
+      <div className="bg-neutral-50 dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-10 text-center">
+        <Star size={24} strokeWidth={1.5} className="mx-auto mb-3 text-neutral-300 dark:text-neutral-700" />
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">No favorites yet</p>
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">
+          Star projects and files to find them here quickly
+        </p>
       </div>
     )
   }
 
   return (
     <>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {items.map((item) => {
-        const url = item.type === 'folder'
-          ? `/dashboard/projects/${item.id}`
-          : `/dashboard/projects/file/${item.id}`
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {items.map((item) => {
+          const url = item.type === 'folder'
+            ? `/dashboard/projects/${item.id}`
+            : `/dashboard/projects/file/${item.id}`
 
-        return (
-          <Link
-            key={item.id}
-            href={url}
-            onClick={() => trackActivity(item.id, 'view')}
-            className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:ring-1 dark:ring-white/[0.08] hover:shadow-lg dark:hover:ring-white/[0.12] transition-all cursor-pointer text-left"
-          >
-            <div className="flex items-start gap-3">
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                item.type === 'folder' ? 'bg-[#4f46e5]/10 dark:bg-[#7c7ff5]/15 text-[#4f46e5] dark:text-[#7c7ff5]' : 'bg-[#575992]/10 dark:bg-[#8b8cc7]/15 text-[#575992] dark:text-[#a5a6e6]'
-              }`}>
-                <span className="material-symbols-outlined text-xl">
-                  {item.type === 'folder' ? 'folder' : 'description'}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-bold text-[#191c1e] dark:text-on-surface truncate">{item.name}</h4>
-                  <span className="material-symbols-outlined text-[#904900] text-sm flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    star
-                  </span>
-                </div>
-                {item.description && (
-                  <p className="text-xs text-[#464554] dark:text-on-surface-variant line-clamp-2">{item.description}</p>
-                )}
-                {item.language_tags && item.language_tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {item.language_tags.slice(0, 3).map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-0.5 bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant rounded text-[10px] font-bold uppercase tracking-wider"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                    {item.language_tags.length > 3 && (
-                      <span className="px-2 py-0.5 bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant rounded text-[10px] font-bold">
-                        +{item.language_tags.length - 3}
-                      </span>
-                    )}
+          return (
+            <Link
+              key={item.id}
+              href={url}
+              onClick={() => trackActivity(item.id, 'view')}
+              className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4 hover:border-neutral-400 dark:hover:border-white/20 hover:shadow-sm transition-all cursor-pointer group"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center flex-shrink-0">
+                    {item.type === 'folder'
+                      ? <Folder size={16} strokeWidth={1.5} className="text-neutral-500 dark:text-neutral-400" />
+                      : <FileText size={16} strokeWidth={1.5} className="text-neutral-500 dark:text-neutral-400" />
+                    }
                   </div>
-                )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
+                      {item.name}
+                    </h3>
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-surface-container-high text-neutral-400 dark:text-neutral-500">
+                      {item.type === 'folder' ? 'Folder' : 'File'}
+                    </span>
+                  </div>
+                </div>
+                {/* Star indicator */}
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-1" title="Favorited" />
               </div>
-            </div>
-          </Link>
-        )
-      })}
-    </div>
 
-    {hasNextPage && (
-      <button
-        onClick={loadMore}
-        disabled={isLoadingMore}
-        className="w-full py-2.5 text-sm font-semibold text-indigo-600 dark:text-[#7c7ff5] hover:text-indigo-700 dark:hover:text-[#9b9ef8] disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
-      >
-        {isLoadingMore ? <Loader2 size={14} className="animate-spin" /> : null}
-        {isLoadingMore ? 'Loading...' : 'Load more'}
-      </button>
-    )}
+              {item.description && (
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-3 line-clamp-2">
+                  {item.description}
+                </p>
+              )}
+
+              {item.language_tags && item.language_tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {item.language_tags.slice(0, 3).map((tag, index) => (
+                    <span
+                      key={index}
+                      className="text-[10px] bg-neutral-100 dark:bg-surface-container-high text-neutral-400 dark:text-neutral-500 px-1.5 py-0.5 rounded font-medium"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {item.language_tags.length > 3 && (
+                    <span className="text-[10px] bg-neutral-100 dark:bg-surface-container-high text-neutral-400 dark:text-neutral-500 px-1.5 py-0.5 rounded font-medium">
+                      +{item.language_tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
+            </Link>
+          )
+        })}
+      </div>
+
+      {hasNextPage && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={loadMore}
+            disabled={isLoadingMore}
+            className="px-4 py-2 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-md text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-surface-container-high disabled:opacity-50 flex items-center gap-2 mx-auto transition-colors"
+          >
+            {isLoadingMore && <Loader2 size={12} className="animate-spin" />}
+            {isLoadingMore ? 'Loading...' : 'Load more'}
+          </button>
+        </div>
+      )}
     </>
   )
 }

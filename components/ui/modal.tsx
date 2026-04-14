@@ -30,24 +30,14 @@ export function Modal({
   showCloseButton = true,
 }: ModalProps) {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset'
+    return () => { document.body.style.overflow = 'unset' }
   }, [isOpen])
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
+      if (e.key === 'Escape' && isOpen) onClose()
     }
-
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
@@ -58,14 +48,14 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+        className="absolute inset-0 bg-black/40 animate-in fade-in duration-150"
         onClick={onClose}
       />
 
-      {/* Modal Content */}
+      {/* Modal */}
       <div
         className={cn(
-          'relative w-full bg-white dark:bg-[#151929] rounded-2xl shadow-2xl animate-in zoom-in-95 fade-in duration-200',
+          'relative w-full bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-xl shadow-lg animate-in zoom-in-95 fade-in duration-150',
           sizeClasses[size],
           className
         )}
@@ -74,9 +64,9 @@ export function Modal({
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-colors text-[#464554] dark:text-on-surface-variant hover:text-[#191c1e] dark:hover:text-on-surface z-10"
+            className="absolute top-4 right-4 p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-surface-container-high transition-colors text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 z-10"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         )}
         {children}
@@ -94,19 +84,19 @@ interface ModalHeaderProps {
 
 export function ModalHeader({ children, className, icon, subtitle }: ModalHeaderProps) {
   return (
-    <div className={cn('px-8 py-6 border-b border-[#c7c4d7]/20 dark:border-white/[0.06]', className)}>
-      <div className="flex items-start gap-4">
+    <div className={cn('px-6 pt-6 pb-5 border-b border-neutral-100 dark:border-white/[0.06]', className)}>
+      <div className="flex items-center gap-3 pr-6">
         {icon && (
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white shadow-lg shrink-0">
+          <div className="shrink-0">
             {icon}
           </div>
         )}
-        <div className="flex-1">
-          <h2 className="text-2xl font-black text-[#191c1e] dark:text-on-surface tracking-tight">
+        <div>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
             {children}
           </h2>
           {subtitle && (
-            <p className="text-sm text-[#464554] dark:text-on-surface-variant mt-1 font-medium">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
               {subtitle}
             </p>
           )}
@@ -123,7 +113,7 @@ interface ModalBodyProps {
 
 export function ModalBody({ children, className }: ModalBodyProps) {
   return (
-    <div className={cn('px-8 py-6', className)}>
+    <div className={cn('px-6 py-5', className)}>
       {children}
     </div>
   )
@@ -136,7 +126,7 @@ interface ModalFooterProps {
 
 export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
-    <div className={cn('px-8 py-6 border-t border-[#c7c4d7]/20 dark:border-white/[0.06] flex gap-3', className)}>
+    <div className={cn('px-6 py-4 border-t border-neutral-100 dark:border-white/[0.06] flex items-center justify-end gap-2', className)}>
       {children}
     </div>
   )

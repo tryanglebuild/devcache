@@ -26,68 +26,20 @@ import { useTheme } from '@/components/providers/ThemeProvider'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const mainMenuItems = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
-  {
-    title: 'Marketplace',
-    href: '/marketplace',
-    icon: Store,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
-  {
-    title: 'Chat',
-    href: '/chat',
-    icon: MessageSquare,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
+  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { title: 'Marketplace', href: '/marketplace', icon: Store },
+  { title: 'Chat', href: '/chat', icon: MessageSquare },
 ]
 
 const workspaceItems = [
-  {
-    title: 'Favorites',
-    href: '/dashboard/favorites',
-    icon: Star,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
-  {
-    title: 'Tags',
-    href: '/dashboard/tags',
-    icon: Tag,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
+  { title: 'Favorites', href: '/dashboard/favorites', icon: Star },
+  { title: 'Tags', href: '/dashboard/tags', icon: Tag },
 ]
 
 const bottomMenuItems = [
-  {
-    title: 'Settings',
-    href: '/dashboard/settings',
-    icon: Settings,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
-  {
-    title: 'Support',
-    href: '/support',
-    icon: HelpCircle,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
-  {
-    title: 'Deleted',
-    href: '/dashboard/deleted-templates',
-    icon: Trash2,
-    color: 'text-gray-500 dark:text-gray-400',
-    bgColor: 'bg-gray-50 dark:bg-surface-container',
-  },
+  { title: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { title: 'Support', href: '/support', icon: HelpCircle },
+  { title: 'Deleted', href: '/dashboard/deleted-templates', icon: Trash2 },
 ]
 
 // Context to share sidebar state
@@ -128,14 +80,14 @@ export function DashboardSidebar() {
       )}
     >
       {/* Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 dark:border-white/[0.06] shrink-0">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-white/[0.06] shrink-0">
         <div className={cn('flex items-center gap-3 min-w-0', isCollapsed && 'justify-center w-full')}>
           {isCollapsed ? (
             <DevCacheLogo iconOnly size="sm" theme={resolvedTheme} />
           ) : (
             <div className="flex flex-col min-w-0">
               <DevCacheLogo size="sm" theme={resolvedTheme} />
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mt-1 pl-[42px]">
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1 pl-[42px]">
                 AI Agent Marketplace
               </p>
             </div>
@@ -146,7 +98,7 @@ export function DashboardSidebar() {
       {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 w-6 h-6 bg-white dark:bg-surface-container border border-gray-200 dark:border-white/[0.09] rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] hover:border-[#4f46e5] dark:hover:border-[#7c7ff5] hover:shadow-md transition-all"
+        className="absolute -right-3 top-20 w-6 h-6 bg-white dark:bg-surface-container border border-slate-200 dark:border-white/[0.09] rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-[#7c7ff5] hover:border-indigo-500 dark:hover:border-[#7c7ff5] hover:shadow-md transition-all"
       >
         {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
       </button>
@@ -156,7 +108,7 @@ export function DashboardSidebar() {
         {/* Main Navigation */}
         <div className="space-y-1 shrink-0">
           {!isCollapsed && (
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
               Main
             </p>
           )}
@@ -172,11 +124,11 @@ export function DashboardSidebar() {
                   isCollapsed && 'justify-center',
                   isActive
                     ? 'bg-[#4f46e5] text-white shadow-md'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-surface-container-high'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-surface-container-high'
                 )}
                 title={isCollapsed ? item.title : undefined}
               >
-                <Icon className={cn('h-5 w-5 shrink-0', isActive ? 'text-white' : item.color)} />
+                <Icon className={cn('h-5 w-5 shrink-0', isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500')} />
                 {!isCollapsed && (
                   <span className="text-sm font-semibold">
                     {item.title}
@@ -190,7 +142,7 @@ export function DashboardSidebar() {
         {/* Workspace Section */}
         <div className="space-y-1 shrink-0">
           {!isCollapsed && (
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
               Workspace
             </p>
           )}
@@ -205,12 +157,12 @@ export function DashboardSidebar() {
                   'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
                   isCollapsed && 'justify-center',
                   isActive
-                    ? 'bg-gray-100 dark:bg-surface-container-high text-gray-900 dark:text-on-surface font-semibold'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-container hover:text-gray-900 dark:hover:text-on-surface'
+                    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-[#7c7ff5] font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-surface-container hover:text-slate-900 dark:hover:text-on-surface'
                 )}
                 title={isCollapsed ? item.title : undefined}
               >
-                <Icon className={cn('h-5 w-5 shrink-0', isActive ? item.color : '')} />
+                <Icon className={cn('h-5 w-5 shrink-0', isActive ? 'text-indigo-600 dark:text-[#7c7ff5]' : 'text-slate-400 dark:text-slate-500')} />
                 {!isCollapsed && (
                   <span className="text-sm font-medium">
                     {item.title}
@@ -225,14 +177,14 @@ export function DashboardSidebar() {
         <div className="flex-1 flex flex-col min-h-0">
           {!isCollapsed && (
             <div className="flex items-center mb-2 shrink-0 px-3">
-              <Link href="/dashboard/projects" className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors flex-1">
+              <Link href="/dashboard/projects" className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-[#7c7ff5] transition-colors flex-1">
                 Projects
               </Link>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setQuickCreateType('folder')}
                   title="New Folder"
-                  className="relative w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors"
+                  className="relative w-5 h-5 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-[#7c7ff5] transition-colors"
                 >
                   <Folder className="w-4 h-4" />
                   <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-white dark:bg-surface rounded-full flex items-center justify-center">
@@ -242,7 +194,7 @@ export function DashboardSidebar() {
                 <button
                   onClick={() => setQuickCreateType('file')}
                   title="New File"
-                  className="relative w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-[#4f46e5] dark:hover:text-[#7c7ff5] transition-colors"
+                  className="relative w-5 h-5 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-[#7c7ff5] transition-colors"
                 >
                   <FileText className="w-4 h-4" />
                   <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-white dark:bg-surface rounded-full flex items-center justify-center">
@@ -266,8 +218,8 @@ export function DashboardSidebar() {
               className={cn(
                 'flex items-center justify-center px-3 py-2.5 rounded-lg transition-all',
                 pathname?.startsWith('/dashboard/projects')
-                  ? 'bg-gray-100 dark:bg-surface-container-high text-[#4f46e5] dark:text-[#7c7ff5] font-semibold'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-container hover:text-gray-900 dark:hover:text-on-surface'
+                  ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-[#7c7ff5] font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-surface-container hover:text-slate-900 dark:hover:text-on-surface'
               )}
               title="Projects"
             >
@@ -282,10 +234,10 @@ export function DashboardSidebar() {
         {/* Divider row with theme toggle sitting on the line */}
         <div className={cn(
           'flex items-center mb-1',
-          isCollapsed ? 'justify-center pt-3 border-t border-gray-100 dark:border-white/[0.06]' : 'justify-end'
+          isCollapsed ? 'justify-center pt-3 border-t border-slate-100 dark:border-white/[0.06]' : 'justify-end'
         )}>
           {!isCollapsed && (
-            <div className="flex-1 h-px bg-gray-100 dark:bg-white/[0.06] mr-2" />
+            <div className="flex-1 h-px bg-slate-100 dark:bg-white/[0.06] mr-2" />
           )}
           <ThemeToggle simple />
         </div>
@@ -301,12 +253,12 @@ export function DashboardSidebar() {
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
                 isCollapsed && 'justify-center',
                 isActive
-                  ? 'bg-gray-100 dark:bg-surface-container-high text-gray-900 dark:text-on-surface font-semibold'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-container hover:text-gray-900 dark:hover:text-on-surface'
+                  ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-[#7c7ff5] font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-surface-container hover:text-slate-900 dark:hover:text-on-surface'
               )}
               title={isCollapsed ? item.title : undefined}
             >
-              <Icon className={cn('h-5 w-5 shrink-0', isActive ? item.color : '')} />
+              <Icon className={cn('h-5 w-5 shrink-0', isActive ? 'text-indigo-600 dark:text-[#7c7ff5]' : 'text-slate-400 dark:text-slate-500')} />
               {!isCollapsed && (
                 <span className="text-sm font-medium">
                   {item.title}

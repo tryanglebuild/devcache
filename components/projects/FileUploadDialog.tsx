@@ -4,7 +4,6 @@
 // with per-file status and error list during upload.
 
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal'
-import { Button } from '@/components/ui/button'
 import { UploadProgress } from '@/lib/storage/folder-upload'
 import { FileText, CheckCircle2, XCircle, Upload } from 'lucide-react'
 
@@ -16,20 +15,13 @@ interface FileUploadDialogProps {
   onCancel: () => void
 }
 
-export function FileUploadDialog({
-  files,
-  uploadProgress,
-  isUploading,
-  onConfirm,
-  onCancel,
-}: FileUploadDialogProps) {
+export function FileUploadDialog({ files, uploadProgress, isUploading, onConfirm, onCancel }: FileUploadDialogProps) {
   const totalSize = files.reduce((sum, file) => sum + file.size, 0)
   const formatSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
+    if (bytes === 0) return '0 B'
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(1024))
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i]
   }
 
   const progressPercentage = uploadProgress
@@ -37,72 +29,69 @@ export function FileUploadDialog({
     : 0
 
   return (
-    <Modal isOpen={true} onClose={onCancel} size="xl">
+    <Modal isOpen={true} onClose={onCancel} size="lg">
       <ModalHeader
-        icon={<Upload className="h-7 w-7" />}
+        icon={
+          <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center">
+            <Upload className="h-4 w-4 text-neutral-500 dark:text-neutral-400" strokeWidth={1.5} />
+          </div>
+        }
         subtitle={
-          isUploading 
+          isUploading
             ? `Uploading ${files.length} file${files.length > 1 ? 's' : ''}...`
             : `Review ${files.length} file${files.length > 1 ? 's' : ''} before uploading`
         }
       >
-        {isUploading ? 'Uploading Files' : 'Upload Files Preview'}
+        {isUploading ? 'Uploading Files' : 'Upload Files'}
       </ModalHeader>
 
-      <ModalBody className="space-y-6">
+      <ModalBody className="space-y-5">
         {/* Summary */}
-        <div className="bg-gradient-to-br from-[#f8f9fa] to-[#f2f4f6] p-6 rounded-xl border border-[#c7c4d7]/20">
-          <h4 className="font-bold text-xs text-[#191c1e] mb-4 uppercase tracking-wider">Summary</h4>
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <p className="text-xs text-[#464554] mb-1.5 uppercase tracking-wider">Total Files</p>
-              <p className="font-black text-3xl text-[#191c1e]">{files.length}</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: 'Total Files', value: files.length },
+            { label: 'Total Size', value: formatSize(totalSize) },
+          ].map(({ label, value }) => (
+            <div key={label} className="px-4 py-3 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-lg">
+              <p className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">{label}</p>
+              <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 tabular-nums">{value}</p>
             </div>
-            <div>
-              <p className="text-xs text-[#464554] mb-1.5 uppercase tracking-wider">Total Size</p>
-              <p className="font-black text-3xl text-[#191c1e]">{formatSize(totalSize)}</p>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Upload Progress */}
         {isUploading && uploadProgress && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-[#191c1e]">
-                Progress: {uploadProgress.completed} / {uploadProgress.total}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                {uploadProgress.completed} / {uploadProgress.total} files
               </span>
-              <span className="text-sm font-bold text-[#4f46e5]">
+              <span className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">
                 {progressPercentage}%
               </span>
             </div>
-            
-            {/* Progress Bar */}
-            <div className="w-full h-3 bg-[#e5e7eb] rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-neutral-100 dark:bg-surface-container-high rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#4f46e5] to-[#4338ca] transition-all duration-300 shadow-lg"
+                className="h-full bg-neutral-900 dark:bg-neutral-100 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
-
             {uploadProgress.current && (
-              <p className="text-xs text-[#464554] flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4f46e5] animate-pulse"></span>
-                Current: {uploadProgress.current}
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-pulse" />
+                {uploadProgress.current}
               </p>
             )}
-
-            {/* Errors */}
             {uploadProgress.errors.length > 0 && (
-              <div className="p-4 bg-[#ba1a1a]/5 rounded-lg border border-[#ba1a1a]/20">
-                <p className="text-xs font-bold text-[#ba1a1a] mb-2 uppercase tracking-wider">
-                  Errors ({uploadProgress.errors.length}):
+              <div className="p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg">
+                <p className="text-xs font-medium text-red-600 dark:text-red-400 mb-2">
+                  {uploadProgress.errors.length} error{uploadProgress.errors.length > 1 ? 's' : ''}
                 </p>
-                <div className="max-h-24 overflow-y-auto space-y-2">
+                <div className="max-h-24 overflow-y-auto space-y-1">
                   {uploadProgress.errors.map((error, index) => (
-                    <div key={index} className="text-xs text-[#ba1a1a] flex items-start gap-2 p-2 bg-white rounded">
+                    <div key={index} className="text-xs text-red-600 dark:text-red-400 flex items-start gap-1.5">
                       <XCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                      <span className="flex-1">{error.path}: {error.error}</span>
+                      <span>{error.path}: {error.error}</span>
                     </div>
                   ))}
                 </div>
@@ -113,59 +102,49 @@ export function FileUploadDialog({
 
         {/* File List Preview */}
         {!isUploading && (
-          <div className="space-y-3">
-            <h4 className="font-bold text-xs text-[#191c1e] uppercase tracking-wider">
-              Files to Upload
-            </h4>
-            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
-              {files.map((file, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#f8f9fa] to-[#f2f4f6] rounded-xl border border-[#c7c4d7]/20 hover:border-[#4f46e5]/40 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
-                    <FileText className="h-5 w-5 text-[#4f46e5]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#191c1e] truncate">
-                      {file.name}
-                    </p>
-                    <p className="text-xs text-[#464554] mt-0.5">
-                      {formatSize(file.size)}
-                    </p>
-                  </div>
+          <div className="space-y-1.5 max-h-[360px] overflow-y-auto">
+            {files.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg"
+              >
+                <div className="w-7 h-7 rounded-md bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center shrink-0">
+                  <FileText className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" strokeWidth={1.5} />
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{file.name}</p>
+                  <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{formatSize(file.size)}</p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </ModalBody>
 
       <ModalFooter>
-        <Button
-          variant="outline"
+        <button
           onClick={onCancel}
           disabled={isUploading && uploadProgress?.status === 'uploading'}
-          className="flex-1 h-12 border-[#c7c4d7]/40 hover:bg-[#f2f4f6] font-semibold text-[#464554]"
+          className="px-4 py-2 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-surface-container-high disabled:opacity-50 transition-colors"
         >
           {isUploading ? 'Cancel' : 'Close'}
-        </Button>
+        </button>
         {!isUploading && (
-          <Button
+          <button
             onClick={onConfirm}
-            className="flex-1 h-12 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] hover:from-[#3a3cb8] hover:to-[#4f52d4] transition-all duration-200 text-white font-semibold"
+            className="px-4 py-2 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-md text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
           >
             Upload {files.length} File{files.length > 1 ? 's' : ''}
-          </Button>
+          </button>
         )}
         {isUploading && uploadProgress?.status === 'completed' && (
-          <Button
+          <button
             onClick={onCancel}
-            className="flex-1 h-12 bg-gradient-to-br from-[#10b981] to-[#059669] hover:from-[#0d9668] hover:to-[#047857] transition-all duration-200 text-white font-semibold"
+            className="px-4 py-2 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-md text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 flex items-center gap-2 transition-colors"
           >
-            <CheckCircle2 className="h-4 w-4 mr-2" />
+            <CheckCircle2 className="h-4 w-4" />
             Done
-          </Button>
+          </button>
         )}
       </ModalFooter>
     </Modal>

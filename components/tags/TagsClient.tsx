@@ -2,7 +2,10 @@
 
 import { useState, useMemo } from 'react'
 import { Tables } from '@/types/database.types'
-import { Plus, Tag as TagIcon, Edit, Trash2, MoreVertical, Search, TrendingUp, FileText, BarChart3, ChevronDown, ChevronUp } from 'lucide-react'
+import {
+  Plus, Tag as TagIcon, Edit, Trash2, MoreVertical,
+  Search, FileText, BarChart3, ChevronDown, ChevronUp, X,
+} from 'lucide-react'
 import { CreateTagModal } from './CreateTagModal'
 import { EditTagModal } from './EditTagModal'
 import { TagDetailsModal } from './TagDetailsModal'
@@ -15,7 +18,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 
 type UserTag = Tables<'user_tags'>
@@ -36,225 +38,166 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
   const [selectedTag, setSelectedTag] = useState<TagWithStats | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<'name' | 'usage'>('name')
-  const [showAnalytics, setShowAnalytics] = useState(true)
+  const [showAnalytics, setShowAnalytics] = useState(false)
   const supabase = createClient()
 
-  // Combine tags with stats
-  const tagsWithStats: TagWithStats[] = useMemo(() => {
-    return tags.map(tag => ({
-      ...tag,
-      file_count: tagStats[tag.name] || 0
-    }))
-  }, [tags, tagStats])
+  const tagsWithStats: TagWithStats[] = useMemo(() =>
+    tags.map(tag => ({ ...tag, file_count: tagStats[tag.name] || 0 }))
+  , [tags, tagStats])
 
-  // Filter and sort tags
   const filteredTags = useMemo(() => {
     let filtered = tagsWithStats
-
-    // Search filter
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(tag => 
-        tag.name.toLowerCase().includes(query) ||
-        tag.description?.toLowerCase().includes(query)
+      const q = searchQuery.toLowerCase()
+      filtered = filtered.filter(tag =>
+        tag.name.toLowerCase().includes(q) ||
+        tag.description?.toLowerCase().includes(q)
       )
     }
-
-    // Sort
-    filtered.sort((a, b) => {
-      if (sortBy === 'usage') {
-        return b.file_count - a.file_count
-      }
-      return a.name.localeCompare(b.name)
-    })
-
+    filtered = [...filtered].sort((a, b) =>
+      sortBy === 'usage' ? b.file_count - a.file_count : a.name.localeCompare(b.name)
+    )
     return filtered
   }, [tagsWithStats, searchQuery, sortBy])
 
-  // Calculate stats
-  const totalFiles = useMemo(() => {
-    return Object.values(tagStats).reduce((sum, count) => sum + count, 0)
-  }, [tagStats])
-
-  const mostUsedTag = useMemo(() => {
-    return tagsWithStats.reduce((max, tag) => 
-      tag.file_count > max.file_count ? tag : max
-    , tagsWithStats[0] || { file_count: 0 })
-  }, [tagsWithStats])
-
-  const handleTagCreated = (newTag: UserTag) => {
-    setTags([...tags, newTag])
-  }
-
-  const handleTagUpdated = (updatedTag: UserTag) => {
-    setTags(tags.map(tag => tag.id === updatedTag.id ? updatedTag : tag))
-  }
+  const handleTagCreated = (newTag: UserTag) => setTags(prev => [...prev, newTag])
+  const handleTagUpdated = (updated: UserTag) =>
+    setTags(prev => prev.map(t => t.id === updated.id ? updated : t))
 
   const handleDelete = async (tag: UserTag) => {
     const fileCount = tagStats[tag.name] || 0
     const message = fileCount > 0
-      ? `Delete tag "${tag.name}"? This will remove it from ${fileCount} file(s).`
-      : `Delete tag "${tag.name}"?`
-
-    if (!confirm(message)) {
-      return
-    }
-
-    const { error } = await supabase
-      .from('user_tags')
-      .delete()
-      .eq('id', tag.id)
-
-    if (error) {
-      toast.error('Failed to delete tag')
-      return
-    }
-
-    setTags(tags.filter(t => t.id !== tag.id))
-    toast.success('Tag deleted successfully')
+      ? `Delete "${tag.name}"? This will remove it from ${fileCount} file(s).`
+      : `Delete "${tag.name}"?`
+    if (!confirm(message)) return
+    const { error } = await supabase.from('user_tags').delete().eq('id', tag.id)
+    if (error) { toast.error('Failed to delete tag'); return }
+    setTags(prev => prev.filter(t => t.id !== tag.id))
+    toast.success('Tag deleted')
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-4xl font-black tracking-tight text-[#191c1e] dark:text-on-surface mb-2">
-            Language Tags
-          </h2>
-          <p className="text-[#464554] dark:text-on-surface-variant font-medium">
-            Organize and manage tags for your projects
-          </p>
+    <div className="max-w-[1400px] mx-auto">
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+              Language Tags
+            </h1>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              Organize and manage tags across your projects.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-md text-xs font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            New Tag
+          </button>
         </div>
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        {[
+          { label: 'Total Tags', value: tags.length },
+          {
+            label: 'Tagged Files',
+            value: Object.values(tagStats).reduce((s, c) => s + c, 0)
+          },
+          {
+            label: 'Most Used',
+            value: tagsWithStats.reduce((m, t) => t.file_count > m.file_count ? t : m,
+              tagsWithStats[0] || { file_count: 0, name: 'N/A' } as TagWithStats
+            ).name || 'N/A',
+            isText: true,
+          },
+        ].map(({ label, value, isText }) => (
+          <div
+            key={label}
+            className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4"
+          >
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{label}</p>
+            <p className={`font-semibold text-neutral-900 dark:text-neutral-100 truncate ${isText ? 'text-sm' : 'text-2xl'}`}>
+              {value}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Analytics (collapsible) */}
+      <div className="mb-6">
         <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="px-6 py-3 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 hover:shadow-xl transition-all flex items-center gap-2"
+          onClick={() => setShowAnalytics(v => !v)}
+          className="flex items-center gap-2 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors mb-3"
         >
-          <Plus className="h-5 w-5" />
-          New Tag
+          {showAnalytics ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          {showAnalytics ? 'Hide' : 'Show'} analytics
         </button>
+        {showAnalytics && <TagAnalytics tags={tags} tagStats={tagStats} />}
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-[#4f46e5]/10 flex items-center justify-center text-[#4f46e5] dark:text-[#7c7ff5]">
-              <TagIcon className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">
-                Total Tags
-              </p>
-              <p className="text-2xl font-black text-[#191c1e] dark:text-on-surface">{tags.length}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-[#10b981]/10 flex items-center justify-center text-[#10b981]">
-              <FileText className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">
-                Tagged Files
-              </p>
-              <p className="text-2xl font-black text-[#191c1e] dark:text-on-surface">{totalFiles}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-surface-container p-6 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-[#f59e0b]/10 flex items-center justify-center text-[#f59e0b]">
-              <TrendingUp className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">
-                Most Used
-              </p>
-              <p className="text-lg font-black text-[#191c1e] dark:text-on-surface truncate">
-                {mostUsedTag?.name || 'N/A'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Analytics Section */}
-      <div className="space-y-3">
-        <button
-          onClick={() => setShowAnalytics(!showAnalytics)}
-          className="flex items-center gap-2 text-sm font-bold text-[#464554] dark:text-on-surface-variant hover:text-[#191c1e] dark:hover:text-on-surface transition-colors"
-        >
-          {showAnalytics ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-          {showAnalytics ? 'Hide' : 'Show'} Analytics
-        </button>
-        
-        {showAnalytics && (
-          <TagAnalytics tags={tags} tagStats={tagStats} />
-        )}
-      </div>
-
-      {/* Search and Filter */}
-      <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#464554] dark:text-on-surface-variant" />
-            <Input
+      {/* Search + Sort */}
+      <div className="space-y-3 mb-6">
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Search */}
+          <div className="relative flex-1 min-w-48">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tags..."
-              className="pl-10 h-11"
+              className="w-full pl-9 pr-8 py-2.5 bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400 outline-none text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-neutral-100 dark:hover:bg-surface-container-high rounded transition-colors"
+              >
+                <X className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />
+              </button>
+            )}
           </div>
-          
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSortBy('name')}
-              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${
-                sortBy === 'name'
-                  ? 'bg-[#4f46e5] text-white'
-                  : 'bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant hover:bg-[#e8eaed] dark:hover:bg-surface-container-highest'
-              }`}
-            >
-              A-Z
-            </button>
-            <button
-              onClick={() => setSortBy('usage')}
-              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
-                sortBy === 'usage'
-                  ? 'bg-[#4f46e5] text-white'
-                  : 'bg-[#f2f4f6] dark:bg-surface-container-high text-[#464554] dark:text-on-surface-variant hover:bg-[#e8eaed] dark:hover:bg-surface-container-highest'
-              }`}
-            >
-              <BarChart3 className="h-4 w-4" />
-              Usage
-            </button>
+
+          {/* Sort Pills */}
+          <div className="flex items-center gap-1.5">
+            {(['name', 'usage'] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setSortBy(opt)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all ${
+                  sortBy === opt
+                    ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
+                    : 'bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-surface-container-high'
+                }`}
+              >
+                {opt === 'usage' && <BarChart3 className="h-3.5 w-3.5" />}
+                {opt === 'name' ? 'A–Z' : 'Usage'}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Tags Grid */}
       {filteredTags.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-surface-container rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f2f4f6] dark:bg-surface-container-high flex items-center justify-center">
-            <TagIcon className="h-8 w-8 text-[#464554] dark:text-on-surface-variant" />
-          </div>
-          <p className="text-[#464554] dark:text-on-surface-variant font-medium mb-4">
+        <div className="bg-neutral-50 dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-10 text-center">
+          <TagIcon size={24} strokeWidth={1.5} className="mx-auto mb-3 text-neutral-300 dark:text-neutral-700" />
+          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
             {searchQuery ? 'No tags found' : 'No tags yet'}
+          </p>
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-4">
+            {searchQuery ? 'Try a different search term' : 'Create your first tag to organize projects'}
           </p>
           {!searchQuery && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-6 py-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg font-bold text-sm shadow-lg shadow-[#4f46e5]/20 hover:shadow-xl transition-all"
+              className="px-3 py-2 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-md text-xs font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
             >
-              Create Your First Tag
+              Create Tag
             </button>
           )}
         </div>
@@ -263,63 +206,54 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
           {filteredTags.map((tag) => (
             <div
               key={tag.id}
-              className="bg-white dark:bg-surface-container p-5 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] hover:shadow-lg dark:hover:border-white/[0.12] transition-all group relative cursor-pointer"
               onClick={() => setSelectedTag(tag)}
+              className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] rounded-lg p-4 hover:border-neutral-400 dark:hover:border-white/20 hover:shadow-sm transition-all cursor-pointer group relative"
             >
               <div className="flex items-start justify-between mb-3">
-                <div
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white shadow-md"
-                  style={{ backgroundColor: tag.color }}
-                >
-                  <TagIcon className="h-6 w-6" />
+                <div className="flex items-center gap-2.5">
+                  {/* Color dot */}
+                  <div
+                    className="w-3 h-3 rounded-full shrink-0 mt-0.5"
+                    style={{ backgroundColor: tag.color }}
+                  />
+                  <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 uppercase tracking-wide group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
+                    {tag.name}
+                  </h3>
                 </div>
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger 
-                    className="p-1 hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high rounded transition-colors opacity-0 group-hover:opacity-100"
+                  <DropdownMenuTrigger
+                    className="p-1 hover:bg-neutral-100 dark:hover:bg-surface-container-high rounded transition-colors opacity-0 group-hover:opacity-100"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MoreVertical className="h-4 w-4 text-[#464554] dark:text-on-surface-variant" />
+                    <MoreVertical className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setEditingTag(tag)
-                      }}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setEditingTag(tag) }}>
+                      <Edit className="h-3.5 w-3.5 mr-2" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleDelete(tag)
-                      }}
-                      className="text-[#ba1a1a]"
+                      onClick={(e) => { e.stopPropagation(); handleDelete(tag) }}
+                      className="text-red-600 dark:text-red-400"
                     >
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <Trash2 className="h-3.5 w-3.5 mr-2" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
 
-              <h3 className="font-bold text-[#191c1e] dark:text-on-surface mb-1 uppercase tracking-wider">
-                {tag.name}
-              </h3>
-
               {tag.description && (
-                <p className="text-xs text-[#464554] dark:text-on-surface-variant line-clamp-2 mb-3">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 mb-3">
                   {tag.description}
                 </p>
               )}
 
-              {/* Usage Badge */}
-              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#c7c4d7]/20 dark:border-white/[0.06]">
-                <FileText className="h-3.5 w-3.5 text-[#464554] dark:text-on-surface-variant" />
-                <span className="text-xs font-bold text-[#464554] dark:text-on-surface-variant">
+              <div className="flex items-center gap-1.5 pt-3 border-t border-neutral-100 dark:border-white/[0.06]">
+                <FileText className="h-3 w-3 text-neutral-400 dark:text-neutral-500" />
+                <span className="text-[11px] font-medium text-neutral-400 dark:text-neutral-500">
                   {tag.file_count} {tag.file_count === 1 ? 'file' : 'files'}
                 </span>
               </div>
@@ -334,7 +268,6 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
         onClose={() => setIsCreateModalOpen(false)}
         onTagCreated={handleTagCreated}
       />
-
       {editingTag && (
         <EditTagModal
           isOpen={!!editingTag}
@@ -343,7 +276,6 @@ export function TagsClient({ initialTags, tagStats }: TagsClientProps) {
           onTagUpdated={handleTagUpdated}
         />
       )}
-
       {selectedTag && (
         <TagDetailsModal
           isOpen={!!selectedTag}

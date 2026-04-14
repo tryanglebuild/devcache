@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ChevronRight, Folder, FolderOpen, FileText, Copy, Trash2, Edit, Download, Star, StarOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -31,7 +31,7 @@ interface SidebarProjectsTreeProps {
 
 export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreateDone }: SidebarProjectsTreeProps) {
   const [items, setItems] = useState<ProjectItem[]>([])
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set())
+  const [userExpandedKeys, setUserExpandedKeys] = useState<Set<string>>(new Set())
   const [contextMenu, setContextMenu] = useState<{
     item: ProjectItem
     x: number
@@ -67,6 +67,35 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
     return null
   }
 
+  // Compute ancestor folders that must be expanded for the current URL path.
+  // This is derived synchronously so it's always in sync with pathname + items.
+  const pathExpandedKeys = useMemo(() => {
+    if (!pathname || items.length === 0) return new Set<string>()
+
+    const folderMatch = pathname.match(/\/dashboard\/projects\/([^/]+)$/)
+    const fileMatch = pathname.match(/\/dashboard\/projects\/file\/([^/]+)$/)
+    const targetId = folderMatch?.[1] || fileMatch?.[1]
+    if (!targetId) return new Set<string>()
+
+    const target = items.find(i => i.id === targetId)
+    if (!target) return new Set<string>()
+
+    const ancestors = new Set<string>()
+    let parentId = target.parent_id
+    while (parentId) {
+      ancestors.add(parentId)
+      const parent = items.find(i => i.id === parentId)
+      parentId = parent?.parent_id ?? null
+    }
+    return ancestors
+  }, [pathname, items])
+
+  // Effective expanded keys = user's manual toggles + path-driven auto-expansion
+  const expandedKeys = useMemo(
+    () => new Set([...userExpandedKeys, ...pathExpandedKeys]),
+    [userExpandedKeys, pathExpandedKeys]
+  )
+
   // Trigger inline creation when quickCreateType changes
   useEffect(() => {
     if (quickCreateType) {
@@ -74,7 +103,7 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
       const parentId = getContextualParentId()
       setPendingItem({ type: quickCreateType, parentId, name: defaultName })
       // Expand parent so the pending item is visible
-      if (parentId) setExpandedKeys(prev => new Set([...prev, parentId]))
+      if (parentId) setUserExpandedKeys(prev => new Set([...prev, parentId]))
       onQuickCreateDone?.()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -234,7 +263,7 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
   }
 
   const toggleExpanded = (id: string) => {
-    setExpandedKeys(prev => {
+    setUserExpandedKeys(prev => {
       const next = new Set(prev)
       if (next.has(id)) {
         next.delete(id)

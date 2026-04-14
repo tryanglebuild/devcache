@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tables } from '@/types/database.types'
-import { Plus, Folder, FileText, Star, Edit, Trash2, Upload } from 'lucide-react'
+import { Plus, Folder, Edit, Trash2, Upload } from 'lucide-react'
 import { CreateItemModal } from './CreateItemModal'
 import { EditItemModal } from './EditItemModal'
 import { PublishToMarketplaceModal } from './PublishToMarketplaceModal'
@@ -161,7 +161,7 @@ export function ProjectDetailClient({ project, initialItems, initialTotal }: Pro
     return pages
   }
 
-  const handleItemCreated = (newItem: ProjectItem) => {
+  const handleItemCreated = (_newItem: ProjectItem) => {
     // Always reload page 1 to keep sort order consistent
     setCurrentPage(1)
     setTotalItems(prev => prev + 1)
@@ -215,127 +215,101 @@ export function ProjectDetailClient({ project, initialItems, initialTotal }: Pro
       <Breadcrumb items={breadcrumbPath} currentPage={project.name} />
 
       {/* Header */}
-      <div className="bg-white dark:bg-surface-container p-8 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06]">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#4338ca] flex items-center justify-center text-white shadow-lg">
-              <Folder className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight text-[#191c1e] dark:text-on-surface mb-2">
-                {project.name}
-              </h1>
-              {project.description && (
-                <p className="text-[#464554] dark:text-on-surface-variant font-medium">
-                  {project.description}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            {project.type === 'file' && project.content && (
-              <button
-                onClick={() => setIsPublishModalOpen(true)}
-                className="p-2.5 bg-gradient-to-br from-[#4f46e5] to-[#4338ca] text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 px-4"
-                title="Publish to Marketplace"
-              >
-                <Upload className="h-4 w-4" />
-                <span className="text-sm font-bold">Publish</span>
-              </button>
-            )}
-            <button
-              onClick={() => setIsEditModalOpen(true)}
-              className="p-2.5 bg-white dark:bg-surface-container-high border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg hover:bg-[#f2f4f6] dark:hover:bg-surface-container-highest transition-all"
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleDelete}
-              className="p-2.5 bg-white dark:bg-surface-container-high border border-[#ba1a1a]/30 text-[#ba1a1a] dark:text-destructive rounded-lg hover:bg-[#ba1a1a]/10 transition-all"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Tags */}
-        {project.language_tags && project.language_tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {project.language_tags.map((tag: string, index: number) => (
-              <span
-                key={index}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider text-white shadow-md"
-                style={{ backgroundColor: tagColors[tag] || '#4f46e5' }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[#4f46e5]/10 flex items-center justify-center text-[#4f46e5] dark:text-[#7c7ff5]">
-            <Folder className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">Folders</p>
-            <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{folders.length}</p>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[#575992]/10 flex items-center justify-center text-[#575992] dark:text-[#7c7ff5]">
-            <FileText className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">Files</p>
-            <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">{files.length}</p>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-surface-container p-4 rounded-xl shadow-[0_8px_32px_-4px_rgba(25,28,30,0.06)] dark:shadow-none dark:border dark:border-white/[0.06] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[#904900]/10 flex items-center justify-center text-[#904900]">
-            <Star className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[#464554] dark:text-on-surface-variant uppercase tracking-widest">Favorites</p>
-            <p className="text-xl font-black text-[#191c1e] dark:text-on-surface">
-              {items.filter(item => item.is_favorite).length}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+            {project.name}
+          </h1>
+          {project.description && (
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3">
+              {project.description}
             </p>
-          </div>
+          )}
+          {/* Tags */}
+          {project.language_tags && project.language_tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {project.language_tags.map((tag: string, index: number) => (
+                <span
+                  key={index}
+                  className="px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wide text-white"
+                  style={{ backgroundColor: tagColors[tag] || '#4f46e5' }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          {project.type === 'file' && project.content && (
+            <button
+              onClick={() => setIsPublishModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors"
+              title="Publish to Marketplace"
+            >
+              <Upload className="h-4 w-4" />
+              Publish
+            </button>
+          )}
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="p-2 rounded-lg border border-neutral-200 dark:border-white/[0.09] text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-surface-container-high transition-colors"
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          <button
+            onClick={handleDelete}
+            className="p-2 rounded-lg border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-3">
-        <button
-          onClick={() => {
-            setCreateType('folder')
-            setIsCreateModalOpen(true)
-          }}
-          className="px-4 py-2.5 bg-white dark:bg-surface-container border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg font-bold text-sm hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all flex items-center gap-2"
-        >
-          <Folder className="h-4 w-4" />
-          New Folder
-        </button>
-        <button
-          onClick={() => {
-            setCreateType('file')
-            setIsCreateModalOpen(true)
-          }}
-          className="px-4 py-2.5 bg-white dark:bg-surface-container border border-[#c7c4d7]/30 dark:border-white/[0.09] text-[#191c1e] dark:text-on-surface rounded-lg font-bold text-sm hover:bg-[#f2f4f6] dark:hover:bg-surface-container-high transition-all flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          New File
-        </button>
-        <FolderUploadButton
-          parentId={project.id}
-          onUploadComplete={handleFolderUploadComplete}
-        />
+      {/* Stats + Actions */}
+      <div className="flex items-center justify-between gap-4 py-4 border-t border-b border-neutral-100 dark:border-white/[0.06]">
+        <div className="flex items-center gap-6 text-sm text-neutral-500 dark:text-neutral-400">
+          <span>
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">{folders.length}</span>{' '}
+            {folders.length === 1 ? 'Folder' : 'Folders'}
+          </span>
+          <span>
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">{files.length}</span>{' '}
+            {files.length === 1 ? 'File' : 'Files'}
+          </span>
+          <span>
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">{items.filter(item => item.is_favorite).length}</span>{' '}
+            Favorites
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setCreateType('folder')
+              setIsCreateModalOpen(true)
+            }}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-neutral-200 dark:border-white/[0.09] text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-colors"
+          >
+            <Folder className="h-4 w-4" />
+            New Folder
+          </button>
+          <button
+            onClick={() => {
+              setCreateType('file')
+              setIsCreateModalOpen(true)
+            }}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-neutral-200 dark:border-white/[0.09] text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-surface-container-high transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            New File
+          </button>
+          <FolderUploadButton
+            parentId={project.id}
+            onUploadComplete={handleFolderUploadComplete}
+          />
+        </div>
       </div>
 
       {/* Content */}
