@@ -35,6 +35,7 @@ export function TagDetailsModal({ isOpen, onClose, tag, fileCount }: TagDetailsM
         .from('project_items')
         .select('*')
         .contains('language_tags', [tag.name])
+        .is('deleted_at', null)
         .order('updated_at', { ascending: false })
       if (error) throw error
       setFiles(data || [])

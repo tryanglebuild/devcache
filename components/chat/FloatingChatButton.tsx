@@ -4,21 +4,25 @@ import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { MessageSquare } from 'lucide-react'
 import { FloatingChatWindow } from './FloatingChatWindow'
+import type { ChatSession } from '@/types/chat'
 
 export function FloatingChatButton() {
   const [isOpen, setIsOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
-  const [prefetched, setPrefetched] = useState(false)
+  const [prefetchedSession, setPrefetchedSession] = useState<ChatSession | null>(null)
   const pathname = usePathname()
 
-  // Prefetch sessions on hover for instant loading
+  // Pre-create a session on hover so it's ready instantly when clicked
   const handleMouseEnter = () => {
-    if (!prefetched && !isOpen) {
-      // Prefetch sessions in background
-      fetch('/api/chat/sessions')
+    if (!prefetchedSession && !isOpen) {
+      fetch('/api/chat/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'New Conversation', context_type: 'general' }),
+      })
         .then(res => res.json())
-        .catch(() => {}) // Silent fail
-      setPrefetched(true)
+        .then(({ data }) => { if (data) setPrefetchedSession(data) })
+        .catch(() => {})
     }
   }
 
@@ -59,7 +63,14 @@ export function FloatingChatButton() {
       )}
 
       {/* Floating Chat Window */}
-      <FloatingChatWindow open={isOpen} onOpenChange={setIsOpen} />
+      <FloatingChatWindow
+        open={isOpen}
+        onOpenChange={(val) => {
+          setIsOpen(val)
+          if (!val) setPrefetchedSession(null)
+        }}
+        prefetchedSession={prefetchedSession}
+      />
     </>
   )
 }

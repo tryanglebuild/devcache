@@ -10,13 +10,15 @@ import toast from 'react-hot-toast'
 interface FloatingChatWindowProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  prefetchedSession?: ChatSession | null
 }
 
-export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowProps) {
+export function FloatingChatWindow({ open, onOpenChange, prefetchedSession }: FloatingChatWindowProps) {
   const router = useRouter()
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null)
+  const [loading, setLoading] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false)
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
@@ -25,8 +27,21 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
   useEffect(() => {
     if (open) {
-      // Load sessions without blocking UI
-      loadSessions()
+      if (prefetchedSession) {
+        // Session was pre-created on hover — use it instantly, no loading
+        setSessions([prefetchedSession])
+        setCurrentSessionId(prefetchedSession.id)
+        setCurrentSession(prefetchedSession)
+      } else {
+        // Fallback: create a new session now (user clicked without hovering first)
+        createNewSession(true)
+      }
+    } else {
+      // Reset state when closed so next open starts clean
+      setSessions([])
+      setCurrentSessionId(null)
+      setCurrentSession(null)
+      setLoading(false)
     }
   }, [open])
 
@@ -61,39 +76,24 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
   async function loadSessions() {
     try {
-      // Don't block UI with loading state for initial load
-      const isInitialLoad = sessions.length === 0
-      if (!isInitialLoad) {
-        setLoading(true)
-      }
-      
       const response = await fetch('/api/chat/sessions')
-      
-      if (!response.ok) {
-        throw new Error('Failed to load sessions')
-      }
-
+      if (!response.ok) throw new Error('Failed to load sessions')
       const { data } = await response.json()
-
-      setSessions(data || [])
-      
-      if (data && data.length > 0) {
-        // Set current session immediately for faster UI
-        setCurrentSessionId(data[0].id)
-      } else {
-        // Create new session if none exist
-        await createNewSession()
-      }
+      // Merge with existing list (current new session stays selected)
+      setSessions((prev) => {
+        const existingIds = new Set(prev.map((s) => s.id))
+        const incoming = (data || []).filter((s: ChatSession) => !existingIds.has(s.id))
+        return [...prev, ...incoming]
+      })
     } catch (error) {
       console.error('Error loading sessions:', error)
-      toast.error('Failed to load chat sessions')
-    } finally {
-      setLoading(false)
+      toast.error('Failed to load chat history')
     }
   }
 
-  async function createNewSession() {
+  async function createNewSession(silent = false) {
     try {
+      setLoading(true)
       const response = await fetch('/api/chat/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -112,11 +112,14 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
 
       setSessions((prev) => [data, ...prev])
       setCurrentSessionId(data.id)
+      setCurrentSession(data)
       setShowHistoryDropdown(false)
-      toast.success('New chat created')
+      if (!silent) toast.success('New chat created')
     } catch (error) {
       console.error('Error creating session:', error)
       toast.error('Failed to create chat session')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -152,7 +155,9 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
   }
 
   function handleSelectSession(sessionId: string) {
+    const session = sessions.find(s => s.id === sessionId) ?? null
     setCurrentSessionId(sessionId)
+    setCurrentSession(session)
     setShowHistoryDropdown(false)
   }
 
@@ -173,8 +178,6 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
       cancelEditing()
     }
   }
-
-  const currentSession = sessions.find(s => s.id === currentSessionId)
 
   if (!open) return null
 
@@ -219,7 +222,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
           <div className="flex items-center gap-1">
             {/* New Chat Button */}
             <button
-              onClick={createNewSession}
+              onClick={() => createNewSession()}
               className="p-2 rounded-lg hover:bg-white/10 text-white transition-colors"
               title="New chat"
             >
@@ -229,7 +232,11 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
             {/* History Dropdown Button */}
             <div className="relative" ref={dropdownRef}>
               <button
-                onClick={() => setShowHistoryDropdown(!showHistoryDropdown)}
+                onClick={() => {
+                  const next = !showHistoryDropdown
+                  setShowHistoryDropdown(next)
+                  if (next) loadSessions()
+                }}
                 className={`p-2 rounded-lg transition-colors ${
                   showHistoryDropdown 
                     ? 'bg-white/20 text-white' 
@@ -248,7 +255,7 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-on-surface">Chat History</h3>
                       <button
-                        onClick={createNewSession}
+                        onClick={() => createNewSession()}
                         className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
                       >
                         <Plus className="w-3 h-3" />
@@ -382,21 +389,16 @@ export function FloatingChatWindow({ open, onOpenChange }: FloatingChatWindowPro
             {currentSessionId ? (
               <ChatInterfaceWrapper 
                 sessionId={currentSessionId}
+                initialSession={currentSession}
                 onSessionUpdate={loadSessions}
-                onNewChat={createNewSession}
+                onNewChat={() => createNewSession()}
                 isExpanded={isExpanded}
               />
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <MessageSquare className="w-12 h-12 text-gray-300 dark:text-on-surface-variant/40 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500 dark:text-on-surface-variant">Select or create a conversation</p>
-                  <button
-                    onClick={createNewSession}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                  >
-                    Start New Chat
-                  </button>
+              <div className="flex items-center justify-center h-full bg-white dark:bg-surface-container">
+                <div className="relative w-8 h-8">
+                  <div className="absolute inset-0 rounded-full border-2 border-[#e8eff3] dark:border-white/[0.09]" />
+                  <div className="absolute inset-0 rounded-full border-2 border-[#4f46e5] dark:border-[#7c7ff5] border-t-transparent animate-spin" />
                 </div>
               </div>
             )}

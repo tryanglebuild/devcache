@@ -16,11 +16,12 @@ export default async function TagsPage() {
     .eq('user_id', user.id)
     .order('name')
 
-  // Fetch all project items to calculate tag usage
+  // Fetch all project items to calculate tag usage (exclude soft-deleted)
   const { data: projectItems } = await supabase
     .from('project_items')
     .select('language_tags')
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .not('language_tags', 'is', null)
 
   // Calculate tag statistics
