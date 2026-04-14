@@ -89,13 +89,13 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
   return (
     <div className="space-y-6">
       {/* Linked Accounts */}
-      <Card className="bg-white border-neutral-200 shadow-none">
-        <CardHeader className="pb-4 border-b border-neutral-100">
+      <Card className="bg-white dark:bg-surface-container border-neutral-200 dark:border-white/[0.09] shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100 dark:border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-neutral-400" />
-            <CardTitle className="text-sm font-semibold text-neutral-900">Linked Accounts</CardTitle>
+            <Link2 className="h-4 w-4 text-neutral-400 dark:text-on-surface-variant" />
+            <CardTitle className="text-sm font-semibold text-neutral-900 dark:text-on-surface">Linked Accounts</CardTitle>
           </div>
-          <CardDescription className="text-sm text-neutral-500">
+          <CardDescription className="text-sm text-neutral-500 dark:text-on-surface-variant">
             Manage your login methods and connected accounts
           </CardDescription>
         </CardHeader>
@@ -105,20 +105,20 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
       </Card>
 
       {/* Change Password */}
-      <Card className="bg-white border-neutral-200 shadow-none">
-        <CardHeader className="pb-4 border-b border-neutral-100">
+      <Card className="bg-white dark:bg-surface-container border-neutral-200 dark:border-white/[0.09] shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100 dark:border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <Lock className="h-4 w-4 text-neutral-400" />
-            <CardTitle className="text-sm font-semibold text-neutral-900">Change Password</CardTitle>
+            <Lock className="h-4 w-4 text-neutral-400 dark:text-on-surface-variant" />
+            <CardTitle className="text-sm font-semibold text-neutral-900 dark:text-on-surface">Change Password</CardTitle>
           </div>
-          <CardDescription className="text-sm text-neutral-500">
+          <CardDescription className="text-sm text-neutral-500 dark:text-on-surface-variant">
             Update your password to keep your account secure
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-5">
           <form onSubmit={handlePasswordChange} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="current_password" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="current_password" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 Current Password
               </Label>
               <Input
@@ -127,12 +127,12 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 value={passwordData.currentPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                 required
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="new_password" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="new_password" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 New Password
               </Label>
               <Input
@@ -142,15 +142,15 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                 required
                 minLength={8}
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
               />
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
                 Must be at least 8 characters long
               </p>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="confirm_password" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="confirm_password" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 Confirm New Password
               </Label>
               <Input
@@ -159,7 +159,7 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                 required
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
               />
             </div>
 
@@ -188,27 +188,27 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
       </Card>
 
       {/* Account Information */}
-      <Card className="bg-white border-neutral-200 shadow-none">
-        <CardHeader className="pb-4 border-b border-neutral-100">
+      <Card className="bg-white dark:bg-surface-container border-neutral-200 dark:border-white/[0.09] shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100 dark:border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <UserIcon className="h-4 w-4 text-neutral-400" />
-            <CardTitle className="text-sm font-semibold text-neutral-900">Account Information</CardTitle>
+            <UserIcon className="h-4 w-4 text-neutral-400 dark:text-on-surface-variant" />
+            <CardTitle className="text-sm font-semibold text-neutral-900 dark:text-on-surface">Account Information</CardTitle>
           </div>
-          <CardDescription className="text-sm text-neutral-500">
+          <CardDescription className="text-sm text-neutral-500 dark:text-on-surface-variant">
             View your account details
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-5 space-y-3">
-          <div className="flex items-center justify-between py-2.5 border-b border-neutral-100">
-            <span className="text-sm text-neutral-500">Account ID</span>
-            <span className="text-sm font-mono text-neutral-900 truncate max-w-xs">
+          <div className="flex items-center justify-between py-2.5 border-b border-neutral-100 dark:border-white/[0.06]">
+            <span className="text-sm text-neutral-500 dark:text-on-surface-variant">Account ID</span>
+            <span className="text-sm font-mono text-neutral-900 dark:text-on-surface truncate max-w-xs">
               {user.id}
             </span>
           </div>
 
-          <div className="flex items-center justify-between py-2.5 border-b border-neutral-100">
-            <span className="text-sm text-neutral-500">Member Since</span>
-            <span className="text-sm text-neutral-900">
+          <div className="flex items-center justify-between py-2.5 border-b border-neutral-100 dark:border-white/[0.06]">
+            <span className="text-sm text-neutral-500 dark:text-on-surface-variant">Member Since</span>
+            <span className="text-sm text-neutral-900 dark:text-on-surface">
               {new Date(user.created_at).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -218,8 +218,8 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
           </div>
 
           <div className="flex items-center justify-between py-2.5">
-            <span className="text-sm text-neutral-500">Last Sign In</span>
-            <span className="text-sm text-neutral-900">
+            <span className="text-sm text-neutral-500 dark:text-on-surface-variant">Last Sign In</span>
+            <span className="text-sm text-neutral-900 dark:text-on-surface">
               {user.last_sign_in_at
                 ? new Date(user.last_sign_in_at).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -235,21 +235,21 @@ export function SecuritySettings({ user }: SecuritySettingsProps) {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="bg-white border-red-200 shadow-none">
-        <CardHeader className="pb-4 border-b border-red-100">
+      <Card className="bg-white dark:bg-surface-container border-red-200 dark:border-red-900/40 shadow-none">
+        <CardHeader className="pb-4 border-b border-red-100 dark:border-red-900/30">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-red-500" />
             <CardTitle className="text-sm font-semibold text-red-600">Danger Zone</CardTitle>
           </div>
-          <CardDescription className="text-sm text-neutral-500">
+          <CardDescription className="text-sm text-neutral-500 dark:text-on-surface-variant">
             Irreversible actions that permanently affect your account
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-5">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <p className="text-sm font-medium text-neutral-900">Delete Account</p>
-              <p className="text-sm text-neutral-500 mt-0.5">
+              <p className="text-sm font-medium text-neutral-900 dark:text-on-surface">Delete Account</p>
+              <p className="text-sm text-neutral-500 dark:text-on-surface-variant mt-0.5">
                 Permanently remove your account and all associated data including templates, projects, and chat history.
               </p>
             </div>

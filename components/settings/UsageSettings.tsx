@@ -81,57 +81,57 @@ export function UsageSettings() {
     <div className="space-y-6">
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white border-gray-200">
+        <Card className="bg-white dark:bg-surface-container border-gray-200 dark:border-white/[0.09]">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-gray-700">Total Tokens</CardTitle>
-              <Zap className="h-4 w-4 text-gray-500" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-on-surface-variant">Total Tokens</CardTitle>
+              <Zap className="h-4 w-4 text-gray-500 dark:text-on-surface-variant" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalTokens)}</div>
-            <p className="text-xs text-gray-500 mt-1">
+            <div className="text-2xl font-bold text-gray-900 dark:text-on-surface">{formatNumber(stats.totalTokens)}</div>
+            <p className="text-xs text-gray-500 dark:text-on-surface-variant mt-1">
               {formatNumber(stats.totalTokensInput)} in / {formatNumber(stats.totalTokensOutput)} out
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-gray-200">
+        <Card className="bg-white dark:bg-surface-container border-gray-200 dark:border-white/[0.09]">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-gray-700">Total Cost</CardTitle>
-              <DollarSign className="h-4 w-4 text-gray-500" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-on-surface-variant">Total Cost</CardTitle>
+              <DollarSign className="h-4 w-4 text-gray-500 dark:text-on-surface-variant" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">${stats.totalCost}</div>
-            <p className="text-xs text-gray-500 mt-1">USD</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-on-surface">${stats.totalCost}</div>
+            <p className="text-xs text-gray-500 dark:text-on-surface-variant mt-1">USD</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-gray-200">
+        <Card className="bg-white dark:bg-surface-container border-gray-200 dark:border-white/[0.09]">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-gray-700">Messages</CardTitle>
-              <MessageSquare className="h-4 w-4 text-gray-500" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-on-surface-variant">Messages</CardTitle>
+              <MessageSquare className="h-4 w-4 text-gray-500 dark:text-on-surface-variant" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalMessages)}</div>
-            <p className="text-xs text-gray-500 mt-1">AI responses</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-on-surface">{formatNumber(stats.totalMessages)}</div>
+            <p className="text-xs text-gray-500 dark:text-on-surface-variant mt-1">AI responses</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-gray-200">
+        <Card className="bg-white dark:bg-surface-container border-gray-200 dark:border-white/[0.09]">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-gray-700">Sessions</CardTitle>
-              <Activity className="h-4 w-4 text-gray-500" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-on-surface-variant">Sessions</CardTitle>
+              <Activity className="h-4 w-4 text-gray-500 dark:text-on-surface-variant" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatNumber(stats.totalSessions)}</div>
-            <p className="text-xs text-gray-500 mt-1">Conversations</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-on-surface">{formatNumber(stats.totalSessions)}</div>
+            <p className="text-xs text-gray-500 dark:text-on-surface-variant mt-1">Conversations</p>
           </CardContent>
         </Card>
       </div>

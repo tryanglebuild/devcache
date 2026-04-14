@@ -146,19 +146,19 @@ export default function LinkedAccountsManager() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="bg-white dark:bg-surface-container rounded-xl border border-slate-200 dark:border-white/[0.09] p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-slate-200 rounded w-1/4"></div>
-          <div className="h-20 bg-slate-200 rounded"></div>
+          <div className="h-4 bg-slate-200 dark:bg-surface-container-high rounded w-1/4"></div>
+          <div className="h-20 bg-slate-200 dark:bg-surface-container-high rounded"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h3 className="text-lg font-bold text-slate-900 mb-2">Linked Accounts</h3>
-      <p className="text-sm text-slate-500 mb-6">
+    <div className="bg-white dark:bg-surface-container rounded-xl border border-slate-200 dark:border-white/[0.09] p-6">
+      <h3 className="text-lg font-bold text-slate-900 dark:text-on-surface mb-2">Linked Accounts</h3>
+      <p className="text-sm text-slate-500 dark:text-on-surface-variant mb-6">
         Manage your login methods. You can link multiple accounts to sign in with different providers.
       </p>
 
@@ -167,17 +167,17 @@ export default function LinkedAccountsManager() {
         {identities.map((identity) => (
           <div
             key={identity.id}
-            className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200"
+            className="flex items-center justify-between p-4 bg-slate-50 dark:bg-surface-container-high rounded-lg border border-slate-200 dark:border-white/[0.09]"
           >
             <div className="flex items-center gap-3">
-              <div className="text-slate-700">
+              <div className="text-slate-700 dark:text-on-surface-variant">
                 {getProviderIcon(identity.provider)}
               </div>
               <div>
-                <p className="font-semibold text-slate-900">
+                <p className="font-semibold text-slate-900 dark:text-on-surface">
                   {getProviderName(identity.provider)}
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-on-surface-variant">
                   {identity.identity_data?.email || 'No email'}
                 </p>
               </div>
@@ -196,8 +196,8 @@ export default function LinkedAccountsManager() {
       </div>
 
       {/* Available Providers to Link */}
-      <div className="border-t border-slate-200 pt-6">
-        <h4 className="text-sm font-bold text-slate-700 mb-3">Add Login Method</h4>
+      <div className="border-t border-slate-200 dark:border-white/[0.09] pt-6">
+        <h4 className="text-sm font-bold text-slate-700 dark:text-on-surface-variant mb-3">Add Login Method</h4>
         <div className="space-y-2">
           {!hasProvider('github') && (
             <button
@@ -219,7 +219,7 @@ export default function LinkedAccountsManager() {
             <button
               onClick={() => linkProvider('google')}
               disabled={isLinking === 'google'}
-              className="w-full flex items-center justify-between p-3 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-lg transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-between p-3 bg-white dark:bg-surface-container-high hover:bg-slate-50 dark:hover:bg-surface-container-highest text-slate-900 dark:text-on-surface border-2 border-slate-200 dark:border-white/[0.09] rounded-lg transition-colors disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
                 {getProviderIcon('google')}

@@ -80,18 +80,18 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
   return (
     <div className="space-y-6">
       {/* Profile Header */}
-      <div className="flex items-center justify-between pb-6 border-b border-neutral-200">
+      <div className="flex items-center justify-between pb-6 border-b border-neutral-200 dark:border-white/[0.09]">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
-            <span className="text-xl font-semibold text-neutral-600">
+          <div className="w-14 h-14 rounded-full bg-neutral-200 dark:bg-surface-container-highest flex items-center justify-center shrink-0">
+            <span className="text-xl font-semibold text-neutral-600 dark:text-on-surface-variant">
               {formData.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
             </span>
           </div>
           <div>
-            <h2 className="text-base font-semibold text-neutral-900">
+            <h2 className="text-base font-semibold text-neutral-900 dark:text-on-surface">
               {formData.full_name || 'Your Name'}
             </h2>
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-neutral-500 dark:text-on-surface-variant">
               {formData.job_title || 'Add your job title'}
               {formData.company && ` · ${formData.company}`}
             </p>
@@ -112,10 +112,10 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
       </div>
 
       {/* Profile Form */}
-      <Card className="bg-white border-neutral-200 shadow-none">
-        <CardHeader className="pb-4 border-b border-neutral-100">
-          <CardTitle className="text-sm font-semibold text-neutral-900">Personal Information</CardTitle>
-          <CardDescription className="text-sm text-neutral-500">
+      <Card className="bg-white dark:bg-surface-container border-neutral-200 dark:border-white/[0.09] shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100 dark:border-white/[0.06]">
+          <CardTitle className="text-sm font-semibold text-neutral-900 dark:text-on-surface">Personal Information</CardTitle>
+          <CardDescription className="text-sm text-neutral-500 dark:text-on-surface-variant">
             {isEditing ? 'Update your personal details' : 'Your personal details and contact information'}
           </CardDescription>
         </CardHeader>
@@ -123,8 +123,8 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email (Read-only) */}
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5 text-neutral-400" />
+              <Label htmlFor="email" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant/60" />
                 Email Address
               </Label>
               <Input
@@ -132,17 +132,17 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 type="email"
                 value={user.email}
                 disabled
-                className="bg-neutral-50 border-neutral-200 text-neutral-500 text-sm"
+                className="bg-neutral-50 dark:bg-surface-container-high border-neutral-200 dark:border-white/[0.09] text-neutral-500 dark:text-on-surface-variant text-sm"
               />
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
                 Email cannot be changed here. Use the Security tab to request an email change.
               </p>
             </div>
 
             {/* Full Name */}
             <div className="space-y-1.5">
-              <Label htmlFor="full_name" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
-                <UserIcon className="h-3.5 w-3.5 text-neutral-400" />
+              <Label htmlFor="full_name" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant flex items-center gap-1.5">
+                <UserIcon className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant/60" />
                 Full Name
               </Label>
               <Input
@@ -150,7 +150,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                 placeholder="John Doe"
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
                 disabled={!isEditing}
               />
             </div>
@@ -158,8 +158,8 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
             {/* Job Title & Company */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="job_title" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
-                  <Briefcase className="h-3.5 w-3.5 text-neutral-400" />
+                <Label htmlFor="job_title" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant flex items-center gap-1.5">
+                  <Briefcase className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant/60" />
                   Job Title
                 </Label>
                 <Input
@@ -167,13 +167,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.job_title}
                   onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
                   placeholder="Software Engineer"
-                  className="border-neutral-200 text-sm"
+                  className="border-neutral-200 dark:border-white/[0.09] text-sm"
                   disabled={!isEditing}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="company" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5 text-neutral-400" />
+                <Label htmlFor="company" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant/60" />
                   Company
                 </Label>
                 <Input
@@ -181,7 +181,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                   placeholder="Acme Inc"
-                  className="border-neutral-200 text-sm"
+                  className="border-neutral-200 dark:border-white/[0.09] text-sm"
                   disabled={!isEditing}
                 />
               </div>
@@ -190,8 +190,8 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
             {/* Location & Website */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="location" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-neutral-400" />
+                <Label htmlFor="location" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant/60" />
                   Location
                 </Label>
                 <Input
@@ -199,13 +199,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="San Francisco, CA"
-                  className="border-neutral-200 text-sm"
+                  className="border-neutral-200 dark:border-white/[0.09] text-sm"
                   disabled={!isEditing}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="website" className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
-                  <Globe className="h-3.5 w-3.5 text-neutral-400" />
+                <Label htmlFor="website" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant flex items-center gap-1.5">
+                  <Globe className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant/60" />
                   Website
                 </Label>
                 <Input
@@ -214,7 +214,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                   value={formData.website}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                   placeholder="https://example.com"
-                  className="border-neutral-200 text-sm"
+                  className="border-neutral-200 dark:border-white/[0.09] text-sm"
                   disabled={!isEditing}
                 />
               </div>
@@ -222,7 +222,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
 
             {/* Bio */}
             <div className="space-y-1.5">
-              <Label htmlFor="bio" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="bio" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 Bio
               </Label>
               <Textarea
@@ -231,14 +231,14 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 placeholder="A short description about yourself"
                 rows={3}
-                className="border-neutral-200 text-sm resize-none"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm resize-none"
                 disabled={!isEditing}
               />
             </div>
 
             {/* Action Buttons */}
             {isEditing && (
-              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-100">
+              <div className="flex justify-end gap-2 pt-4 border-t border-neutral-100 dark:border-white/[0.06]">
                 <Button
                   type="button"
                   onClick={handleCancel}
@@ -275,17 +275,17 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
       </Card>
 
       {/* Social Links Card */}
-      <Card className="bg-white border-neutral-200 shadow-none">
-        <CardHeader className="pb-4 border-b border-neutral-100">
-          <CardTitle className="text-sm font-semibold text-neutral-900">Social Links</CardTitle>
-          <CardDescription className="text-sm text-neutral-500">
+      <Card className="bg-white dark:bg-surface-container border-neutral-200 dark:border-white/[0.09] shadow-none">
+        <CardHeader className="pb-4 border-b border-neutral-100 dark:border-white/[0.06]">
+          <CardTitle className="text-sm font-semibold text-neutral-900 dark:text-on-surface">Social Links</CardTitle>
+          <CardDescription className="text-sm text-neutral-500 dark:text-on-surface-variant">
             Connect your social media profiles
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-5">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="github_username" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="github_username" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 GitHub Username
               </Label>
               <Input
@@ -293,13 +293,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.github_username}
                 onChange={(e) => setFormData({ ...formData, github_username: e.target.value })}
                 placeholder="octocat"
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
                 disabled={!isEditing}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="twitter_username" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="twitter_username" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 Twitter Username
               </Label>
               <Input
@@ -307,13 +307,13 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.twitter_username}
                 onChange={(e) => setFormData({ ...formData, twitter_username: e.target.value })}
                 placeholder="username"
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
                 disabled={!isEditing}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="linkedin_url" className="text-sm font-medium text-neutral-700">
+              <Label htmlFor="linkedin_url" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                 LinkedIn URL
               </Label>
               <Input
@@ -322,7 +322,7 @@ export function ProfileSettings({ user, profile }: ProfileSettingsProps) {
                 value={formData.linkedin_url}
                 onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
                 placeholder="https://linkedin.com/in/username"
-                className="border-neutral-200 text-sm"
+                className="border-neutral-200 dark:border-white/[0.09] text-sm"
                 disabled={!isEditing}
               />
             </div>

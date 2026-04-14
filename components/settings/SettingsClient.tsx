@@ -52,17 +52,17 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
 
   const navItem =
     'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer text-left'
-  const navActive = 'bg-neutral-100 text-neutral-900'
-  const navInactive = 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
+  const navActive = 'bg-neutral-100 text-neutral-900 dark:bg-white/[0.08] dark:text-on-surface'
+  const navInactive = 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-on-surface-variant dark:hover:bg-white/[0.05] dark:hover:text-on-surface'
 
   return (
     <div className="px-8 py-10">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-neutral-900 tracking-tight">
+        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-on-surface tracking-tight">
           Account Settings
         </h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-neutral-500 dark:text-on-surface-variant">
           Manage your profile, security, and preferences
         </p>
       </div>
@@ -113,7 +113,7 @@ export function SettingsClient({ user, profile, preferences }: SettingsClientPro
               </button>
 
               {aiExpanded && (
-                <div className="ml-6 mt-0.5 flex flex-col gap-0.5 border-l border-neutral-200 pl-3">
+                <div className="ml-6 mt-0.5 flex flex-col gap-0.5 border-l border-neutral-200 dark:border-white/[0.09] pl-3">
                   <button
                     onClick={() => selectTab('ai-model')}
                     className={`${navItem} ${activeTab === 'ai-model' ? navActive : navInactive}`}

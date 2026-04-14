@@ -157,39 +157,39 @@ export function DevSettings() {
   return (
     <div className="space-y-5">
       {/* Embedding Sync Card */}
-      <Card className="p-5 border-neutral-200 bg-white shadow-none">
+      <Card className="p-5 border-neutral-200 dark:border-white/[0.09] bg-white dark:bg-surface-container shadow-none">
         <div className="flex items-start gap-4">
-          <div className="w-9 h-9 rounded-md bg-neutral-100 flex items-center justify-center shrink-0">
-            <Database className="h-4 w-4 text-neutral-500" />
+          <div className="w-9 h-9 rounded-md bg-neutral-100 dark:bg-surface-container-high flex items-center justify-center shrink-0">
+            <Database className="h-4 w-4 text-neutral-500 dark:text-on-surface-variant" />
           </div>
 
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-neutral-900 mb-0.5">
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-on-surface mb-0.5">
               Embedding Sync
             </h3>
-            <p className="text-xs text-neutral-500 mb-4">
+            <p className="text-xs text-neutral-500 dark:text-on-surface-variant mb-4">
               Analyze and sync embeddings for your documentation files and agent templates
             </p>
 
             {/* Stats Display */}
             {stats && (
-              <div className="mb-4 p-4 bg-neutral-50 rounded-md border border-neutral-200">
+              <div className="mb-4 p-4 bg-neutral-50 dark:bg-surface-container-high rounded-md border border-neutral-200 dark:border-white/[0.09]">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs font-medium text-neutral-500 mb-1.5">Project Files</p>
+                    <p className="text-xs font-medium text-neutral-500 dark:text-on-surface-variant mb-1.5">Project Files</p>
                     <div className="flex items-baseline gap-1.5 mb-1">
-                      <span className="text-lg font-semibold text-neutral-900">
+                      <span className="text-lg font-semibold text-neutral-900 dark:text-on-surface">
                         {stats.project_items_with_embeddings}/{stats.total_project_items}
                       </span>
-                      <span className="text-xs text-neutral-400">({projectPercentage}%)</span>
+                      <span className="text-xs text-neutral-400 dark:text-on-surface-variant/60">({projectPercentage}%)</span>
                     </div>
                     {stats.project_items_pending > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-neutral-400">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400 dark:text-on-surface-variant/60">
                         <AlertCircle className="h-3 w-3" />
                         {stats.project_items_pending} pending
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-neutral-400">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400 dark:text-on-surface-variant/60">
                         <CheckCircle2 className="h-3 w-3" />
                         All synced
                       </div>
@@ -197,20 +197,20 @@ export function DevSettings() {
                   </div>
 
                   <div>
-                    <p className="text-xs font-medium text-neutral-500 mb-1.5">Agent Templates</p>
+                    <p className="text-xs font-medium text-neutral-500 dark:text-on-surface-variant mb-1.5">Agent Templates</p>
                     <div className="flex items-baseline gap-1.5 mb-1">
-                      <span className="text-lg font-semibold text-neutral-900">
+                      <span className="text-lg font-semibold text-neutral-900 dark:text-on-surface">
                         {stats.agents_with_embeddings}/{stats.total_agents}
                       </span>
-                      <span className="text-xs text-neutral-400">({agentPercentage}%)</span>
+                      <span className="text-xs text-neutral-400 dark:text-on-surface-variant/60">({agentPercentage}%)</span>
                     </div>
                     {stats.agents_pending > 0 ? (
-                      <div className="flex items-center gap-1 text-xs text-neutral-400">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400 dark:text-on-surface-variant/60">
                         <AlertCircle className="h-3 w-3" />
                         {stats.agents_pending} pending
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-neutral-400">
+                      <div className="flex items-center gap-1 text-xs text-neutral-400 dark:text-on-surface-variant/60">
                         <CheckCircle2 className="h-3 w-3" />
                         All synced
                       </div>
@@ -220,11 +220,11 @@ export function DevSettings() {
 
                 {totalPending > 0 && (
                   <div className="mt-4 pt-3 border-t border-neutral-200">
-                    <div className="flex items-center justify-between text-xs text-neutral-500 mb-1.5">
+                    <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-on-surface-variant mb-1.5">
                       <span>Overall Progress</span>
                       <span>{totalPending} pending</span>
                     </div>
-                    <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-neutral-200 dark:bg-surface-container-highest rounded-full overflow-hidden">
                       <div
                         className="h-full bg-neutral-500 transition-all duration-500"
                         style={{
@@ -266,7 +266,7 @@ export function DevSettings() {
             </div>
 
             {lastSync && (
-              <p className="mt-2.5 text-xs text-neutral-400">
+              <p className="mt-2.5 text-xs text-neutral-400 dark:text-on-surface-variant/60">
                 Last synced: {lastSync.toLocaleString()}
               </p>
             )}
@@ -276,11 +276,11 @@ export function DevSettings() {
 
       {/* Progress Display */}
       {showProgress && processingItems.length > 0 && (
-        <Card className="p-5 border-neutral-200 bg-white shadow-none">
+        <Card className="p-5 border-neutral-200 dark:border-white/[0.09] bg-white dark:bg-surface-container shadow-none">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-neutral-900">Processing Items</p>
-              <span className="text-xs text-neutral-400">
+              <p className="text-sm font-semibold text-neutral-900 dark:text-on-surface">Processing Items</p>
+              <span className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
                 {processingItems.filter(i => i.status === 'success').length}/{processingItems.length}
               </span>
             </div>
@@ -289,23 +289,23 @@ export function DevSettings() {
               {processingItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 px-3 py-2 rounded-md bg-neutral-50 border border-neutral-100"
+                  className="flex items-center gap-3 px-3 py-2 rounded-md bg-neutral-50 dark:bg-surface-container-high border border-neutral-100 dark:border-white/[0.06]"
                 >
                   <div className="shrink-0">
                     {item.type === 'agent' ? (
-                      <Database className="h-3.5 w-3.5 text-neutral-400" />
+                      <Database className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant" />
                     ) : (
-                      <FolderOpen className="h-3.5 w-3.5 text-neutral-400" />
+                      <FolderOpen className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-neutral-700 truncate">{item.name}</p>
-                    <p className="text-[10px] text-neutral-400">{item.type === 'agent' ? 'Agent' : 'Project File'}</p>
+                    <p className="text-xs font-medium text-neutral-700 dark:text-on-surface-variant truncate">{item.name}</p>
+                    <p className="text-[10px] text-neutral-400 dark:text-on-surface-variant/60">{item.type === 'agent' ? 'Agent' : 'Project File'}</p>
                   </div>
                   <div className="shrink-0">
-                    {item.status === 'pending' && <div className="w-3.5 h-3.5 rounded-full border border-neutral-300" />}
-                    {item.status === 'processing' && <Loader2 className="h-3.5 w-3.5 text-neutral-400 animate-spin" />}
-                    {item.status === 'success' && <CheckCircle2 className="h-3.5 w-3.5 text-neutral-500" />}
+                    {item.status === 'pending' && <div className="w-3.5 h-3.5 rounded-full border border-neutral-300 dark:border-white/[0.20]" />}
+                    {item.status === 'processing' && <Loader2 className="h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant animate-spin" />}
+                    {item.status === 'success' && <CheckCircle2 className="h-3.5 w-3.5 text-neutral-500 dark:text-on-surface-variant" />}
                     {item.status === 'error' && <AlertCircle className="h-3.5 w-3.5 text-red-400" />}
                   </div>
                 </div>
@@ -316,9 +316,9 @@ export function DevSettings() {
       )}
 
       {/* Info */}
-      <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-md">
-        <p className="text-xs text-neutral-500 leading-relaxed">
-          <span className="font-medium text-neutral-700">About Embeddings — </span>
+      <div className="p-4 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md">
+        <p className="text-xs text-neutral-500 dark:text-on-surface-variant leading-relaxed">
+          <span className="font-medium text-neutral-700 dark:text-on-surface">About Embeddings — </span>
           Embeddings enable AI-powered search across your documentation. They are generated automatically when you push files via CLI,
           but you can manually sync them here if needed. A weekly cron job runs every Sunday at 2 AM UTC to catch any missed items.
         </p>

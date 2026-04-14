@@ -255,14 +255,14 @@ export function InstructionsSettings() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg border border-neutral-200 shadow-none overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-surface-container rounded-lg border border-neutral-200 dark:border-white/[0.09] shadow-none overflow-hidden">
       {/* Header Section */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200 dark:border-white/[0.09]">
         <div>
-          <h2 className="text-sm font-semibold text-neutral-900">
+          <h2 className="text-sm font-semibold text-neutral-900 dark:text-on-surface">
             AI Instructions
           </h2>
-          <p className="text-sm text-neutral-500 mt-0.5">
+          <p className="text-sm text-neutral-500 dark:text-on-surface-variant mt-0.5">
             Create custom instructions to guide AI chat behavior
           </p>
         </div>
@@ -270,19 +270,19 @@ export function InstructionsSettings() {
 
       {/* Tabs Navigation - Fixed at top */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 overflow-hidden">
-        <div className="border-b border-neutral-200 bg-white">
+        <div className="border-b border-neutral-200 dark:border-white/[0.09] bg-white dark:bg-surface-container">
           <div className="px-6">
             <TabsList className="inline-flex h-10 items-center justify-start gap-0 bg-transparent p-0">
               <TabsTrigger
                 value="my-instructions"
-                className="relative inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-colors border-b-2 border-transparent -mb-[2px] data-[state=active]:border-neutral-900 data-[state=active]:text-neutral-900 data-[state=inactive]:text-neutral-500 hover:text-neutral-700 rounded-none bg-transparent"
+                className="relative inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-colors border-b-2 border-transparent -mb-[2px] data-[state=active]:border-neutral-900 dark:data-[state=active]:border-on-surface data-[state=active]:text-neutral-900 dark:data-[state=active]:text-on-surface data-[state=inactive]:text-neutral-500 dark:data-[state=inactive]:text-on-surface-variant hover:text-neutral-700 dark:hover:text-on-surface rounded-none bg-transparent"
               >
                 <FileText className="h-3.5 w-3.5 mr-1.5" />
                 My Instructions
               </TabsTrigger>
               <TabsTrigger
                 value="templates"
-                className="relative inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-colors border-b-2 border-transparent -mb-[2px] data-[state=active]:border-neutral-900 data-[state=active]:text-neutral-900 data-[state=inactive]:text-neutral-500 hover:text-neutral-700 rounded-none bg-transparent"
+                className="relative inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-colors border-b-2 border-transparent -mb-[2px] data-[state=active]:border-neutral-900 dark:data-[state=active]:border-on-surface data-[state=active]:text-neutral-900 dark:data-[state=active]:text-on-surface data-[state=inactive]:text-neutral-500 dark:data-[state=inactive]:text-on-surface-variant hover:text-neutral-700 dark:hover:text-on-surface rounded-none bg-transparent"
               >
                 <FileText className="h-3.5 w-3.5 mr-1.5" />
                 Browse Templates
@@ -310,13 +310,13 @@ export function InstructionsSettings() {
                     New Instruction
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-white flex flex-col">
+                <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-white dark:bg-surface-container flex flex-col">
               {/* Header */}
-              <div className="px-8 pt-5 pb-4 border-b border-neutral-200 shrink-0">
-                <DialogTitle className="text-base font-semibold text-neutral-900">
+              <div className="px-8 pt-5 pb-4 border-b border-neutral-200 dark:border-white/[0.09] shrink-0">
+                <DialogTitle className="text-base font-semibold text-neutral-900 dark:text-on-surface">
                   New Instruction
                 </DialogTitle>
-                <DialogDescription className="text-sm text-neutral-500 mt-0.5">
+                <DialogDescription className="text-sm text-neutral-500 dark:text-on-surface-variant mt-0.5">
                   Define custom behavior for the AI chat assistant
                 </DialogDescription>
               </div>
@@ -326,10 +326,10 @@ export function InstructionsSettings() {
                 <div className="flex gap-8">
                   {/* Left Column - Basic Info */}
                   <div className="w-[380px] shrink-0 space-y-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Basic Information</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-on-surface-variant/60">Basic Information</p>
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <Label htmlFor="name" className="text-sm font-medium text-neutral-700">
+                        <Label htmlFor="name" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                           Name <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -337,22 +337,22 @@ export function InstructionsSettings() {
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="e.g., Always provide examples"
-                          className="border-neutral-200 text-sm"
+                          className="border-neutral-200 dark:border-white/[0.09] text-sm"
                         />
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label htmlFor="category" className="text-sm font-medium text-neutral-700">
+                        <Label htmlFor="category" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                           Category
                         </Label>
                         <Select
                           value={formData.category}
                           onValueChange={(value) => setFormData({ ...formData, category: value })}
                         >
-                          <SelectTrigger className="border-neutral-200 bg-white text-sm">
+                          <SelectTrigger className="border-neutral-200 dark:border-white/[0.09] bg-white dark:bg-surface-container-high text-sm">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-white border border-neutral-200 shadow-md">
+                          <SelectContent className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] shadow-md">
                             <SelectItem value="general" className="cursor-pointer">General</SelectItem>
                             <SelectItem value="coding" className="cursor-pointer">Coding</SelectItem>
                             <SelectItem value="writing" className="cursor-pointer">Writing</SelectItem>
@@ -363,20 +363,20 @@ export function InstructionsSettings() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label htmlFor="description" className="text-sm font-medium text-neutral-700">
-                          Description <span className="text-neutral-400 text-xs font-normal">(Optional)</span>
+                        <Label htmlFor="description" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
+                          Description <span className="text-neutral-400 dark:text-on-surface-variant/60 text-xs font-normal">(Optional)</span>
                         </Label>
                         <Textarea
                           id="description"
                           value={formData.description}
                           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                           placeholder="Brief description of what this instruction does"
-                          className="border-neutral-200 text-sm min-h-[80px] resize-none"
+                          className="border-neutral-200 dark:border-white/[0.09] text-sm min-h-[80px] resize-none"
                         />
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label htmlFor="priority" className="text-sm font-medium text-neutral-700">
+                        <Label htmlFor="priority" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                           Priority (0–100)
                         </Label>
                         <Input
@@ -386,55 +386,55 @@ export function InstructionsSettings() {
                           max="100"
                           value={formData.priority}
                           onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
-                          className="border-neutral-200 text-sm"
+                          className="border-neutral-200 dark:border-white/[0.09] text-sm"
                         />
-                        <div className="h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-neutral-100 dark:bg-surface-container-highest rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-neutral-400 transition-all duration-200"
+                            className="h-full bg-neutral-400 dark:bg-on-surface-variant transition-all duration-200"
                             style={{ width: `${formData.priority}%` }}
                           />
                         </div>
-                        <p className="text-xs text-neutral-400">Higher priority instructions are applied first</p>
+                        <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">Higher priority instructions are applied first</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Right Column - Content Editor */}
                   <div className="flex-1 min-w-0 space-y-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Instruction Content</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-on-surface-variant/60">Instruction Content</p>
 
                     <div className="space-y-2">
-                      <Label htmlFor="content" className="text-sm font-medium text-neutral-700">
+                      <Label htmlFor="content" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                         Markdown Content <span className="text-red-500">*</span>
                       </Label>
                       
                       {/* Markdown Toolbar */}
-                      <div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-50 border border-neutral-200 rounded-t-md">
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('**', '**')} title="Bold" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                      <div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-t-md">
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('**', '**')} title="Bold" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                           <Bold className="h-3.5 w-3.5" />
                         </Button>
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('*', '*')} title="Italic" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('*', '*')} title="Italic" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                           <Italic className="h-3.5 w-3.5" />
                         </Button>
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('`', '`')} title="Code" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('`', '`')} title="Code" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                           <Code className="h-3.5 w-3.5" />
                         </Button>
-                        <div className="w-px h-4 bg-neutral-200 mx-1" />
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('# ')} title="H1" className="h-7 px-1.5 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold">H1</Button>
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('## ')} title="H2" className="h-7 px-1.5 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold">H2</Button>
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('### ')} title="H3" className="h-7 px-1.5 hover:bg-neutral-200 text-neutral-600 text-xs font-semibold">H3</Button>
-                        <div className="w-px h-4 bg-neutral-200 mx-1" />
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('- ')} title="List" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                        <div className="w-px h-4 bg-neutral-200 dark:bg-white/[0.09] mx-1" />
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('# ')} title="H1" className="h-7 px-1.5 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant text-xs font-semibold">H1</Button>
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('## ')} title="H2" className="h-7 px-1.5 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant text-xs font-semibold">H2</Button>
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('### ')} title="H3" className="h-7 px-1.5 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant text-xs font-semibold">H3</Button>
+                        <div className="w-px h-4 bg-neutral-200 dark:bg-white/[0.09] mx-1" />
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('- ')} title="List" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                           <List className="h-3.5 w-3.5" />
                         </Button>
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('1. ')} title="Ordered List" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('1. ')} title="Ordered List" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                           <ListOrdered className="h-3.5 w-3.5" />
                         </Button>
-                        <div className="w-px h-4 bg-neutral-200 mx-1" />
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('[', '](url)')} title="Link" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                        <div className="w-px h-4 bg-neutral-200 dark:bg-white/[0.09] mx-1" />
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('[', '](url)')} title="Link" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                           <LinkIcon className="h-3.5 w-3.5" />
                         </Button>
-                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('```\n', '\n```')} title="Code Block" className="h-7 px-1.5 hover:bg-neutral-200 text-neutral-600 text-xs gap-1">
+                        <Button type="button" size="sm" variant="ghost" onClick={() => insertMarkdown('```\n', '\n```')} title="Code Block" className="h-7 px-1.5 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant text-xs gap-1">
                           <Code className="h-3.5 w-3.5" />Block
                         </Button>
                       </div>
@@ -444,9 +444,9 @@ export function InstructionsSettings() {
                         value={formData.content}
                         onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                         placeholder="# My Instruction&#10;&#10;Always provide code examples when explaining concepts.&#10;&#10;## Guidelines&#10;&#10;- Use clear, concise language&#10;- Include practical examples&#10;- Be specific about requirements"
-                        className="min-h-[500px] font-mono text-sm rounded-t-none border-t-0 border-neutral-200 resize-none"
+                        className="min-h-[500px] font-mono text-sm rounded-t-none border-t-0 border-neutral-200 dark:border-white/[0.09] resize-none"
                       />
-                      <div className="flex items-center justify-between text-xs text-neutral-400">
+                      <div className="flex items-center justify-between text-xs text-neutral-400 dark:text-on-surface-variant/60">
                         <span>Supports markdown formatting</span>
                         <span>{formData.content.length} characters</span>
                       </div>
@@ -456,8 +456,8 @@ export function InstructionsSettings() {
               </div>
 
               {/* Footer - Fixed */}
-              <div className="px-8 py-4 bg-white border-t border-neutral-200 flex items-center justify-between shrink-0">
-                <p className="text-xs text-neutral-400">
+              <div className="px-8 py-4 bg-white dark:bg-surface-container border-t border-neutral-200 dark:border-white/[0.09] flex items-center justify-between shrink-0">
+                <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
                   <span className="text-red-500">*</span> Required fields
                 </p>
                 <div className="flex gap-2">
@@ -490,10 +490,10 @@ export function InstructionsSettings() {
           </div>
 
         {/* Info Card */}
-        <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-md mb-5">
-          <p className="text-xs text-neutral-500 leading-relaxed">
+        <div className="p-4 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md mb-5">
+          <p className="text-xs text-neutral-500 dark:text-on-surface-variant leading-relaxed">
             Instructions are active in every chat session. Active instructions are applied in priority order and override default AI behavior.
-            Examples: <span className="text-neutral-700">&quot;Always respond in Portuguese&quot;</span>, <span className="text-neutral-700">&quot;Always include code examples&quot;</span>.
+            Examples: <span className="text-neutral-700 dark:text-on-surface">&quot;Always respond in Portuguese&quot;</span>, <span className="text-neutral-700 dark:text-on-surface">&quot;Always include code examples&quot;</span>.
           </p>
         </div>
 
@@ -531,11 +531,11 @@ export function InstructionsSettings() {
             <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
           </div>
         ) : filteredSkills.length === 0 ? (
-          <div className="text-center py-10 border border-neutral-200 rounded-md bg-neutral-50">
-            <p className="text-sm text-neutral-500">
+          <div className="text-center py-10 border border-neutral-200 dark:border-white/[0.09] rounded-md bg-neutral-50 dark:bg-surface-container-high">
+            <p className="text-sm text-neutral-500 dark:text-on-surface-variant">
               {filter === 'all' ? 'No instructions yet' : `No ${filter} instructions`}
             </p>
-            <p className="text-xs text-neutral-400 mt-1">
+            <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60 mt-1">
               {filter === 'all' ? 'Create your first instruction to get started' : 'Try a different filter'}
             </p>
           </div>
@@ -546,18 +546,18 @@ export function InstructionsSettings() {
                 key={skill.id}
                 className={`p-4 rounded-md border transition-colors ${
                   skill.is_active
-                    ? 'bg-white border-neutral-200'
-                    : 'bg-neutral-50 border-neutral-200 opacity-60'
+                    ? 'bg-white dark:bg-surface-container-high border-neutral-200 dark:border-white/[0.09]'
+                    : 'bg-neutral-50 dark:bg-surface-container border-neutral-200 dark:border-white/[0.06] opacity-60'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h4 className="text-sm font-medium text-neutral-900">{skill.name}</h4>
-                      <span className="px-1.5 py-0.5 bg-neutral-100 rounded text-[10px] font-medium text-neutral-500 capitalize">
+                      <h4 className="text-sm font-medium text-neutral-900 dark:text-on-surface">{skill.name}</h4>
+                      <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-surface-container-highest rounded text-[10px] font-medium text-neutral-500 dark:text-on-surface-variant capitalize">
                         {skill.category}
                       </span>
-                      <span className="px-1.5 py-0.5 bg-neutral-100 rounded text-[10px] font-medium text-neutral-500">
+                      <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-surface-container-highest rounded text-[10px] font-medium text-neutral-500 dark:text-on-surface-variant">
                         P{skill.priority}
                       </span>
                       {skill.is_active && (
@@ -567,9 +567,9 @@ export function InstructionsSettings() {
                       )}
                     </div>
                     {skill.description && (
-                      <p className="text-xs text-neutral-500 mb-1.5">{skill.description}</p>
+                      <p className="text-xs text-neutral-500 dark:text-on-surface-variant mb-1.5">{skill.description}</p>
                     )}
-                    <p className="text-xs text-neutral-400">
+                    <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
                       Created {new Date(skill.created_at).toLocaleDateString()}
                       {skill.last_used_at && ` · Last used ${new Date(skill.last_used_at).toLocaleDateString()}`}
                     </p>
@@ -579,7 +579,7 @@ export function InstructionsSettings() {
                       size="sm"
                       variant="ghost"
                       onClick={() => openEditModal(skill)}
-                      className="h-7 w-7 p-0 text-neutral-400 hover:text-neutral-700"
+                      className="h-7 w-7 p-0 text-neutral-400 dark:text-on-surface-variant hover:text-neutral-700 dark:hover:text-on-surface"
                       title="Edit"
                     >
                       <Edit className="h-3.5 w-3.5" />
@@ -588,7 +588,7 @@ export function InstructionsSettings() {
                       size="sm"
                       variant="ghost"
                       onClick={() => handleToggle(skill.id, skill.is_active)}
-                      className="h-7 w-7 p-0 text-neutral-400 hover:text-neutral-700"
+                      className="h-7 w-7 p-0 text-neutral-400 dark:text-on-surface-variant hover:text-neutral-700 dark:hover:text-on-surface"
                       title={skill.is_active ? 'Disable' : 'Enable'}
                     >
                       {skill.is_active ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
@@ -615,21 +615,21 @@ export function InstructionsSettings() {
         {/* Search Bar */}
         <div className="mb-5">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400 dark:text-on-surface-variant" />
             <Input
               value={templateSearch}
               onChange={(e) => setTemplateSearch(e.target.value)}
               placeholder="Search templates..."
-              className="pl-9 border-neutral-200 text-sm"
+              className="pl-9 border-neutral-200 dark:border-white/[0.09] text-sm"
             />
           </div>
         </div>
 
         {/* Templates List */}
         {filteredTemplates.length === 0 ? (
-          <div className="text-center py-10 border border-neutral-200 rounded-md bg-neutral-50">
-            <p className="text-sm text-neutral-500">No templates found</p>
-            <p className="text-xs text-neutral-400 mt-1">Try adjusting your search terms</p>
+          <div className="text-center py-10 border border-neutral-200 dark:border-white/[0.09] rounded-md bg-neutral-50 dark:bg-surface-container-high">
+            <p className="text-sm text-neutral-500 dark:text-on-surface-variant">No templates found</p>
+            <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60 mt-1">Try adjusting your search terms</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -639,21 +639,21 @@ export function InstructionsSettings() {
               return (
               <div
                 key={template.id}
-                className="p-4 bg-white border border-neutral-200 rounded-md hover:border-neutral-300 transition-colors"
+              className="p-4 bg-white dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md hover:border-neutral-300 dark:hover:border-white/[0.15] transition-colors"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h3 className="text-sm font-medium text-neutral-900">{template.name}</h3>
+                      <h3 className="text-sm font-medium text-neutral-900 dark:text-on-surface">{template.name}</h3>
                       {isImported && (
-                        <span className="px-1.5 py-0.5 bg-neutral-100 text-neutral-500 rounded text-[10px] font-medium">Imported</span>
+                        <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-surface-container-highest text-neutral-500 dark:text-on-surface-variant rounded text-[10px] font-medium">Imported</span>
                       )}
-                      <span className="px-1.5 py-0.5 bg-neutral-100 text-neutral-500 rounded text-[10px] capitalize">{template.category}</span>
+                      <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-surface-container-highest text-neutral-500 dark:text-on-surface-variant rounded text-[10px] capitalize">{template.category}</span>
                       {template.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="px-1.5 py-0.5 bg-neutral-100 text-neutral-500 rounded text-[10px]">{tag}</span>
+                        <span key={tag} className="px-1.5 py-0.5 bg-neutral-100 dark:bg-surface-container-highest text-neutral-500 dark:text-on-surface-variant rounded text-[10px]">{tag}</span>
                       ))}
                     </div>
-                    <p className="text-xs text-neutral-500 leading-relaxed">{template.description}</p>
+                    <p className="text-xs text-neutral-500 dark:text-on-surface-variant leading-relaxed">{template.description}</p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <Button
@@ -690,8 +690,7 @@ export function InstructionsSettings() {
 
         {filteredTemplates.length > 0 && (
           <div className="mt-4 text-center">
-            <p className="text-xs text-neutral-400">
-              {filteredTemplates.length} of {INSTRUCTION_TEMPLATES.length} templates
+            <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
             </p>
           </div>
         )}
@@ -702,43 +701,43 @@ export function InstructionsSettings() {
 
       {/* Template Preview Modal */}
       <Dialog open={!!previewTemplate} onOpenChange={(open) => !open && setPreviewTemplate(null)}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden p-0 gap-0 bg-white flex flex-col">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden p-0 gap-0 bg-white dark:bg-surface-container flex flex-col">
           {previewTemplate && (
             <>
               {/* Header */}
-              <div className="px-6 pt-5 pb-4 border-b border-neutral-200">
+              <div className="px-6 pt-5 pb-4 border-b border-neutral-200 dark:border-white/[0.09]">
                 <div className="flex items-start gap-3 mb-3">
                   <span className="text-2xl shrink-0">{previewTemplate.icon}</span>
                   <div className="flex-1">
-                    <DialogTitle className="text-base font-semibold text-neutral-900">
+                    <DialogTitle className="text-base font-semibold text-neutral-900 dark:text-on-surface">
                       {previewTemplate.name}
                     </DialogTitle>
-                    <DialogDescription className="text-sm text-neutral-500 mt-0.5">
+                    <DialogDescription className="text-sm text-neutral-500 dark:text-on-surface-variant mt-0.5">
                       {previewTemplate.description}
                     </DialogDescription>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 rounded text-[10px] font-medium capitalize">{previewTemplate.category}</span>
-                  <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 rounded text-[10px] font-medium">Priority {previewTemplate.priority}</span>
+                  <span className="px-2 py-0.5 bg-neutral-100 dark:bg-surface-container-high text-neutral-500 dark:text-on-surface-variant rounded text-[10px] font-medium capitalize">{previewTemplate.category}</span>
+                  <span className="px-2 py-0.5 bg-neutral-100 dark:bg-surface-container-high text-neutral-500 dark:text-on-surface-variant rounded text-[10px] font-medium">Priority {previewTemplate.priority}</span>
                   {previewTemplate.tags.map((tag) => (
-                    <span key={tag} className="px-2 py-0.5 bg-neutral-100 text-neutral-500 rounded text-[10px]">{tag}</span>
+                    <span key={tag} className="px-2 py-0.5 bg-neutral-100 dark:bg-surface-container-high text-neutral-500 dark:text-on-surface-variant rounded text-[10px]">{tag}</span>
                   ))}
                 </div>
               </div>
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto px-6 py-5">
-                <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">Content</p>
-                <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-md">
-                  <pre className="text-xs text-neutral-700 whitespace-pre-wrap font-mono leading-relaxed">
+                <p className="text-xs font-medium text-neutral-500 dark:text-on-surface-variant uppercase tracking-wide mb-2">Content</p>
+                <div className="p-4 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-md">
+                  <pre className="text-xs text-neutral-700 dark:text-on-surface-variant whitespace-pre-wrap font-mono leading-relaxed">
                     {previewTemplate.content}
                   </pre>
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 border-t border-neutral-200 flex items-center justify-end gap-2">
+              <div className="px-6 py-4 border-t border-neutral-200 dark:border-white/[0.09] flex items-center justify-end gap-2">
                 <Button variant="outline" size="sm" onClick={() => setPreviewTemplate(null)}>
                   Close
                 </Button>
@@ -762,13 +761,13 @@ export function InstructionsSettings() {
 
       {/* Edit Skill Modal */}
       <Dialog open={!!editingSkill} onOpenChange={(open) => !open && setEditingSkill(null)}>
-        <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-white flex flex-col">
+        <DialogContent className="!max-w-none w-[96vw] h-[92vh] overflow-hidden p-0 gap-0 bg-white dark:bg-surface-container flex flex-col">
           {/* Header */}
-          <div className="px-8 pt-5 pb-4 border-b border-neutral-200 shrink-0">
-            <DialogTitle className="text-base font-semibold text-neutral-900">
+          <div className="px-8 pt-5 pb-4 border-b border-neutral-200 dark:border-white/[0.09] shrink-0">
+            <DialogTitle className="text-base font-semibold text-neutral-900 dark:text-on-surface">
               Edit Instruction
             </DialogTitle>
-            <DialogDescription className="text-sm text-neutral-500 mt-0.5">
+            <DialogDescription className="text-sm text-neutral-500 dark:text-on-surface-variant mt-0.5">
               Modify and improve your custom instruction
             </DialogDescription>
           </div>
@@ -778,10 +777,10 @@ export function InstructionsSettings() {
             <div className="flex gap-8">
               {/* Left Column - Basic Info */}
               <div className="w-[380px] shrink-0 space-y-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Basic Information</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-on-surface-variant/60">Basic Information</p>
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-name" className="text-sm font-medium text-neutral-700">
+                    <Label htmlFor="edit-name" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                       Name <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -789,22 +788,22 @@ export function InstructionsSettings() {
                       value={editFormData.name}
                       onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                       placeholder="e.g., Always provide examples"
-                      className="border-neutral-200 text-sm"
+                      className="border-neutral-200 dark:border-white/[0.09] text-sm"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-category" className="text-sm font-medium text-neutral-700">
+                    <Label htmlFor="edit-category" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                       Category
                     </Label>
                     <Select
                       value={editFormData.category}
                       onValueChange={(value) => setEditFormData({ ...editFormData, category: value })}
                     >
-                      <SelectTrigger className="border-neutral-200 bg-white text-sm">
+                      <SelectTrigger className="border-neutral-200 dark:border-white/[0.09] bg-white dark:bg-surface-container-high text-sm">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-neutral-200 shadow-md">
+                      <SelectContent className="bg-white dark:bg-surface-container border border-neutral-200 dark:border-white/[0.09] shadow-md">
                         <SelectItem value="general" className="cursor-pointer">General</SelectItem>
                         <SelectItem value="coding" className="cursor-pointer">Coding</SelectItem>
                         <SelectItem value="writing" className="cursor-pointer">Writing</SelectItem>
@@ -815,20 +814,20 @@ export function InstructionsSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-description" className="text-sm font-medium text-neutral-700">
-                      Description <span className="text-neutral-400 text-xs font-normal">(Optional)</span>
+                    <Label htmlFor="edit-description" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
+                      Description <span className="text-neutral-400 dark:text-on-surface-variant/60 text-xs font-normal">(Optional)</span>
                     </Label>
                     <Textarea
                       id="edit-description"
                       value={editFormData.description}
                       onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
                       placeholder="Brief description of what this instruction does"
-                      className="border-neutral-200 text-sm min-h-[80px] resize-none"
+                      className="border-neutral-200 dark:border-white/[0.09] text-sm min-h-[80px] resize-none"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-priority" className="text-sm font-medium text-neutral-700">
+                    <Label htmlFor="edit-priority" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                       Priority (0–100)
                     </Label>
                     <Input
@@ -838,11 +837,11 @@ export function InstructionsSettings() {
                       max="100"
                       value={editFormData.priority}
                       onChange={(e) => setEditFormData({ ...editFormData, priority: parseInt(e.target.value) || 0 })}
-                      className="border-neutral-200 text-sm"
+                      className="border-neutral-200 dark:border-white/[0.09] text-sm"
                     />
-                    <div className="h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-neutral-100 dark:bg-surface-container-highest rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-neutral-400 transition-all duration-200"
+                        className="h-full bg-neutral-400 dark:bg-on-surface-variant transition-all duration-200"
                         style={{ width: `${editFormData.priority}%` }}
                       />
                     </div>
@@ -852,28 +851,28 @@ export function InstructionsSettings() {
 
               {/* Right Column - Content Editor */}
               <div className="flex-1 min-w-0 space-y-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Instruction Content</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-on-surface-variant/60">Instruction Content</p>
 
                 <div className="space-y-2">
-                  <Label htmlFor="edit-content" className="text-sm font-medium text-neutral-700">
+                  <Label htmlFor="edit-content" className="text-sm font-medium text-neutral-700 dark:text-on-surface-variant">
                     Content <span className="text-red-500">*</span>
                   </Label>
 
                   {/* Markdown Toolbar */}
-                  <div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-50 border border-neutral-200 rounded-t-md">
+                  <div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-50 dark:bg-surface-container-high border border-neutral-200 dark:border-white/[0.09] rounded-t-md">
                     <Button type="button" size="sm" variant="ghost"
                       onClick={() => { const ta = document.getElementById('edit-content') as HTMLTextAreaElement; if (!ta) return; const s = ta.selectionStart; const e = ta.selectionEnd; setEditFormData({ ...editFormData, content: editFormData.content.substring(0, s) + '**' + editFormData.content.substring(s, e) + '**' + editFormData.content.substring(e) }) }}
-                      title="Bold" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                      title="Bold" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                       <Bold className="h-3.5 w-3.5" />
                     </Button>
                     <Button type="button" size="sm" variant="ghost"
                       onClick={() => { const ta = document.getElementById('edit-content') as HTMLTextAreaElement; if (!ta) return; const s = ta.selectionStart; const e = ta.selectionEnd; setEditFormData({ ...editFormData, content: editFormData.content.substring(0, s) + '*' + editFormData.content.substring(s, e) + '*' + editFormData.content.substring(e) }) }}
-                      title="Italic" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                      title="Italic" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                       <Italic className="h-3.5 w-3.5" />
                     </Button>
                     <Button type="button" size="sm" variant="ghost"
                       onClick={() => { const ta = document.getElementById('edit-content') as HTMLTextAreaElement; if (!ta) return; const s = ta.selectionStart; const e = ta.selectionEnd; setEditFormData({ ...editFormData, content: editFormData.content.substring(0, s) + '`' + editFormData.content.substring(s, e) + '`' + editFormData.content.substring(e) }) }}
-                      title="Code" className="h-7 w-7 p-0 hover:bg-neutral-200 text-neutral-600">
+                      title="Code" className="h-7 w-7 p-0 hover:bg-neutral-200 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-on-surface-variant">
                       <Code className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -883,9 +882,9 @@ export function InstructionsSettings() {
                     value={editFormData.content}
                     onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
                     placeholder="# My Instruction&#10;&#10;Content here..."
-                    className="min-h-[500px] font-mono text-sm rounded-t-none border-t-0 border-neutral-200 resize-none"
+                    className="min-h-[500px] font-mono text-sm rounded-t-none border-t-0 border-neutral-200 dark:border-white/[0.09] resize-none"
                   />
-                  <div className="flex items-center justify-between text-xs text-neutral-400">
+                  <div className="flex items-center justify-between text-xs text-neutral-400 dark:text-on-surface-variant/60">
                     <span>Supports markdown formatting</span>
                     <span>{editFormData.content.length} characters</span>
                   </div>
@@ -895,8 +894,8 @@ export function InstructionsSettings() {
           </div>
 
           {/* Footer - Fixed */}
-          <div className="px-8 py-4 bg-white border-t border-neutral-200 flex items-center justify-between shrink-0">
-            <p className="text-xs text-neutral-400">
+          <div className="px-8 py-4 bg-white dark:bg-surface-container border-t border-neutral-200 dark:border-white/[0.09] flex items-center justify-between shrink-0">
+            <p className="text-xs text-neutral-400 dark:text-on-surface-variant/60">
               <span className="text-red-500">*</span> Required fields
             </p>
             <div className="flex gap-2">

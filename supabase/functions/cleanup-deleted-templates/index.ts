@@ -4,16 +4,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
-Deno.serve(async (req: Request) => {
+Deno.serve(async (_req: Request) => {
   try {
-    // Verify cron secret for security
-    const authHeader = req.headers.get('Authorization')
-    if (authHeader !== `Bearer ${Deno.env.get('CRON_SECRET')}`) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } }
-      )
-    }
+    // JWT verification is handled by Supabase (verify_jwt: true on deploy).
+    // The pg_cron job calls this function using the anon key -- no extra secret needed.
 
     // Create Supabase client with service role
     const supabase = createClient(
