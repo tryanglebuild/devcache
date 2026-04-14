@@ -86,6 +86,8 @@ export function ItemCard({ item, onOpen, onUpdate, onDelete }: ItemCardProps) {
       return
     }
 
+    // Notify sidebar to remove item immediately (before Realtime catches up)
+    window.dispatchEvent(new CustomEvent('project-item-deleted', { detail: { id: item.id } }))
     onDelete(item.id)
     toast.success('Item deleted successfully')
   }

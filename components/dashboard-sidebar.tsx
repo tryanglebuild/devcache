@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useRef, ReactNode } from 'react'
 import {
   LayoutDashboard,
   FolderKanban,
@@ -18,8 +18,9 @@ import {
   Star,
   HelpCircle,
   MessageSquare,
+  RotateCw,
 } from 'lucide-react'
-import { SidebarProjectsTree } from '@/components/dashboard/SidebarProjectsTree'
+import { SidebarProjectsTree, SidebarProjectsTreeHandle } from '@/components/dashboard/SidebarProjectsTree'
 import { cn } from '@/lib/utils'
 import { DevCacheLogo } from '@/components/ui/DevCacheLogo'
 import { useTheme } from '@/components/providers/ThemeProvider'
@@ -69,7 +70,15 @@ export function DashboardSidebar() {
   const pathname = usePathname() || '/dashboard'
   const { isCollapsed, setIsCollapsed } = useSidebarContext()
   const [quickCreateType, setQuickCreateType] = useState<'folder' | 'file' | null>(null)
+  const treeRef = useRef<SidebarProjectsTreeHandle>(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const { resolvedTheme } = useTheme()
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    treeRef.current?.refresh()
+    setTimeout(() => setIsRefreshing(false), 600)
+  }
 
   return (
     <aside
@@ -182,6 +191,13 @@ export function DashboardSidebar() {
               </Link>
               <div className="flex items-center gap-1">
                 <button
+                  onClick={handleRefresh}
+                  title="Refresh"
+                  className="w-5 h-5 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-[#7c7ff5] transition-colors flex items-center justify-center"
+                >
+                  <RotateCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                </button>
+                <button
                   onClick={() => setQuickCreateType('folder')}
                   title="New Folder"
                   className="relative w-5 h-5 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-[#7c7ff5] transition-colors"
@@ -207,6 +223,7 @@ export function DashboardSidebar() {
           {!isCollapsed ? (
             <div className="flex-1 min-h-0">
               <SidebarProjectsTree
+                ref={treeRef}
                 isCollapsed={isCollapsed}
                 quickCreateType={quickCreateType}
                 onQuickCreateDone={() => setQuickCreateType(null)}

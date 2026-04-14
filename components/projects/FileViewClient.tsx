@@ -183,6 +183,8 @@ export function FileViewClient({ file, attachments: initialAttachments }: FileVi
 
       if (error) throw error
 
+      // Notify sidebar to remove item immediately (before Realtime catches up)
+      window.dispatchEvent(new CustomEvent('project-item-deleted', { detail: { id: file.id } }))
       toast.success('File deleted successfully')
       router.push('/dashboard/projects')
     } catch (error) {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useImperativeHandle, forwardRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ChevronRight, Folder, FolderOpen, FileText, Copy, Trash2, Edit, Download, Star, StarOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -29,7 +29,12 @@ interface SidebarProjectsTreeProps {
   onQuickCreateDone?: () => void
 }
 
-export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreateDone }: SidebarProjectsTreeProps) {
+export interface SidebarProjectsTreeHandle {
+  refresh: () => void
+}
+
+export const SidebarProjectsTree = forwardRef<SidebarProjectsTreeHandle, SidebarProjectsTreeProps>(
+  function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreateDone }, ref) {
   const [items, setItems] = useState<ProjectItem[]>([])
   const [userExpandedKeys, setUserExpandedKeys] = useState<Set<string>>(new Set())
   const [contextMenu, setContextMenu] = useState<{
@@ -109,13 +114,17 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quickCreateType])
 
-  // Focus input when pendingItem appears
+  // Focus input only when pendingItem first appears (not on every keystroke)
+  const wasPendingRef = useRef(false)
   useEffect(() => {
-    if (pendingItem) {
+    if (pendingItem && !wasPendingRef.current) {
+      wasPendingRef.current = true
       setTimeout(() => {
         pendingInputRef.current?.focus()
         pendingInputRef.current?.select()
       }, 50)
+    } else if (!pendingItem) {
+      wasPendingRef.current = false
     }
   }, [pendingItem])
 
@@ -189,6 +198,17 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
     }
   }, [contextMenu])
 
+  // Listen for physical deletes dispatched by ItemCard / FileViewClient
+  useEffect(() => {
+    const handleExternalDelete = (e: Event) => {
+      const id = (e as CustomEvent<{ id: string }>).detail?.id
+      if (!id) return
+      setItems(prev => prev.filter(i => i.id !== id))
+    }
+    window.addEventListener('project-item-deleted', handleExternalDelete)
+    return () => window.removeEventListener('project-item-deleted', handleExternalDelete)
+  }, [])
+
   // Load items
   useEffect(() => {
     const loadItems = async () => {
@@ -210,10 +230,44 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
 
     loadItems()
 
-    // Subscribe to changes
+    // Subscribe to changes — handle each event type optimistically for instant UI updates
     const channel = supabase
       .channel('sidebar-items')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_items' }, loadItems)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'project_items' },
+        (payload) => {
+          const newItem = payload.new as ProjectItem
+          if (newItem.deleted_at) return
+          setItems(prev => {
+            if (prev.some(i => i.id === newItem.id)) return prev
+            return [...prev, newItem]
+          })
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'project_items' },
+        (payload) => {
+          const updated = payload.new as ProjectItem
+          if (updated.deleted_at) {
+            // Soft deleted — remove from sidebar
+            setItems(prev => prev.filter(i => i.id !== updated.id))
+          } else {
+            setItems(prev => prev.map(i => i.id === updated.id ? updated : i))
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'project_items' },
+        (payload) => {
+          const deletedId = (payload.old as Partial<ProjectItem>).id
+          if (deletedId) {
+            setItems(prev => prev.filter(i => i.id !== deletedId))
+          }
+        }
+      )
       .subscribe()
 
     return () => {
@@ -288,6 +342,8 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
     }
   }
 
+  useImperativeHandle(ref, () => ({ refresh: reloadItems }))
+
   const handleRename = async (item: ProjectItem) => {
     const newName = prompt(`Rename ${item.type}:`, item.name)
     if (!newName || newName === item.name) return
@@ -312,18 +368,31 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
 
   const confirmDelete = async () => {
     if (!deleteTarget) return
+    const target = deleteTarget
+    setDeleteTarget(null)
+
+    // Collect all descendant IDs (for folder deletion)
+    const getAllDescendantIds = (parentId: string): string[] => {
+      const children = items.filter(i => i.parent_id === parentId)
+      return children.flatMap(child => [child.id, ...getAllDescendantIds(child.id)])
+    }
+    const idsToRemove = new Set([target.id, ...getAllDescendantIds(target.id)])
+
+    // Optimistic update: remove from local state immediately
+    setItems(prev => prev.filter(i => !idsToRemove.has(i.id)))
+
     const { error } = await supabase
       .from('project_items')
       .update({ deleted_at: new Date().toISOString() })
-      .eq('id', deleteTarget.id)
+      .eq('id', target.id)
 
     if (error) {
       toast.error('Failed to delete')
+      // Revert optimistic update on error
+      reloadItems()
     } else {
       toast.success('Moved to trash')
-      reloadItems()
     }
-    setDeleteTarget(null)
   }
 
   const handleDuplicate = async (item: ProjectItem) => {
@@ -571,4 +640,4 @@ export function SidebarProjectsTree({ isCollapsed, quickCreateType, onQuickCreat
       />
     </>
   )
-}
+})
